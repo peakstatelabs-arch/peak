@@ -4,6 +4,7 @@ import { CountdownTimer } from "@/app/components/CountdownTimer";
 import { Calculator } from "@/app/components/Calculator";
 import { FAQ } from "@/app/components/FAQ";
 import { PricingCard } from "@/app/components/PricingCard";
+import { BenefitsGrid } from "@/app/components/BenefitsGrid";
 import { siteCopy } from "@/content/siteCopy";
 
 export default function Home() {
@@ -117,42 +118,7 @@ export default function Home() {
             </div>
 
             {/* Benefits Grid */}
-            <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
-              {siteCopy.hero.benefits.map((benefit, index) => (
-                <div
-                  key={benefit.title}
-                  className={`p-5 rounded-2xl border border-[var(--border)] bg-white/80 backdrop-blur card-hover animate-fade-in-up stagger-${
-                    (index % 6) + 1
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center mt-0.5">
-                      <svg
-                        className="w-3.5 h-3.5 text-[var(--accent-dark)]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={3}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </span>
-                    <div>
-                      <p className="font-semibold text-[var(--primary)]">
-                        {benefit.title}
-                      </p>
-                      <p className="text-sm text-[var(--primary)]/60 mt-1">
-                        {benefit.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <BenefitsGrid benefits={siteCopy.hero.benefits} />
 
             {/* Secure Note */}
             <div className="mt-12 p-5 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 max-w-2xl mx-auto text-center">
