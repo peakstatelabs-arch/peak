@@ -243,15 +243,15 @@ export default function Home() {
               {siteCopy.contents.items.map((item, index) => (
                 <div
                   key={item.name}
-                  className={`p-8 rounded-2xl bg-white border border-[var(--border)] shadow-sm text-center card-hover animate-fade-in-up stagger-${
+                  className={`p-6 pt-4 rounded-2xl bg-white border border-[var(--border)] shadow-sm text-center card-hover animate-fade-in-up stagger-${
                     index + 1
                   }`}
                 >
-                  <div className="w-52 h-52 mx-auto mb-6">
+                  <div className="w-64 h-64 mx-auto mb-3 -mt-2">
                     <img
                       src="/bottle.png"
                       alt={item.name}
-                      className="w-full h-full object-contain"
+                      className="w-full h-full object-contain scale-125"
                     />
                   </div>
                   <h3 className="font-bold text-xl text-[var(--primary)]">
