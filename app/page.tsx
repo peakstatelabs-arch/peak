@@ -486,8 +486,8 @@ export default function Home() {
                     <p className="text-sm text-[var(--accent-dark)] mt-1">
                       {doc.amount}
                     </p>
-                    <p className="text-xs text-[var(--primary)]/50 mt-2">
-                      View Purity Test
+                    <p className="text-xs text-[var(--accent-dark)] mt-2 underline">
+                      Click to View Purity Test
                     </p>
                   </a>
                 ))}
