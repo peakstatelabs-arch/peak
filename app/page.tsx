@@ -29,7 +29,7 @@ export default function Home() {
         <Container className="flex h-16 items-center justify-between">
           <a href="#top" className="flex items-center gap-2 font-bold text-lg">
             <img
-              src="/logo.svg"
+              src="/logo.png"
               alt="POWER CUT Logo"
               className="h-9 w-9 rounded-xl"
             />
