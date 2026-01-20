@@ -144,12 +144,12 @@ export default function Home() {
               </div>
 
               {/* Countdown Timer */}
-              <div className="mt-12">
+              <div className="mt-8">
                 <CountdownTimer label={siteCopy.hero.timerLabel} />
               </div>
 
               {/* Research Disclaimer */}
-              <p className="mt-8 text-xs text-[var(--primary)]/50">
+              <p className="mt-4 text-xs text-[var(--primary)]/50">
                 {siteCopy.hero.researchDisclaimer}
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function Home() {
         </Section>
 
         {/* Calculator Section */}
-        <Section id="calculator" className="bg-white py-12 sm:py-16">
+        <Section id="calculator" className="bg-white !py-8 sm:!py-10">
           <Container>
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-5xl mx-auto">
               {/* Left Column - Text */}
@@ -404,8 +404,10 @@ export default function Home() {
                         {siteCopy.comparison.powercut.price}
                       </span>
                     </div>
-                    <div className="mt-3 inline-block bg-[var(--accent)]/20 text-[var(--accent)] px-4 py-2 rounded-full text-sm font-semibold">
-                      VALUE SAVED: {siteCopy.comparison.powercut.savings}
+                    <div className="mt-4 w-full bg-[var(--accent)] text-[var(--primary)] py-3 px-6 rounded-xl text-center">
+                      <span className="text-lg font-bold uppercase tracking-wide">
+                        VALUE SAVED: {siteCopy.comparison.powercut.savings}
+                      </span>
                     </div>
                   </div>
                 </div>

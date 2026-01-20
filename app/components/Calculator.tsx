@@ -7,29 +7,38 @@ interface CalculatorProps {
 }
 
 export function Calculator({ onCalculate }: CalculatorProps) {
-  const [currentWeight, setCurrentWeight] = useState(180);
-  const [goalWeight, setGoalWeight] = useState(160);
-  const [currentBodyFat, setCurrentBodyFat] = useState(25);
+  const [currentWeight, setCurrentWeight] = useState(150);
+  const [goalWeight, setGoalWeight] = useState(130);
+  const [currentBodyFat, setCurrentBodyFat] = useState(20);
   const [goalBodyFat, setGoalBodyFat] = useState(15);
 
-  // Calculate cycles based on weight difference and body fat goals
+  // Weight rules: goal > current => 0; <=18 lbs loss => 1; >18 => ceil(diff/18)
+  const cyclesFromWeight = (cw: number, gw: number): number => {
+    const gaining = gw > cw;
+    if (gaining) return 0;
+    const diff = cw - gw;
+    if (diff <= 18) return 1;
+    return Math.ceil(diff / 18);
+  };
+
+  // BF: ceil((cbf - gbf) / 7) if cbf > gbf, else 0
+  const cyclesFromBF = (cbf: number, gbf: number): number => {
+    if (cbf > gbf) {
+      return Math.ceil((cbf - gbf) / 7);
+    }
+    return 0;
+  };
+
   const calculateCycles = (): number => {
-    const weightDiff = Math.abs(currentWeight - goalWeight);
-    const bodyFatDiff = Math.abs(currentBodyFat - goalBodyFat);
-
-    // Assume ~20lbs per cycle for weight loss
-    // and ~5% body fat reduction per cycle
-    const cyclesFromWeight = Math.ceil(weightDiff / 20);
-    const cyclesFromBodyFat = Math.ceil(bodyFatDiff / 5);
-
-    // Use the higher of the two calculations, minimum 1 cycle
-    const cycles = Math.max(1, Math.max(cyclesFromWeight, cyclesFromBodyFat));
+    const weightCycles = cyclesFromWeight(currentWeight, goalWeight);
+    const bfCycles = cyclesFromBF(currentBodyFat, goalBodyFat);
+    const finalCycles = Math.max(weightCycles, bfCycles);
 
     if (onCalculate) {
-      onCalculate(cycles);
+      onCalculate(finalCycles);
     }
 
-    return Math.min(cycles, 5); // Cap at 5 cycles for display
+    return finalCycles;
   };
 
   const cycles = calculateCycles();
@@ -134,19 +143,25 @@ export function Calculator({ onCalculate }: CalculatorProps) {
         </div>
       </div>
 
-      {/* Result */}
-      <div className="mt-5 p-4 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-xl text-center text-white shadow-lg">
-        <p className="text-xs font-medium text-white/70 uppercase tracking-wider">
-          Your Estimated Cycles
-        </p>
-        <p className="text-sm mt-1 text-white/80">You Need</p>
-        <div className="my-2">
-          <span className="text-4xl font-bold">{cycles}</span>
+      {/* Result - Horizontal Layout */}
+      <div className="mt-5 p-4 bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] rounded-xl text-white shadow-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-medium text-white/70 uppercase tracking-wider">
+              Your Estimated Cycles
+            </p>
+            <p className="text-sm text-white/80">You Need</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-4xl font-bold">{cycles}</span>
+            <div className="text-left">
+              <p className="text-sm font-semibold">
+                POWER CUT™ {cycles === 1 ? "Cycle" : "Cycles"}
+              </p>
+              <p className="text-white/70 text-xs">to Hit Your Goal</p>
+            </div>
+          </div>
         </div>
-        <p className="text-sm font-semibold">
-          POWER CUT™ {cycles === 1 ? "Cycle" : "Cycles"}
-        </p>
-        <p className="text-white/70 text-xs mt-0.5">to Hit Your Goal</p>
       </div>
     </div>
   );

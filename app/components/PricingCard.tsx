@@ -46,10 +46,10 @@ export function PricingCard({
         {/* Header */}
         <div className="mb-6">
           <h3 className="text-xl font-bold text-[var(--primary)]">{name}</h3>
-          <p className="text-sm text-[var(--accent-dark)] font-medium mt-1">
+          <p className="text-sm text-[var(--accent-dark)] font-semibold mt-1">
             {subtitle}
           </p>
-          <p className="text-sm text-[var(--primary)]/60 mt-3 leading-relaxed">
+          <p className="text-[15px] text-[var(--primary)]/70 mt-3 leading-relaxed font-medium">
             {description}
           </p>
         </div>
@@ -73,7 +73,7 @@ export function PricingCard({
                   />
                 </svg>
               </span>
-              <span className="text-sm text-[var(--primary)]/80">{feature}</span>
+              <span className="text-[15px] text-[var(--primary)]/90 font-medium">{feature}</span>
             </li>
           ))}
         </ul>
