@@ -247,7 +247,7 @@ export default function Home() {
                     index + 1
                   }`}
                 >
-                  <div className="w-40 h-40 mx-auto mb-4 flex items-center justify-center">
+                  <div className="w-60 h-60 mx-auto mb-4 flex items-center justify-center">
                     <img
                       src="/bottle.png"
                       alt={item.name}
