@@ -99,14 +99,17 @@ export const siteCopy = {
       {
         name: "Retatrutide",
         amount: "20mg (2 vials)",
+        url: "https://pep-pedia.org/peptides/retatrutide",
       },
       {
         name: "CJC-1295 + Ipamorelin",
         amount: "10mg Blend (2 vials)",
+        url: "https://pep-pedia.org/peptides/cjc-ipa-protocol",
       },
       {
         name: "BPC-157 + TB-500",
         amount: "20mg Blend (2 vials)",
+        url: "https://pep-pedia.org/peptides/wolverine-stack",
       },
     ],
   },

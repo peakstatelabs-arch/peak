@@ -146,12 +146,9 @@ export function Calculator({ onCalculate }: CalculatorProps) {
       {/* Result - Horizontal Layout */}
       <div className="mt-5 p-4 bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] rounded-xl text-white shadow-lg">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-white/70 uppercase tracking-wider">
-              Your Estimated Cycles
-            </p>
-            <p className="text-sm text-white/80">You Need</p>
-          </div>
+          <p className="text-sm font-medium text-white/90 uppercase tracking-wider">
+            Your Estimated Cycles
+          </p>
           <div className="flex items-center gap-3">
             <span className="text-4xl font-bold">{cycles}</span>
             <div className="text-left">
