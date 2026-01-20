@@ -677,11 +677,11 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-2 font-bold text-lg">
                 <img
-                  src="/logo.svg"
-                  alt="POWER CUT Logo"
+                  src="/logo.png"
+                  alt="Peak State Labs Logo"
                   className="h-9 w-9 rounded-xl"
                 />
-                <span>{siteCopy.brand.trademark}</span>
+                <span>{siteCopy.brand.name}</span>
               </div>
               <nav className="flex flex-wrap justify-center gap-6 text-sm">
                 {siteCopy.nav.map((item) => (

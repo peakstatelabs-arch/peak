@@ -43,7 +43,7 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             <label className="text-sm font-medium text-[var(--primary)]">
               Current Weight (lbs)
             </label>
-            <span className="text-sm font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
+            <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
               {currentWeight}
             </span>
           </div>
@@ -55,7 +55,7 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             onChange={(e) => setCurrentWeight(Number(e.target.value))}
             className="w-full h-1.5"
           />
-          <div className="flex justify-between text-[10px] text-[var(--primary)]/40">
+          <div className="flex justify-between text-[10px] text-[var(--primary)] font-medium">
             <span>100</span>
             <span>400</span>
           </div>
@@ -67,7 +67,7 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             <label className="text-sm font-medium text-[var(--primary)]">
               Goal Weight (lbs)
             </label>
-            <span className="text-sm font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
+            <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
               {goalWeight}
             </span>
           </div>
@@ -79,7 +79,7 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             onChange={(e) => setGoalWeight(Number(e.target.value))}
             className="w-full h-1.5"
           />
-          <div className="flex justify-between text-[10px] text-[var(--primary)]/40">
+          <div className="flex justify-between text-[10px] text-[var(--primary)] font-medium">
             <span>80</span>
             <span>350</span>
           </div>
@@ -91,7 +91,7 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             <label className="text-sm font-medium text-[var(--primary)]">
               Current Body Fat % <span className="text-[var(--primary)]/40">(optional)</span>
             </label>
-            <span className="text-sm font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
+            <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
               {currentBodyFat}%
             </span>
           </div>
@@ -103,7 +103,7 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             onChange={(e) => setCurrentBodyFat(Number(e.target.value))}
             className="w-full h-1.5"
           />
-          <div className="flex justify-between text-[10px] text-[var(--primary)]/40">
+          <div className="flex justify-between text-[10px] text-[var(--primary)] font-medium">
             <span>5%</span>
             <span>50%</span>
           </div>
@@ -115,7 +115,7 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             <label className="text-sm font-medium text-[var(--primary)]">
               Goal Body Fat % <span className="text-[var(--primary)]/40">(optional)</span>
             </label>
-            <span className="text-sm font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
+            <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
               {goalBodyFat}%
             </span>
           </div>
@@ -127,7 +127,7 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             onChange={(e) => setGoalBodyFat(Number(e.target.value))}
             className="w-full h-1.5"
           />
-          <div className="flex justify-between text-[10px] text-[var(--primary)]/40">
+          <div className="flex justify-between text-[10px] text-[var(--primary)] font-medium">
             <span>5%</span>
             <span>50%</span>
           </div>
