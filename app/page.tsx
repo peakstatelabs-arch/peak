@@ -458,9 +458,12 @@ export default function Home() {
 
               <div className="grid sm:grid-cols-3 gap-4">
                 {siteCopy.safety.documents.map((doc) => (
-                  <div
+                  <a
                     key={doc.name}
-                    className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--muted)] text-center card-hover cursor-pointer group"
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--muted)] text-center card-hover cursor-pointer group block"
                   >
                     <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/10 mx-auto flex items-center justify-center mb-3 group-hover:bg-[var(--accent)]/20 transition-colors">
                       <svg
@@ -483,7 +486,10 @@ export default function Home() {
                     <p className="text-sm text-[var(--accent-dark)] mt-1">
                       {doc.amount}
                     </p>
-                  </div>
+                    <p className="text-xs text-[var(--primary)]/50 mt-2">
+                      View COA
+                    </p>
+                  </a>
                 ))}
               </div>
             </div>

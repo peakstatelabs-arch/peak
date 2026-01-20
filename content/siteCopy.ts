@@ -235,9 +235,9 @@ export const siteCopy = {
     description:
       "Everything inside POWER CUT\u2122 is supported with documentation and references.",
     documents: [
-      { name: "Retatrutide", amount: "20mg" },
-      { name: "CJC-1295 + Ipamorelin", amount: "10mg Blend" },
-      { name: "BPC-157 + TB-500", amount: "20mg Blend" },
+      { name: "Retatrutide", amount: "20mg", url: "https://drive.google.com/file/d/1E8gUISGGxMt7zi85Y8RjEyXbmcJPD2ja/view?usp=sharing" },
+      { name: "CJC-1295 + Ipamorelin", amount: "10mg Blend", url: "https://drive.google.com/file/d/1JiWvMhP9SJ0ccdNtRzlMYBht8D5f9hjv/view?usp=sharing" },
+      { name: "BPC-157 + TB-500", amount: "20mg Blend", url: "https://drive.google.com/file/d/15wLuf1F_FOHsA8fDS5fSrRHxPrXTK6ml/view?usp=drive_link" },
     ],
   },
 
