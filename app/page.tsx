@@ -74,7 +74,7 @@ export default function Home() {
 
               {/* Headline */}
               <h1 className="mt-8 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-up">
-                {siteCopy.hero.headline}
+                POWER CUT<span className="text-[0.5em] align-super">™</span>
               </h1>
 
               {/* Subheadline */}
@@ -245,6 +245,17 @@ export default function Home() {
                   <p className="text-sm text-[var(--accent-dark)] font-medium mt-1">
                     {item.amount}
                   </p>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-[var(--primary)] hover:text-[var(--primary-light)] transition-colors"
+                  >
+                    Learn More
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
                 </div>
               ))}
             </div>
@@ -301,10 +312,10 @@ export default function Home() {
                       key={item.name}
                       className="flex justify-between items-center py-3 border-b border-[var(--border)]"
                     >
-                      <span className="text-sm text-[var(--primary)]/70">
+                      <span className="text-base text-[var(--primary)]/80">
                         {item.name}
                       </span>
-                      <span className="text-sm font-semibold text-[var(--primary)]">
+                      <span className="text-base font-bold text-[var(--primary)]">
                         {item.price}
                       </span>
                     </div>
@@ -372,8 +383,8 @@ export default function Home() {
                         key={item.name}
                         className="flex justify-between items-center py-3 border-b border-white/20"
                       >
-                        <span className="text-sm text-white/80">{item.name}</span>
-                        <span className="text-sm font-semibold text-[var(--accent)]">
+                        <span className="text-base text-white/90">{item.name}</span>
+                        <span className="text-base font-bold text-[var(--accent)]">
                           {item.price}
                         </span>
                       </div>
@@ -393,7 +404,7 @@ export default function Home() {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        <span className="text-sm text-white/80">{pro}</span>
+                        <span className="text-base text-white/90">{pro}</span>
                       </div>
                     ))}
                   </div>
