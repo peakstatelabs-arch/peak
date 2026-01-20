@@ -112,17 +112,8 @@ export function PricingCard({
                 : "btn-primary"
             }`}
           >
-            <span className="text-base">{ctaLabel}</span>
-            <span className="block text-xs font-normal mt-1 opacity-90">{ctaSubtext}</span>
+            {ctaLabel}
           </a>
-
-          {/* Preorder Note */}
-          <p className="text-center text-xs font-semibold text-[var(--accent-dark)] mt-4 uppercase tracking-wide">
-            {preorderNote}
-          </p>
-          <p className="text-center text-xs text-[var(--primary)]/50 mt-2">
-            {refundNote}
-          </p>
         </div>
       </div>
     </div>
