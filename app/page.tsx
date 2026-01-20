@@ -31,7 +31,7 @@ export default function Home() {
             <img
               src="/logo.png"
               alt="POWER CUT Logo"
-              className="h-9 w-9 rounded-xl"
+              className="h-7 w-7 rounded-lg"
             />
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
           </a>
@@ -65,94 +65,111 @@ export default function Home() {
           </div>
 
           <Container className="relative">
-            <div className="max-w-4xl mx-auto text-center">
-              {/* Eyebrow */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-xs font-semibold tracking-wider text-[var(--accent-dark)] animate-fade-in">
-                <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-                <span>{siteCopy.hero.eyebrow}</span>
-              </div>
+            {/* Hero Top: Two-column layout */}
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Left Column - Text */}
+              <div className="text-center lg:text-left">
+                {/* Eyebrow */}
+                <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-xs font-semibold tracking-wider text-[var(--accent-dark)] animate-fade-in">
+                  <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
+                  <span>{siteCopy.hero.eyebrow}</span>
+                </div>
 
-              {/* Headline */}
-              <h1 className="mt-8 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-up">
-                POWER CUT<span className="text-[0.5em] align-super">™</span>
-              </h1>
+                {/* Headline */}
+                <h1 className="mt-8 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-up">
+                  POWER CUT<span className="text-[0.5em] align-super">™</span>
+                </h1>
 
-              {/* Subheadline */}
-              <p className="mt-6 text-lg sm:text-xl text-[var(--primary)]/70 max-w-2xl mx-auto animate-fade-in-up stagger-1">
-                {siteCopy.hero.subheadline}
-              </p>
+                {/* Subheadline */}
+                <p className="mt-6 text-lg sm:text-xl text-[var(--primary)]/70 max-w-xl lg:mx-0 mx-auto animate-fade-in-up stagger-1">
+                  {siteCopy.hero.subheadline}
+                </p>
 
-              {/* CTA Buttons */}
-              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up stagger-2">
-                <a
-                  href={siteCopy.brand.primaryCtaHref}
-                  className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
-                >
-                  {siteCopy.brand.primaryCtaLabel}
-                </a>
-                <a
-                  href={siteCopy.brand.secondaryCtaHref}
-                  className="inline-flex h-14 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-8 text-lg font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)]"
-                >
-                  {siteCopy.brand.secondaryCtaLabel}
-                </a>
-              </div>
-
-              {/* Benefits Grid */}
-              <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
-                {siteCopy.hero.benefits.map((benefit, index) => (
-                  <div
-                    key={benefit.title}
-                    className={`p-5 rounded-2xl border border-[var(--border)] bg-white/80 backdrop-blur card-hover animate-fade-in-up stagger-${
-                      (index % 6) + 1
-                    }`}
+                {/* CTA Buttons */}
+                <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up stagger-2">
+                  <a
+                    href={siteCopy.brand.primaryCtaHref}
+                    className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
                   >
-                    <div className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center mt-0.5">
-                        <svg
-                          className="w-3.5 h-3.5 text-[var(--accent-dark)]"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={3}
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      </span>
-                      <div>
-                        <p className="font-semibold text-[var(--primary)]">
-                          {benefit.title}
-                        </p>
-                        <p className="text-sm text-[var(--primary)]/60 mt-1">
-                          {benefit.description}
-                        </p>
-                      </div>
+                    {siteCopy.brand.primaryCtaLabel}
+                  </a>
+                  <a
+                    href={siteCopy.brand.secondaryCtaHref}
+                    className="inline-flex h-14 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-8 text-lg font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)]"
+                  >
+                    {siteCopy.brand.secondaryCtaLabel}
+                  </a>
+                </div>
+              </div>
+
+              {/* Right Column - Product Image */}
+              <div className="relative flex items-center justify-center lg:justify-end">
+                <div className="relative animate-drop-in">
+                  <img
+                    src="/product.png"
+                    alt="POWER CUT Peptide Kit"
+                    className="w-full max-w-md lg:max-w-lg drop-shadow-2xl"
+                  />
+                  {/* Decorative glow behind image */}
+                  <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[var(--accent)]/30 to-[var(--accent)]/10 blur-3xl rounded-full scale-90" />
+                </div>
+              </div>
+            </div>
+
+            {/* Benefits Grid */}
+            <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
+              {siteCopy.hero.benefits.map((benefit, index) => (
+                <div
+                  key={benefit.title}
+                  className={`p-5 rounded-2xl border border-[var(--border)] bg-white/80 backdrop-blur card-hover animate-fade-in-up stagger-${
+                    (index % 6) + 1
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center mt-0.5">
+                      <svg
+                        className="w-3.5 h-3.5 text-[var(--accent-dark)]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </span>
+                    <div>
+                      <p className="font-semibold text-[var(--primary)]">
+                        {benefit.title}
+                      </p>
+                      <p className="text-sm text-[var(--primary)]/60 mt-1">
+                        {benefit.description}
+                      </p>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
+            </div>
 
-              {/* Secure Note */}
-              <div className="mt-12 p-5 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 max-w-2xl mx-auto">
-                <p className="text-sm text-[var(--primary)]/80 leading-relaxed">
-                  {siteCopy.hero.secureNote}
-                </p>
-              </div>
-
-              {/* Countdown Timer */}
-              <div className="mt-8">
-                <CountdownTimer label={siteCopy.hero.timerLabel} />
-              </div>
-
-              {/* Research Disclaimer */}
-              <p className="mt-4 text-xs text-[var(--primary)]/50">
-                {siteCopy.hero.researchDisclaimer}
+            {/* Secure Note */}
+            <div className="mt-12 p-5 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 max-w-2xl mx-auto text-center">
+              <p className="text-sm text-[var(--primary)]/80 leading-relaxed">
+                {siteCopy.hero.secureNote}
               </p>
             </div>
+
+            {/* Countdown Timer */}
+            <div className="mt-8 text-center">
+              <CountdownTimer label={siteCopy.hero.timerLabel} />
+            </div>
+
+            {/* Research Disclaimer */}
+            <p className="mt-4 text-xs text-[var(--primary)]/50 text-center">
+              {siteCopy.hero.researchDisclaimer}
+            </p>
           </Container>
         </Section>
 
@@ -692,7 +709,7 @@ export default function Home() {
                 <img
                   src="/logo.png"
                   alt="Peak State Labs Logo"
-                  className="h-9 w-9 rounded-xl"
+                  className="h-7 w-7 rounded-lg"
                 />
                 <span>{siteCopy.brand.name}</span>
               </div>
