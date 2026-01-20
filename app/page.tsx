@@ -1,26 +1,44 @@
-import { EmailCapture } from "@/app/components/EmailCapture";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
-import { cn } from "@/app/lib/cn";
+import { CountdownTimer } from "@/app/components/CountdownTimer";
+import { Calculator } from "@/app/components/Calculator";
+import { FAQ } from "@/app/components/FAQ";
+import { PricingCard } from "@/app/components/PricingCard";
 import { siteCopy } from "@/content/siteCopy";
 
 export default function Home() {
   return (
-    <div id="top" className="min-h-screen bg-white text-black">
-      <header className="sticky top-0 z-50 border-b border-black/5 bg-white/80 backdrop-blur">
+    <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
+      {/* Urgency Banner */}
+      <div className="bg-[var(--primary)] text-white py-3 px-4">
+        <Container>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center text-sm">
+            <span className="font-semibold">
+              {siteCopy.urgencyBanner.preorderText}
+            </span>
+            <span className="hidden sm:inline text-white/50">|</span>
+            <span className="text-white/80">
+              {siteCopy.urgencyBanner.shippingText}
+            </span>
+          </div>
+        </Container>
+      </div>
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
         <Container className="flex h-16 items-center justify-between">
-          <a href="#top" className="flex items-center gap-2 font-semibold">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-black text-white">
+          <a href="#top" className="flex items-center gap-2 font-bold text-lg">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--primary)] text-white font-bold">
               P
             </span>
-            <span>{siteCopy.brand.name}</span>
+            <span className="hidden sm:inline">{siteCopy.brand.name}</span>
           </a>
-          <nav className="hidden items-center gap-6 text-sm text-black/70 sm:flex">
+          <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--primary)]/70">
             {siteCopy.nav.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
-                className="transition hover:text-black"
+                className="transition-colors hover:text-[var(--primary)] font-medium"
               >
                 {item.label}
               </a>
@@ -28,7 +46,7 @@ export default function Home() {
           </nav>
           <a
             href={siteCopy.brand.primaryCtaHref}
-            className="inline-flex h-10 items-center justify-center rounded-xl bg-black px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-black/90"
+            className="btn-primary inline-flex h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
           >
             {siteCopy.brand.primaryCtaLabel}
           </a>
@@ -36,284 +54,624 @@ export default function Home() {
       </header>
 
       <main>
-        <Section className="relative overflow-hidden">
+        {/* Hero Section */}
+        <Section className="relative overflow-hidden gradient-hero">
+          {/* Background decoration */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-28 left-1/2 h-72 w-[56rem] -translate-x-1/2 rounded-full bg-gradient-to-r from-black/5 via-black/10 to-black/5 blur-3xl" />
-            <div className="absolute -bottom-40 right-[-20%] h-80 w-80 rounded-full bg-black/5 blur-3xl" />
+            <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+            <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
           </div>
 
           <Container className="relative">
-            <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-              <div className="lg:col-span-7">
-                <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-xs font-semibold tracking-wide text-black/70">
-                  <span className="h-1.5 w-1.5 rounded-full bg-black/60" />
-                  <span>{siteCopy.hero.eyebrow}</span>
-                </div>
-                <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                  {siteCopy.hero.headline}
-                </h1>
-                <p className="mt-5 max-w-2xl text-pretty text-lg leading-8 text-black/70">
-                  {siteCopy.hero.subheadline}
-                </p>
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <a
-                    href={siteCopy.brand.primaryCtaHref}
-                    className="inline-flex h-12 items-center justify-center rounded-xl bg-black px-6 text-base font-semibold text-white shadow-sm transition hover:bg-black/90"
-                  >
-                    {siteCopy.brand.primaryCtaLabel}
-                  </a>
-                  <a
-                    href={siteCopy.brand.secondaryCtaHref}
-                    className="inline-flex h-12 items-center justify-center rounded-xl border border-black/10 bg-white px-6 text-base font-semibold text-black shadow-sm transition hover:border-black/20 hover:bg-black/5"
-                  >
-                    {siteCopy.brand.secondaryCtaLabel}
-                  </a>
-                </div>
-                <ul className="mt-8 grid gap-3 text-sm text-black/70 sm:grid-cols-2">
-                  {siteCopy.hero.bullets.map((b) => (
-                    <li key={b} className="flex items-start gap-2">
-                      <span className="mt-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-black/5 text-black">
-                        ✓
-                      </span>
-                      <span>{b}</span>
-                    </li>
-                  ))}
-                </ul>
+            <div className="max-w-4xl mx-auto text-center">
+              {/* Eyebrow */}
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-xs font-semibold tracking-wider text-[var(--accent-dark)] animate-fade-in">
+                <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
+                <span>{siteCopy.hero.eyebrow}</span>
               </div>
 
-              <div className="lg:col-span-5">
-                <div className="rounded-2xl border border-black/10 bg-gradient-to-b from-black/[0.02] to-black/[0.06] p-6 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-black">
-                      What you’ll see at launch
-                    </p>
-                    <span className="rounded-full border border-black/10 bg-white px-3 py-1 text-xs font-semibold text-black/70">
-                      v1
-                    </span>
-                  </div>
-                  <div className="mt-4 grid gap-3">
-                    {[
-                      {
-                        title: "Clean product pages",
-                        description:
-                          "Specs, documentation, and key details—organized for fast scanning.",
-                      },
-                      {
-                        title: "Clear standards",
-                        description:
-                          "Packaging, handling, and consistency policies you can read in one place.",
-                      },
-                      {
-                        title: "Fast updates",
-                        description:
-                          "We ship improvements frequently; the site will evolve quickly.",
-                      },
-                    ].map((item) => (
-                      <div
-                        key={item.title}
-                        className="rounded-xl border border-black/10 bg-white p-4"
-                      >
-                        <p className="text-sm font-semibold">{item.title}</p>
-                        <p className="mt-1 text-sm text-black/70">
-                          {item.description}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="mt-4 text-xs text-black/60">
-                    Replace this card with product imagery, COA previews, or
-                    category tiles.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Container>
-        </Section>
+              {/* Headline */}
+              <h1 className="mt-8 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-up">
+                {siteCopy.hero.headline}
+              </h1>
 
-        <Section id="standards" className="border-t border-black/5 bg-white">
-          <Container>
-            <div className="max-w-2xl">
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                {siteCopy.features.headline}
-              </h2>
-              <p className="mt-4 text-lg leading-8 text-black/70">
-                {siteCopy.features.subheadline}
+              {/* Subheadline */}
+              <p className="mt-6 text-lg sm:text-xl text-[var(--primary)]/70 max-w-2xl mx-auto animate-fade-in-up stagger-1">
+                {siteCopy.hero.subheadline}
               </p>
-            </div>
 
-            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {siteCopy.features.items.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm"
-                >
-                  <p className="text-base font-semibold">{item.title}</p>
-                  <p className="mt-2 text-sm leading-7 text-black/70">
-                    {item.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-10 rounded-2xl border border-black/10 bg-black p-8 text-white shadow-sm">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-lg font-semibold">Make the copy yours.</p>
-                  <p className="mt-1 text-sm text-white/70">
-                    Update all headlines, sections, and disclaimers in one file:{" "}
-                    <span className="font-mono text-white/90">
-                      content/siteCopy.ts
-                    </span>
-                  </p>
-                </div>
+              {/* CTA Buttons */}
+              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up stagger-2">
                 <a
                   href={siteCopy.brand.primaryCtaHref}
-                  className={cn(
-                    "inline-flex h-11 items-center justify-center rounded-xl bg-white px-5 text-sm font-semibold text-black",
-                    "transition hover:bg-white/90"
-                  )}
+                  className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
                 >
                   {siteCopy.brand.primaryCtaLabel}
                 </a>
+                <a
+                  href={siteCopy.brand.secondaryCtaHref}
+                  className="inline-flex h-14 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-8 text-lg font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)]"
+                >
+                  {siteCopy.brand.secondaryCtaLabel}
+                </a>
+              </div>
+
+              {/* Benefits Grid */}
+              <div className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left">
+                {siteCopy.hero.benefits.map((benefit, index) => (
+                  <div
+                    key={benefit.title}
+                    className={`p-5 rounded-2xl border border-[var(--border)] bg-white/80 backdrop-blur card-hover animate-fade-in-up stagger-${
+                      (index % 6) + 1
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center mt-0.5">
+                        <svg
+                          className="w-3.5 h-3.5 text-[var(--accent-dark)]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </span>
+                      <div>
+                        <p className="font-semibold text-[var(--primary)]">
+                          {benefit.title}
+                        </p>
+                        <p className="text-sm text-[var(--primary)]/60 mt-1">
+                          {benefit.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Secure Note */}
+              <div className="mt-12 p-5 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 max-w-2xl mx-auto">
+                <p className="text-sm text-[var(--primary)]/80 leading-relaxed">
+                  {siteCopy.hero.secureNote}
+                </p>
+              </div>
+
+              {/* Countdown Timer */}
+              <div className="mt-12">
+                <CountdownTimer label={siteCopy.hero.timerLabel} />
+              </div>
+
+              {/* Research Disclaimer */}
+              <p className="mt-8 text-xs text-[var(--primary)]/50">
+                {siteCopy.hero.researchDisclaimer}
+              </p>
+            </div>
+          </Container>
+        </Section>
+
+        {/* Calculator Section */}
+        <Section id="calculator" className="bg-white">
+          <Container>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                {siteCopy.calculator.headline}
+              </h2>
+              <p className="mt-4 text-lg text-[var(--primary)]/70">
+                {siteCopy.calculator.subheadline}
+              </p>
+            </div>
+            <div className="max-w-xl mx-auto bg-[var(--muted)] rounded-3xl p-6 sm:p-10 border border-[var(--border)]">
+              <Calculator />
+            </div>
+          </Container>
+        </Section>
+
+        {/* Contents Section */}
+        <Section id="contents" className="bg-[var(--muted)]">
+          <Container>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                {siteCopy.contents.headline}
+              </h2>
+              <p className="mt-4 text-lg text-[var(--primary)]/70">
+                {siteCopy.contents.subheadline}
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {siteCopy.contents.items.map((item, index) => (
+                <div
+                  key={item.name}
+                  className={`p-6 rounded-2xl bg-white border border-[var(--border)] shadow-sm text-center card-hover animate-fade-in-up stagger-${
+                    index + 1
+                  }`}
+                >
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--accent)]/20 to-[var(--accent)]/5 mx-auto flex items-center justify-center mb-4">
+                    <svg
+                      className="w-8 h-8 text-[var(--accent-dark)]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="font-bold text-lg text-[var(--primary)]">
+                    {item.name}
+                  </h3>
+                  <p className="text-sm text-[var(--accent-dark)] font-medium mt-1">
+                    {item.amount}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center mt-10">
+              <a
+                href="#pricing"
+                className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
+              >
+                {siteCopy.brand.primaryCtaLabel}
+              </a>
+            </div>
+          </Container>
+        </Section>
+
+        {/* Comparison Section */}
+        <Section className="bg-white">
+          <Container>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                {siteCopy.comparison.headline}
+              </h2>
+              <p className="mt-4 text-lg text-[var(--primary)]/70">
+                {siteCopy.comparison.subheadline}
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* DIY Column */}
+              <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-[var(--muted)]">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-red-500"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </span>
+                  <h3 className="text-xl font-bold text-[var(--primary)]">
+                    {siteCopy.comparison.diy.title}
+                  </h3>
+                </div>
+                <div className="space-y-4">
+                  {siteCopy.comparison.diy.items.map((item) => (
+                    <div
+                      key={item.name}
+                      className="flex justify-between items-center py-3 border-b border-[var(--border)]"
+                    >
+                      <span className="text-sm text-[var(--primary)]/70">
+                        {item.name}
+                      </span>
+                      <span className="text-sm font-semibold text-[var(--primary)]">
+                        {item.price}
+                      </span>
+                    </div>
+                  ))}
+                  {siteCopy.comparison.diy.cons.map((con) => (
+                    <div key={con} className="flex items-center gap-2">
+                      <svg
+                        className="w-4 h-4 text-red-500 flex-shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                      <span className="text-sm text-[var(--primary)]/60">
+                        {con}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6 pt-6 border-t border-[var(--border)]">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-[var(--primary)]">
+                      Total Estimated Cost:
+                    </span>
+                    <span className="text-2xl font-bold text-red-500">
+                      {siteCopy.comparison.diy.total}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* POWER CUT Column */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--accent)]/10 rounded-full blur-2xl" />
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-[var(--primary)]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </span>
+                    <h3 className="text-xl font-bold">
+                      {siteCopy.comparison.powercut.title}
+                    </h3>
+                  </div>
+                  <div className="space-y-4">
+                    {siteCopy.comparison.powercut.items.map((item) => (
+                      <div
+                        key={item.name}
+                        className="flex justify-between items-center py-3 border-b border-white/20"
+                      >
+                        <span className="text-sm text-white/80">{item.name}</span>
+                        <span className="text-sm font-semibold text-[var(--accent)]">
+                          {item.price}
+                        </span>
+                      </div>
+                    ))}
+                    {siteCopy.comparison.powercut.pros.map((pro) => (
+                      <div key={pro} className="flex items-center gap-2">
+                        <svg
+                          className="w-4 h-4 text-[var(--accent)] flex-shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span className="text-sm text-white/80">{pro}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-6 pt-6 border-t border-white/20">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold">Your Exclusive Price:</span>
+                      <span className="text-3xl font-bold text-[var(--accent)]">
+                        {siteCopy.comparison.powercut.price}
+                      </span>
+                    </div>
+                    <div className="mt-3 inline-block bg-[var(--accent)]/20 text-[var(--accent)] px-4 py-2 rounded-full text-sm font-semibold">
+                      VALUE SAVED: {siteCopy.comparison.powercut.savings}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </Container>
         </Section>
 
-        <Section className="border-t border-black/5 bg-white">
+        {/* Pricing Section */}
+        <Section id="pricing" className="bg-[var(--muted)]">
           <Container>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <div className="max-w-2xl">
-                <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                  {siteCopy.socialProof.headline}
-                </h2>
-                <p className="mt-3 text-lg leading-8 text-black/70">
-                  {siteCopy.socialProof.subheadline}
-                </p>
-              </div>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                {siteCopy.pricing.headline}
+              </h2>
             </div>
 
-            <div className="mt-10 grid gap-4 lg:grid-cols-2">
-              {siteCopy.socialProof.testimonials.map((t, idx) => (
-                <figure
-                  key={`${t.name}-${idx}`}
-                  className="rounded-2xl border border-black/10 bg-white p-7 shadow-sm"
-                >
-                  <blockquote className="text-base leading-8 text-black">
-                    “{t.quote}”
-                  </blockquote>
-                  <figcaption className="mt-4 text-sm text-black/70">
-                    <span className="font-semibold text-black">{t.name}</span>{" "}
-                    <span className="text-black/40">·</span> {t.title}
-                  </figcaption>
-                </figure>
+            <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {siteCopy.pricing.tiers.map((tier) => (
+                <PricingCard key={tier.id} {...tier} />
               ))}
             </div>
           </Container>
         </Section>
 
-        <Section id="faq" className="border-t border-black/5 bg-white">
+        {/* Safety Section */}
+        <Section className="bg-white">
           <Container>
-            <div className="max-w-2xl">
-              <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 mb-4">
+                  <svg
+                    className="w-8 h-8 text-[var(--accent-dark)]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"
+                    />
+                  </svg>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                  {siteCopy.safety.headline}
+                </h2>
+                <p className="mt-2 text-lg text-[var(--accent-dark)] font-medium">
+                  {siteCopy.safety.subheadline}
+                </p>
+                <p className="mt-4 text-[var(--primary)]/70">
+                  {siteCopy.safety.description}
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-3 gap-4">
+                {siteCopy.safety.documents.map((doc) => (
+                  <div
+                    key={doc.name}
+                    className="p-5 rounded-2xl border border-[var(--border)] bg-[var(--muted)] text-center card-hover cursor-pointer group"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/10 mx-auto flex items-center justify-center mb-3 group-hover:bg-[var(--accent)]/20 transition-colors">
+                      <svg
+                        className="w-6 h-6 text-[var(--accent-dark)]"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                        />
+                      </svg>
+                    </div>
+                    <p className="font-semibold text-[var(--primary)]">
+                      {doc.name}
+                    </p>
+                    <p className="text-sm text-[var(--accent-dark)] mt-1">
+                      {doc.amount}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Container>
+        </Section>
+
+        {/* Timeline Section */}
+        <Section className="bg-[var(--muted)]">
+          <Container>
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                {siteCopy.timeline.headline}
+              </h2>
+              <p className="mt-4 text-lg text-[var(--primary)]/70">
+                {siteCopy.timeline.subheadline}
+              </p>
+            </div>
+
+            <div className="max-w-3xl mx-auto space-y-6">
+              {siteCopy.timeline.steps.map((step, index) => (
+                <div
+                  key={step.phase}
+                  className="relative pl-8 sm:pl-0 sm:grid sm:grid-cols-[120px_1fr] gap-8 items-start"
+                >
+                  {/* Timeline dot for mobile */}
+                  <div className="absolute left-0 top-0 sm:hidden w-4 h-4 rounded-full bg-[var(--accent)] border-4 border-white shadow" />
+                  {/* Timeline line for mobile */}
+                  {index < siteCopy.timeline.steps.length - 1 && (
+                    <div className="absolute left-[7px] top-4 bottom-0 w-0.5 bg-[var(--accent)]/30 sm:hidden" />
+                  )}
+
+                  {/* Days badge */}
+                  <div className="hidden sm:flex flex-col items-center">
+                    <div className="w-4 h-4 rounded-full bg-[var(--accent)] border-4 border-white shadow" />
+                    {index < siteCopy.timeline.steps.length - 1 && (
+                      <div className="w-0.5 flex-1 bg-[var(--accent)]/30 my-2" />
+                    )}
+                    <span className="text-xs font-semibold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-3 py-1 rounded-full">
+                      {step.days}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 rounded-2xl bg-white border border-[var(--border)] shadow-sm card-hover">
+                    <div className="flex flex-wrap items-center gap-3 mb-3">
+                      <h3 className="font-bold text-lg text-[var(--primary)]">
+                        {step.phase}
+                      </h3>
+                      <span className="sm:hidden text-xs font-semibold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-3 py-1 rounded-full">
+                        {step.days}
+                      </span>
+                    </div>
+                    <p className="text-sm text-[var(--primary)]/70 mb-3">
+                      <span className="font-semibold text-[var(--primary)]">
+                        The Action:
+                      </span>{" "}
+                      {step.action}
+                    </p>
+                    <p className="text-sm text-[var(--primary)]/70">
+                      <span className="font-semibold text-[var(--primary)]">
+                        The Result:
+                      </span>{" "}
+                      {step.result}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <a
+                href="#pricing"
+                className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
+              >
+                {siteCopy.brand.primaryCtaLabel}
+              </a>
+            </div>
+          </Container>
+        </Section>
+
+        {/* Problem/Solution Section */}
+        <Section className="bg-[var(--primary)] text-white">
+          <Container>
+            <div className="max-w-4xl mx-auto">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                {/* Problem */}
+                <div>
+                  <h2 className="text-3xl sm:text-4xl font-bold">
+                    {siteCopy.problem.headline}
+                  </h2>
+                  <p className="mt-4 text-white/70 font-medium">Because:</p>
+                  <ul className="mt-4 space-y-3">
+                    {siteCopy.problem.reasons.map((reason) => (
+                      <li key={reason} className="flex items-center gap-3">
+                        <svg
+                          className="w-5 h-5 text-red-400 flex-shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                        <span className="text-white/80">{reason}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Solution */}
+                <div className="p-8 rounded-3xl bg-white/10 backdrop-blur">
+                  <h3 className="text-2xl font-bold text-[var(--accent)]">
+                    {siteCopy.problem.solution.headline}
+                  </h3>
+                  <p className="mt-6 text-2xl sm:text-3xl font-bold">
+                    {siteCopy.problem.solution.tagline}
+                  </p>
+                  <a
+                    href="#pricing"
+                    className="btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold mt-8"
+                  >
+                    {siteCopy.brand.primaryCtaLabel}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Container>
+        </Section>
+
+        {/* FAQ Section */}
+        <Section id="faq" className="bg-white">
+          <Container>
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
                 {siteCopy.faq.headline}
               </h2>
             </div>
 
-            <div className="mt-8 grid gap-3">
-              {siteCopy.faq.items.map((item) => (
-                <details
-                  key={item.q}
-                  className="group rounded-2xl border border-black/10 bg-white p-6 shadow-sm"
-                >
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6">
-                    <span className="text-base font-semibold">{item.q}</span>
-                    <span className="text-black/50 transition group-open:rotate-45">
-                      +
-                    </span>
-                  </summary>
-                  <p className="mt-4 text-sm leading-7 text-black/70">
-                    {item.a}
-                  </p>
-                </details>
-              ))}
+            <div className="max-w-3xl mx-auto">
+              <FAQ items={siteCopy.faq.items} />
             </div>
           </Container>
         </Section>
 
-        <Section
-          id="waitlist"
-          className="border-t border-black/5 bg-gradient-to-b from-white to-black/[0.03]"
-        >
+        {/* Final CTA Section */}
+        <Section className="bg-gradient-to-br from-[var(--muted)] to-[var(--accent)]/10">
           <Container>
-            <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-              <div className="lg:col-span-6">
-                <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                  {siteCopy.cta.headline}
-                </h2>
-                <p className="mt-4 text-lg leading-8 text-black/70">
-                  {siteCopy.cta.subheadline}
-                </p>
-                <div className="mt-6 rounded-2xl border border-black/10 bg-white p-5 text-sm text-black/70">
-                  <p className="font-semibold text-black">Tip</p>
-                  <p className="mt-2">
-                    Replace <span className="font-mono">support@peak.example</span>{" "}
-                    in <span className="font-mono">content/siteCopy.ts</span>{" "}
-                    with your real inbox.
-                  </p>
-                </div>
-              </div>
-              <div className="lg:col-span-6">
-                <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm">
-                  <EmailCapture
-                    emailTo={siteCopy.cta.emailTo}
-                    subject={siteCopy.cta.emailSubject}
-                    bodyHint={siteCopy.cta.emailBodyHint}
-                  />
-                </div>
-              </div>
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                {siteCopy.finalCta.headline}
+              </h2>
+              <p className="mt-6 text-lg text-[var(--primary)]/70">
+                {siteCopy.finalCta.description}
+              </p>
+              <p className="mt-4 text-[var(--primary)]/60 italic">
+                {siteCopy.finalCta.subtext}
+              </p>
+              <a
+                href="#pricing"
+                className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold mt-10"
+              >
+                {siteCopy.brand.primaryCtaLabel}
+              </a>
             </div>
           </Container>
         </Section>
       </main>
 
-      <footer className="border-t border-black/10 bg-white">
+      {/* Footer */}
+      <footer className="bg-[var(--primary)] text-white">
         <Container className="py-12">
-          <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-base font-semibold">{siteCopy.brand.name}</p>
-              <p className="mt-2 text-sm text-black/70">
-                {siteCopy.brand.tagline}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-4 text-sm">
-              {siteCopy.footer.links.map((l) => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  className="text-black/70 transition hover:text-black"
-                >
-                  {l.label}
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-10 rounded-2xl border border-black/10 bg-black/[0.03] p-6">
-            <p className="text-sm font-semibold text-black">
-              {siteCopy.footer.disclaimerTitle}
+          {/* Product Disclaimer */}
+          <div className="text-center pb-8 border-b border-white/10">
+            <p className="text-sm text-white/60">
+              {siteCopy.footer.productDisclaimer}
             </p>
-            <div className="mt-3 grid gap-2 text-sm text-black/70">
-              {siteCopy.footer.disclaimerLines.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
+          </div>
+
+          {/* Main Footer Content */}
+          <div className="py-8 border-b border-white/10">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="flex items-center gap-2 font-bold text-lg">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--primary)] font-bold">
+                  P
+                </span>
+                <span>{siteCopy.brand.trademark}</span>
+              </div>
+              <nav className="flex flex-wrap justify-center gap-6 text-sm">
+                {siteCopy.nav.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="text-white/70 hover:text-white transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
             </div>
           </div>
 
-          <p className="mt-10 text-xs text-black/60">
-            © {new Date().getFullYear()} {siteCopy.footer.copyrightName}. All
-            rights reserved.
-          </p>
+          {/* Legal Disclaimer */}
+          <div className="pt-8">
+            <p className="text-xs text-white/50 leading-relaxed max-w-4xl mx-auto text-center">
+              {siteCopy.footer.disclaimer}
+            </p>
+            <p className="text-xs text-white/40 text-center mt-6">
+              © {new Date().getFullYear()} {siteCopy.footer.copyrightName}. All
+              rights reserved.
+            </p>
+          </div>
         </Container>
       </footer>
     </div>
