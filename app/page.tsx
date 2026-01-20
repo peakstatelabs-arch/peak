@@ -28,9 +28,11 @@ export default function Home() {
       <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
         <Container className="flex h-16 items-center justify-between">
           <a href="#top" className="flex items-center gap-2 font-bold text-lg">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--primary)] text-white font-bold">
-              P
-            </span>
+            <img
+              src="/logo.png"
+              alt="POWER CUT Logo"
+              className="h-9 w-9 rounded-xl"
+            />
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
           </a>
           <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--primary)]/70">
@@ -155,18 +157,49 @@ export default function Home() {
         </Section>
 
         {/* Calculator Section */}
-        <Section id="calculator" className="bg-white">
+        <Section id="calculator" className="bg-white py-12 sm:py-16">
           <Container>
-            <div className="text-center max-w-2xl mx-auto mb-12">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                {siteCopy.calculator.headline}
-              </h2>
-              <p className="mt-4 text-lg text-[var(--primary)]/70">
-                {siteCopy.calculator.subheadline}
-              </p>
-            </div>
-            <div className="max-w-xl mx-auto bg-[var(--muted)] rounded-3xl p-6 sm:p-10 border border-[var(--border)]">
-              <Calculator />
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-5xl mx-auto">
+              {/* Left Column - Text */}
+              <div className="text-left">
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                  {siteCopy.calculator.headline}
+                </h2>
+                <p className="mt-4 text-lg text-[var(--primary)]/70">
+                  {siteCopy.calculator.subheadline}
+                </p>
+                <div className="mt-6 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--accent)]/20 flex items-center justify-center">
+                      <svg className="w-3 h-3 text-[var(--accent-dark)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    <span className="text-sm text-[var(--primary)]/80">Personalized cycle recommendations</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--accent)]/20 flex items-center justify-center">
+                      <svg className="w-3 h-3 text-[var(--accent-dark)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    <span className="text-sm text-[var(--primary)]/80">Based on your specific goals</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--accent)]/20 flex items-center justify-center">
+                      <svg className="w-3 h-3 text-[var(--accent-dark)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    <span className="text-sm text-[var(--primary)]/80">Instant results, no guesswork</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Calculator */}
+              <div className="bg-[var(--muted)] rounded-2xl p-5 sm:p-6 border border-[var(--border)]">
+                <Calculator />
+              </div>
             </div>
           </Container>
         </Section>
@@ -643,9 +676,11 @@ export default function Home() {
           <div className="py-8 border-b border-white/10">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-2 font-bold text-lg">
-                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--primary)] font-bold">
-                  P
-                </span>
+                <img
+                  src="/logo.svg"
+                  alt="POWER CUT Logo"
+                  className="h-9 w-9 rounded-xl"
+                />
                 <span>{siteCopy.brand.trademark}</span>
               </div>
               <nav className="flex flex-wrap justify-center gap-6 text-sm">
