@@ -106,7 +106,7 @@ export const siteCopy = {
         name: "CJC-1295 + Ipamorelin",
         amount: "10mg Blend (2 vials)",
         url: "https://pep-pedia.org/peptides/cjc-ipa-protocol",
-        image: "/bottle.png",
+        image: "/cjc-ipa.png",
       },
       {
         name: "BPC-157 + TB-500",
