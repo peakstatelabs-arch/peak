@@ -1,6 +1,6 @@
 export const siteCopy = {
   brand: {
-    name: "POWER CUT",
+    name: "Peak State Labs",
     trademark: "POWER CUT\u2122",
     tagline: "The 10-Week Biological Shortcut to Your Dream Physique",
     primaryCtaLabel: "PRE-ORDER NOW",
@@ -24,7 +24,7 @@ export const siteCopy = {
 
   hero: {
     eyebrow: "SECURE PRIORITY PRE-ORDER",
-    headline: "The 10-Week Biological Shortcut to Your Dream Physique",
+    headline: "POWER CUT\u2122",
     subheadline:
       "A Curated Peptide Stack Packaged With A Clear 10-Week Workflow For Rapid Fat Loss And Lean Muscle Growth",
     benefits: [
