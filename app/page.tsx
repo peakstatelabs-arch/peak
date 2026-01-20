@@ -247,11 +247,11 @@ export default function Home() {
                     index + 1
                   }`}
                 >
-                  <div className="w-48 h-48 mx-auto mb-4">
+                  <div className="w-40 h-40 mx-auto mb-4 flex items-center justify-center">
                     <img
                       src="/bottle.png"
                       alt={item.name}
-                      className="w-full h-full object-contain scale-110"
+                      className="max-w-full max-h-full object-contain"
                     />
                   </div>
                   <h3 className="font-bold text-xl text-[var(--primary)]">
