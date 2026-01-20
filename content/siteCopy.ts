@@ -157,7 +157,7 @@ export const siteCopy = {
           "1\u00d7 POWER CUT\u2122 Research Cycle",
           "Full experiment protocol",
           "Handling & sequencing guidance",
-          "Batch documentation (COAs)",
+          "Batch documentation (Purity Tests)",
           "Research Cycle Calculator access",
           "Free shipping",
         ],
@@ -185,7 +185,7 @@ export const siteCopy = {
           "Reduced variability from re-ordering",
           "Priority access to research drops",
           "Bonus guidance + protocol notes",
-          "Batch documentation (COAs)",
+          "Batch documentation (Purity Tests)",
           "Free shipping",
         ],
         estimatedValue: "$1,800",
@@ -212,7 +212,7 @@ export const siteCopy = {
           "Priority restocks on limited batches",
           "Highest cost-per-cycle efficiency",
           "Bonus protocol expansions",
-          "Batch documentation (COAs)",
+          "Batch documentation (Purity Tests)",
           "Free shipping",
         ],
         estimatedValue: "$2,700",
@@ -231,7 +231,7 @@ export const siteCopy = {
 
   safety: {
     headline: "Your Safety Is Our #1 Priority",
-    subheadline: "Documentation & COAs",
+    subheadline: "Documentation & Purity Tests",
     description:
       "Everything inside POWER CUT\u2122 is supported with documentation and references.",
     documents: [
@@ -312,8 +312,8 @@ export const siteCopy = {
         a: "You'll receive immediate digital access to the 10-Week Protocol. Your physical kit ships within our 21-day production window, and you'll receive tracking information via email.",
       },
       {
-        q: "Are Certificates of Analysis available?",
-        a: "Yes. Every batch includes full COA documentation from independent third-party laboratories, verifying 99%+ purity for all compounds.",
+        q: "Are Purity Tests available?",
+        a: "Yes. Every batch includes full purity test documentation from independent third-party laboratories, verifying 99%+ purity for all compounds.",
       },
       {
         q: "Why insider drops?",
