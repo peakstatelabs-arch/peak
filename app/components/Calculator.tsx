@@ -35,15 +35,15 @@ export function Calculator({ onCalculate }: CalculatorProps) {
   const cycles = calculateCycles();
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <div className="space-y-8">
+    <div className="w-full">
+      <div className="space-y-4">
         {/* Current Weight */}
-        <div className="space-y-3">
+        <div className="space-y-1">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-semibold text-[var(--primary)]">
+            <label className="text-sm font-medium text-[var(--primary)]">
               Current Weight (lbs)
             </label>
-            <span className="text-lg font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-3 py-1 rounded-lg">
+            <span className="text-sm font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
               {currentWeight}
             </span>
           </div>
@@ -53,21 +53,21 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             max="400"
             value={currentWeight}
             onChange={(e) => setCurrentWeight(Number(e.target.value))}
-            className="w-full"
+            className="w-full h-1.5"
           />
-          <div className="flex justify-between text-xs text-[var(--primary)]/50">
+          <div className="flex justify-between text-[10px] text-[var(--primary)]/40">
             <span>100</span>
             <span>400</span>
           </div>
         </div>
 
         {/* Goal Weight */}
-        <div className="space-y-3">
+        <div className="space-y-1">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-semibold text-[var(--primary)]">
+            <label className="text-sm font-medium text-[var(--primary)]">
               Goal Weight (lbs)
             </label>
-            <span className="text-lg font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-3 py-1 rounded-lg">
+            <span className="text-sm font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
               {goalWeight}
             </span>
           </div>
@@ -77,21 +77,21 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             max="350"
             value={goalWeight}
             onChange={(e) => setGoalWeight(Number(e.target.value))}
-            className="w-full"
+            className="w-full h-1.5"
           />
-          <div className="flex justify-between text-xs text-[var(--primary)]/50">
+          <div className="flex justify-between text-[10px] text-[var(--primary)]/40">
             <span>80</span>
             <span>350</span>
           </div>
         </div>
 
         {/* Current Body Fat */}
-        <div className="space-y-3">
+        <div className="space-y-1">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-semibold text-[var(--primary)]">
-              Current Body Fat % (optional)
+            <label className="text-sm font-medium text-[var(--primary)]">
+              Current Body Fat % <span className="text-[var(--primary)]/40">(optional)</span>
             </label>
-            <span className="text-lg font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-3 py-1 rounded-lg">
+            <span className="text-sm font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
               {currentBodyFat}%
             </span>
           </div>
@@ -101,21 +101,21 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             max="50"
             value={currentBodyFat}
             onChange={(e) => setCurrentBodyFat(Number(e.target.value))}
-            className="w-full"
+            className="w-full h-1.5"
           />
-          <div className="flex justify-between text-xs text-[var(--primary)]/50">
+          <div className="flex justify-between text-[10px] text-[var(--primary)]/40">
             <span>5%</span>
             <span>50%</span>
           </div>
         </div>
 
         {/* Goal Body Fat */}
-        <div className="space-y-3">
+        <div className="space-y-1">
           <div className="flex justify-between items-center">
-            <label className="text-sm font-semibold text-[var(--primary)]">
-              Goal Body Fat % (optional)
+            <label className="text-sm font-medium text-[var(--primary)]">
+              Goal Body Fat % <span className="text-[var(--primary)]/40">(optional)</span>
             </label>
-            <span className="text-lg font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-3 py-1 rounded-lg">
+            <span className="text-sm font-bold text-[var(--accent-dark)] bg-[var(--accent)]/10 px-2 py-0.5 rounded">
               {goalBodyFat}%
             </span>
           </div>
@@ -125,9 +125,9 @@ export function Calculator({ onCalculate }: CalculatorProps) {
             max="50"
             value={goalBodyFat}
             onChange={(e) => setGoalBodyFat(Number(e.target.value))}
-            className="w-full"
+            className="w-full h-1.5"
           />
-          <div className="flex justify-between text-xs text-[var(--primary)]/50">
+          <div className="flex justify-between text-[10px] text-[var(--primary)]/40">
             <span>5%</span>
             <span>50%</span>
           </div>
@@ -135,20 +135,18 @@ export function Calculator({ onCalculate }: CalculatorProps) {
       </div>
 
       {/* Result */}
-      <div className="mt-10 p-6 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-2xl text-center text-white shadow-xl">
-        <p className="text-sm font-medium text-white/80 uppercase tracking-wider">
+      <div className="mt-5 p-4 bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] rounded-xl text-center text-white shadow-lg">
+        <p className="text-xs font-medium text-white/70 uppercase tracking-wider">
           Your Estimated Cycles
         </p>
-        <p className="text-lg mt-2 text-white/90">You Need</p>
-        <div className="my-4">
-          <span className="text-6xl sm:text-7xl font-bold animate-scale-in">
-            {cycles}
-          </span>
+        <p className="text-sm mt-1 text-white/80">You Need</p>
+        <div className="my-2">
+          <span className="text-4xl font-bold">{cycles}</span>
         </div>
-        <p className="text-xl font-semibold">
+        <p className="text-sm font-semibold">
           POWER CUT™ {cycles === 1 ? "Cycle" : "Cycles"}
         </p>
-        <p className="text-white/80 mt-1">to Hit Your Goal</p>
+        <p className="text-white/70 text-xs mt-0.5">to Hit Your Goal</p>
       </div>
     </div>
   );

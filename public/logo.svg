@@ -1,0 +1,10 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rounded square background -->
+  <rect width="512" height="512" rx="102" fill="#155090"/>
+
+  <!-- Droplet/flame shape -->
+  <path d="M256 96C256 96 152 208 152 304C152 361.438 198.562 408 256 408C313.438 408 360 361.438 360 304C360 208 256 96 256 96Z" fill="#78DCE5"/>
+
+  <!-- Inner cutout (teardrop shape at bottom) -->
+  <path d="M256 320C256 320 224 344 224 368C224 385.673 238.327 400 256 400C273.673 400 288 385.673 288 368C288 344 256 320 256 320Z" fill="#155090"/>
+</svg>
