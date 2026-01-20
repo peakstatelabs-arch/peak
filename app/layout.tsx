@@ -20,6 +20,10 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: `${siteCopy.brand.trademark} — ${siteCopy.brand.tagline}`,
   description: siteCopy.hero.subheadline,
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
