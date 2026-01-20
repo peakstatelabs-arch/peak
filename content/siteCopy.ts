@@ -160,8 +160,10 @@ export const siteCopy = {
         ],
         estimatedValue: "$900",
         price: "$599",
+        installment: "$137.25",
         savings: "$50",
         ctaLabel: "Add To Cart",
+        ctaSubtext: "Get the protocol now. Pay $137.25 today.",
         preorderNote: "PREORDER NOW AND SAVE $50",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
@@ -184,8 +186,10 @@ export const siteCopy = {
         ],
         estimatedValue: "$1,800",
         price: "$1,019",
+        installment: "$229.75",
         savings: "$100",
         ctaLabel: "Add To Cart",
+        ctaSubtext: "Get the protocol now. Pay $229.75 today.",
         preorderNote: "PREORDER NOW AND SAVE $100",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
@@ -208,8 +212,10 @@ export const siteCopy = {
         ],
         estimatedValue: "$2,700",
         price: "$1,259",
+        installment: "$277.25",
         savings: "$150",
         ctaLabel: "Add To Cart",
+        ctaSubtext: "Get the protocol now. Pay $277.25 today.",
         preorderNote: "PREORDER NOW AND SAVE $150",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
