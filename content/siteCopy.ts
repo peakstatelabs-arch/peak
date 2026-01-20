@@ -162,6 +162,7 @@ export const siteCopy = {
         price: "$599",
         savings: "$50",
         ctaLabel: "Add To Cart",
+        paypalUrl: "https://www.paypal.com/ncp/payment/WJW89XHYFRC88",
         preorderNote: "PREORDER NOW AND SAVE $50",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
@@ -186,6 +187,7 @@ export const siteCopy = {
         price: "$1,019",
         savings: "$100",
         ctaLabel: "Add To Cart",
+        paypalUrl: "https://www.paypal.com/ncp/payment/24NRV9E8HMWQE",
         preorderNote: "PREORDER NOW AND SAVE $100",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
@@ -210,6 +212,7 @@ export const siteCopy = {
         price: "$1,259",
         savings: "$150",
         ctaLabel: "Add To Cart",
+        paypalUrl: "https://www.paypal.com/ncp/payment/8EZZ5FNXJEWM8",
         preorderNote: "PREORDER NOW AND SAVE $150",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
