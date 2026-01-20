@@ -164,6 +164,7 @@ export const siteCopy = {
         savings: "$50",
         ctaLabel: "Add To Cart",
         ctaSubtext: "Get the protocol now. Pay $137.25 today.",
+        paypalUrl: "https://www.paypal.com/ncp/payment/JRLATAWFXBFYY",
         preorderNote: "PREORDER NOW AND SAVE $50",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
@@ -190,6 +191,7 @@ export const siteCopy = {
         savings: "$100",
         ctaLabel: "Add To Cart",
         ctaSubtext: "Get the protocol now. Pay $229.75 today.",
+        paypalUrl: "https://www.paypal.com/ncp/payment/24NRV9E8HMWQE",
         preorderNote: "PREORDER NOW AND SAVE $100",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
@@ -216,6 +218,7 @@ export const siteCopy = {
         savings: "$150",
         ctaLabel: "Add To Cart",
         ctaSubtext: "Get the protocol now. Pay $277.25 today.",
+        paypalUrl: "https://www.paypal.com/ncp/payment/DFN8NZ4BZS3SC",
         preorderNote: "PREORDER NOW AND SAVE $150",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
