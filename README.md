@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Peak — landing page
 
-## Getting Started
+Single-page landing site for the Peak peptide brand.
 
-First, run the development server:
+## Quickstart
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Edit the copy (Claude-friendly)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All headlines, section text, nav labels, and footer disclaimer live in:
 
-## Learn More
+- `content/siteCopy.ts`
 
-To learn more about Next.js, take a look at the following resources:
+That file is the best “single source of truth” to hand Claude for copy and layout edits.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `app/page.tsx`: landing page sections (Hero, Standards/Features, Social proof placeholders, FAQ, CTA, Footer)
+- `app/components/*`: small reusable UI blocks
+- `content/siteCopy.ts`: centralized marketing copy + links
 
-## Deploy on Vercel
+## Build & quality checks
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run lint
+npm run build
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy (Vercel)
+
+Since your GitHub repo is connected to Vercel:
+
+- Every push to `main` triggers a production deployment
+- Pull requests (if you use them) get preview deployments
+
+Vercel should auto-detect this as a Next.js project. No env vars are required for v1.
+
+## Workflow: Claude → local → GitHub → Vercel
+
+1. Ask Claude to generate changes (copy, sections, components).
+2. Apply changes locally in this repo.
+3. Validate:
+   - `npm run lint`
+   - `npm run build`
+4. Commit + push:
+
+```bash
+git add .
+git commit -m "Update landing copy/sections"
+git push
+```
+
+Vercel auto-deploys after the push.
+
+## Notes
+
+- The waitlist CTA is currently a `mailto:` flow (see `app/components/EmailCapture.tsx`). Swap it later for a real provider (Klaviyo, Mailchimp, ConvertKit, etc.).
+- Update the disclaimer text in `content/siteCopy.ts` to match your exact positioning and compliance needs.
