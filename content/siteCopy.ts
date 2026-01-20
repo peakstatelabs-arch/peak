@@ -160,8 +160,10 @@ export const siteCopy = {
         ],
         estimatedValue: "$900",
         price: "$599",
+        installment: "$137.25",
         savings: "$50",
         ctaLabel: "Add To Cart",
+        ctaSubtext: "Get the protocol now. Pay $137.25 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/WJW89XHYFRC88",
         preorderNote: "PREORDER NOW AND SAVE $50",
         refundNote:
@@ -185,8 +187,10 @@ export const siteCopy = {
         ],
         estimatedValue: "$1,800",
         price: "$1,019",
+        installment: "$229.75",
         savings: "$100",
         ctaLabel: "Add To Cart",
+        ctaSubtext: "Get the protocol now. Pay $229.75 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/24NRV9E8HMWQE",
         preorderNote: "PREORDER NOW AND SAVE $100",
         refundNote:
@@ -210,8 +214,10 @@ export const siteCopy = {
         ],
         estimatedValue: "$2,700",
         price: "$1,259",
+        installment: "$277.25",
         savings: "$150",
         ctaLabel: "Add To Cart",
+        ctaSubtext: "Get the protocol now. Pay $277.25 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/8EZZ5FNXJEWM8",
         preorderNote: "PREORDER NOW AND SAVE $150",
         refundNote:

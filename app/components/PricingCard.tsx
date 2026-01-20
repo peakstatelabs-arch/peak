@@ -5,8 +5,10 @@ interface PricingCardProps {
   features: string[];
   estimatedValue: string;
   price: string;
+  installment: string;
   savings: string;
   ctaLabel: string;
+  ctaSubtext: string;
   paypalUrl: string;
   preorderNote: string;
   refundNote: string;
@@ -20,8 +22,10 @@ export function PricingCard({
   features,
   estimatedValue,
   price,
+  installment,
   savings,
   ctaLabel,
+  ctaSubtext,
   paypalUrl,
   preorderNote,
   refundNote,
@@ -93,19 +97,23 @@ export function PricingCard({
               {price}
             </span>
           </div>
+          <p className="text-sm text-[var(--primary)]/60 mt-1">
+            or 4 interest-free payments of <span className="font-semibold text-[var(--primary)]">{installment}</span>
+          </p>
 
           {/* CTA Button */}
           <a
             href={paypalUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className={`w-full mt-6 py-4 px-6 rounded-xl font-semibold text-base transition-all duration-300 text-center block ${
+            className={`w-full mt-6 py-4 px-6 rounded-xl font-semibold text-base text-center transition-all duration-300 block ${
               popular
                 ? "btn-accent"
                 : "btn-primary"
             }`}
           >
-            {ctaLabel}
+            <span className="text-base">{ctaLabel}</span>
+            <span className="block text-xs font-normal mt-1 opacity-90">{ctaSubtext}</span>
           </a>
 
           {/* Preorder Note */}
