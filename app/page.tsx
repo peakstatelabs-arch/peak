@@ -70,8 +70,8 @@ export default function Home() {
               {/* Left Column - Text */}
               <div className="text-center lg:text-left">
                 {/* Eyebrow */}
-                <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-2 text-xs font-semibold tracking-wider text-[var(--accent-dark)] animate-fade-in">
-                  <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
+                <div className="inline-flex items-center gap-3 rounded-full border-2 border-[var(--accent)]/40 bg-[var(--accent)]/15 px-6 py-3 text-base font-bold tracking-wider text-[var(--accent-dark)] animate-fade-in">
+                  <span className="h-3 w-3 rounded-full bg-[var(--accent)] animate-pulse-slow" />
                   <span>{siteCopy.hero.eyebrow}</span>
                 </div>
 
@@ -159,6 +159,12 @@ export default function Home() {
               <p className="text-sm text-[var(--primary)]/80 leading-relaxed">
                 {siteCopy.hero.secureNote}
               </p>
+              <a
+                href={siteCopy.brand.primaryCtaHref}
+                className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold mt-5"
+              >
+                {siteCopy.brand.primaryCtaLabel}
+              </a>
             </div>
 
             {/* Countdown Timer */}

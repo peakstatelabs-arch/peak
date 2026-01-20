@@ -26,7 +26,7 @@ export const siteCopy = {
     eyebrow: "SECURE PRIORITY PRE-ORDER",
     headline: "POWER CUT\u2122",
     subheadline:
-      "A Curated Peptide Stack Packaged With A Clear 10-Week Workflow For Rapid Fat Loss And Lean Muscle Growth",
+      "A Curated Peptide Stack Packaged With A Clear 10-Week Protocol For Rapid Fat Loss And Lean Muscle Growth",
     benefits: [
       {
         title: "Burn 2lbs Every Week",
@@ -152,7 +152,7 @@ export const siteCopy = {
           "A single 10-week burst to prove the system works. Perfect for hitting an immediate fat loss goal before deciding if you're ready for the elite level.",
         features: [
           "1\u00d7 POWER CUT\u2122 Research Cycle",
-          "Full experiment workflow",
+          "Full experiment protocol",
           "Handling & sequencing guidance",
           "Batch documentation (COAs)",
           "Research Cycle Calculator access",
@@ -174,7 +174,7 @@ export const siteCopy = {
           'The "Smart Choice" for 20 weeks of uninterrupted metabolic control. Stop "trying" and start guaranteeing your body finally cooperates with your ambition.',
         features: [
           "2\u00d7 POWER CUT\u2122 Research Cycles",
-          "Extended workflow continuity",
+          "Extended protocol continuity",
           "Cleaner sequencing across phases",
           "Reduced variability from re-ordering",
           "Priority access to research drops",
@@ -199,7 +199,7 @@ export const siteCopy = {
           "Our most aggressive research timeline. Lock in three full cycles to ensure your new, lean physique becomes your permanent biological reality.",
         features: [
           "3\u00d7 POWER CUT\u2122 Research Cycles",
-          "Full multi-phase workflow continuity",
+          "Full multi-phase protocol continuity",
           "Priority restocks on limited batches",
           "Highest cost-per-cycle efficiency",
           "Bonus protocol expansions",
@@ -240,7 +240,7 @@ export const siteCopy = {
         action:
           "Lock in your pre-order discount and priority position in Batch 001.",
         result:
-          "You get immediate digital access to the Power Cut\u2122 10-Week Workflow so you can begin your mental and nutritional preparation today.",
+          "You get immediate digital access to the Power Cut\u2122 10-Week Protocol so you can begin your mental and nutritional preparation today.",
       },
       {
         phase: "2. Purity Verification",
@@ -265,14 +265,14 @@ export const siteCopy = {
     headline: "Most Peptide Users Fail Before They Start",
     reasons: [
       "The stack isn't curated",
-      "There's no workflow",
+      "There's no protocol",
       "No sequence",
       "No clarity",
       "No consistency",
     ],
     solution: {
       headline: "POWER CUT\u2122 solves all five:",
-      tagline: "Stack + Workflow + Access = Guaranteed Results",
+      tagline: "Stack + Protocol + Access = Guaranteed Results",
     },
   },
 
@@ -288,12 +288,12 @@ export const siteCopy = {
         a: "No. Nothing on this site constitutes medical advice. We do not provide recommendations for human use, dosing, or protocols. Always consult with a licensed healthcare professional before making any health decisions.",
       },
       {
-        q: "Why a workflow?",
-        a: "Research quality dramatically improves with structure. Our 10-week workflow provides clear sequencing, documentation checkpoints, and milestone tracking so your data is clean and actionable.",
+        q: "Why a protocol?",
+        a: "Research quality dramatically improves with structure. Our 10-week protocol provides clear sequencing, documentation checkpoints, and milestone tracking so your data is clean and actionable.",
       },
       {
         q: "Is this beginner-friendly?",
-        a: "Yes. The workflow is designed to guide researchers through every step, from handling and storage to sequencing and documentation. No prior peptide research experience required.",
+        a: "Yes. The protocol is designed to guide researchers through every step, from handling and storage to sequencing and documentation. No prior peptide research experience required.",
       },
       {
         q: "How many cycles do I need?",
@@ -301,7 +301,7 @@ export const siteCopy = {
       },
       {
         q: "What happens after I order?",
-        a: "You'll receive immediate digital access to the 10-Week Workflow. Your physical kit ships within our 21-day production window, and you'll receive tracking information via email.",
+        a: "You'll receive immediate digital access to the 10-Week Protocol. Your physical kit ships within our 21-day production window, and you'll receive tracking information via email.",
       },
       {
         q: "Are Certificates of Analysis available?",
@@ -313,7 +313,7 @@ export const siteCopy = {
       },
       {
         q: "Can I buy the components individually?",
-        a: "The POWER CUT\u2122 stack is specifically curated and sequenced for optimal research outcomes. While individual components exist elsewhere, our value comes from the complete system: curated compounds + proven workflow + community support.",
+        a: "The POWER CUT\u2122 stack is specifically curated and sequenced for optimal research outcomes. While individual components exist elsewhere, our value comes from the complete system: curated compounds + proven protocol + community support.",
       },
     ],
   },
