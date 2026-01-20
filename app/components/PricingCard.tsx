@@ -7,6 +7,7 @@ interface PricingCardProps {
   price: string;
   savings: string;
   ctaLabel: string;
+  paypalUrl: string;
   preorderNote: string;
   refundNote: string;
   popular?: boolean;
@@ -21,6 +22,7 @@ export function PricingCard({
   price,
   savings,
   ctaLabel,
+  paypalUrl,
   preorderNote,
   refundNote,
   popular,
@@ -93,15 +95,18 @@ export function PricingCard({
           </div>
 
           {/* CTA Button */}
-          <button
-            className={`w-full mt-6 py-4 px-6 rounded-xl font-semibold text-base transition-all duration-300 ${
+          <a
+            href={paypalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`w-full mt-6 py-4 px-6 rounded-xl font-semibold text-base transition-all duration-300 text-center block ${
               popular
                 ? "btn-accent"
                 : "btn-primary"
             }`}
           >
             {ctaLabel}
-          </button>
+          </a>
 
           {/* Preorder Note */}
           <p className="text-center text-xs font-semibold text-[var(--accent-dark)] mt-4 uppercase tracking-wide">

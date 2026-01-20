@@ -266,7 +266,7 @@ export default function Home() {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 mt-3 text-sm font-semibold text-[var(--primary)] hover:text-[var(--primary-light)] transition-colors"
+                    className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-[var(--primary)] text-white text-sm font-semibold rounded-lg hover:bg-[var(--primary-light)] transition-colors"
                   >
                     Learn More
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
