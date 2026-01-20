@@ -487,7 +487,7 @@ export default function Home() {
                       {doc.amount}
                     </p>
                     <p className="text-xs text-[var(--primary)]/50 mt-2">
-                      View COA
+                      View Purity Test
                     </p>
                   </a>
                 ))}
