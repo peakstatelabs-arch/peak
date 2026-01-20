@@ -9,6 +9,7 @@ interface PricingCardProps {
   savings: string;
   ctaLabel: string;
   ctaSubtext: string;
+  paypalUrl?: string;
   preorderNote: string;
   refundNote: string;
   popular?: boolean;
@@ -25,6 +26,7 @@ export function PricingCard({
   savings,
   ctaLabel,
   ctaSubtext,
+  paypalUrl,
   preorderNote,
   refundNote,
   popular,
