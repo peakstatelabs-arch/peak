@@ -239,15 +239,15 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="grid sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {siteCopy.contents.items.map((item, index) => (
                 <div
                   key={item.name}
-                  className={`p-6 pt-4 rounded-2xl bg-white border border-[var(--border)] shadow-sm text-center card-hover animate-fade-in-up stagger-${
+                  className={`p-4 rounded-2xl bg-white border border-[var(--border)] shadow-sm text-center card-hover animate-fade-in-up stagger-${
                     index + 1
                   }`}
                 >
-                  <div className="w-60 h-60 mx-auto mb-4 flex items-center justify-center">
+                  <div className="w-60 h-60 mx-auto mb-2 flex items-center justify-center">
                     <img
                       src="/bottle.png"
                       alt={item.name}
@@ -257,14 +257,14 @@ export default function Home() {
                   <h3 className="font-bold text-xl text-[var(--primary)]">
                     {item.name}
                   </h3>
-                  <p className="text-base text-[var(--accent-dark)] font-medium mt-2">
+                  <p className="text-base text-[var(--accent-dark)] font-medium mt-1">
                     {item.amount}
                   </p>
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 bg-[var(--primary)] text-white text-base font-semibold rounded-xl hover:bg-[var(--primary-light)] transition-colors"
+                    className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 bg-[var(--primary)] text-white text-base font-semibold rounded-xl hover:bg-[var(--primary-light)] transition-colors"
                   >
                     Learn More
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
