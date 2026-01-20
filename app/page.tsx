@@ -249,7 +249,7 @@ export default function Home() {
                 >
                   <div className="w-60 h-60 mx-auto mb-2 flex items-center justify-center">
                     <img
-                      src="/bottle.png"
+                      src={item.image}
                       alt={item.name}
                       className="max-w-full max-h-full object-contain"
                     />
