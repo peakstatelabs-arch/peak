@@ -283,10 +283,6 @@ export const siteCopy = {
     headline: "Frequently Asked Questions",
     items: [
       {
-        q: "Is this for human use?",
-        a: "No. All POWER CUT\u2122 products are sold strictly for laboratory research purposes only. They are not intended for human consumption, medical treatment, or diagnostic use. Any use of these products for humans is done solely at the user's own risk and responsibility.",
-      },
-      {
         q: "Is this medical advice?",
         a: "No. Nothing on this site constitutes medical advice. We do not provide recommendations for human use, dosing, or protocols. Always consult with a licensed healthcare professional before making any health decisions.",
       },
