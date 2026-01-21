@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 interface CountdownTimerProps {
-  targetDate?: Date;
+  targetDate?: Date | string;
   label?: string;
 }
 
@@ -15,9 +15,12 @@ interface TimeLeft {
 }
 
 export function CountdownTimer({ targetDate, label }: CountdownTimerProps) {
-  // Default to 3 days from now if no target date provided
+  // Parse target date - accepts Date object or ISO string
   const [target] = useState(() => {
-    if (targetDate) return targetDate;
+    if (targetDate) {
+      return typeof targetDate === 'string' ? new Date(targetDate) : targetDate;
+    }
+    // Default fallback (should not be used - always pass a targetDate)
     const date = new Date();
     date.setDate(date.getDate() + 3);
     return date;

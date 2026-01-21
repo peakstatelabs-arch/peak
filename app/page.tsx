@@ -5,6 +5,7 @@ import { Calculator } from "@/app/components/Calculator";
 import { FAQ } from "@/app/components/FAQ";
 import { PricingCard } from "@/app/components/PricingCard";
 import { BenefitsGrid } from "@/app/components/BenefitsGrid";
+import { EmailSubscription } from "@/app/components/EmailSubscription";
 import { siteCopy } from "@/content/siteCopy";
 
 export default function Home() {
@@ -133,9 +134,12 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Countdown Timer */}
+            {/* Countdown Timer - January 22, 2026 at 8PM EST */}
             <div className="mt-8 text-center">
-              <CountdownTimer label={siteCopy.hero.timerLabel} />
+              <CountdownTimer
+                label={siteCopy.hero.timerLabel}
+                targetDate="2026-01-23T01:00:00Z"
+              />
             </div>
 
             {/* Research Disclaimer */}
@@ -658,6 +662,18 @@ export default function Home() {
                 {siteCopy.brand.primaryCtaLabel}
               </a>
             </div>
+          </Container>
+        </Section>
+
+        {/* Email Subscription Section */}
+        <Section className="bg-white border-t border-[var(--border)]">
+          <Container>
+            <EmailSubscription
+              headline="Not Ready to Commit Yet?"
+              subheadline="Subscribe to get notified about future drops, exclusive offers, and answers to your questions. We're here to help."
+              buttonText="Keep Me Updated"
+              successMessage="You're on the list! We'll be in touch soon."
+            />
           </Container>
         </Section>
       </main>
