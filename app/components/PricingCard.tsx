@@ -114,6 +114,9 @@ export function PricingCard({
           >
             {ctaLabel}
           </a>
+          <p className="text-[10px] text-[var(--primary)]/50 text-center mt-3 leading-relaxed">
+            Discount added at checkout. Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.
+          </p>
         </div>
       </div>
     </div>
