@@ -224,7 +224,7 @@ export const siteCopy = {
         ctaLabel: "Add To Cart",
         ctaSubtext: "Get the protocol now. Pay $277.25 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/8EZZ5FNXJEWM8",
-        stripeUrl: "https://buy.stripe.com/dRm5kC5O7fst3Tj51HafS03",
+        stripeUrl: "https://buy.stripe.com/dRm5kC5O7fst3Tj91HafS03",
         preorderNote: "PREORDER NOW AND SAVE $150",
         refundNote:
           "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
