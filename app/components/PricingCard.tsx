@@ -9,7 +9,7 @@ interface PricingCardProps {
   savings: string;
   ctaLabel: string;
   ctaSubtext: string;
-  paypalUrl: string;
+  stripeUrl: string;
   preorderNote: string;
   refundNote: string;
   popular?: boolean;
@@ -26,7 +26,7 @@ export function PricingCard({
   savings,
   ctaLabel,
   ctaSubtext,
-  paypalUrl,
+  stripeUrl,
   preorderNote,
   refundNote,
   popular,
@@ -103,7 +103,7 @@ export function PricingCard({
 
           {/* CTA Button */}
           <a
-            href={paypalUrl}
+            href={stripeUrl}
             target="_blank"
             rel="noopener noreferrer"
             className={`w-full mt-6 py-4 px-6 rounded-xl font-semibold text-base text-center transition-all duration-300 block ${
