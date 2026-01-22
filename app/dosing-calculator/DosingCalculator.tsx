@@ -125,91 +125,97 @@ function InputForm({ inputs, setInputs, weightLoss, onSubmit }: InputFormProps) 
           <h3 className="text-sm font-semibold text-[var(--primary)] mb-3">Your Stats</h3>
 
           <div className="grid grid-cols-2 gap-4">
-            {/* Current Weight */}
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-medium text-[var(--primary)]">Current Weight</label>
-                <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
-                  {inputs.currentWeight} lbs
-                </span>
+            {/* Current Stats Column */}
+            <div className="border border-[var(--primary)]/30 rounded-xl p-3 space-y-4">
+              {/* Current Weight */}
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-medium text-[var(--primary)]">Current Weight</label>
+                  <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
+                    {inputs.currentWeight} lbs
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="100"
+                  max="400"
+                  value={inputs.currentWeight}
+                  onChange={(e) => setInputs((prev) => ({ ...prev, currentWeight: Number(e.target.value) }))}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-[10px] text-[var(--primary)]/50">
+                  <span>100</span>
+                  <span>400</span>
+                </div>
               </div>
-              <input
-                type="range"
-                min="100"
-                max="400"
-                value={inputs.currentWeight}
-                onChange={(e) => setInputs((prev) => ({ ...prev, currentWeight: Number(e.target.value) }))}
-                className="w-full"
-              />
-              <div className="flex justify-between text-[10px] text-[var(--primary)]/50">
-                <span>100</span>
-                <span>400</span>
+
+              {/* Current Body Fat */}
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-medium text-[var(--primary)]">Current Body Fat</label>
+                  <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
+                    {inputs.currentBodyFat}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  value={inputs.currentBodyFat}
+                  onChange={(e) => setInputs((prev) => ({ ...prev, currentBodyFat: Number(e.target.value) }))}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-[10px] text-[var(--primary)]/50">
+                  <span>5%</span>
+                  <span>50%</span>
+                </div>
               </div>
             </div>
 
-            {/* Goal Weight */}
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-medium text-[var(--primary)]">Goal Weight</label>
-                <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
-                  {inputs.goalWeight} lbs
-                </span>
+            {/* Goal Stats Column */}
+            <div className="border border-[var(--primary)]/30 rounded-xl p-3 space-y-4">
+              {/* Goal Weight */}
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-medium text-[var(--primary)]">Goal Weight</label>
+                  <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
+                    {inputs.goalWeight} lbs
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="80"
+                  max="350"
+                  value={inputs.goalWeight}
+                  onChange={(e) => setInputs((prev) => ({ ...prev, goalWeight: Number(e.target.value) }))}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-[10px] text-[var(--primary)]/50">
+                  <span>80</span>
+                  <span>350</span>
+                </div>
               </div>
-              <input
-                type="range"
-                min="80"
-                max="350"
-                value={inputs.goalWeight}
-                onChange={(e) => setInputs((prev) => ({ ...prev, goalWeight: Number(e.target.value) }))}
-                className="w-full"
-              />
-              <div className="flex justify-between text-[10px] text-[var(--primary)]/50">
-                <span>80</span>
-                <span>350</span>
-              </div>
-            </div>
 
-            {/* Current Body Fat */}
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-medium text-[var(--primary)]">Current Body Fat</label>
-                <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
-                  {inputs.currentBodyFat}%
-                </span>
-              </div>
-              <input
-                type="range"
-                min="5"
-                max="50"
-                value={inputs.currentBodyFat}
-                onChange={(e) => setInputs((prev) => ({ ...prev, currentBodyFat: Number(e.target.value) }))}
-                className="w-full"
-              />
-              <div className="flex justify-between text-[10px] text-[var(--primary)]/50">
-                <span>5%</span>
-                <span>50%</span>
-              </div>
-            </div>
-
-            {/* Goal Body Fat */}
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-medium text-[var(--primary)]">Goal Body Fat</label>
-                <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
-                  {inputs.goalBodyFat}%
-                </span>
-              </div>
-              <input
-                type="range"
-                min="5"
-                max="50"
-                value={inputs.goalBodyFat}
-                onChange={(e) => setInputs((prev) => ({ ...prev, goalBodyFat: Number(e.target.value) }))}
-                className="w-full"
-              />
-              <div className="flex justify-between text-[10px] text-[var(--primary)]/50">
-                <span>5%</span>
-                <span>50%</span>
+              {/* Goal Body Fat */}
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-medium text-[var(--primary)]">Goal Body Fat</label>
+                  <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
+                    {inputs.goalBodyFat}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  value={inputs.goalBodyFat}
+                  onChange={(e) => setInputs((prev) => ({ ...prev, goalBodyFat: Number(e.target.value) }))}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-[10px] text-[var(--primary)]/50">
+                  <span>5%</span>
+                  <span>50%</span>
+                </div>
               </div>
             </div>
           </div>
