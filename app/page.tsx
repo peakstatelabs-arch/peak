@@ -134,11 +134,11 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Countdown Timer - 20 hours from Jan 24, 2026 */}
+            {/* Countdown Timer - 20 hours from Jan 25, 2026 */}
             <div className="mt-8 text-center">
               <CountdownTimer
                 label={siteCopy.hero.timerLabel}
-                targetDate="2026-01-25T15:00:00Z"
+                targetDate="2026-01-26T13:00:00Z"
               />
             </div>
 
