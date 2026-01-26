@@ -9,6 +9,8 @@ import { EmailSubscription } from "@/app/components/EmailSubscription";
 import { siteCopy } from "@/content/siteCopy";
 
 export default function Home() {
+  const countdownTarget = new Date(Date.now() + 20 * 60 * 60 * 1000);
+
   return (
     <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
       {/* Urgency Banner */}
@@ -134,11 +136,11 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Countdown Timer - 20 hours from Jan 25, 2026 */}
+            {/* Countdown Timer - 20 hours from now */}
             <div className="mt-8 text-center">
               <CountdownTimer
                 label={siteCopy.hero.timerLabel}
-                targetDate="2026-01-26T13:00:00Z"
+                targetDate={countdownTarget}
               />
             </div>
 
