@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 interface CountdownTimerProps {
   targetDate?: Date | string;
+  durationMs?: number;
   label?: string;
 }
 
@@ -14,16 +15,17 @@ interface TimeLeft {
   seconds: number;
 }
 
-export function CountdownTimer({ targetDate, label }: CountdownTimerProps) {
-  // Parse target date - accepts Date object or ISO string
+export function CountdownTimer({ targetDate, durationMs, label }: CountdownTimerProps) {
+  // Parse target date - accepts Date object, ISO string, or duration in ms from now
   const [target] = useState(() => {
+    if (durationMs) {
+      return new Date(Date.now() + durationMs);
+    }
     if (targetDate) {
       return typeof targetDate === 'string' ? new Date(targetDate) : targetDate;
     }
-    // Default fallback (should not be used - always pass a targetDate)
-    const date = new Date();
-    date.setDate(date.getDate() + 3);
-    return date;
+    // Default fallback: 3 days from now
+    return new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
   });
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
