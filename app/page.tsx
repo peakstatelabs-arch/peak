@@ -89,13 +89,13 @@ export default function Home() {
                 <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up stagger-2">
                   <a
                     href={siteCopy.brand.primaryCtaHref}
-                    className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
+                    className="btn-primary inline-flex h-12 sm:h-14 items-center justify-center rounded-2xl px-6 sm:px-8 text-base sm:text-lg font-semibold whitespace-nowrap"
                   >
                     Start Your Transformation
                   </a>
                   <a
                     href={siteCopy.brand.secondaryCtaHref}
-                    className="inline-flex h-14 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-8 text-lg font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)]"
+                    className="inline-flex h-12 sm:h-14 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-6 sm:px-8 text-base sm:text-lg font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)] whitespace-nowrap"
                   >
                     {siteCopy.brand.secondaryCtaLabel}
                   </a>
