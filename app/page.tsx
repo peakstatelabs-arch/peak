@@ -6,26 +6,21 @@ import { FAQ } from "@/app/components/FAQ";
 import { PricingCard } from "@/app/components/PricingCard";
 import { BenefitsGrid } from "@/app/components/BenefitsGrid";
 import { EmailSubscription } from "@/app/components/EmailSubscription";
+import { UrgencyBanner } from "@/app/components/UrgencyBanner";
 import { siteCopy } from "@/content/siteCopy";
 
 export default function Home() {
-  // Countdown target: midnight at the end of Sunday, Feb 8 2026 (visitor's local time)
-  const countdownTarget = "2026-02-09T00:00:00";
-
   return (
     <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
       {/* Urgency Banner */}
       <div className="bg-[var(--primary)] text-white py-3 px-4">
         <Container>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center text-sm">
-            <span className="font-semibold">
-              {siteCopy.urgencyBanner.preorderText}
-            </span>
-            <span className="hidden sm:inline text-white/50">|</span>
-            <span className="text-white/80">
-              {siteCopy.urgencyBanner.shippingText}
-            </span>
-          </div>
+          <UrgencyBanner
+            batchText={siteCopy.urgencyBanner.batchText}
+            baseCount={siteCopy.urgencyBanner.stacksRemainingBase}
+            baseDate={siteCopy.urgencyBanner.stacksRemainingBaseDate}
+            shippingText={siteCopy.urgencyBanner.shippingText}
+          />
         </Container>
       </div>
 
@@ -82,7 +77,7 @@ export default function Home() {
 
                 {/* Headline */}
                 <h1 className="mt-8 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-up">
-                  POWER CUT<span className="text-[0.5em] align-super">™</span>
+                  Secure Your POWER CUT<span className="text-[0.5em] align-super">™</span> Stack
                 </h1>
 
                 {/* Subheadline */}
@@ -96,7 +91,7 @@ export default function Home() {
                     href={siteCopy.brand.primaryCtaHref}
                     className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
                   >
-                    {siteCopy.brand.primaryCtaLabel}
+                    Start Your Transformation
                   </a>
                   <a
                     href={siteCopy.brand.secondaryCtaHref}
@@ -126,22 +121,21 @@ export default function Home() {
 
             {/* Secure Note */}
             <div className="mt-12 p-5 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 max-w-2xl mx-auto text-center">
-              <p className="text-sm text-[var(--primary)]/80 leading-relaxed">
+              <p className="text-sm text-[var(--primary)]/80 leading-relaxed font-semibold">
                 {siteCopy.hero.secureNote}
               </p>
               <a
                 href={siteCopy.brand.primaryCtaHref}
                 className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold mt-5"
               >
-                {siteCopy.brand.primaryCtaLabel}
+                Order Now
               </a>
             </div>
 
-            {/* Countdown Timer - 3 days from now */}
+            {/* Countdown Timer - resets daily at 7 PM EST */}
             <div className="mt-8 text-center">
               <CountdownTimer
                 label={siteCopy.hero.timerLabel}
-                targetDate={countdownTarget}
               />
             </div>
 
@@ -422,6 +416,9 @@ export default function Home() {
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
                 {siteCopy.pricing.headline}
               </h2>
+              <p className="mt-3 text-lg text-[var(--accent-dark)] font-semibold">
+                [{siteCopy.pricing.subheadline}]
+              </p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
