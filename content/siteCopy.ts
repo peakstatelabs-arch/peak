@@ -3,15 +3,17 @@ export const siteCopy = {
     name: "Peak State Labs",
     trademark: "POWER CUT\u2122",
     tagline: "The 10-Week Biological Shortcut to Your Dream Physique",
-    primaryCtaLabel: "PRE-ORDER NOW",
+    primaryCtaLabel: "Order Now",
     primaryCtaHref: "#pricing",
     secondaryCtaLabel: "See What's Included",
     secondaryCtaHref: "#contents",
   },
 
   urgencyBanner: {
-    preorderText: "PREORDER SPECIAL: Save $150 today.",
-    shippingText: "We ship in 21 days (Week of Feb 8th).",
+    batchText: "FEBRUARY BATCH LIVE:",
+    stacksRemainingBase: 14,
+    stacksRemainingBaseDate: "2026-02-11",
+    shippingText: "Ships within 24-48 Hours",
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
 
@@ -23,7 +25,7 @@ export const siteCopy = {
   ],
 
   hero: {
-    eyebrow: "SECURE PRIORITY PRE-ORDER",
+    eyebrow: "SECURE YOUR PROTOCOL",
     headline: "POWER CUT\u2122",
     subheadline:
       "A Curated Peptide Stack Packaged With A Clear 10-Week Protocol For Rapid Fat Loss And Lean Muscle Growth",
@@ -60,8 +62,8 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "Secure Priority Pre-Order: We are currently in a 21-day final quality & purity certification window. Secure your kit now to be first in line for Batch 001 dispatch.",
-    timerLabel: "Time remaining to lock in up to $150 Pre-Order Discount:",
+      "SECURE YOUR PROTOCOL: GUARANTEED FREE NEXT-DAY SHIPPING. Orders placed by 7:00 PM EST move to the front of the line for tomorrow\u2019s fulfillment cycle.",
+    timerLabel: "Time remaining for the next shipping window:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
   },
@@ -146,6 +148,7 @@ export const siteCopy = {
 
   pricing: {
     headline: "Choose Your Stack",
+    subheadline: "Free Shipping On All Orders",
     tiers: [
       {
         id: "single",
@@ -163,15 +166,15 @@ export const siteCopy = {
         ],
         estimatedValue: "$900",
         price: "$599",
-        installment: "$137.25",
+        installment: "$149.76",
         savings: "$50",
         ctaLabel: "Add To Cart",
-        ctaSubtext: "Get the protocol now. Pay $137.25 today.",
+        ctaSubtext: "Get the protocol now. Pay $149.76 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/WJW89XHYFRC88",
-        stripeUrl: "https://buy.stripe.com/6oU14m5O75RT1Lb3HnafS00",
-        preorderNote: "PREORDER NOW AND SAVE $50",
+        stripeUrl: "https://buy.stripe.com/9B628q0tNeopahH4LrafS05",
+        preorderNote: "ORDER NOW AND SAVE $50",
         refundNote:
-          "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
+          "Orders are guaranteed. Cancel anytime before shipment for a full refund.",
       },
       {
         id: "double",
@@ -191,15 +194,15 @@ export const siteCopy = {
         ],
         estimatedValue: "$1,800",
         price: "$1,019",
-        installment: "$229.75",
+        installment: "$254.75",
         savings: "$100",
         ctaLabel: "Add To Cart",
-        ctaSubtext: "Get the protocol now. Pay $229.75 today.",
+        ctaSubtext: "Get the protocol now. Pay $254.75 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/24NRV9E8HMWQE",
-        stripeUrl: "https://buy.stripe.com/4gM00ifoHcgh3TjcdTafS01",
-        preorderNote: "PREORDER NOW AND SAVE $100",
+        stripeUrl: "https://buy.stripe.com/dRm4gygsL9459dD4LrafS06",
+        preorderNote: "ORDER NOW AND SAVE $100",
         refundNote:
-          "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
+          "Orders are guaranteed. Cancel anytime before shipment for a full refund.",
         popular: true,
       },
       {
@@ -219,15 +222,15 @@ export const siteCopy = {
         ],
         estimatedValue: "$2,700",
         price: "$1,259",
-        installment: "$277.25",
+        installment: "$314.75",
         savings: "$150",
         ctaLabel: "Add To Cart",
-        ctaSubtext: "Get the protocol now. Pay $277.25 today.",
+        ctaSubtext: "Get the protocol now. Pay $314.75 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/8EZZ5FNXJEWM8",
-        stripeUrl: "https://buy.stripe.com/dRm5kC5O7fst3Tj91HafS03",
-        preorderNote: "PREORDER NOW AND SAVE $150",
+        stripeUrl: "https://buy.stripe.com/9B6eVc7Wf945ahH7XDafS07",
+        preorderNote: "ORDER NOW AND SAVE $150",
         refundNote:
-          "Pre-orders are guaranteed. Cancel anytime before shipment for a full refund.",
+          "Orders are guaranteed. Cancel anytime before shipment for a full refund.",
       },
     ],
   },
@@ -245,33 +248,33 @@ export const siteCopy = {
   },
 
   timeline: {
-    headline: "The Path to Peak Performance: Batch 001 Timeline",
+    headline: "Biological Recomposition: Your 10+ Week Evolution",
     subheadline:
-      "Because we prioritize 99%+ purity, we don't 'warehouse' our stacks. Every Power Cut\u2122 kit is part of a fresh, small-batch production run.",
+      "We don\u2019t believe in overnight miracles. We believe in a phased biological reset that stacks your wins week over week.",
     steps: [
       {
-        phase: "1. Secure Your Spot",
-        days: "Days 1\u20133",
+        phase: "Phase 1: The Metabolic Reset",
+        days: "Days 1\u201321",
         action:
-          "Lock in your pre-order discount and priority position in Batch 001.",
+          "You begin the Engine (Retatrutide) on-ramp and master your movement and nutrition.",
         result:
-          "You get immediate digital access to the Power Cut\u2122 10-Week Protocol so you can begin your mental and nutritional preparation today.",
+          "Systematic inflammation retreats, \u201Cfood noise\u201D begins to silence, and your body shifts from sugar-burning to fat-oxidation.",
       },
       {
-        phase: "2. Purity Verification",
-        days: "Days 4\u201318",
+        phase: "Phase 2: The Recomposition Window",
+        days: "Days 22\u201349",
         action:
-          "Your kit undergoes final formulation followed by an additional independent, 3rd-party laboratory testing.",
+          "We strategically increase the Engine dose while the Architect (CJC/Ipam) triggers nightly growth hormone pulses.",
         result:
-          "We verify that every vial exceeds 99% purity, ensuring the highest level of safety and efficacy before it ever leaves our facility.",
+          "Noticeable changes in your physique as you incinerate visceral fat while the Shield (BPC/TB) protects and repairs your lean muscle tissue.",
       },
       {
-        phase: "3. Priority Dispatch",
-        days: "Days 19\u201321",
+        phase: "Phase 3: Peak State Integration",
+        days: "Days 50\u201370+",
         action:
-          "Kits are professionally packed and dispatched via priority, insured mail.",
+          "Your metabolism is now operating at a high-efficiency baseline, requiring less effort to maintain your Peak State.",
         result:
-          "Your tracking number is sent to your inbox and begins its journey from our production hub to your doorstep.",
+          "Total physical and hormonal recalibration. You aren\u2019t just \u201Cleaner\u201D\u2014you are operating with a level of focus and energy that is unmistakably elite.",
       },
     ],
   },
@@ -312,7 +315,7 @@ export const siteCopy = {
       },
       {
         q: "What happens after I order?",
-        a: "You'll receive immediate digital access to the 10-Week Protocol. Your physical kit ships within our 21-day production window, and you'll receive tracking information via email.",
+        a: "You\u2019ll receive immediate digital access to our online community. Your physical kit ships within 24hrs on business days and you\u2019ll receive tracking information.",
       },
       {
         q: "Are Purity Tests available?",
