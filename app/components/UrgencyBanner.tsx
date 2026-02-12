@@ -21,7 +21,7 @@ export function UrgencyBanner({ batchText, baseCount, baseDate, shippingText }: 
 
   if (stacksRemaining === null) {
     return (
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center text-sm">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-4 text-center text-xs sm:text-sm">
         <span className="font-semibold">{batchText}</span>
         <span className="hidden sm:inline text-white/50">|</span>
         <span className="text-white/80">{shippingText}</span>
@@ -30,7 +30,7 @@ export function UrgencyBanner({ batchText, baseCount, baseDate, shippingText }: 
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center text-sm">
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-4 text-center text-xs sm:text-sm">
       <span className="font-semibold">
         {batchText} Only {stacksRemaining} Stack{stacksRemaining !== 1 ? "s" : ""} Remaining.
       </span>
