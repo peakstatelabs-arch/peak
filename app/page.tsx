@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
       {/* Urgency Banner */}
-      <div className="bg-[var(--primary)] text-white py-3 px-4">
+      <div className="bg-[var(--primary)] text-white py-2 sm:py-3 px-3 sm:px-4">
         <Container>
           <UrgencyBanner
             batchText={siteCopy.urgencyBanner.batchText}
