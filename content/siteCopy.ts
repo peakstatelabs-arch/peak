@@ -10,9 +10,9 @@ export const siteCopy = {
   },
 
   urgencyBanner: {
-    batchText: "FEBRUARY BATCH LIVE:",
-    stacksRemainingBase: 9,
-    stacksRemainingBaseDate: "2026-02-23",
+    batchText: "MARCH BATCH LIVE:",
+    stacksRemainingBase: 10,
+    stacksRemainingBaseDate: "2026-03-01",
     shippingText: "Ships within 24-48 Hours",
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
