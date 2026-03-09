@@ -22,28 +22,41 @@ export function EmailSubscription({
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [subscribedEmails, setSubscribedEmails] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const trimmed = email.trim();
   const valid = useMemo(() => (trimmed.length ? isValidEmail(trimmed) : false), [trimmed]);
   const showError = touched && trimmed.length > 0 && !valid;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched(true);
+    setErrorMsg("");
 
     if (!valid) return;
 
-    // Store email in localStorage for later retrieval
-    const storedEmails = JSON.parse(localStorage.getItem("subscribedEmails") || "[]");
-    if (!storedEmails.includes(trimmed)) {
-      storedEmails.push(trimmed);
-      localStorage.setItem("subscribedEmails", JSON.stringify(storedEmails));
-    }
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed }),
+      });
 
-    setSubscribedEmails(storedEmails);
-    setSubmitted(true);
-    setEmail("");
+      if (!res.ok) {
+        const data = await res.json();
+        setErrorMsg(data.error || "Something went wrong. Please try again.");
+        return;
+      }
+
+      setSubmitted(true);
+      setEmail("");
+    } catch {
+      setErrorMsg("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -99,16 +112,19 @@ export function EmailSubscription({
           </div>
           <button
             type="submit"
-            disabled={!trimmed.length}
+            disabled={!trimmed.length || submitting}
             className="h-14 shrink-0 rounded-xl bg-[var(--primary)] px-8 text-base font-semibold text-white shadow-sm transition hover:bg-[var(--primary-light)] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {buttonText}
+            {submitting ? "Sending..." : buttonText}
           </button>
         </div>
         {showError && (
           <p className="mt-2 text-sm text-red-600 text-left">
             Please enter a valid email address.
           </p>
+        )}
+        {errorMsg && (
+          <p className="mt-2 text-sm text-red-600 text-left">{errorMsg}</p>
         )}
         <p className="mt-3 text-xs text-[var(--primary)]/50">
           We respect your privacy. Unsubscribe at any time.
