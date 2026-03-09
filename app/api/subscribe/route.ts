@@ -9,9 +9,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
-    const sheetUrl = process.env.GOOGLE_SHEETS_URL;
+    const sheetUrl = process.env.Subscribers;
     if (!sheetUrl) {
-      console.error("GOOGLE_SHEETS_URL env variable is not set");
+      console.error("Subscribers env variable is not set");
       return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
     }
 
