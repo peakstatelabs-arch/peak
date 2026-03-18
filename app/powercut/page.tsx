@@ -254,7 +254,7 @@ export default function PowerCutProtocol() {
                         The Architect
                       </h3>
                       <p className="text-sm text-[var(--accent-dark)] font-medium">
-                        CJC-1295 + Ipamorelin (25mg total)
+                        CJC-1295 + Ipamorelin (20mg total)
                       </p>
                     </div>
                   </div>
@@ -300,7 +300,7 @@ export default function PowerCutProtocol() {
                         The Shield
                       </h3>
                       <p className="text-sm text-[var(--accent-dark)] font-medium">
-                        BPC-157 + TB-500 (20mg total)
+                        BPC-157 + TB-500 (40mg total)
                       </p>
                     </div>
                   </div>
