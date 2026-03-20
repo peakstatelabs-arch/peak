@@ -10,10 +10,9 @@ export const siteCopy = {
   },
 
   urgencyBanner: {
-    batchText: "MARCH BATCH LIVE:",
-    stacksRemainingBase: 10,
-    stacksRemainingBaseDate: "2026-03-01",
-    shippingText: "Ships within 24-48 Hours",
+    lineOne: "PRE-ORDER LIVE",
+    lineTwo: "Only 12 Stacks Left",
+    shippingText: "Ships 3/27",
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
 
@@ -62,8 +61,8 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "SECURE YOUR PROTOCOL: GUARANTEED FREE NEXT-DAY SHIPPING. Orders placed by 7:00 PM EST move to the front of the line for tomorrow\u2019s fulfillment cycle.",
-    timerLabel: "Time remaining for the next shipping window:",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 3/27. Reserve your kit now to lock in priority access to Batch 003.",
+    timerLabel: "Pre-order window closes in:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
   },
