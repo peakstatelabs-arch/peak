@@ -7,42 +7,23 @@ interface CountdownTimerProps {
 }
 
 interface TimeLeft {
+  days: number;
   hours: number;
   minutes: number;
   seconds: number;
 }
 
-function getSecondsUntilNext7PMEastern(): number {
+function getSecondsUntilDeadline(): number {
+  // Deadline: Thursday March 26, 2026 at midnight EST (00:00 on 3/27 EST = end of 3/26)
+  const deadline = new Date("2026-03-27T00:00:00-05:00");
   const now = new Date();
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-  });
-
-  const parts = formatter.formatToParts(now);
-  const getPart = (type: string) =>
-    parts.find((p) => p.type === type)?.value || "0";
-
-  const easternHour = parseInt(getPart("hour"));
-  const easternMinute = parseInt(getPart("minute"));
-  const easternSecond = parseInt(getPart("second"));
-
-  const currentSecondsInDay =
-    easternHour * 3600 + easternMinute * 60 + easternSecond;
-  const targetSecondsInDay = 19 * 3600; // 7 PM = 19:00
-
-  if (currentSecondsInDay < targetSecondsInDay) {
-    return targetSecondsInDay - currentSecondsInDay;
-  }
-  // Past 7 PM — target is tomorrow's 7 PM
-  return 24 * 3600 - currentSecondsInDay + targetSecondsInDay;
+  const diff = Math.floor((deadline.getTime() - now.getTime()) / 1000);
+  return Math.max(0, diff);
 }
 
 export function CountdownTimer({ label }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
@@ -51,9 +32,10 @@ export function CountdownTimer({ label }: CountdownTimerProps) {
   const [mounted, setMounted] = useState(false);
 
   const calculateTimeLeft = useCallback((): TimeLeft => {
-    const totalSeconds = getSecondsUntilNext7PMEastern();
+    const totalSeconds = getSecondsUntilDeadline();
     return {
-      hours: Math.floor(totalSeconds / 3600),
+      days: Math.floor(totalSeconds / 86400),
+      hours: Math.floor((totalSeconds % 86400) / 3600),
       minutes: Math.floor((totalSeconds % 3600) / 60),
       seconds: Math.floor(totalSeconds % 60),
     };
@@ -71,6 +53,12 @@ export function CountdownTimer({ label }: CountdownTimerProps) {
   }, [calculateTimeLeft]);
 
   if (!mounted) {
+    const placeholderUnits = [
+      { label: "Days" },
+      { label: "Hours" },
+      { label: "Minutes" },
+      { label: "Seconds" },
+    ];
     return (
       <div className="flex flex-col items-center gap-4">
         {label && (
@@ -79,15 +67,15 @@ export function CountdownTimer({ label }: CountdownTimerProps) {
           </p>
         )}
         <div className="flex items-center gap-2 sm:gap-4">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="flex flex-col items-center">
+          {placeholderUnits.map((unit) => (
+            <div key={unit.label} className="flex flex-col items-center">
               <div className="bg-[var(--primary)] text-white rounded-xl w-16 sm:w-20 h-16 sm:h-20 flex items-center justify-center">
                 <span className="text-2xl sm:text-3xl font-bold tabular-nums">
                   --
                 </span>
               </div>
               <span className="text-xs sm:text-sm text-[var(--primary)]/60 mt-2 font-medium">
-                {["Hours", "Minutes", "Seconds"][i]}
+                {unit.label}
               </span>
             </div>
           ))}
@@ -97,6 +85,7 @@ export function CountdownTimer({ label }: CountdownTimerProps) {
   }
 
   const timeUnits = [
+    { value: timeLeft.days, label: "Days" },
     { value: timeLeft.hours, label: "Hours" },
     { value: timeLeft.minutes, label: "Minutes" },
     { value: timeLeft.seconds, label: "Seconds" },

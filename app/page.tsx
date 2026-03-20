@@ -16,9 +16,8 @@ export default function Home() {
       <div className="bg-[var(--primary)] text-white py-2 sm:py-3 px-3 sm:px-4">
         <Container>
           <UrgencyBanner
-            batchText={siteCopy.urgencyBanner.batchText}
-            baseCount={siteCopy.urgencyBanner.stacksRemainingBase}
-            baseDate={siteCopy.urgencyBanner.stacksRemainingBaseDate}
+            lineOne={siteCopy.urgencyBanner.lineOne}
+            lineTwo={siteCopy.urgencyBanner.lineTwo}
             shippingText={siteCopy.urgencyBanner.shippingText}
           />
         </Container>

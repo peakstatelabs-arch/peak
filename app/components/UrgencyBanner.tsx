@@ -1,39 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 interface UrgencyBannerProps {
-  batchText: string;
-  baseCount: number;
-  baseDate: string;
+  lineOne: string;
+  lineTwo: string;
   shippingText: string;
 }
 
-export function UrgencyBanner({ batchText, baseCount, baseDate, shippingText }: UrgencyBannerProps) {
-  const [stacksRemaining, setStacksRemaining] = useState<number | null>(null);
-
-  useEffect(() => {
-    const base = new Date(baseDate + "T00:00:00");
-    const now = new Date();
-    const diffDays = Math.floor((now.getTime() - base.getTime()) / (1000 * 60 * 60 * 24));
-    setStacksRemaining(Math.max(1, baseCount - diffDays));
-  }, [baseCount, baseDate]);
-
-  if (stacksRemaining === null) {
-    return (
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-4 text-center text-xs sm:text-sm">
-        <span className="font-semibold">{batchText}</span>
-        <span className="hidden sm:inline text-white/50">|</span>
-        <span className="text-white/80">{shippingText}</span>
-      </div>
-    );
-  }
-
+export function UrgencyBanner({ lineOne, lineTwo, shippingText }: UrgencyBannerProps) {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-4 text-center text-xs sm:text-sm">
-      <span className="font-semibold">
-        {batchText} Only {stacksRemaining} Stack{stacksRemaining !== 1 ? "s" : ""} Remaining.
-      </span>
+      <div className="flex flex-col sm:flex-row items-center gap-0.5 sm:gap-2">
+        <span className="font-bold tracking-wide">{lineOne}</span>
+        <span className="font-semibold text-white/90">{lineTwo}</span>
+      </div>
       <span className="hidden sm:inline text-white/50">|</span>
       <span className="text-white/80">{shippingText}</span>
     </div>
