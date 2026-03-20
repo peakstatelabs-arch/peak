@@ -104,6 +104,7 @@ export function PricingCard({
           {/* CTA Button */}
           <a
             href={stripeUrl}
+            data-rewardful
             target="_blank"
             rel="noopener noreferrer"
             className={`w-full mt-6 py-4 px-6 rounded-xl font-semibold text-base text-center transition-all duration-300 block ${
