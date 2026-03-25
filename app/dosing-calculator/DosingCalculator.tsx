@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { dosingProtocols, getMatchingTier, type ProtocolTier } from "./dosingProtocols";
+import { useState } from "react";
+import { getStackProtocol, type StackProtocol, type WeeklyDose, type BPCOption } from "./dosingProtocols";
 
 interface UserInputs {
-  duration: number;
+  stacks: number;
   currentWeight: number;
   goalWeight: number;
   currentBodyFat: number;
@@ -14,7 +14,7 @@ interface UserInputs {
 export function DosingCalculator() {
   const [step, setStep] = useState<"input" | "results">("input");
   const [inputs, setInputs] = useState<UserInputs>({
-    duration: 10,
+    stacks: 1,
     currentWeight: 180,
     goalWeight: 160,
     currentBodyFat: 25,
@@ -22,19 +22,6 @@ export function DosingCalculator() {
   });
 
   const weightLoss = Math.max(0, inputs.currentWeight - inputs.goalWeight);
-
-  // Get matching tiers for all 3 protocols
-  const allProtocolTiers = useMemo(() => {
-    return dosingProtocols.map((protocol) => {
-      const tier = getMatchingTier(protocol, inputs.duration, inputs.currentBodyFat, weightLoss);
-      const duration = protocol.durations.find((d) => d.weeks === inputs.duration);
-      return {
-        protocol,
-        tier,
-        totalMaterial: duration?.totalMaterial || "",
-      };
-    });
-  }, [inputs.duration, inputs.currentBodyFat, weightLoss]);
 
   const handleSubmit = () => {
     setStep("results");
@@ -50,12 +37,14 @@ export function DosingCalculator() {
     window.print();
   };
 
-  if (step === "results") {
+  const protocol = getStackProtocol(inputs.stacks);
+
+  if (step === "results" && protocol) {
     return (
       <ResultsView
         inputs={inputs}
         weightLoss={weightLoss}
-        allProtocolTiers={allProtocolTiers}
+        protocol={protocol}
         onBack={handleBack}
         onDownload={handleDownloadPDF}
       />
@@ -81,6 +70,12 @@ interface InputFormProps {
 }
 
 function InputForm({ inputs, setInputs, weightLoss, onSubmit }: InputFormProps) {
+  const stackOptions = [
+    { value: 1, label: "1 Stack" },
+    { value: 2, label: "2 Stacks" },
+    { value: 3, label: "3 Stacks" },
+  ];
+
   return (
     <div className="w-full max-w-xl mx-auto animate-fade-in">
       {/* Header - Compact */}
@@ -95,23 +90,23 @@ function InputForm({ inputs, setInputs, weightLoss, onSubmit }: InputFormProps) 
 
       {/* Form Card - Compact */}
       <div className="bg-white rounded-2xl border border-[var(--border)] p-5 shadow-lg">
-        {/* Duration Selector */}
+        {/* Stack Selector */}
         <div className="mb-4">
           <label className="block text-xs font-semibold text-[var(--primary)] mb-2">
-            Select Your Stack Duration
+            Select How Many Stacks
           </label>
           <div className="grid grid-cols-3 gap-2">
-            {[10, 20, 30].map((weeks) => (
+            {stackOptions.map((option) => (
               <button
-                key={weeks}
-                onClick={() => setInputs((prev) => ({ ...prev, duration: weeks }))}
+                key={option.value}
+                onClick={() => setInputs((prev) => ({ ...prev, stacks: option.value }))}
                 className={`py-2.5 px-3 rounded-lg font-bold text-sm transition-all ${
-                  inputs.duration === weeks
+                  inputs.stacks === option.value
                     ? "bg-[var(--primary)] text-white shadow-md"
                     : "bg-[var(--muted)] text-[var(--primary)] hover:bg-[var(--muted-dark)]"
                 }`}
               >
-                {weeks} Weeks
+                {option.label}
               </button>
             ))}
           </div>
@@ -254,16 +249,12 @@ function InputForm({ inputs, setInputs, weightLoss, onSubmit }: InputFormProps) 
 interface ResultsViewProps {
   inputs: UserInputs;
   weightLoss: number;
-  allProtocolTiers: Array<{
-    protocol: (typeof dosingProtocols)[0];
-    tier: ProtocolTier | undefined;
-    totalMaterial: string;
-  }>;
+  protocol: StackProtocol;
   onBack: () => void;
   onDownload: () => void;
 }
 
-function ResultsView({ inputs, weightLoss, allProtocolTiers, onBack, onDownload }: ResultsViewProps) {
+function ResultsView({ inputs, weightLoss, protocol, onBack, onDownload }: ResultsViewProps) {
   return (
     <div className="w-full max-w-7xl mx-auto animate-fade-in print:max-w-none print:mx-0 print:text-[11px]">
       {/* Header */}
@@ -272,7 +263,7 @@ function ResultsView({ inputs, weightLoss, allProtocolTiers, onBack, onDownload 
           Your Complete Protocol Dosing
         </h1>
         <p className="text-sm text-[var(--primary)]/70 print:text-xs">
-          {inputs.duration}-Week Stack | {inputs.currentWeight} lbs → {inputs.goalWeight} lbs | {inputs.currentBodyFat}% → {inputs.goalBodyFat}% BF
+          {inputs.stacks} Stack{inputs.stacks > 1 ? "s" : ""} | {inputs.currentWeight} lbs &rarr; {inputs.goalWeight} lbs | {inputs.currentBodyFat}% &rarr; {inputs.goalBodyFat}% BF
         </p>
       </div>
 
@@ -282,7 +273,7 @@ function ResultsView({ inputs, weightLoss, allProtocolTiers, onBack, onDownload 
           onClick={onBack}
           className="px-4 py-2 bg-[var(--muted)] text-[var(--primary)] font-semibold rounded-lg text-sm hover:bg-[var(--muted-dark)] transition-all"
         >
-          ← Modify Inputs
+          &larr; Modify Inputs
         </button>
         <button
           onClick={onDownload}
@@ -295,27 +286,33 @@ function ResultsView({ inputs, weightLoss, allProtocolTiers, onBack, onDownload 
         </button>
       </div>
 
-      {/* Protocol Tier Badge */}
-      {allProtocolTiers[0]?.tier && (
-        <div className="text-center mb-4 print:mb-2">
-          <span className="inline-block px-4 py-1.5 bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] text-white font-semibold rounded-full text-xs">
-            {allProtocolTiers[0].tier.name} ({allProtocolTiers[0].tier.description})
-          </span>
-        </div>
-      )}
+      {/* System Overview */}
+      <SystemOverviewCard protocol={protocol} />
 
       {/* 3-Column Protocol Cards */}
-      <div className="grid md:grid-cols-3 gap-4 print:gap-2 print:grid-cols-3">
-        {allProtocolTiers.map(({ protocol, tier, totalMaterial }) => (
-          <ProtocolCard
-            key={protocol.id}
-            name={protocol.name}
-            description={protocol.description}
-            tier={tier}
-            totalMaterial={totalMaterial}
-            duration={inputs.duration}
-          />
-        ))}
+      <div className="grid md:grid-cols-3 gap-4 print:gap-2 print:grid-cols-3 mt-4">
+        {/* RETA Card */}
+        <WeeklyScheduleCard
+          title={protocol.reta.title}
+          totalMaterial={protocol.reta.totalMaterial}
+          schedule={protocol.reta.schedule}
+        />
+
+        {/* CJC Card */}
+        <WeeklyScheduleCard
+          title={protocol.cjc.title}
+          totalMaterial={protocol.cjc.totalMaterial}
+          subtitle={protocol.cjc.frequency}
+          schedule={protocol.cjc.schedule}
+        />
+
+        {/* BPC Card */}
+        <BPCCard
+          title={protocol.bpc.title}
+          totalMaterial={protocol.bpc.totalMaterial}
+          foundation={protocol.bpc.foundation}
+          performance={protocol.bpc.performance}
+        />
       </div>
 
       {/* Important Instructions - Compact */}
@@ -325,27 +322,27 @@ function ResultsView({ inputs, weightLoss, allProtocolTiers, onBack, onDownload 
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-[var(--primary)]/80 print:text-[10px] print:gap-1">
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">✓</span>
-            <span>Store refrigerated at 36-46°F (2-8°C)</span>
+            <span className="text-[var(--accent)] font-bold">&check;</span>
+            <span>Store refrigerated at 36-46&deg;F (2-8&deg;C)</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">✓</span>
+            <span className="text-[var(--accent)] font-bold">&check;</span>
             <span>Inject subcutaneously, rotate sites</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">✓</span>
+            <span className="text-[var(--accent)] font-bold">&check;</span>
             <span>Administer at consistent times</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">✓</span>
+            <span className="text-[var(--accent)] font-bold">&check;</span>
             <span>Stay hydrated, protein-rich diet</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">✓</span>
+            <span className="text-[var(--accent)] font-bold">&check;</span>
             <span>Consult provider for adverse effects</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">✓</span>
+            <span className="text-[var(--accent)] font-bold">&check;</span>
             <span>Use bacteriostatic water</span>
           </div>
         </div>
@@ -359,62 +356,96 @@ function ResultsView({ inputs, weightLoss, allProtocolTiers, onBack, onDownload 
   );
 }
 
-// ============ PROTOCOL CARD ============
-interface ProtocolCardProps {
-  name: string;
-  description: string;
-  tier: ProtocolTier | undefined;
-  totalMaterial: string;
-  duration: number;
+// ============ SYSTEM OVERVIEW CARD ============
+function SystemOverviewCard({ protocol }: { protocol: StackProtocol }) {
+  return (
+    <div className="bg-white rounded-xl border border-[var(--border)] p-4 shadow-sm print:shadow-none print:p-2">
+      <h2 className="text-lg font-bold text-[var(--primary)] mb-3 print:text-sm print:mb-1">
+        {protocol.overview.title}
+      </h2>
+      <ul className="space-y-1.5 print:space-y-0.5">
+        {protocol.overview.phases.map((phase, i) => (
+          <li key={i} className="flex items-start gap-2 text-sm text-[var(--primary)]/80 print:text-[10px]">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2022;</span>
+            <span>{phase.label}</span>
+          </li>
+        ))}
+      </ul>
+      {protocol.overview.note && (
+        <p className="mt-2 text-xs text-[var(--primary)]/60 italic print:text-[9px]">
+          {protocol.overview.note}
+        </p>
+      )}
+    </div>
+  );
 }
 
-function ProtocolCard({ name, description, tier, totalMaterial, duration }: ProtocolCardProps) {
-  if (!tier) {
-    return (
-      <div className="bg-white rounded-xl border border-[var(--border)] p-4 shadow-sm opacity-50">
-        <h3 className="text-sm font-bold text-[var(--primary)] mb-1">{name}</h3>
-        <p className="text-xs text-[var(--primary)]/60 mb-2">{description}</p>
-        <p className="text-xs text-[var(--primary)]/50 italic">
-          Not available for {duration}-week duration
-        </p>
-      </div>
-    );
-  }
+// ============ WEEKLY SCHEDULE CARD (RETA & CJC) ============
+interface WeeklyScheduleCardProps {
+  title: string;
+  totalMaterial: string;
+  subtitle?: string;
+  schedule: WeeklyDose[];
+}
 
+function WeeklyScheduleCard({ title, totalMaterial, subtitle, schedule }: WeeklyScheduleCardProps) {
   return (
     <div className="bg-white rounded-xl border border-[var(--border)] shadow-sm overflow-hidden print:break-inside-avoid print:text-[10px]">
       {/* Card Header */}
       <div className="bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] p-3 text-white print:p-2">
-        <h3 className="text-sm font-bold mb-0.5 print:text-xs">{name}</h3>
-        <p className="text-[10px] text-white/70 print:text-[9px]">{description}</p>
+        <h3 className="text-sm font-bold mb-0.5 print:text-xs">{title}</h3>
+        {subtitle && (
+          <p className="text-[10px] text-white/70 print:text-[9px]">{subtitle}</p>
+        )}
         <div className="flex justify-between items-center mt-1.5">
-          <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded print:text-[8px]">{totalMaterial}</span>
-          <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded print:text-[8px]">{duration} Weeks</span>
+          <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded print:text-[8px]">
+            {totalMaterial} Total
+          </span>
         </div>
       </div>
 
       {/* Dosing Schedule */}
       <div className="p-3 print:p-2">
-        <div className="space-y-1.5 print:space-y-1">
-          {tier.schedule.map((dose, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between py-1.5 px-2 bg-[var(--muted)] rounded-lg text-xs print:py-1 print:px-1.5"
-            >
-              <div className="flex items-center gap-1.5">
-                <span className="w-6 h-6 bg-[var(--accent)] rounded-full flex items-center justify-center text-[10px] font-bold text-[var(--primary)] print:w-5 print:h-5 print:text-[8px]">
-                  W{dose.weeks.split("-")[0]}
-                </span>
-                <div>
-                  <p className="font-medium text-[var(--primary)] text-xs print:text-[10px]">
-                    Wk {dose.weeks}
+        <div className="space-y-1 print:space-y-0.5 max-h-[500px] overflow-y-auto print:max-h-none print:overflow-visible">
+          {schedule.map((dose, index) => (
+            <div key={index}>
+              {/* Cycle Label */}
+              {dose.cycleLabel && (
+                <div className="pt-2 pb-1 first:pt-0">
+                  <p className="text-[10px] font-semibold text-[var(--primary)]/60 uppercase tracking-wide print:text-[8px]">
+                    {dose.cycleLabel}
                   </p>
-                  {dose.frequency && (
-                    <p className="text-[9px] text-[var(--primary)]/60 print:text-[8px]">{dose.frequency}</p>
-                  )}
                 </div>
+              )}
+              <div
+                className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-xs print:py-1 print:px-1.5 ${
+                  dose.isOff
+                    ? "bg-[var(--primary)]/5 text-[var(--primary)]/50"
+                    : "bg-[var(--muted)]"
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold print:w-5 print:h-5 print:text-[8px] ${
+                      dose.isOff
+                        ? "bg-[var(--primary)]/10 text-[var(--primary)]/40"
+                        : "bg-[var(--accent)] text-[var(--primary)]"
+                    }`}
+                  >
+                    {dose.week}
+                  </span>
+                  <p className="font-medium text-[var(--primary)] text-xs print:text-[10px]">
+                    Week {dose.week}
+                  </p>
+                </div>
+                <p
+                  className={`font-bold text-xs print:text-[10px] ${
+                    dose.isOff ? "text-[var(--primary)]/40 italic" : "text-[var(--primary)]"
+                  }`}
+                >
+                  {dose.dose}
+                </p>
               </div>
-              <p className="font-bold text-[var(--primary)] text-xs print:text-[10px]">{dose.dose}</p>
             </div>
           ))}
         </div>
@@ -422,15 +453,75 @@ function ProtocolCard({ name, description, tier, totalMaterial, duration }: Prot
         {/* Total */}
         <div className="mt-2 pt-2 border-t border-[var(--border)] flex justify-between items-center print:mt-1 print:pt-1">
           <span className="text-xs font-medium text-[var(--primary)] print:text-[10px]">Total</span>
-          <span className="text-sm font-bold text-[var(--accent-dark)] print:text-xs">{tier.totalDose}</span>
+          <span className="text-sm font-bold text-[var(--accent-dark)] print:text-xs">{totalMaterial}</span>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        {/* Notes */}
-        {tier.notes && tier.notes.length > 0 && (
-          <div className="mt-2 p-1.5 bg-[var(--accent)]/10 rounded print:mt-1 print:p-1">
-            <p className="text-[9px] text-[var(--primary)]/70 print:text-[8px]">{tier.notes[0]}</p>
+// ============ BPC CARD ============
+interface BPCCardProps {
+  title: string;
+  totalMaterial: string;
+  foundation: BPCOption;
+  performance: BPCOption;
+}
+
+function BPCCard({ title, totalMaterial, foundation, performance }: BPCCardProps) {
+  return (
+    <div className="bg-white rounded-xl border border-[var(--border)] shadow-sm overflow-hidden print:break-inside-avoid print:text-[10px]">
+      {/* Card Header */}
+      <div className="bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] p-3 text-white print:p-2">
+        <h3 className="text-sm font-bold mb-0.5 print:text-xs">{title}</h3>
+        <div className="flex justify-between items-center mt-1.5">
+          <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded print:text-[8px]">
+            {totalMaterial} Total
+          </span>
+        </div>
+      </div>
+
+      {/* Two Protocol Options */}
+      <div className="p-3 print:p-2 space-y-4 print:space-y-2">
+        {/* Foundation */}
+        <BPCOptionSection option={foundation} optionNumber={1} />
+
+        {/* Divider */}
+        <div className="border-t border-[var(--border)]" />
+
+        {/* Performance */}
+        <BPCOptionSection option={performance} optionNumber={2} />
+      </div>
+    </div>
+  );
+}
+
+function BPCOptionSection({ option, optionNumber }: { option: BPCOption; optionNumber: number }) {
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="w-5 h-5 bg-[var(--accent)] rounded-full flex items-center justify-center text-[9px] font-bold text-[var(--primary)]">
+          {optionNumber}
+        </span>
+        <h4 className="text-xs font-bold text-[var(--primary)]">{option.name}</h4>
+        <span className="text-[9px] bg-[var(--muted)] px-1.5 py-0.5 rounded font-medium text-[var(--primary)]/70">
+          {option.frequency}
+        </span>
+      </div>
+      <p className="text-[10px] text-[var(--primary)]/70 mb-2 print:text-[9px]">
+        {option.subtitle} {option.description}
+      </p>
+      <div className="space-y-1 print:space-y-0.5">
+        {option.details.map((detail, i) => (
+          <div
+            key={i}
+            className={`py-1.5 px-2 rounded-lg text-xs print:py-1 print:px-1.5 ${
+              detail.includes("OFF") ? "bg-[var(--primary)]/5 text-[var(--primary)]/50" : "bg-[var(--muted)]"
+            }`}
+          >
+            <p className="font-medium text-[var(--primary)] text-[11px] print:text-[9px]">{detail}</p>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
