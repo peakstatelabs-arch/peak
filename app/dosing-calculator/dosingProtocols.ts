@@ -1,324 +1,375 @@
 export interface WeeklyDose {
-  weeks: string; // e.g., "1-3" or "4"
-  dose: string; // e.g., "0.5 mg" or "250 mcg"
-  total: string; // e.g., "1.5 mg"
-  frequency?: string; // e.g., "Nightly, 5 on / 2 off"
+  week: number;
+  dose: string;
+  isOff?: boolean;
+  cycleLabel?: string; // e.g., "Cycle 1 (Weeks 1-10)"
 }
 
-export interface ProtocolTier {
-  name: string;
-  description: string;
-  bodyFatRange: [number, number]; // [min, max] - use Infinity for no upper bound
-  weightLossRange: [number, number]; // [min, max] in lbs
-  focus: string;
-  schedule: WeeklyDose[];
-  totalDose: string;
-  notes?: string[];
+export interface OverviewPhase {
+  label: string;
 }
 
-export interface PeptideProtocol {
-  id: string;
+export interface BPCOption {
   name: string;
+  frequency: string;
+  subtitle: string;
   description: string;
-  durations: {
-    weeks: number;
+  details: string[];
+}
+
+export interface StackProtocol {
+  stacks: number;
+  totalWeeks: number;
+  overview: {
+    title: string;
+    phases: OverviewPhase[];
+    note?: string;
+  };
+  reta: {
+    title: string;
     totalMaterial: string;
-    tiers: ProtocolTier[];
-  }[];
+    schedule: WeeklyDose[];
+  };
+  cjc: {
+    title: string;
+    totalMaterial: string;
+    frequency: string;
+    schedule: WeeklyDose[];
+  };
+  bpc: {
+    title: string;
+    totalMaterial: string;
+    foundation: BPCOption;
+    performance: BPCOption;
+  };
 }
 
-export const dosingProtocols: PeptideProtocol[] = [
+export const stackProtocols: StackProtocol[] = [
+  // ===================== 1 STACK =====================
   {
-    id: "reta",
-    name: "RETA (Retatrutide)",
-    description: "Triple-agonist for aggressive fat loss and metabolic optimization",
-    durations: [
-      {
-        weeks: 10,
-        totalMaterial: "40 mg",
-        tiers: [
-          {
-            name: "High-Resistance Reset",
-            description: ">25% BF / >40lb Goal",
-            bodyFatRange: [25, Infinity],
-            weightLossRange: [40, Infinity],
-            focus: "Rapidly breaking metabolic inertia while protecting the gut",
-            schedule: [
-              { weeks: "1-3", dose: "0.5 mg", total: "1.5 mg" },
-              { weeks: "4", dose: "2.0 mg", total: "2.0 mg" },
-              { weeks: "5", dose: "3.5 mg", total: "3.5 mg" },
-              { weeks: "6", dose: "5.0 mg", total: "5.0 mg" },
-              { weeks: "7", dose: "6.5 mg", total: "6.5 mg" },
-              { weeks: "8", dose: "7.5 mg", total: "7.5 mg" },
-              { weeks: "9-10", dose: "7.0 mg", total: "14.0 mg" },
-            ],
-            totalDose: "40.0 mg",
-          },
-          {
-            name: "Standard Protocol",
-            description: "15-25% BF / 15-40lb Goal",
-            bodyFatRange: [15, 25],
-            weightLossRange: [15, 40],
-            focus: "Steady titration for consistent lipolysis and fat oxidation",
-            schedule: [
-              { weeks: "1-3", dose: "0.5 mg", total: "1.5 mg" },
-              { weeks: "4", dose: "1.5 mg", total: "1.5 mg" },
-              { weeks: "5", dose: "2.5 mg", total: "2.5 mg" },
-              { weeks: "6", dose: "4.0 mg", total: "4.0 mg" },
-              { weeks: "7", dose: "6.0 mg", total: "6.0 mg" },
-              { weeks: "8", dose: "7.5 mg", total: "7.5 mg" },
-              { weeks: "9-10", dose: "8.5 mg", total: "17.0 mg" },
-            ],
-            totalDose: "40.0 mg",
-          },
-          {
-            name: "Optimization Track",
-            description: "<15% BF / <15lb Goal",
-            bodyFatRange: [0, 15],
-            weightLossRange: [0, 15],
-            focus: "Slow on-ramp with a sustained peak to utilize the full kit safely",
-            schedule: [
-              { weeks: "1-3", dose: "0.5 mg", total: "1.5 mg" },
-              { weeks: "4", dose: "1.5 mg", total: "1.5 mg" },
-              { weeks: "5", dose: "3.0 mg", total: "3.0 mg" },
-              { weeks: "6", dose: "4.5 mg", total: "4.5 mg" },
-              { weeks: "7", dose: "6.5 mg", total: "6.5 mg" },
-              { weeks: "8-10", dose: "7.6 mg", total: "23.0 mg" },
-            ],
-            totalDose: "40.0 mg",
-            notes: ["Administering ~76 units ensures total kit utilization without nearing the 9.0 mg cap."],
-          },
+    stacks: 1,
+    totalWeeks: 12,
+    overview: {
+      title: "1 Stack: 12-Week System Overview",
+      phases: [
+        { label: "Weeks 1-10: Full protocol" },
+        { label: "Weeks 11-12: Reset phase (Reta continues while BPC and CJC blends are cycled out)" },
+      ],
+    },
+    reta: {
+      title: "RETA - 12 WEEK TITRATION",
+      totalMaterial: "40 mg",
+      schedule: [
+        { week: 1, dose: "0.5 mg" },
+        { week: 2, dose: "1.0 mg" },
+        { week: 3, dose: "1.5 mg" },
+        { week: 4, dose: "2.0 mg" },
+        { week: 5, dose: "2.5 mg" },
+        { week: 6, dose: "3.0 mg" },
+        { week: 7, dose: "3.5 mg" },
+        { week: 8, dose: "4.0 mg" },
+        { week: 9, dose: "4.5 mg" },
+        { week: 10, dose: "5.5 mg" },
+        { week: 11, dose: "6.0 mg" },
+        { week: 12, dose: "6.0 mg" },
+      ],
+    },
+    cjc: {
+      title: "CJC-1295 / Ipamorelin Dosing Schedule",
+      totalMaterial: "20 mg",
+      frequency: "5 days on / 2 days off, taken nightly",
+      schedule: [
+        { week: 1, dose: "0.30 mg" },
+        { week: 2, dose: "0.30 mg" },
+        { week: 3, dose: "0.30 mg" },
+        { week: 4, dose: "0.30 mg" },
+        { week: 5, dose: "0.40 mg" },
+        { week: 6, dose: "0.40 mg" },
+        { week: 7, dose: "0.50 mg" },
+        { week: 8, dose: "0.50 mg" },
+        { week: 9, dose: "0.50 mg" },
+        { week: 10, dose: "0.50 mg" },
+        { week: 11, dose: "OFF", isOff: true },
+        { week: 12, dose: "OFF", isOff: true },
+      ],
+    },
+    bpc: {
+      title: "BPC-157 / TB-500 Structure",
+      totalMaterial: "40 mg",
+      foundation: {
+        name: "Foundation Protocol",
+        frequency: "2x weekly",
+        subtitle: "Designed for simplicity and consistency.",
+        description: "Best for those who want effective recovery with minimal injections and low friction.",
+        details: [
+          "Dose per injection: 2.0 mg",
+          "Schedule: Monday / Thursday",
+          "Weeks 1-10: ON (2.0 mg per injection)",
+          "Weeks 11-12: OFF (No dosing)",
         ],
       },
-      {
-        weeks: 20,
-        totalMaterial: "80 mg",
-        tiers: [
-          {
-            name: "High-Resistance Reset",
-            description: ">25% BF / >40lb Goal",
-            bodyFatRange: [25, Infinity],
-            weightLossRange: [40, Infinity],
-            focus: "Extended protocol for significant transformation",
-            schedule: [
-              { weeks: "1-3", dose: "0.5 mg", total: "1.5 mg" },
-              { weeks: "4-8", dose: "3.0 mg", total: "15.0 mg" },
-              { weeks: "9-14", dose: "5.5 mg", total: "33.0 mg" },
-              { weeks: "15-18", dose: "6.5 mg", total: "26.0 mg" },
-              { weeks: "19-20", dose: "2.25 mg (Taper)", total: "4.5 mg" },
-            ],
-            totalDose: "80.0 mg",
-          },
-          {
-            name: "Standard Protocol",
-            description: "15-25% BF / 15-40lb Goal",
-            bodyFatRange: [15, 25],
-            weightLossRange: [15, 40],
-            focus: "Balanced 20-week approach for moderate goals",
-            schedule: [
-              { weeks: "1-3", dose: "0.5 mg", total: "1.5 mg" },
-              { weeks: "4-10", dose: "3.0 mg", total: "21.0 mg" },
-              { weeks: "11-16", dose: "5.5 mg", total: "33.0 mg" },
-              { weeks: "17-20", dose: "6.1 mg", total: "24.5 mg" },
-            ],
-            totalDose: "80.0 mg",
-          },
+      performance: {
+        name: "Performance Protocol",
+        frequency: "3x weekly",
+        subtitle: "Increased frequency for enhanced recovery signaling.",
+        description: "Ideal for those looking to maximize results and don't mind a slightly higher level of commitment.",
+        details: [
+          "Dose per injection: 1.3 mg (Mon) / 1.3 mg (Wed) / 1.3 mg (Fri)",
+          "Schedule: Monday / Wednesday / Friday",
+          "Weeks 1-10: ON (4.0 mg weekly total)",
+          "Weeks 11-12: OFF (No dosing)",
         ],
       },
-      {
-        weeks: 30,
-        totalMaterial: "120 mg",
-        tiers: [
-          {
-            name: "High-Resistance Reset",
-            description: ">25% BF / >40lb Goal",
-            bodyFatRange: [25, Infinity],
-            weightLossRange: [40, Infinity],
-            focus: "Comprehensive long-term protocol for major transformation",
-            schedule: [
-              { weeks: "1-3", dose: "0.5 mg", total: "1.5 mg" },
-              { weeks: "4-10", dose: "2.5 mg", total: "17.5 mg" },
-              { weeks: "11-18", dose: "4.5 mg", total: "36.0 mg" },
-              { weeks: "19-25", dose: "6.0 mg", total: "42.0 mg" },
-              { weeks: "26-30", dose: "4.6 mg", total: "23.0 mg" },
-            ],
-            totalDose: "120.0 mg",
-          },
-          {
-            name: "Standard Protocol",
-            description: "15-25% BF / 15-40lb Goal",
-            bodyFatRange: [15, 25],
-            weightLossRange: [15, 40],
-            focus: "Extended steady protocol for lasting results",
-            schedule: [
-              { weeks: "1-3", dose: "0.5 mg", total: "1.5 mg" },
-              { weeks: "4-12", dose: "2.0 mg", total: "18.0 mg" },
-              { weeks: "13-20", dose: "4.5 mg", total: "36.0 mg" },
-              { weeks: "21-27", dose: "6.5 mg", total: "45.5 mg" },
-              { weeks: "28-30", dose: "6.3 mg", total: "19.0 mg" },
-            ],
-            totalDose: "120.0 mg",
-          },
-        ],
-      },
-    ],
+    },
   },
+
+  // ===================== 2 STACKS =====================
   {
-    id: "cjc-ipa",
-    name: "CJC-1295 / IPAMORELIN",
-    description: "Growth hormone synergy for muscle preservation and skin elasticity",
-    durations: [
-      {
-        weeks: 10,
-        totalMaterial: "25 mg (25,000 mcg)",
-        tiers: [
-          {
-            name: "Full Utilization Protocol",
-            description: "All body types",
-            bodyFatRange: [0, Infinity],
-            weightLossRange: [0, Infinity],
-            focus: "Complete kit utilization by day 70",
-            schedule: [
-              { weeks: "1-2", dose: "250 mcg", total: "2,500 mcg", frequency: "Nightly, 5 on / 2 off" },
-              { weeks: "3-4", dose: "300 mcg", total: "3,000 mcg", frequency: "Nightly, 5 on / 2 off" },
-              { weeks: "5-6", dose: "350 mcg", total: "3,500 mcg", frequency: "Nightly, 5 on / 2 off" },
-              { weeks: "7-8", dose: "450 mcg", total: "4,500 mcg", frequency: "Nightly, 5 on / 2 off" },
-              { weeks: "9-10", dose: "650 mcg", total: "6,500 mcg", frequency: "Nightly, 5 on / 2 off" },
-            ],
-            totalDose: "20,000 mcg",
-            notes: ["Remaining ~5,000 mcg can be used for a final 'Peak' push or slight buffer."],
-          },
+    stacks: 2,
+    totalWeeks: 24,
+    overview: {
+      title: "2 Stacks: 22-Week System Overview",
+      phases: [
+        { label: "Weeks 1-10: Full protocol" },
+        { label: "Weeks 11-12: Reset phase (Reta continues while BPC and CJC blends are cycled out)" },
+        { label: "Weeks 13-22: Full protocol resumes" },
+        { label: "Weeks 23-24: Reta only" },
+      ],
+      note: "Designed to preserve sensitivity and maximize long-term results.",
+    },
+    reta: {
+      title: "RETA - 22 WEEK TITRATION",
+      totalMaterial: "80 mg",
+      schedule: [
+        { week: 1, dose: "0.5 mg" },
+        { week: 2, dose: "1.0 mg" },
+        { week: 3, dose: "1.5 mg" },
+        { week: 4, dose: "2.0 mg" },
+        { week: 5, dose: "2.5 mg" },
+        { week: 6, dose: "2.5 mg" },
+        { week: 7, dose: "2.5 mg" },
+        { week: 8, dose: "2.5 mg" },
+        { week: 9, dose: "2.5 mg" },
+        { week: 10, dose: "2.5 mg" },
+        { week: 11, dose: "2.5 mg" },
+        { week: 12, dose: "2.5 mg" },
+        { week: 13, dose: "2.5 mg" },
+        { week: 14, dose: "3.0 mg" },
+        { week: 15, dose: "3.0 mg" },
+        { week: 16, dose: "3.5 mg" },
+        { week: 17, dose: "4.0 mg" },
+        { week: 18, dose: "4.5 mg" },
+        { week: 19, dose: "5.0 mg" },
+        { week: 20, dose: "5.5 mg" },
+        { week: 21, dose: "6.0 mg" },
+        { week: 22, dose: "6.0 mg" },
+        { week: 23, dose: "6.0 mg" },
+        { week: 24, dose: "6.0 mg" },
+      ],
+    },
+    cjc: {
+      title: "CJC-1295 / Ipamorelin Dosing Schedule",
+      totalMaterial: "40 mg",
+      frequency: "5 days on / 2 days off, taken nightly",
+      schedule: [
+        { week: 1, dose: "0.30 mg", cycleLabel: "Cycle 1 (Weeks 1-10)" },
+        { week: 2, dose: "0.30 mg" },
+        { week: 3, dose: "0.35 mg" },
+        { week: 4, dose: "0.35 mg" },
+        { week: 5, dose: "0.40 mg" },
+        { week: 6, dose: "0.40 mg" },
+        { week: 7, dose: "0.45 mg" },
+        { week: 8, dose: "0.45 mg" },
+        { week: 9, dose: "0.50 mg" },
+        { week: 10, dose: "0.50 mg" },
+        { week: 11, dose: "OFF", isOff: true, cycleLabel: "Weeks 11-12" },
+        { week: 12, dose: "OFF", isOff: true },
+        { week: 13, dose: "0.25 mg", cycleLabel: "Cycle 2 (Weeks 13-22)" },
+        { week: 14, dose: "0.25 mg" },
+        { week: 15, dose: "0.30 mg" },
+        { week: 16, dose: "0.30 mg" },
+        { week: 17, dose: "0.30 mg" },
+        { week: 18, dose: "0.35 mg" },
+        { week: 19, dose: "0.40 mg" },
+        { week: 20, dose: "0.50 mg" },
+        { week: 21, dose: "0.60 mg" },
+        { week: 22, dose: "0.75 mg" },
+      ],
+    },
+    bpc: {
+      title: "BPC-157 / TB-500 Structure",
+      totalMaterial: "80 mg",
+      foundation: {
+        name: "Foundation Protocol",
+        frequency: "2x weekly",
+        subtitle: "Designed for simplicity and consistency.",
+        description: "Best for those who want effective recovery with minimal injections and low friction.",
+        details: [
+          "Dose per injection: 2.0 mg",
+          "Schedule: Monday / Thursday",
+          "Weeks 1-10: ON (2.0 mg per injection)",
+          "Weeks 11-12: OFF (No dosing)",
+          "Weeks 13-22: ON (2.0 mg per injection)",
+          "Weeks 23-24: OFF (No dosing)",
         ],
       },
-      {
-        weeks: 20,
-        totalMaterial: "50 mg (50,000 mcg)",
-        tiers: [
-          {
-            name: "Extended Protocol",
-            description: "All body types",
-            bodyFatRange: [0, Infinity],
-            weightLossRange: [0, Infinity],
-            focus: "Sustained GH optimization over 20 weeks",
-            schedule: [
-              { weeks: "1-5", dose: "300 mcg", total: "7,500 mcg", frequency: "Nightly, 5 on / 2 off" },
-              { weeks: "6-15", dose: "500 mcg", total: "25,000 mcg", frequency: "Nightly, 5 on / 2 off" },
-              { weeks: "16-20", dose: "650 mcg", total: "16,250 mcg", frequency: "Nightly, 5 on / 2 off" },
-            ],
-            totalDose: "48,750 mcg",
-          },
+      performance: {
+        name: "Performance Protocol",
+        frequency: "3x weekly",
+        subtitle: "Increased frequency for enhanced recovery signaling.",
+        description: "Ideal for those looking to maximize results and don't mind a slightly higher level of commitment.",
+        details: [
+          "Dose per injection: 1.3 mg (Mon) / 1.3 mg (Wed) / 1.3 mg (Fri)",
+          "Schedule: Monday / Wednesday / Friday",
+          "Weeks 1-10: ON (4.0 mg weekly total)",
+          "Weeks 11-12: OFF (No dosing)",
+          "Weeks 13-22: ON (4.0 mg weekly total)",
+          "Weeks 23-24: OFF (No dosing)",
         ],
       },
-      {
-        weeks: 30,
-        totalMaterial: "75 mg (75,000 mcg)",
-        tiers: [
-          {
-            name: "Marathon Protocol",
-            description: "All body types",
-            bodyFatRange: [0, Infinity],
-            weightLossRange: [0, Infinity],
-            focus: "Long-term growth hormone optimization",
-            schedule: [
-              { weeks: "1-10", dose: "350 mcg", total: "17,500 mcg", frequency: "Nightly, 5 on / 2 off" },
-              { weeks: "11-20", dose: "500 mcg", total: "25,000 mcg", frequency: "Nightly, 5 on / 2 off" },
-              { weeks: "21-30", dose: "650 mcg", total: "32,500 mcg", frequency: "Nightly, 5 on / 2 off" },
-            ],
-            totalDose: "75,000 mcg",
-          },
-        ],
-      },
-    ],
+    },
   },
+
+  // ===================== 3 STACKS =====================
   {
-    id: "bpc-tb",
-    name: "BPC-157 / TB-500",
-    description: "Systemic repair, joint protection, and reducing inflammation",
-    durations: [
-      {
-        weeks: 10,
-        totalMaterial: "20 mg",
-        tiers: [
-          {
-            name: "Standard Recovery Protocol",
-            description: "All body types",
-            bodyFatRange: [0, Infinity],
-            weightLossRange: [0, Infinity],
-            focus: "Complete kit utilization for healing and recovery",
-            schedule: [
-              { weeks: "1-5", dose: "2.0 mg", total: "10.0 mg", frequency: "Twice weekly (Mon/Thu)" },
-              { weeks: "6-10", dose: "2.0 mg", total: "10.0 mg", frequency: "Twice weekly (Mon/Thu)" },
-            ],
-            totalDose: "20.0 mg",
-          },
+    stacks: 3,
+    totalWeeks: 36,
+    overview: {
+      title: "3 Stacks: 36-Week System Overview",
+      phases: [
+        { label: "Weeks 1-10: Full protocol" },
+        { label: "Weeks 11-12: Reset phase (Reta continues while BPC and CJC blends are cycled out)" },
+        { label: "Weeks 13-22: Full protocol resumes" },
+        { label: "Weeks 23-24: Reset phase (Reta continues while BPC and CJC blends are cycled out)" },
+        { label: "Weeks 25-34: Full protocol resumes" },
+        { label: "Weeks 35-36: Reta only" },
+      ],
+      note: "Designed to preserve sensitivity and maximize long-term results.",
+    },
+    reta: {
+      title: "RETA - 36 WEEK TITRATION",
+      totalMaterial: "120 mg",
+      schedule: [
+        { week: 1, dose: "0.5 mg" },
+        { week: 2, dose: "1.0 mg" },
+        { week: 3, dose: "1.5 mg" },
+        { week: 4, dose: "2.0 mg" },
+        { week: 5, dose: "2.5 mg" },
+        { week: 6, dose: "2.5 mg" },
+        { week: 7, dose: "2.5 mg" },
+        { week: 8, dose: "2.5 mg" },
+        { week: 9, dose: "2.5 mg" },
+        { week: 10, dose: "2.5 mg" },
+        { week: 11, dose: "2.5 mg" },
+        { week: 12, dose: "2.5 mg" },
+        { week: 13, dose: "2.5 mg" },
+        { week: 14, dose: "2.5 mg" },
+        { week: 15, dose: "2.5 mg" },
+        { week: 16, dose: "2.5 mg" },
+        { week: 17, dose: "2.5 mg" },
+        { week: 18, dose: "2.5 mg" },
+        { week: 19, dose: "2.5 mg" },
+        { week: 20, dose: "2.5 mg" },
+        { week: 21, dose: "2.5 mg" },
+        { week: 22, dose: "2.5 mg" },
+        { week: 23, dose: "2.5 mg" },
+        { week: 24, dose: "3.0 mg" },
+        { week: 25, dose: "3.5 mg" },
+        { week: 26, dose: "4.0 mg" },
+        { week: 27, dose: "4.5 mg" },
+        { week: 28, dose: "5.0 mg" },
+        { week: 29, dose: "5.5 mg" },
+        { week: 30, dose: "6.0 mg" },
+        { week: 31, dose: "6.0 mg" },
+        { week: 32, dose: "6.0 mg" },
+        { week: 33, dose: "6.0 mg" },
+        { week: 34, dose: "6.0 mg" },
+        { week: 35, dose: "6.0 mg" },
+        { week: 36, dose: "6.0 mg" },
+      ],
+    },
+    cjc: {
+      title: "CJC-1295 / Ipamorelin Protocol",
+      totalMaterial: "60 mg",
+      frequency: "5 days on / 2 days off, taken nightly",
+      schedule: [
+        { week: 1, dose: "0.25 mg", cycleLabel: "Cycle 1 (Weeks 1-10)" },
+        { week: 2, dose: "0.25 mg" },
+        { week: 3, dose: "0.30 mg" },
+        { week: 4, dose: "0.30 mg" },
+        { week: 5, dose: "0.30 mg" },
+        { week: 6, dose: "0.30 mg" },
+        { week: 7, dose: "0.30 mg" },
+        { week: 8, dose: "0.35 mg" },
+        { week: 9, dose: "0.35 mg" },
+        { week: 10, dose: "0.40 mg" },
+        { week: 11, dose: "OFF", isOff: true, cycleLabel: "Weeks 11-12" },
+        { week: 12, dose: "OFF", isOff: true },
+        { week: 13, dose: "0.30 mg", cycleLabel: "Cycle 2 (Weeks 13-22)" },
+        { week: 14, dose: "0.30 mg" },
+        { week: 15, dose: "0.35 mg" },
+        { week: 16, dose: "0.35 mg" },
+        { week: 17, dose: "0.35 mg" },
+        { week: 18, dose: "0.40 mg" },
+        { week: 19, dose: "0.40 mg" },
+        { week: 20, dose: "0.45 mg" },
+        { week: 21, dose: "0.50 mg" },
+        { week: 22, dose: "0.50 mg" },
+        { week: 23, dose: "OFF", isOff: true, cycleLabel: "Weeks 23-24" },
+        { week: 24, dose: "OFF", isOff: true },
+        { week: 25, dose: "0.30 mg", cycleLabel: "Cycle 3 (Weeks 25-34)" },
+        { week: 26, dose: "0.35 mg" },
+        { week: 27, dose: "0.40 mg" },
+        { week: 28, dose: "0.45 mg" },
+        { week: 29, dose: "0.50 mg" },
+        { week: 30, dose: "0.50 mg" },
+        { week: 31, dose: "0.60 mg" },
+        { week: 32, dose: "0.60 mg" },
+        { week: 33, dose: "0.60 mg" },
+        { week: 34, dose: "0.70 mg" },
+        { week: 35, dose: "OFF", isOff: true, cycleLabel: "Weeks 35-36" },
+        { week: 36, dose: "OFF", isOff: true },
+      ],
+    },
+    bpc: {
+      title: "BPC-157 / TB-500 Protocol",
+      totalMaterial: "120 mg",
+      foundation: {
+        name: "Foundation Protocol",
+        frequency: "2x weekly",
+        subtitle: "Designed for simplicity and consistency.",
+        description: "Best for those who want effective recovery with minimal injections and low friction.",
+        details: [
+          "Dose per injection: 2.0 mg",
+          "Schedule: Monday / Thursday",
+          "Weeks 1-10: ON (2.0 mg per injection)",
+          "Weeks 11-12: OFF (No dosing)",
+          "Weeks 13-22: ON (2.0 mg per injection)",
+          "Weeks 23-24: OFF (No dosing)",
+          "Weeks 25-34: ON (2.0 mg per injection)",
+          "Weeks 35-36: OFF (No dosing)",
         ],
       },
-      {
-        weeks: 20,
-        totalMaterial: "40 mg",
-        tiers: [
-          {
-            name: "Extended Recovery Protocol",
-            description: "All body types",
-            bodyFatRange: [0, Infinity],
-            weightLossRange: [0, Infinity],
-            focus: "Sustained healing support over 20 weeks",
-            schedule: [
-              { weeks: "1-20", dose: "2.0 mg", total: "40.0 mg", frequency: "Twice weekly (Mon/Thu)" },
-            ],
-            totalDose: "40.0 mg",
-          },
+      performance: {
+        name: "Performance Protocol",
+        frequency: "3x weekly",
+        subtitle: "Increased frequency for enhanced recovery signaling.",
+        description: "Ideal for those looking to maximize results and don't mind a slightly higher level of commitment.",
+        details: [
+          "Dose per injection: 1.3 mg (Mon) / 1.3 mg (Wed) / 1.3 mg (Fri)",
+          "Schedule: Monday / Wednesday / Friday",
+          "Weeks 1-10: ON (4.0 mg weekly total)",
+          "Weeks 11-12: OFF (No dosing)",
+          "Weeks 13-22: ON (4.0 mg weekly total)",
+          "Weeks 23-24: OFF (No dosing)",
+          "Weeks 25-34: ON (4.0 mg weekly total)",
+          "Weeks 35-36: OFF (No dosing)",
         ],
       },
-      {
-        weeks: 30,
-        totalMaterial: "60 mg",
-        tiers: [
-          {
-            name: "Comprehensive Recovery Protocol",
-            description: "All body types",
-            bodyFatRange: [0, Infinity],
-            weightLossRange: [0, Infinity],
-            focus: "Long-term systemic repair and joint protection",
-            schedule: [
-              { weeks: "1-30", dose: "2.0 mg", total: "60.0 mg", frequency: "Twice weekly (Mon/Thu)" },
-            ],
-            totalDose: "60.0 mg",
-          },
-        ],
-      },
-    ],
+    },
   },
 ];
 
-export function getProtocolById(id: string): PeptideProtocol | undefined {
-  return dosingProtocols.find((p) => p.id === id);
-}
-
-export function getMatchingTier(
-  protocol: PeptideProtocol,
-  weeks: number,
-  bodyFat: number,
-  weightLoss: number
-): ProtocolTier | undefined {
-  const duration = protocol.durations.find((d) => d.weeks === weeks);
-  if (!duration) return undefined;
-
-  // Find the best matching tier based on body fat and weight loss goals
-  // Priority: exact match > closest match
-  for (const tier of duration.tiers) {
-    const [minBF, maxBF] = tier.bodyFatRange;
-    const [minWL, maxWL] = tier.weightLossRange;
-
-    // Check if user falls within this tier's ranges
-    const bfMatch = bodyFat >= minBF && bodyFat <= maxBF;
-    const wlMatch = weightLoss >= minWL && weightLoss <= maxWL;
-
-    if (bfMatch || wlMatch) {
-      return tier;
-    }
-  }
-
-  // If no exact match, return the first tier (usually the most general one)
-  return duration.tiers[duration.tiers.length - 1];
+export function getStackProtocol(stacks: number): StackProtocol | undefined {
+  return stackProtocols.find((p) => p.stacks === stacks);
 }
