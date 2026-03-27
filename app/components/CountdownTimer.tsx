@@ -15,7 +15,7 @@ interface TimeLeft {
 
 function getSecondsUntilDeadline(): number {
   // Deadline: Thursday March 26, 2026 at midnight EST (00:00 on 3/27 EST = end of 3/26)
-  const deadline = new Date("2026-03-27T00:00:00-05:00");
+  const deadline = new Date("2026-03-30T00:00:00-05:00");
   const now = new Date();
   const diff = Math.floor((deadline.getTime() - now.getTime()) / 1000);
   return Math.max(0, diff);
