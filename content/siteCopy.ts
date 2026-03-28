@@ -198,7 +198,7 @@ export const siteCopy = {
         ctaLabel: "Add To Cart",
         ctaSubtext: "Get the protocol now. Pay $254.75 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/24NRV9E8HMWQE",
-        stripeUrl: "https://buy.stripe.com/dRm4gygsL9459dD4LrafS06",
+        stripeUrl: "https://buy.stripe.com/00wfZgfoHgwxcpP5PvafS09",
         preorderNote: "ORDER NOW AND SAVE $100",
         refundNote:
           "Orders are guaranteed. Cancel anytime before shipment for a full refund.",
@@ -226,7 +226,7 @@ export const siteCopy = {
         ctaLabel: "Add To Cart",
         ctaSubtext: "Get the protocol now. Pay $314.75 today.",
         paypalUrl: "https://www.paypal.com/ncp/payment/8EZZ5FNXJEWM8",
-        stripeUrl: "https://buy.stripe.com/9B6eVc7Wf945ahH7XDafS07",
+        stripeUrl: "https://buy.stripe.com/fZuaEW90jgwx3Tj1zfafS0a",
         preorderNote: "ORDER NOW AND SAVE $150",
         refundNote:
           "Orders are guaranteed. Cancel anytime before shipment for a full refund.",
