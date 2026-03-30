@@ -11,8 +11,8 @@ export const siteCopy = {
 
   urgencyBanner: {
     lineOne: "PRE-ORDER LIVE:",
-    lineTwo: "Only 6 Stacks Left",
-    shippingText: "Ships 3/30",
+    lineTwo: "Only 4 Stacks Left",
+    shippingText: "Ships 3/31",
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
 
