@@ -61,7 +61,7 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 4/14. Reserve your kit now to lock in priority access to Batch 003.",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 4/14. Reserve your kit now to lock in priority access to Batch 004.",
     timerLabel: "Pre-order window closes in:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
