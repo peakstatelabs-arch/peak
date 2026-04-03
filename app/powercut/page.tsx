@@ -63,7 +63,7 @@ export default function PowerCutProtocol() {
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
           </a>
           <a
-            href="/#pricing"
+            href="/"
             className="btn-primary inline-flex h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
           >
             Order Now
