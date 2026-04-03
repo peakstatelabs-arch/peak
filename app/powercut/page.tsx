@@ -1005,7 +1005,7 @@ export default function PowerCutProtocol() {
                   exactly as outlined above, access the complete kit here:
                 </p>
                 <a
-                  href="/#pricing"
+                  href="/"
                   className="btn-primary inline-flex h-16 items-center justify-center rounded-2xl px-12 text-xl font-bold mt-8"
                 >
                   ORDER NOW
