@@ -242,7 +242,7 @@ export const siteCopy = {
     documents: [
       { name: "Retatrutide", amount: "20mg", url: "/purity-tests/Reta Lab Test.png" },
       { name: "CJC-1295 + Ipamorelin", amount: "10mg Blend", url: "/purity-tests/CJC IPA Lab 318.png" },
-      { name: "BPC-157 + TB-500", amount: "20mg Blend", url: "/purity-tests/BPC TB Lab Test.png" },
+      { name: "BPC-157 + TB-500", amount: "20mg Blend", url: "/purity-tests/BPC TB 318.png" },
     ],
   },
 
