@@ -12,7 +12,7 @@ export const siteCopy = {
   urgencyBanner: {
     lineOne: "APRIL PRE-ORDER LIVE:",
     lineTwo: "Only 3 Stacks Left",
-    shippingText: "Ships 4/16",
+    shippingText: "Ships 4/18",
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
 
@@ -61,7 +61,7 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 4/16. Reserve your kit now to lock in priority access to Batch 004.",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 4/18. Reserve your kit now to lock in priority access to Batch 004.",
     timerLabel: "Pre-order window closes in:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
