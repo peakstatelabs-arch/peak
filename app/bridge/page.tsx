@@ -57,7 +57,7 @@ export default function BridgePage() {
 
       <main>
         {/* Hero */}
-        <Section className="relative overflow-hidden gradient-hero">
+        <Section className="relative overflow-hidden gradient-hero !py-10 sm:!py-14">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
             <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
@@ -70,16 +70,28 @@ export default function BridgePage() {
                 <span>SYSTEM OVERVIEW</span>
               </div>
 
-              <h1 className="mt-8 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight animate-fade-in-up">
+              <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight animate-fade-in-up">
                 This is a structured system built around{" "}
                 <span className="text-[var(--accent-dark)]">3 core mechanisms</span>.
               </h1>
+
+              {/* Product Image */}
+              <div className="mt-8 relative flex items-center justify-center animate-drop-in">
+                <div className="relative">
+                  <img
+                    src="/product.png"
+                    alt="POWER CUT Peptide Kit"
+                    className="w-full max-w-sm sm:max-w-md drop-shadow-2xl"
+                  />
+                  <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[var(--accent)]/30 to-[var(--accent)]/10 blur-3xl rounded-full scale-90" />
+                </div>
+              </div>
             </div>
           </Container>
         </Section>
 
         {/* The Objective */}
-        <Section className="bg-[var(--primary)] text-white">
+        <Section className="bg-[var(--primary)] text-white !py-10 sm:!py-14">
           <Container>
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -120,7 +132,7 @@ export default function BridgePage() {
         </Section>
 
         {/* CTA */}
-        <Section className="bg-white">
+        <Section className="bg-white !py-10 sm:!py-14">
           <Container>
             <div className="max-w-2xl mx-auto text-center">
               <p className="text-lg text-[var(--primary)]/70">
@@ -132,9 +144,6 @@ export default function BridgePage() {
                 rel="noopener noreferrer"
                 className="btn-primary inline-flex h-16 items-center justify-center rounded-2xl px-10 text-lg sm:text-xl font-bold mt-6"
               >
-                <span aria-hidden="true" className="mr-2">
-                  👉
-                </span>
                 View full breakdown
               </a>
               <p className="mt-6 text-xs text-[var(--primary)]/50">
