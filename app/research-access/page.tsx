@@ -61,16 +61,17 @@ export default function ResearchAccessPage() {
           </Container>
         </Section>
 
-        {/* Account Creation Form */}
+        {/* Account Form */}
         <Section className="bg-white !py-6 sm:!py-10">
           <Container>
             <div className="max-w-md mx-auto">
               <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
                 <h2 className="text-2xl font-bold tracking-tight text-center">
-                  Create an account
+                  Research Account
                 </h2>
                 <p className="mt-2 text-sm text-[var(--primary)]/60 text-center">
-                  Password will be emailed to you.
+                  New here? Create an account. Returning? Sign in with your
+                  email.
                 </p>
 
                 <ResearchAccessForm />
