@@ -83,8 +83,7 @@ export function ResearchAccessForm() {
             className="mt-1 h-4 w-4 flex-shrink-0 rounded border-[var(--border)] accent-[var(--accent-dark)]"
           />
           <span className="text-sm font-bold text-[var(--primary)] leading-snug">
-            By logging in or creating an account, you agree to the research-only
-            terms above.
+            By creating an account you agree to the research-only terms above.
           </span>
         </label>
       </div>
