@@ -73,8 +73,6 @@ export default function BridgePage() {
 
               <a
                 href="https://www.peakstate.shop/research-access"
-                target="_blank"
-                rel="noopener noreferrer"
                 className="btn-primary inline-flex h-16 items-center justify-center rounded-2xl px-10 text-lg sm:text-xl font-bold mt-10"
               >
                 Enter Peak State Website
