@@ -70,7 +70,7 @@ export default function ResearchAccessPage() {
                   Create an account
                 </h2>
                 <p className="mt-2 text-sm text-[var(--primary)]/60 text-center">
-                  Password will be emailed to you.
+                  Get immediate access to website.
                 </p>
 
                 <ResearchAccessForm />
