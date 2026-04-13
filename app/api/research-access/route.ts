@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Google Apps Script Web App URL for the Research Access sheet.
+// Hardcoded because this endpoint is "Anyone" access — not a secret.
+const SHEETS_WEBHOOK_URL =
+  "https://script.google.com/macros/s/AKfycbzBB8nrTJfVLQ95JPGjApbVe9CJ8MIhU1RBiV8-Z58EeQ2n6LxY1MdvJijxv2tpN5OTPg/exec";
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -14,11 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
-    const sheetUrl = process.env.AccountCreation;
-    if (!sheetUrl) {
-      console.error("AccountCreation env variable is not set");
-      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
-    }
+    const sheetUrl = process.env.AccountCreation || SHEETS_WEBHOOK_URL;
 
     const response = await fetch(sheetUrl, {
       method: "POST",
