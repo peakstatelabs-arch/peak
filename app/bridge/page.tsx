@@ -4,39 +4,10 @@ import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 
 export const metadata: Metadata = {
-  title: `THE POWER CUT™ — A Structured System Built Around 3 Core Mechanisms`,
+  title: `Peak State Labs — 21+ Research Use Only`,
   description:
-    "A structured approach to system design. Support metabolic function, maintain lean tissue, enhance recovery capacity, and promote stable energy and appetite signaling.",
+    "Materials referenced on this site are supplied strictly for laboratory research and non-human use.",
 };
-
-function CheckIcon({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={3}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M5 13l4 4L19 7"
-      />
-    </svg>
-  );
-}
-
-function Bullet({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-start gap-3">
-      <span className="flex-shrink-0 mt-1 w-5 h-5 rounded-full bg-[var(--accent)]/20 flex items-center justify-center">
-        <CheckIcon className="w-3 h-3 text-[var(--accent-dark)]" />
-      </span>
-      <span>{children}</span>
-    </li>
-  );
-}
 
 export default function BridgePage() {
   return (
@@ -67,12 +38,11 @@ export default function BridgePage() {
             <div className="max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-sm font-bold tracking-wider text-[var(--accent-dark)] animate-fade-in">
                 <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-                <span>SYSTEM OVERVIEW</span>
+                <span>AGE VERIFICATION</span>
               </div>
 
               <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight animate-fade-in-up">
-                This is a structured system built around{" "}
-                <span className="text-[var(--accent-dark)]">3 core mechanisms</span>.
+                21+ Research Use Only
               </h1>
 
               {/* Product Image */}
@@ -90,65 +60,25 @@ export default function BridgePage() {
           </Container>
         </Section>
 
-        {/* The Objective */}
-        <Section className="bg-[var(--primary)] text-white !py-10 sm:!py-14">
-          <Container>
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                The Objective
-              </h2>
-
-              <ul className="mt-10 space-y-4 text-lg sm:text-xl text-white/90 text-left max-w-xl mx-auto">
-                <Bullet>Support metabolic function</Bullet>
-                <Bullet>Maintain lean tissue</Bullet>
-                <Bullet>Enhance recovery capacity</Bullet>
-                <Bullet>Promote stable energy and appetite signaling</Bullet>
-              </ul>
-
-              <div className="mt-12 flex flex-wrap justify-center gap-3">
-                {[
-                  "Without extremes",
-                  "Without unnecessary complexity",
-                  "Without guesswork",
-                ].map((item) => (
-                  <span
-                    key={item}
-                    className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-[var(--accent)]"
-                  >
-                    <CheckIcon className="w-3 h-3" />
-                    {item}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-12 p-6 rounded-2xl bg-white/10 backdrop-blur">
-                <p className="text-white/70">This is not a supplement stack.</p>
-                <p className="mt-2 text-xl font-bold text-[var(--accent)]">
-                  It&apos;s a structured approach to system design.
-                </p>
-              </div>
-            </div>
-          </Container>
-        </Section>
-
-        {/* CTA */}
+        {/* Disclaimer + CTA */}
         <Section className="bg-white !py-10 sm:!py-14">
           <Container>
             <div className="max-w-2xl mx-auto text-center">
-              <p className="text-lg text-[var(--primary)]/70">
-                Want the complete architecture?
+              <p className="text-lg sm:text-xl text-[var(--primary)]/80 leading-relaxed">
+                Materials referenced on this site are supplied strictly for
+                laboratory research and non-human use. By clicking &ldquo;Enter
+                Peak State Website,&rdquo; you confirm that you are 21 years or
+                older and understand these items are not for human consumption.
               </p>
+
               <a
                 href="https://peakstate.shop"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary inline-flex h-16 items-center justify-center rounded-2xl px-10 text-lg sm:text-xl font-bold mt-6"
+                className="btn-primary inline-flex h-16 items-center justify-center rounded-2xl px-10 text-lg sm:text-xl font-bold mt-10"
               >
-                View full breakdown
+                Enter Peak State Website
               </a>
-              <p className="mt-6 text-xs text-[var(--primary)]/50">
-                You&apos;ll be taken to peakstate.shop for the full protocol details.
-              </p>
             </div>
           </Container>
         </Section>
