@@ -12,13 +12,14 @@ export function ResearchAccessForm() {
   const [agreed, setAgreed] = useState(false);
   const [signInAgreed, setSignInAgreed] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   function switchTab(next: Tab) {
     setTab(next);
     setError(null);
   }
 
-  function handleCreateSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleCreateSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!username.trim() || !email.trim()) {
@@ -32,6 +33,21 @@ export function ResearchAccessForm() {
     }
 
     setError(null);
+    setSubmitting(true);
+
+    try {
+      await fetch("/api/research-access", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username.trim(),
+          email: email.trim(),
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to record account:", err);
+    }
+
     window.location.href = "https://peakstate.shop";
   }
 
@@ -160,9 +176,10 @@ export function ResearchAccessForm() {
 
           <button
             type="submit"
-            className="btn-primary inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold"
+            disabled={submitting}
+            className="btn-primary inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Create account
+            {submitting ? "Creating account..." : "Create account"}
           </button>
         </form>
       ) : (
