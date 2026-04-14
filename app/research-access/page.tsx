@@ -95,7 +95,7 @@ export default function ResearchAccessPage() {
             </p>
           </div>
           <div className="py-8 border-b border-white/10">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="flex items-center justify-center">
               <a href="/" className="flex items-center gap-2 font-bold text-lg">
                 <img
                   src="/logo.png"
@@ -104,32 +104,6 @@ export default function ResearchAccessPage() {
                 />
                 <span>{siteCopy.brand.name}</span>
               </a>
-              <nav className="flex flex-wrap justify-center gap-6 text-sm">
-                <a
-                  href="/"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  Home
-                </a>
-                <a
-                  href="/#pricing"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  Pricing
-                </a>
-                <a
-                  href="/dosing-calculator"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  Dosing Calculator
-                </a>
-                <a
-                  href="/#faq"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  FAQ
-                </a>
-              </nav>
             </div>
           </div>
           <div className="pt-8">
