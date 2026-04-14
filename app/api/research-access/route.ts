@@ -1,62 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Google Apps Script Web App URL for the Research Access sheet.
-// Hardcoded because this endpoint is "Anyone" access — not a secret.
-const SHEETS_WEBHOOK_URL =
-  "https://script.google.com/macros/s/AKfycbzBB8nrTJfVLQ95JPGjApbVe9CJ8MIhU1RBiV8-Z58EeQ2n6LxY1MdvJijxv2tpN5OTPg/exec";
+// Zapier Catch Hook that forwards research-access signups into ClickFunnels 2.0.
+// Hardcoded because catch-hook URLs are write-only (they can't read anything),
+// but can be overridden via the ZAPIER_CF_WEBHOOK_URL env var without a redeploy.
+const ZAPIER_WEBHOOK_URL =
+  "https://hooks.zapier.com/hooks/catch/27218922/u7jnrb3/";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const username = (body.username ?? "").trim();
+    const name = (body.name ?? body.username ?? "").trim();
     const email = (body.email ?? "").trim().toLowerCase();
 
-    if (!username) {
-      return NextResponse.json({ error: "Username is required" }, { status: 400 });
+    if (!name) {
+      return NextResponse.json({ error: "Name is required" }, { status: 400 });
     }
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
-    const sheetUrl = process.env.AccountCreation || SHEETS_WEBHOOK_URL;
+    const webhookUrl = process.env.ZAPIER_CF_WEBHOOK_URL || ZAPIER_WEBHOOK_URL;
 
-    const response = await fetch(sheetUrl, {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      req.headers.get("x-real-ip") ||
+      "";
+    const userAgent = req.headers.get("user-agent") || "";
+
+    const response = await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        username,
+        name,
         email,
         timestamp: new Date().toISOString(),
+        source: "research-access-form",
+        ip,
+        user_agent: userAgent,
       }),
-      redirect: "follow",
     });
 
-    const responseText = await response.text();
-    console.log("Google Sheets response status:", response.status);
-    console.log("Google Sheets response body:", responseText);
-
     if (!response.ok) {
-      console.error("Google Sheets API error:", response.status, responseText);
+      const responseText = await response.text();
+      console.error("Zapier webhook error:", response.status, responseText);
       return NextResponse.json(
-        { error: "Failed to save account", upstream: responseText },
+        { error: "Failed to record account" },
         { status: 502 }
       );
-    }
-
-    // Apps Script always returns 200 even on internal errors, so inspect the body.
-    try {
-      const parsed = JSON.parse(responseText);
-      if (parsed && parsed.error) {
-        console.error("Apps Script reported error:", parsed.error);
-        return NextResponse.json(
-          { error: "Sheet write failed", upstream: parsed.error },
-          { status: 502 }
-        );
-      }
-    } catch {
-      // If Apps Script returned HTML (e.g., the "Authorization required" page),
-      // this catch hits — log the raw body above for debugging.
     }
 
     return NextResponse.json({ message: "Account recorded", email });
