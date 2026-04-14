@@ -23,7 +23,7 @@ export function ResearchAccessForm() {
     e.preventDefault();
 
     if (!username.trim() || !email.trim()) {
-      setError("Please fill in your username and email.");
+      setError("Please fill in your name and email.");
       return;
     }
 
@@ -111,7 +111,7 @@ export function ResearchAccessForm() {
               htmlFor="username"
               className="block text-sm font-bold text-[var(--primary)]"
             >
-              Username
+              Name
             </label>
             <input
               id="username"
