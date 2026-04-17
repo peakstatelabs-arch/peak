@@ -478,9 +478,23 @@ export default function PowerCutProtocol() {
                 </div>
                 <a
                   href="/dosing-calculator"
-                  className="btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold mt-6"
+                  className="btn-accent inline-flex h-20 items-center justify-center gap-3 rounded-2xl px-14 text-xl sm:text-2xl font-extrabold uppercase tracking-wide mt-6 shadow-2xl ring-4 ring-[var(--accent)]/30 animate-pulse-slow"
                 >
-                  Peak State Labs Dosing Calculator
+                  Click Here to Access The Peak State Dosing Calculator
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
                 </a>
                 <p className="mt-4 text-sm text-[var(--primary)]/60">
                   Use it before beginning the protocol.
