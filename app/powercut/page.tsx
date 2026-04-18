@@ -371,19 +371,41 @@ export default function PowerCutProtocol() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-6 mb-14">
-                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-white">
+                  <div className="grid grid-cols-2 bg-[var(--accent)]/30 text-[var(--primary)]">
+                    <div className="py-3 text-center text-lg font-semibold tracking-wide">
+                      Before
+                    </div>
+                    <div className="py-3 text-center text-lg font-semibold tracking-wide">
+                      After
+                    </div>
+                  </div>
                   <img
                     src="/transformation-front.png"
                     alt="POWER CUT Three Week Transformation - Front View"
                     className="w-full h-auto block"
                   />
+                  <div className="py-3 px-4 bg-[var(--accent)]/30 text-[var(--primary)] text-center text-sm sm:text-base font-semibold tracking-wide">
+                    POWER CUT&trade; &nbsp;|&nbsp; Three Week Transformation
+                  </div>
                 </div>
-                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-white">
+                  <div className="grid grid-cols-2 bg-[var(--accent)]/30 text-[var(--primary)]">
+                    <div className="py-3 text-center text-lg font-semibold tracking-wide">
+                      Before
+                    </div>
+                    <div className="py-3 text-center text-lg font-semibold tracking-wide">
+                      After
+                    </div>
+                  </div>
                   <img
                     src="/transformation-side.png"
                     alt="POWER CUT Three Week Transformation - Side View"
                     className="w-full h-auto block"
                   />
+                  <div className="py-3 px-4 bg-[var(--accent)]/30 text-[var(--primary)] text-center text-sm sm:text-base font-semibold tracking-wide">
+                    POWER CUT&trade; &nbsp;|&nbsp; Three Week Transformation
+                  </div>
                 </div>
               </div>
 
