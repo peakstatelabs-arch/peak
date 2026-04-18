@@ -570,12 +570,12 @@ export default function PowerCutProtocol() {
                 </div>
                 <a
                   href="/dosing-calculator"
-                  className="btn-accent inline-flex h-20 items-center justify-center gap-3 rounded-2xl px-14 text-xl sm:text-2xl font-extrabold uppercase tracking-wide mt-6 shadow-2xl ring-4 ring-[var(--accent)]/30 animate-pulse-slow"
+                  className="btn-accent inline-flex h-auto sm:h-20 items-center justify-center gap-2 sm:gap-3 rounded-2xl px-5 sm:px-14 py-4 sm:py-0 text-sm sm:text-2xl font-extrabold uppercase tracking-normal sm:tracking-wide leading-tight mt-6 shadow-2xl ring-4 ring-[var(--accent)]/30 animate-pulse-slow text-center max-w-full"
                 >
                   Click Here to Access The Peak State Dosing Calculator
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6 shrink-0"
+                    className="w-4 h-4 sm:w-6 sm:h-6 shrink-0"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
