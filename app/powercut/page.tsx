@@ -370,44 +370,34 @@ export default function PowerCutProtocol() {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6 mb-14">
-                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-white">
-                  <div className="grid grid-cols-2 bg-[var(--accent)]/30 text-[var(--primary)]">
-                    <div className="py-3 text-center text-lg font-semibold tracking-wide">
-                      Before
-                    </div>
-                    <div className="py-3 text-center text-lg font-semibold tracking-wide">
-                      After
-                    </div>
-                  </div>
+              <div className="text-center mb-8">
+                <div className="flex items-center justify-center gap-6 text-2xl sm:text-3xl font-bold tracking-tight">
+                  <span>Before</span>
+                  <span className="text-[var(--accent)]">/</span>
+                  <span>After</span>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
                   <img
                     src="/transformation-front.png"
                     alt="POWER CUT Three Week Transformation - Front View"
                     className="w-full h-auto block"
                   />
-                  <div className="py-3 px-4 bg-[var(--accent)]/30 text-[var(--primary)] text-center text-sm sm:text-base font-semibold tracking-wide">
-                    POWER CUT&trade; &nbsp;|&nbsp; Three Week Transformation
-                  </div>
                 </div>
-                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-white">
-                  <div className="grid grid-cols-2 bg-[var(--accent)]/30 text-[var(--primary)]">
-                    <div className="py-3 text-center text-lg font-semibold tracking-wide">
-                      Before
-                    </div>
-                    <div className="py-3 text-center text-lg font-semibold tracking-wide">
-                      After
-                    </div>
-                  </div>
+                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
                   <img
                     src="/transformation-side.png"
                     alt="POWER CUT Three Week Transformation - Side View"
                     className="w-full h-auto block"
                   />
-                  <div className="py-3 px-4 bg-[var(--accent)]/30 text-[var(--primary)] text-center text-sm sm:text-base font-semibold tracking-wide">
-                    POWER CUT&trade; &nbsp;|&nbsp; Three Week Transformation
-                  </div>
                 </div>
               </div>
+
+              <p className="mt-6 mb-14 text-center text-lg font-semibold text-[var(--accent)] tracking-wide">
+                POWER CUT&trade; &mdash; Three Week Transformation
+              </p>
 
               <div className="grid sm:grid-cols-3 gap-6">
                 <div className="p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
