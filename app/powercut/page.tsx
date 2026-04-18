@@ -370,25 +370,22 @@ export default function PowerCutProtocol() {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6 mb-12">
-                <div className="rounded-2xl overflow-hidden border border-white/10">
+              <div className="grid md:grid-cols-2 gap-6 mb-14">
+                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
                   <img
                     src="/transformation-front.png"
                     alt="POWER CUT Three Week Transformation - Front View"
-                    className="w-full h-auto"
+                    className="w-full h-auto block"
                   />
                 </div>
-                <div className="rounded-2xl overflow-hidden border border-white/10">
+                <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
                   <img
                     src="/transformation-side.png"
                     alt="POWER CUT Three Week Transformation - Side View"
-                    className="w-full h-auto"
+                    className="w-full h-auto block"
                   />
                 </div>
               </div>
-              <p className="text-center text-sm text-white/40 -mt-6 mb-12">
-                POWER CUT&trade; &bull; Three Week Transformation
-              </p>
 
               <div className="grid sm:grid-cols-3 gap-6">
                 <div className="p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
