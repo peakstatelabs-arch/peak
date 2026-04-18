@@ -357,6 +357,69 @@ export default function PowerCutProtocol() {
           </Container>
         </Section>
 
+        {/* Testimonials */}
+        <Section className="bg-[var(--primary)] text-white">
+          <Container>
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                  What people are experiencing with this approach
+                </h2>
+                <p className="mt-3 text-lg text-white/60">
+                  From people who were stuck&hellip; now following a structured system
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6 mb-12">
+                <div className="rounded-2xl overflow-hidden border border-white/10">
+                  <img
+                    src="/transformation-front.png"
+                    alt="POWER CUT Three Week Transformation - Front View"
+                    className="w-full h-auto"
+                  />
+                </div>
+                <div className="rounded-2xl overflow-hidden border border-white/10">
+                  <img
+                    src="/transformation-side.png"
+                    alt="POWER CUT Three Week Transformation - Side View"
+                    className="w-full h-auto"
+                  />
+                </div>
+              </div>
+              <p className="text-center text-sm text-white/40 -mt-6 mb-12">
+                POWER CUT&trade; &bull; Three Week Transformation
+              </p>
+
+              <div className="grid sm:grid-cols-3 gap-6">
+                <div className="p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
+                  <svg className="w-8 h-8 text-[var(--accent)] mb-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                  </svg>
+                  <p className="text-lg font-semibold leading-relaxed">
+                    Down 20.8 lbs and 4.8% body fat&hellip; not slowing down.
+                  </p>
+                </div>
+                <div className="p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
+                  <svg className="w-8 h-8 text-[var(--accent)] mb-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                  </svg>
+                  <p className="text-lg font-semibold leading-relaxed">
+                    Food noise gone. Sleeping better. Actually sticking to it.
+                  </p>
+                </div>
+                <div className="p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
+                  <svg className="w-8 h-8 text-[var(--accent)] mb-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                  </svg>
+                  <p className="text-lg font-semibold leading-relaxed">
+                    This is the first time something has actually worked.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Container>
+        </Section>
+
         {/* Dosing Framework */}
         <Section className="bg-[var(--muted)]">
           <Container>
