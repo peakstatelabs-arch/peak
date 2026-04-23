@@ -90,7 +90,7 @@ export default function Home() {
                     {[0, 1, 2, 3, 4].map((i) => (
                       <svg
                         key={i}
-                        className="w-5 h-5 text-[#F5B544] drop-shadow-sm"
+                        className="w-5 h-5 text-[var(--accent-dark)] drop-shadow-sm"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                         aria-hidden="true"
