@@ -5,6 +5,7 @@ interface PricingCardProps {
   features: string[];
   estimatedValue: string;
   price: string;
+  perStackPrice?: string;
   installment: string;
   savings: string;
   ctaLabel: string;
@@ -22,6 +23,7 @@ export function PricingCard({
   features,
   estimatedValue,
   price,
+  perStackPrice,
   installment,
   savings,
   ctaLabel,
@@ -97,7 +99,12 @@ export function PricingCard({
               {price}
             </span>
           </div>
-          <p className="text-sm text-[var(--primary)]/60 mt-1">
+          {perStackPrice && (
+            <p className="mt-2 inline-flex items-center rounded-full bg-[var(--accent)]/15 px-3 py-1 text-sm font-bold text-[var(--accent-dark)]">
+              {perStackPrice}
+            </p>
+          )}
+          <p className="text-sm text-[var(--primary)]/60 mt-2">
             or 4 interest-free payments of <span className="font-semibold text-[var(--primary)]">{installment}</span>
           </p>
 
