@@ -101,7 +101,9 @@ export default function ThankYouPage() {
                         progress tracking, and direct access to the support
                         ecosystem designed to help you succeed.{" "}
                         <a
-                          href="#community"
+                          href="https://www.skool.com/peak-state-labs-7241/about"
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="text-[var(--accent-dark)] font-semibold underline hover:no-underline"
                         >
                           Click here to join now.
