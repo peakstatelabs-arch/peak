@@ -57,7 +57,7 @@ function ProductImage({ product }: { product: Product }) {
         <img
           src={product.image}
           alt={`${product.name} ${product.dose} vial`}
-          className="h-full w-full object-contain p-4"
+          className="h-full w-full object-contain scale-[1.6]"
         />
       </div>
     );
