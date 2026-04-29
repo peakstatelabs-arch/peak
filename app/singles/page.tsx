@@ -16,6 +16,7 @@ type Product = {
   dose: string;
   price: string;
   description: string;
+  image?: string;
 };
 
 const products: Product[] = [
@@ -45,8 +46,24 @@ const products: Product[] = [
     price: "$169",
     description:
       "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, and supports tendon integrity.",
+    image: "/bpc-tb500-vial.png",
   },
 ];
+
+function ProductImage({ product }: { product: Product }) {
+  if (product.image) {
+    return (
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-white border border-[var(--border)] flex items-center justify-center">
+        <img
+          src={product.image}
+          alt={`${product.name} ${product.dose} vial`}
+          className="h-full w-full object-contain p-4"
+        />
+      </div>
+    );
+  }
+  return <PlaceholderImage label={product.name} />;
+}
 
 function PlaceholderImage({ label }: { label: string }) {
   return (
@@ -137,7 +154,7 @@ export default function SinglesCatalog() {
                   key={product.id}
                   className="group flex flex-col rounded-3xl border border-[var(--border)] bg-[var(--muted)] p-5 sm:p-6 card-hover"
                 >
-                  <PlaceholderImage label={product.name} />
+                  <ProductImage product={product} />
 
                   <div className="mt-5 flex-1 flex flex-col">
                     <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
