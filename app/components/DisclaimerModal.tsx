@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { usePathname } from "next/navigation";
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
@@ -13,8 +14,12 @@ function setCookie(name: string, value: string, maxAgeSeconds: number) {
 
 const ONE_DAY = 60 * 60 * 24;
 
+const SUPPRESSED_PATHS = ["/thankyou"];
+
 export function DisclaimerModal() {
   const [visible, setVisible] = useState(false);
+  const pathname = usePathname();
+  const suppressed = SUPPRESSED_PATHS.includes(pathname ?? "");
 
   const show = useCallback(() => {
     if (getCookie("disclaimer_ack")) return;
@@ -22,6 +27,7 @@ export function DisclaimerModal() {
   }, []);
 
   useEffect(() => {
+    if (suppressed) return;
     // Already acknowledged within the last 24 hours
     if (getCookie("disclaimer_ack")) return;
 
@@ -41,7 +47,9 @@ export function DisclaimerModal() {
       clearTimeout(timer);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [show]);
+  }, [show, suppressed]);
+
+  if (suppressed) return null;
 
   function dismiss() {
     setCookie("disclaimer_ack", "1", ONE_DAY);
