@@ -46,7 +46,7 @@ const products: Product[] = [
     price: "$169",
     description:
       "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, and supports tendon integrity.",
-    image: "/bpc-tb500-vial.png",
+    image: "/bpc-tb-single-vial.png",
   },
 ];
 
