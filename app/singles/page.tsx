@@ -28,6 +28,7 @@ const products: Product[] = [
     price: "$249",
     description:
       "GLP-1 / GIP / Glucagon triple agonist. Reduces food noise, raises metabolic output, and stimulates stored fat oxidation.",
+    image: "/reta-product.png",
   },
   {
     id: "cjc-ipamorelin",
@@ -37,6 +38,7 @@ const products: Product[] = [
     price: "$119",
     description:
       "Growth hormone pulse amplification. Builds lean muscle, improves sleep depth, and supports recovery during deficit.",
+    image: "/cjc-ipa-product.png",
   },
   {
     id: "bpc-tb500",
@@ -46,7 +48,7 @@ const products: Product[] = [
     price: "$169",
     description:
       "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, and supports tendon integrity.",
-    image: "/bpc-tb-single-vial.png",
+    image: "/bpc-tb-product.png",
   },
 ];
 
@@ -57,7 +59,7 @@ function ProductImage({ product }: { product: Product }) {
         <img
           src={product.image}
           alt={`${product.name} ${product.dose} vial`}
-          className="h-full w-full object-contain scale-[1.6]"
+          className="h-full w-full object-contain"
         />
       </div>
     );
