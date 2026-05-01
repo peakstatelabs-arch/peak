@@ -17,6 +17,7 @@ type Product = {
   price: string;
   description: string;
   image?: string;
+  buyUrl: string;
 };
 
 const products: Product[] = [
@@ -29,6 +30,7 @@ const products: Product[] = [
     description:
       "GLP-1 / GIP / Glucagon triple agonist. Reduces food noise, raises metabolic output, and stimulates stored fat oxidation.",
     image: "/reta-product.png",
+    buyUrl: "https://www.paypal.com/ncp/payment/3GQWA553XEXNU",
   },
   {
     id: "cjc-ipamorelin",
@@ -39,16 +41,18 @@ const products: Product[] = [
     description:
       "Growth hormone pulse amplification. Builds lean muscle, improves sleep depth, and supports recovery during deficit.",
     image: "/cjc-ipa-product.png",
+    buyUrl: "https://www.paypal.com/ncp/payment/SPCE9E3H3VVX2",
   },
   {
     id: "bpc-tb500",
     name: "BPC-157 + TB-500",
     subtitle: "The Shield",
     dose: "20mg blend",
-    price: "$169",
+    price: "$145",
     description:
       "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, and supports tendon integrity.",
     image: "/bpc-tb-product.png",
+    buyUrl: "https://www.paypal.com/ncp/payment/B62P3JVPTD6CA",
   },
 ];
 
@@ -183,7 +187,9 @@ export default function SinglesCatalog() {
                         </p>
                       </div>
                       <a
-                        href="/research-access"
+                        href={product.buyUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="btn-accent inline-flex h-12 items-center justify-center rounded-xl px-6 text-sm font-extrabold uppercase tracking-wide shadow-lg ring-2 ring-[var(--accent)]/30 transition-transform group-hover:scale-105"
                       >
                         Buy Now
