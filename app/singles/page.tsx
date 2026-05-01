@@ -163,10 +163,11 @@ export default function SinglesCatalog() {
                   <ProductImage product={product} />
 
                   <div className="mt-5 flex-1 flex flex-col">
-                    <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
+                    <span className="self-start inline-flex items-center gap-2 rounded-full bg-[var(--primary)] px-4 py-1.5 text-sm font-extrabold uppercase tracking-widest text-[var(--accent)] shadow-sm">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
                       {product.subtitle}
-                    </p>
-                    <h2 className="mt-1 text-2xl font-bold text-[var(--primary)] tracking-tight">
+                    </span>
+                    <h2 className="mt-3 text-2xl font-bold text-[var(--primary)] tracking-tight">
                       {product.name}
                     </h2>
                     <p className="mt-1 text-sm font-semibold text-[var(--primary)]/70">
