@@ -449,7 +449,7 @@ export default function Home() {
         </Section>
 
         {/* Singles Offer Section - capture leads not ready for the full stack */}
-        <Section className="bg-white relative overflow-hidden">
+        <Section className="bg-white relative overflow-hidden !pb-8 sm:!pb-12">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-20 left-[-10%] h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl" />
             <div className="absolute bottom-0 right-[-10%] h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl" />
@@ -540,7 +540,7 @@ export default function Home() {
         </Section>
 
         {/* Safety Section */}
-        <Section className="bg-white">
+        <Section className="bg-white !pt-8 sm:!pt-12">
           <Container>
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
