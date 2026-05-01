@@ -517,12 +517,6 @@ export default function Home() {
                       </svg>
                       No minimum order
                     </span>
-                    <span className="inline-flex items-center gap-2">
-                      <svg className="w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      Ships 4/24
-                    </span>
                   </div>
 
                   {/* CTA */}
