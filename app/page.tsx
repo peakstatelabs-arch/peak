@@ -448,6 +448,103 @@ export default function Home() {
           </Container>
         </Section>
 
+        {/* Singles Offer Section - capture leads not ready for the full stack */}
+        <Section className="bg-white relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-20 left-[-10%] h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl" />
+            <div className="absolute bottom-0 right-[-10%] h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl" />
+          </div>
+
+          <Container className="relative">
+            <div className="max-w-4xl mx-auto">
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] p-8 sm:p-12 text-white shadow-2xl">
+                <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full bg-[var(--accent)]/20 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-20 -left-16 w-72 h-72 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+
+                <div className="relative text-center">
+                  {/* Eyebrow */}
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-wider text-[var(--accent)]">
+                    <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
+                    <span>NOT READY FOR THE FULL STACK?</span>
+                  </div>
+
+                  {/* Headline */}
+                  <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-balance">
+                    Start With A Single Vial
+                  </h2>
+
+                  {/* Subheadline */}
+                  <p className="mt-5 text-base sm:text-lg text-white/80 max-w-2xl mx-auto">
+                    Dip your toe in with a single peptide. Same lab-tested 99%+ purity. Same protocol guidance. Zero commitment to the full 10-week system.
+                  </p>
+
+                  {/* Product chips */}
+                  <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                    {[
+                      "Retatrutide",
+                      "CJC-1295 + Ipamorelin",
+                      "BPC-157 + TB-500",
+                    ].map((name) => (
+                      <span
+                        key={name}
+                        className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm font-semibold"
+                      >
+                        <svg
+                          className="w-4 h-4 text-[var(--accent)] flex-shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {name}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Benefits row */}
+                  <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/80">
+                    <span className="inline-flex items-center gap-2">
+                      <svg className="w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Free shipping
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                      <svg className="w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      No minimum order
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                      <svg className="w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      Ships 4/24
+                    </span>
+                  </div>
+
+                  {/* CTA */}
+                  <a
+                    href="/singles"
+                    className="btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold mt-8"
+                  >
+                    Shop Single Vials
+                    <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </a>
+
+                  <p className="mt-4 text-xs text-white/60">
+                    Same batch documentation. Same purity tests. Upgrade to a full stack anytime.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Container>
+        </Section>
+
         {/* Safety Section */}
         <Section className="bg-white">
           <Container>
