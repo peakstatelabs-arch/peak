@@ -25,7 +25,7 @@ const products: Product[] = [
     name: "Retatrutide",
     subtitle: "The Engine",
     dose: "20mg",
-    price: "$249",
+    price: "$215",
     description:
       "GLP-1 / GIP / Glucagon triple agonist. Reduces food noise, raises metabolic output, and stimulates stored fat oxidation.",
     image: "/reta-product.png",
@@ -35,7 +35,7 @@ const products: Product[] = [
     name: "CJC-1295 + Ipamorelin",
     subtitle: "The Architect",
     dose: "10mg blend",
-    price: "$119",
+    price: "$105",
     description:
       "Growth hormone pulse amplification. Builds lean muscle, improves sleep depth, and supports recovery during deficit.",
     image: "/cjc-ipa-product.png",
