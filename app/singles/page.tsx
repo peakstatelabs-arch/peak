@@ -9,6 +9,17 @@ export const metadata: Metadata = {
     "Individual research peptides from Peak State Labs. Retatrutide, CJC-1295 + Ipamorelin, and BPC-157 + TB-500.",
 };
 
+export const revalidate = 3600;
+
+const STOCK_EPOCH_MS = Date.UTC(2026, 4, 1);
+
+function currentStock(startStock: number): number {
+  const cycle = startStock - 1;
+  const days = Math.floor((Date.now() - STOCK_EPOCH_MS) / 86_400_000);
+  const offset = ((days % cycle) + cycle) % cycle;
+  return startStock - offset;
+}
+
 type Product = {
   id: string;
   name: string;
@@ -18,6 +29,7 @@ type Product = {
   description: string;
   image?: string;
   buyUrl: string;
+  startStock: number;
 };
 
 const products: Product[] = [
@@ -31,6 +43,7 @@ const products: Product[] = [
       "GLP-1 / GIP / Glucagon triple agonist. Reduces food noise, raises metabolic output, and stimulates stored fat oxidation.",
     image: "/reta-product.png",
     buyUrl: "https://www.paypal.com/ncp/payment/3GQWA553XEXNU",
+    startStock: 7,
   },
   {
     id: "cjc-ipamorelin",
@@ -42,6 +55,7 @@ const products: Product[] = [
       "Growth hormone pulse amplification. Builds lean muscle, improves sleep depth, and supports recovery during deficit.",
     image: "/cjc-ipa-product.png",
     buyUrl: "https://www.paypal.com/ncp/payment/SPCE9E3H3VVX2",
+    startStock: 11,
   },
   {
     id: "bpc-tb500",
@@ -53,6 +67,7 @@ const products: Product[] = [
       "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, and supports tendon integrity.",
     image: "/bpc-tb-product.png",
     buyUrl: "https://www.paypal.com/ncp/payment/B62P3JVPTD6CA",
+    startStock: 9,
   },
 ];
 
@@ -178,7 +193,21 @@ export default function SinglesCatalog() {
                       {product.description}
                     </p>
 
-                    <div className="mt-6 pt-6 border-t border-[var(--border)] flex items-end justify-between gap-4">
+                    <div className="mt-5 flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-2.5">
+                      <span className="relative flex h-2.5 w-2.5 shrink-0">
+                        <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-ping" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+                      </span>
+                      <p className="text-sm font-bold text-red-700">
+                        Only{" "}
+                        <span className="font-extrabold">
+                          {currentStock(product.startStock)}
+                        </span>{" "}
+                        vials in stock
+                      </p>
+                    </div>
+
+                    <div className="mt-5 pt-5 border-t border-[var(--border)] flex items-end justify-between gap-4">
                       <div>
                         <p className="text-xs font-medium uppercase tracking-wider text-[var(--primary)]/50">
                           Price
