@@ -3,6 +3,7 @@ import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { CartScripts } from "./CartScripts";
+import { AddToCartButton } from "./AddToCartButton";
 
 export const metadata: Metadata = {
   title: `Singles Catalog — ${siteCopy.brand.name}`,
@@ -222,11 +223,7 @@ export default function SinglesCatalog() {
                           {product.price}
                         </p>
                       </div>
-                      <div className="paypal-add-to-cart-slot">
-                        <paypal-add-to-cart-button
-                          data-id={product.cartId}
-                        ></paypal-add-to-cart-button>
-                      </div>
+                      <AddToCartButton cartId={product.cartId} />
                     </div>
                   </div>
                 </div>
