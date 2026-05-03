@@ -3,7 +3,6 @@ import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { CartScripts } from "./CartScripts";
-import { AddToCartButton } from "./AddToCartButton";
 
 export const metadata: Metadata = {
   title: `Singles Catalog — ${siteCopy.brand.name}`,
@@ -214,16 +213,22 @@ export default function SinglesCatalog() {
                       </p>
                     </div>
 
-                    <div className="mt-5 pt-5 border-t border-[var(--border)] flex items-end justify-between gap-4">
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-wider text-[var(--primary)]/50">
-                          Price
-                        </p>
-                        <p className="text-3xl font-bold text-[var(--primary)]">
-                          {product.price}
-                        </p>
+                    <div className="mt-5 pt-5 border-t border-[var(--border)]">
+                      <div className="flex items-end justify-between gap-4 mb-4">
+                        <div>
+                          <p className="text-xs font-medium uppercase tracking-wider text-[var(--primary)]/50">
+                            Price
+                          </p>
+                          <p className="text-3xl font-bold text-[var(--primary)]">
+                            {product.price}
+                          </p>
+                        </div>
                       </div>
-                      <AddToCartButton cartId={product.cartId} />
+                      <div className="paypal-add-to-cart-host">
+                        <paypal-add-to-cart-button
+                          data-id={product.cartId}
+                        ></paypal-add-to-cart-button>
+                      </div>
                     </div>
                   </div>
                 </div>
