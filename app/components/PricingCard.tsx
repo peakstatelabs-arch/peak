@@ -1,4 +1,7 @@
+import { TrackedLink } from "./TrackedLink";
+
 interface PricingCardProps {
+  id: string;
   name: string;
   subtitle: string;
   description: string;
@@ -17,6 +20,7 @@ interface PricingCardProps {
 }
 
 export function PricingCard({
+  id,
   name,
   subtitle,
   description,
@@ -109,7 +113,7 @@ export function PricingCard({
           </p>
 
           {/* CTA Button */}
-          <a
+          <TrackedLink
             href={stripeUrl}
             data-rewardful
             target="_blank"
@@ -119,9 +123,17 @@ export function PricingCard({
                 ? "btn-accent"
                 : "btn-primary"
             }`}
+            event="add_to_cart_click"
+            eventProperties={{
+              tier: name,
+              tier_id: id,
+              price,
+              installment,
+              popular: !!popular,
+            }}
           >
             {ctaLabel}
-          </a>
+          </TrackedLink>
         </div>
       </div>
     </div>

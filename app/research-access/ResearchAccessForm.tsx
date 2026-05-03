@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import posthog from "posthog-js";
 
 type Tab = "create" | "signin";
 
@@ -35,13 +36,23 @@ export function ResearchAccessForm() {
     setError(null);
     setSubmitting(true);
 
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = username.trim();
+
+    try {
+      posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
+      posthog.capture("research_access_signup", { method: "create" });
+    } catch (err) {
+      console.error("PostHog identify failed:", err);
+    }
+
     try {
       await fetch("/api/research-access", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: username.trim(),
-          email: email.trim(),
+          name: cleanName,
+          email: cleanEmail,
         }),
       });
     } catch (err) {
@@ -65,6 +76,15 @@ export function ResearchAccessForm() {
     }
 
     setError(null);
+
+    const cleanEmail = signInEmail.trim().toLowerCase();
+    try {
+      posthog.identify(cleanEmail, { email: cleanEmail });
+      posthog.capture("research_access_signup", { method: "signin" });
+    } catch (err) {
+      console.error("PostHog identify failed:", err);
+    }
+
     window.location.href = "https://peakstate.shop";
   }
 
