@@ -382,3 +382,12 @@ details[open] summary .faq-icon {
   width: 100%;
   min-width: 0;
 }
+.paypal-add-to-cart-host paypal-add-to-cart-button h1,
+.paypal-add-to-cart-host paypal-add-to-cart-button h2,
+.paypal-add-to-cart-host paypal-add-to-cart-button h3,
+.paypal-add-to-cart-host paypal-add-to-cart-button h4,
+.paypal-add-to-cart-host paypal-add-to-cart-button h5,
+.paypal-add-to-cart-host paypal-add-to-cart-button h6,
+.paypal-add-to-cart-host paypal-add-to-cart-button p {
+  display: none !important;
+}
