@@ -7,6 +7,7 @@ import { PricingCard } from "@/app/components/PricingCard";
 import { BenefitsGrid } from "@/app/components/BenefitsGrid";
 import { EmailSubscription } from "@/app/components/EmailSubscription";
 import { UrgencyBanner } from "@/app/components/UrgencyBanner";
+import { TrackedLink } from "@/app/components/TrackedLink";
 import { siteCopy } from "@/content/siteCopy";
 
 export default function Home() {
@@ -520,15 +521,17 @@ export default function Home() {
                   </div>
 
                   {/* CTA */}
-                  <a
+                  <TrackedLink
                     href="/singles"
                     className="btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold mt-8"
+                    event="shop_singles_click"
+                    eventProperties={{ source: "singles_offer_section" }}
                   >
                     Shop Single Vials
                     <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
-                  </a>
+                  </TrackedLink>
 
                   <p className="mt-4 text-xs text-white/60">
                     Same batch documentation. Same purity tests. Upgrade to a full stack anytime.

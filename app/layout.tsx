@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { siteCopy } from "@/content/siteCopy";
 import { DisclaimerModal } from "@/app/components/DisclaimerModal";
+import { PostHogInit } from "@/app/components/PostHogInit";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,6 +46,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <PostHogInit />
         <DisclaimerModal />
         {children}
       </body>
