@@ -372,3 +372,13 @@ details[open] summary .faq-icon {
     print-color-adjust: exact !important;
   }
 }
+
+/* PayPal NCP cart web components */
+.paypal-add-to-cart-host {
+  width: 100%;
+}
+.paypal-add-to-cart-host paypal-add-to-cart-button {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
