@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
+import { CartScripts } from "./CartScripts";
 
 export const metadata: Metadata = {
   title: `Singles Catalog — ${siteCopy.brand.name}`,
@@ -28,7 +29,7 @@ type Product = {
   price: string;
   description: string;
   image?: string;
-  buyUrl: string;
+  cartId: string;
   startStock: number;
 };
 
@@ -42,7 +43,7 @@ const products: Product[] = [
     description:
       "GLP-1 / GIP / Glucagon triple agonist. Reduces food noise, raises metabolic output, and stimulates stored fat oxidation.",
     image: "/reta-product.png",
-    buyUrl: "https://www.paypal.com/ncp/payment/3GQWA553XEXNU",
+    cartId: "3GQWA553XEXNU",
     startStock: 7,
   },
   {
@@ -54,7 +55,7 @@ const products: Product[] = [
     description:
       "Growth hormone pulse amplification. Builds lean muscle, improves sleep depth, and supports recovery during deficit.",
     image: "/cjc-ipa-product.png",
-    buyUrl: "https://www.paypal.com/ncp/payment/SPCE9E3H3VVX2",
+    cartId: "SPCE9E3H3VVX2",
     startStock: 11,
   },
   {
@@ -66,7 +67,7 @@ const products: Product[] = [
     description:
       "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, and supports tendon integrity.",
     image: "/bpc-tb-product.png",
-    buyUrl: "https://www.paypal.com/ncp/payment/B62P3JVPTD6CA",
+    cartId: "B62P3JVPTD6CA",
     startStock: 9,
   },
 ];
@@ -129,12 +130,17 @@ export default function SinglesCatalog() {
             />
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
           </a>
-          <a
-            href="/"
-            className="text-sm font-medium text-[var(--primary)]/70 hover:text-[var(--primary)] transition-colors"
-          >
-            ← Back to POWER CUT™
-          </a>
+          <div className="flex items-center gap-4 sm:gap-6">
+            <a
+              href="/"
+              className="text-sm font-medium text-[var(--primary)]/70 hover:text-[var(--primary)] transition-colors"
+            >
+              ← Back to POWER CUT™
+            </a>
+            <div className="paypal-cart-slot">
+              <paypal-cart-button data-id="pp-view-cart-header"></paypal-cart-button>
+            </div>
+          </div>
         </Container>
       </header>
 
@@ -216,23 +222,25 @@ export default function SinglesCatalog() {
                           {product.price}
                         </p>
                       </div>
-                      <a
-                        href={product.buyUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-accent inline-flex h-12 items-center justify-center rounded-xl px-6 text-sm font-extrabold uppercase tracking-wide shadow-lg ring-2 ring-[var(--accent)]/30 transition-transform group-hover:scale-105"
-                      >
-                        Buy Now
-                      </a>
+                      <div className="paypal-add-to-cart-slot">
+                        <paypal-add-to-cart-button
+                          data-id={product.cartId}
+                        ></paypal-add-to-cart-button>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <p className="mt-10 text-center text-sm text-[var(--primary)]/50">
-              For laboratory research only. Not for human consumption.
-            </p>
+            <div className="mt-10 flex flex-col items-center gap-4">
+              <div className="paypal-cart-slot paypal-cart-slot-inline">
+                <paypal-cart-button data-id="pp-view-cart-floating"></paypal-cart-button>
+              </div>
+              <p className="text-center text-sm text-[var(--primary)]/50">
+                For laboratory research only. Not for human consumption.
+              </p>
+            </div>
           </Container>
         </Section>
 
@@ -324,6 +332,8 @@ export default function SinglesCatalog() {
           </div>
         </Container>
       </footer>
+
+      <CartScripts />
     </div>
   );
 }
