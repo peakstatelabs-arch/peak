@@ -65,7 +65,7 @@ const products: Product[] = [
     dose: "20mg blend",
     price: "$145",
     description:
-      "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, and supports tendon integrity.",
+      "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, supports tendon integrity.",
     image: "/bpc-tb-product.png",
     cartId: "B62P3JVPTD6CA",
     startStock: 9,
