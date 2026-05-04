@@ -58,13 +58,45 @@ function trimContainer(parent: Element) {
   }
 }
 
+const QUANTITY_OPTIONS = ["0", "1", "2", "3", "4"] as const;
+
+function adjustSelect(select: HTMLSelectElement) {
+  const opts = Array.from(select.options);
+  const values = opts.map((o) => o.value);
+  const optionsCorrect =
+    values.length === QUANTITY_OPTIONS.length &&
+    QUANTITY_OPTIONS.every((v, i) => values[i] === v);
+
+  if (optionsCorrect) return;
+
+  const isFirstAdjustment = select.dataset.peakQtyInit !== "true";
+  const previousValue = select.value;
+
+  while (select.firstChild) select.removeChild(select.firstChild);
+  for (const v of QUANTITY_OPTIONS) {
+    const opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = v;
+    select.appendChild(opt);
+  }
+
+  if (isFirstAdjustment || !QUANTITY_OPTIONS.includes(previousValue as never)) {
+    select.value = "0";
+  } else {
+    select.value = previousValue;
+  }
+  select.dataset.peakQtyInit = "true";
+}
+
 function trimHost(host: Element) {
   trimContainer(host);
+  host.querySelectorAll("select").forEach(adjustSelect);
   const sr = (host as Element & { shadowRoot?: ShadowRoot | null }).shadowRoot;
   if (sr) {
     Array.from(sr.children).forEach((c) => {
       if (c instanceof HTMLElement) trimContainer(c);
     });
+    sr.querySelectorAll("select").forEach(adjustSelect);
   }
 }
 
