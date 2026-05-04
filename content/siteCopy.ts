@@ -10,9 +10,9 @@ export const siteCopy = {
   },
 
   urgencyBanner: {
-    lineOne: "MAY PRE-ORDER LIVE:",
+    lineOne: "MAY BATCH LIVE:",
     lineTwo: "Only 2 Stacks Left",
-    shippingText: "Ships 5/4",
+    shippingText: "Ships within 24 Hours",
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
 
@@ -61,8 +61,8 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 5/4. Reserve your kit now to lock in priority access to Batch 005.",
-    timerLabel: "Pre-order window closes in:",
+      "MAY BATCH LIVE: Guaranteed FREE Shipping Within 24 Hours. Orders placed by 3pm EDT will receive free same day shipping.",
+    timerLabel: "Time remaining for same day shipping:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
   },
