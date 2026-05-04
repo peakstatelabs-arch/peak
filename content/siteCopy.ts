@@ -61,7 +61,7 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "MAY BATCH LIVE: Guaranteed FREE Shipping Within 24 Hours. Orders placed by 3pm EDT will receive free same day shipping.",
+      "MAY BATCH LIVE: Guaranteed FREE same day shipping with orders placed by 3pm EDT.",
     timerLabel: "Time remaining for same day shipping:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
