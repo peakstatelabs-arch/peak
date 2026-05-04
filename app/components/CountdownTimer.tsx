@@ -7,23 +7,37 @@ interface CountdownTimerProps {
 }
 
 interface TimeLeft {
-  days: number;
   hours: number;
   minutes: number;
   seconds: number;
 }
 
-function getSecondsUntilDeadline(): number {
-  // Deadline: Thursday March 26, 2026 at midnight EST (00:00 on 3/27 EST = end of 3/26)
-  const deadline = new Date("2026-05-04T00:00:00-05:00");
-  const now = new Date();
-  const diff = Math.floor((deadline.getTime() - now.getTime()) / 1000);
-  return Math.max(0, diff);
+const EASTERN_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/New_York",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+});
+
+const CUTOFF_HOUR = 15; // 3:00 PM Eastern (resets at midnight Eastern)
+
+function getSecondsUntilEasternCutoff(): number {
+  const parts = EASTERN_TIME_FORMATTER.formatToParts(new Date());
+  const read = (type: string) =>
+    Number(parts.find((p) => p.type === type)?.value ?? 0);
+
+  const currentSecondOfDay =
+    read("hour") * 3600 + read("minute") * 60 + read("second");
+  const cutoffSecondOfDay = CUTOFF_HOUR * 3600;
+
+  let diff = cutoffSecondOfDay - currentSecondOfDay;
+  if (diff <= 0) diff += 86400;
+  return diff;
 }
 
 export function CountdownTimer({ label }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
@@ -32,10 +46,9 @@ export function CountdownTimer({ label }: CountdownTimerProps) {
   const [mounted, setMounted] = useState(false);
 
   const calculateTimeLeft = useCallback((): TimeLeft => {
-    const totalSeconds = getSecondsUntilDeadline();
+    const totalSeconds = getSecondsUntilEasternCutoff();
     return {
-      days: Math.floor(totalSeconds / 86400),
-      hours: Math.floor((totalSeconds % 86400) / 3600),
+      hours: Math.floor(totalSeconds / 3600),
       minutes: Math.floor((totalSeconds % 3600) / 60),
       seconds: Math.floor(totalSeconds % 60),
     };
@@ -54,7 +67,6 @@ export function CountdownTimer({ label }: CountdownTimerProps) {
 
   if (!mounted) {
     const placeholderUnits = [
-      { label: "Days" },
       { label: "Hours" },
       { label: "Minutes" },
       { label: "Seconds" },
@@ -85,7 +97,6 @@ export function CountdownTimer({ label }: CountdownTimerProps) {
   }
 
   const timeUnits = [
-    { value: timeLeft.days, label: "Days" },
     { value: timeLeft.hours, label: "Hours" },
     { value: timeLeft.minutes, label: "Minutes" },
     { value: timeLeft.seconds, label: "Seconds" },
