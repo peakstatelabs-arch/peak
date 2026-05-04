@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { getEasternShippingState } from "@/app/lib/easternTime";
 
 interface CountdownTimerProps {
   label?: string;
+  labelAfterCutoff?: string;
 }
 
 interface TimeLeft {
@@ -12,58 +14,44 @@ interface TimeLeft {
   seconds: number;
 }
 
-const EASTERN_TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: "America/New_York",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-  hourCycle: "h23",
-});
-
-const CUTOFF_HOUR = 15; // 3:00 PM Eastern (resets at midnight Eastern)
-
-function getSecondsUntilEasternCutoff(): number {
-  const parts = EASTERN_TIME_FORMATTER.formatToParts(new Date());
-  const read = (type: string) =>
-    Number(parts.find((p) => p.type === type)?.value ?? 0);
-
-  const currentSecondOfDay =
-    read("hour") * 3600 + read("minute") * 60 + read("second");
-  const cutoffSecondOfDay = CUTOFF_HOUR * 3600;
-
-  let diff = cutoffSecondOfDay - currentSecondOfDay;
-  if (diff <= 0) diff += 86400;
-  return diff;
-}
-
-export function CountdownTimer({ label }: CountdownTimerProps) {
+export function CountdownTimer({ label, labelAfterCutoff }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     hours: 0,
     minutes: 0,
     seconds: 0,
   });
+  const [isAfterCutoff, setIsAfterCutoff] = useState(false);
 
   const [mounted, setMounted] = useState(false);
 
-  const calculateTimeLeft = useCallback((): TimeLeft => {
-    const totalSeconds = getSecondsUntilEasternCutoff();
+  const recompute = useCallback((): { time: TimeLeft; isAfter: boolean } => {
+    const { secondsRemaining, isAfterCutoff } = getEasternShippingState();
     return {
-      hours: Math.floor(totalSeconds / 3600),
-      minutes: Math.floor((totalSeconds % 3600) / 60),
-      seconds: Math.floor(totalSeconds % 60),
+      time: {
+        hours: Math.floor(secondsRemaining / 3600),
+        minutes: Math.floor((secondsRemaining % 3600) / 60),
+        seconds: Math.floor(secondsRemaining % 60),
+      },
+      isAfter: isAfterCutoff,
     };
   }, []);
 
   useEffect(() => {
     setMounted(true);
-    setTimeLeft(calculateTimeLeft());
+    const initial = recompute();
+    setTimeLeft(initial.time);
+    setIsAfterCutoff(initial.isAfter);
 
     const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
+      const next = recompute();
+      setTimeLeft(next.time);
+      setIsAfterCutoff(next.isAfter);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [calculateTimeLeft]);
+  }, [recompute]);
+
+  const activeLabel = isAfterCutoff && labelAfterCutoff ? labelAfterCutoff : label;
 
   if (!mounted) {
     const placeholderUnits = [
@@ -104,8 +92,8 @@ export function CountdownTimer({ label }: CountdownTimerProps) {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {label && (
-        <p className="text-sm text-[var(--primary)]/70 font-medium">{label}</p>
+      {activeLabel && (
+        <p className="text-sm text-[var(--primary)]/70 font-medium">{activeLabel}</p>
       )}
       <div className="flex items-center gap-2 sm:gap-4">
         {timeUnits.map((unit, index) => (

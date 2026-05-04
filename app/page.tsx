@@ -8,6 +8,7 @@ import { BenefitsGrid } from "@/app/components/BenefitsGrid";
 import { EmailSubscription } from "@/app/components/EmailSubscription";
 import { UrgencyBanner } from "@/app/components/UrgencyBanner";
 import { TrackedLink } from "@/app/components/TrackedLink";
+import { ShippingNoteText } from "@/app/components/ShippingNoteText";
 import { siteCopy } from "@/content/siteCopy";
 
 export default function Home() {
@@ -141,9 +142,11 @@ export default function Home() {
 
             {/* Secure Note */}
             <div className="mt-12 p-5 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/20 max-w-2xl mx-auto text-center">
-              <p className="text-sm text-[var(--primary)]/80 leading-relaxed font-semibold">
-                {siteCopy.hero.secureNote}
-              </p>
+              <ShippingNoteText
+                preCutoff={siteCopy.hero.secureNote}
+                postCutoff={siteCopy.hero.secureNoteAfterCutoff}
+                className="text-sm text-[var(--primary)]/80 leading-relaxed font-semibold"
+              />
               <a
                 href={siteCopy.brand.primaryCtaHref}
                 className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold mt-5"
@@ -152,10 +155,11 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Countdown Timer - resets daily at 7 PM EST */}
+            {/* Countdown Timer - swaps target + label at 3 PM ET, resets at midnight ET */}
             <div className="mt-8 text-center">
               <CountdownTimer
                 label={siteCopy.hero.timerLabel}
+                labelAfterCutoff={siteCopy.hero.timerLabelAfterCutoff}
               />
             </div>
 
