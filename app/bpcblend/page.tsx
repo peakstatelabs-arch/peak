@@ -125,7 +125,7 @@ export default function BpcBlendPage() {
             {/* Quick facts */}
             <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl">
               {[
-                { label: "Blend", value: "5 mg + 5 mg" },
+                { label: "Blend", value: "40 mg total" },
                 { label: "Class", value: "Cytoprotective + Tβ4 fragment" },
                 { label: "Targets", value: "VEGFR2 / G-actin" },
                 { label: "Half-life", value: "~4 h / ~2–3 h" },
@@ -441,59 +441,97 @@ export default function BpcBlendPage() {
         {/* Dosing */}
         <Section id="dosing" className="bg-[var(--muted)]">
           <Container>
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-5xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
                 Reported Research Dosing
               </h2>
               <p className="mt-4 text-lg text-[var(--primary)]/70">
-                The following schedule reflects the dosing design most
-                commonly described in the published Wolverine Stack protocol
-                literature for the 10 mg blended vial (5 mg BPC-157 + 5 mg
-                TB-500). It is provided for reference only and is not a
-                recommendation for human use.
+                The following two protocols reflect the dosing structure Peak
+                State Labs suggests for the 40 mg BPC-157 + TB-500 blended
+                vial. Choose the cadence that fits your routine. Provided for
+                reference only and not a recommendation for human use.
               </p>
 
-              <div className="mt-8 overflow-hidden rounded-2xl border border-[var(--border)]">
-                <table className="w-full text-left">
-                  <thead className="bg-[var(--primary)] text-white">
-                    <tr>
-                      <th className="p-4 font-semibold">Phase</th>
-                      <th className="p-4 font-semibold">Weeks</th>
-                      <th className="p-4 font-semibold">Per-injection dose (research)</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border)]">
-                    {[
-                      ["Loading", "1 – 2", "BPC-157 250 mcg twice daily; TB-500 5 mg twice weekly"],
-                      ["Active cycle", "3 – 6", "BPC-157 250 mcg twice daily; TB-500 2 – 2.5 mg twice weekly"],
-                      ["Extended cycle", "7 – 8", "BPC-157 250 – 500 mcg daily; TB-500 2 mg twice weekly"],
-                      ["Maintenance", "9 – 10", "BPC-157 250 mcg daily; TB-500 2 mg once weekly (optional)"],
-                      ["Cycle off", "11 – 12", "Pause for 2 weeks before resuming"],
-                    ].map((row) => (
-                      <tr key={row[0]} className="bg-white">
-                        <td className="p-4 font-semibold">{row[0]}</td>
-                        <td className="p-4 text-[var(--primary)]/70">{row[1]}</td>
-                        <td className="p-4 text-[var(--primary)]/70">{row[2]}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="mt-8 rounded-2xl bg-white border border-[var(--border)] shadow-sm overflow-hidden">
+                <div className="bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] text-white p-6">
+                  <h3 className="text-xl font-bold">BPC-157 / TB-500 Structure</h3>
+                  <span className="mt-3 inline-flex items-center px-3 py-1 rounded-lg text-sm font-semibold bg-white/15 border border-white/20">
+                    40 mg Total
+                  </span>
+                </div>
+
+                <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-[var(--border)]">
+                  {[
+                    {
+                      n: "1",
+                      title: "Foundation Protocol",
+                      cadence: "2x weekly",
+                      blurb:
+                        "Designed for simplicity and consistency. Best for those who want effective recovery with minimal injections and low friction.",
+                      rows: [
+                        "Dose per injection: 2.0 mg",
+                        "Schedule: Monday / Thursday",
+                        "Weeks 1 – 10: ON (2.0 mg per injection)",
+                        "Weeks 11 – 12: OFF (No dosing)",
+                      ],
+                    },
+                    {
+                      n: "2",
+                      title: "Performance Protocol",
+                      cadence: "3x weekly",
+                      blurb:
+                        "Increased frequency for enhanced recovery signaling. Ideal for those looking to maximize results and don't mind a slightly higher level of commitment.",
+                      rows: [
+                        "Dose per injection: 1.3 mg (Mon) / 1.3 mg (Wed) / 1.3 mg (Fri)",
+                        "Schedule: Monday / Wednesday / Friday",
+                        "Weeks 1 – 10: ON (4.0 mg weekly total)",
+                        "Weeks 11 – 12: OFF (No dosing)",
+                      ],
+                    },
+                  ].map((p) => (
+                    <div key={p.n} className="p-6">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)]/20 text-[var(--accent-dark)] font-bold">
+                          {p.n}
+                        </span>
+                        <h4 className="text-lg font-bold text-[var(--primary)]">
+                          {p.title}
+                        </h4>
+                        <span className="ml-1 inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-[var(--muted)] text-[var(--primary)]/70 border border-[var(--border)]">
+                          {p.cadence}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm text-[var(--primary)]/70 leading-relaxed">
+                        {p.blurb}
+                      </p>
+                      <ul className="mt-4 space-y-2">
+                        {p.rows.map((r) => (
+                          <li
+                            key={r}
+                            className="rounded-lg bg-[var(--muted)] border border-[var(--border)] px-4 py-2.5 text-sm text-[var(--primary)]/80"
+                          >
+                            {r}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <p className="mt-6 text-base text-[var(--primary)]/70 leading-relaxed">
-                Timing is flexible: BPC-157 is most often split into two daily
-                subcutaneous injections (morning and evening), placed near the
-                injury site when accessible. TB-500 is dosed twice weekly
-                (e.g. Monday and Thursday), and because of its slow systemic
-                action, location of injection is less important. A 6 – 8 week
-                cycle is standard for active soft-tissue recovery; chronic or
-                more severe presentations are extended to 8 – 12 weeks.
+                Both protocols use the same 40 mg blended vial and the same
+                10-week ON / 2-week OFF cycle. The Foundation Protocol delivers
+                4.0 mg per week across two subcutaneous injections; the
+                Performance Protocol splits the same weekly volume across
+                three smaller injections to maintain a more frequent
+                regenerative-signaling pulse.
               </p>
 
               <p className="mt-4 text-sm text-[var(--primary)]/60 italic">
-                The optional 2-week loading phase for TB-500 is the most
-                consistent variation across published Wolverine Stack
-                protocols and is associated with faster onset of effect.
+                Cycle off for 2 full weeks before resuming. Slow titration on
+                the first cycle is associated with reduced injection-site
+                irritation and head-rush during the initial week.
               </p>
             </div>
           </Container>
@@ -515,7 +553,7 @@ export default function BpcBlendPage() {
                     <li>• Draw 2 mL of bacteriostatic water into a 3 mL syringe.</li>
                     <li>• Inject the diluent slowly down the inside wall of the peptide vial; do not aim directly at the powder.</li>
                     <li>• Swirl gently until fully dissolved. Do not shake.</li>
-                    <li>• At 2 mL into a 10 mg blend (5 mg + 5 mg), each 0.1 mL contains 250 mcg BPC-157 + 250 mcg TB-500.</li>
+                    <li>• At 2 mL into a 40 mg blended vial, each 0.1 mL contains 2.0 mg of the BPC-157 + TB-500 blend (one Foundation-Protocol dose).</li>
                   </ul>
                 </div>
                 <div className="p-6 rounded-2xl bg-white border border-[var(--border)] shadow-sm">
