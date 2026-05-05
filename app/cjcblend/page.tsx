@@ -457,8 +457,8 @@ export default function CjcBlendPage() {
                       ["Initiation", "1 – 2", "100 mcg of each peptide, once daily"],
                       ["Titration A", "3 – 4", "150 mcg of each peptide, once daily"],
                       ["Titration B", "5 – 8", "200 mcg of each peptide, once or twice daily"],
-                      ["Maintenance", "9 – 12", "Up to 300 mcg of each peptide, twice daily"],
-                      ["Cycle off", "13 – 16+", "Pause for 4 – 8 weeks before resuming"],
+                      ["Maintenance", "9 – 10", "Up to 300 mcg of each peptide, twice daily"],
+                      ["Cycle off", "11 – 12", "Pause for 2 weeks before resuming"],
                     ].map((row) => (
                       <tr key={row[0]} className="bg-white">
                         <td className="p-4 font-semibold">{row[0]}</td>
