@@ -394,14 +394,9 @@ export default function CjcBlendPage() {
                         "Early body-composition changes appear: gradual reductions in waist circumference and modest lean-mass gains. IGF-1 confirmation testing typically reaches steady state in this window.",
                     },
                     {
-                      week: "Week 8 – 12",
+                      week: "Week 8 – 10",
                       body:
                         "More visible body-composition changes, improved skin texture and joint comfort, and continued recovery improvements. Most research protocols reassess and consider cycling at this point.",
-                    },
-                    {
-                      week: "Week 12+",
-                      body:
-                        "Many published protocols cycle off for 4 – 8 weeks before resuming, both to preserve GHRH receptor sensitivity and to re-baseline the endogenous GH axis.",
                     },
                   ].map((row) => (
                     <li key={row.week} className="flex gap-4">
