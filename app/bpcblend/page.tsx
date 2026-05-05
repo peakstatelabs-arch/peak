@@ -395,7 +395,7 @@ export default function BpcBlendPage() {
                     {
                       week: "Week 2 – 4",
                       body:
-                        "Noticeable improvements in joint comfort and range of motion. Reduced post-training soreness and steadier energy through the day. Most subjects feel the stack is &ldquo;working&rdquo; by the end of week 3.",
+                        "Noticeable improvements in joint comfort and range of motion. Reduced post-training soreness and steadier energy through the day. Most subjects feel the stack is “working” by the end of week 3.",
                     },
                     {
                       week: "Week 4 – 6",
@@ -408,14 +408,9 @@ export default function BpcBlendPage() {
                         "For acute-injury research protocols, this is typically the end of the active cycle. Soft tissue is meaningfully remodeled; many subjects transition to maintenance dosing or cycle off.",
                     },
                     {
-                      week: "Week 8 – 12",
+                      week: "Week 8 – 10",
                       body:
-                        "Extended cycles for chronic conditions or major injury. Continued connective-tissue improvement and stabilization of gains. Standard cycle endpoint for most protocols.",
-                    },
-                    {
-                      week: "Week 12+",
-                      body:
-                        "Most published protocols cycle off for 4 – 8 weeks before resuming, both to allow the endogenous repair signaling axis to reset and to evaluate sustained improvement.",
+                        "Maintenance window: dose tapers to once-daily BPC-157 with optional weekly TB-500. Continued connective-tissue improvement and stabilization of gains before the planned cycle-off period.",
                     },
                   ].map((row) => (
                     <li key={row.week} className="flex gap-4">
@@ -472,8 +467,8 @@ export default function BpcBlendPage() {
                       ["Loading", "1 – 2", "BPC-157 250 mcg twice daily; TB-500 5 mg twice weekly"],
                       ["Active cycle", "3 – 6", "BPC-157 250 mcg twice daily; TB-500 2 – 2.5 mg twice weekly"],
                       ["Extended cycle", "7 – 8", "BPC-157 250 – 500 mcg daily; TB-500 2 mg twice weekly"],
-                      ["Maintenance", "9 – 12", "BPC-157 250 mcg daily; TB-500 2 mg once weekly (optional)"],
-                      ["Cycle off", "13+", "Pause for 4 – 8 weeks before resuming"],
+                      ["Maintenance", "9 – 10", "BPC-157 250 mcg daily; TB-500 2 mg once weekly (optional)"],
+                      ["Cycle off", "11 – 12", "Pause for 2 weeks before resuming"],
                     ].map((row) => (
                       <tr key={row[0]} className="bg-white">
                         <td className="p-4 font-semibold">{row[0]}</td>
