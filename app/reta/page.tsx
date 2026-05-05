@@ -15,6 +15,7 @@ const tocItems = [
   { id: "mechanism", label: "Mechanism of Action" },
   { id: "pharmacokinetics", label: "Pharmacokinetics" },
   { id: "research-findings", label: "Research Findings" },
+  { id: "what-to-expect", label: "What to Expect" },
   { id: "dosing", label: "Reported Research Dosing" },
   { id: "reconstitution", label: "Reconstitution & Storage" },
   { id: "side-effects", label: "Reported Adverse Events" },
@@ -74,7 +75,7 @@ export default function RetatrutidePage() {
                 <h1 className="mt-6 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
                   Retatrutide
                   <span className="block text-2xl sm:text-3xl text-[var(--primary)]/60 font-semibold mt-2">
-                    LY-3437943 — Triple Receptor Agonist
+                    Triple Receptor Agonist
                   </span>
                 </h1>
                 <p className="mt-6 text-lg text-[var(--primary)]/70 max-w-xl">
@@ -108,7 +109,7 @@ export default function RetatrutidePage() {
               <div className="relative flex items-center justify-center">
                 <div className="relative">
                   <img
-                    src="/reta-product.png"
+                    src="/Reta Product Image Transparent.png"
                     alt="Retatrutide research vial"
                     className="w-full max-w-md drop-shadow-2xl"
                   />
@@ -350,8 +351,79 @@ export default function RetatrutidePage() {
           </Container>
         </Section>
 
+        {/* What to Expect */}
+        <Section id="what-to-expect" className="bg-white">
+          <Container>
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                What to Expect
+              </h2>
+              <p className="mt-4 text-lg text-[var(--primary)]/70">
+                A general timeline of how response has progressed across published
+                Phase 2 trial data. Individual results vary; figures below are
+                ranges reported in clinical research and are not promises.
+              </p>
+
+              <div className="mt-8 p-6 sm:p-8 rounded-2xl bg-[var(--muted)] border border-[var(--border)]">
+                <ul className="space-y-5">
+                  {[
+                    {
+                      week: "Week 1 – 2",
+                      body:
+                        "Early appetite suppression begins as triple-receptor activity ramps up; mild gastrointestinal effects are common during initial adaptation.",
+                    },
+                    {
+                      week: "Week 2 – 4",
+                      body:
+                        "Noticeable reduction in cravings and portion size. Early body-weight reduction in the 2 – 5% range begins to appear.",
+                    },
+                    {
+                      week: "Week 4 – 8",
+                      body:
+                        "Steadier appetite control and continued weight reduction (typically 5 – 10%). Glycemic markers improve in subjects with type-2 diabetes.",
+                    },
+                    {
+                      week: "Week 8 – 16",
+                      body:
+                        "Substantial body-weight reduction (10 – 18%) accompanied by increased basal energy expenditure and broader metabolic improvements.",
+                    },
+                    {
+                      week: "Week 16 – 24",
+                      body:
+                        "A major weight-loss milestone (15 – 22%) with cardiovascular markers improving and reductions in hepatic fat reported.",
+                    },
+                    {
+                      week: "Week 24 – 48",
+                      body:
+                        "Maximum efficacy observed in trials (up to ~24% mean reduction at the highest dose) with comprehensive metabolic improvements and sustained benefits.",
+                    },
+                  ].map((row) => (
+                    <li key={row.week} className="flex gap-4">
+                      <span className="flex-shrink-0 mt-1.5 w-2.5 h-2.5 rounded-full bg-[var(--accent)]" />
+                      <div>
+                        <p className="font-bold text-[var(--primary)]">
+                          {row.week}
+                        </p>
+                        <p className="mt-1 text-[var(--primary)]/80 leading-relaxed">
+                          {row.body}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <p className="mt-6 text-sm text-[var(--primary)]/60 italic">
+                Timeline values reflect group-level outcomes from published
+                trials. Adherence, dose, baseline weight, and lifestyle inputs
+                all materially influence individual response.
+              </p>
+            </div>
+          </Container>
+        </Section>
+
         {/* Dosing */}
-        <Section id="dosing" className="bg-white">
+        <Section id="dosing" className="bg-[var(--muted)]">
           <Container>
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -374,7 +446,7 @@ export default function RetatrutidePage() {
                   </thead>
                   <tbody className="divide-y divide-[var(--border)]">
                     {[
-                      ["Initiation", "1 – 4", "2 mg"],
+                      ["Initiation", "1 – 4", "0.5 – 2 mg"],
                       ["Titration A", "5 – 8", "4 mg"],
                       ["Titration B", "9 – 12", "6 – 8 mg"],
                       ["Maintenance", "13+", "Up to 12 mg (highest arm tested)"],
@@ -398,7 +470,7 @@ export default function RetatrutidePage() {
         </Section>
 
         {/* Reconstitution */}
-        <Section id="reconstitution" className="bg-[var(--muted)]">
+        <Section id="reconstitution" className="bg-white">
           <Container>
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -436,7 +508,7 @@ export default function RetatrutidePage() {
         </Section>
 
         {/* Side effects */}
-        <Section id="side-effects" className="bg-white">
+        <Section id="side-effects" className="bg-[var(--muted)]">
           <Container>
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -479,7 +551,7 @@ export default function RetatrutidePage() {
         </Section>
 
         {/* Comparisons */}
-        <Section id="comparisons" className="bg-[var(--muted)]">
+        <Section id="comparisons" className="bg-white">
           <Container>
             <div className="max-w-5xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -515,7 +587,7 @@ export default function RetatrutidePage() {
         </Section>
 
         {/* References */}
-        <Section id="references" className="bg-white">
+        <Section id="references" className="bg-[var(--muted)]">
           <Container>
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
