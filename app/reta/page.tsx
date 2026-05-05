@@ -109,7 +109,7 @@ export default function RetatrutidePage() {
               <div className="relative flex items-center justify-center">
                 <div className="relative">
                   <img
-                    src="/reta-product-transparent.png"
+                    src="/reta-product-transparent-2.png"
                     alt="Retatrutide research vial"
                     className="w-full max-w-md drop-shadow-2xl"
                   />
