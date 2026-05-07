@@ -131,6 +131,7 @@ export function PricingCard({
               installment,
               popular: !!popular,
             }}
+            webhookEndpoint="/api/track-add-to-cart"
           >
             {ctaLabel}
           </TrackedLink>

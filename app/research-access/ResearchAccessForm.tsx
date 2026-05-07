@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import posthog from "posthog-js";
+import { saveClientContact } from "@/app/lib/clientContact";
 
 type Tab = "create" | "signin";
 
@@ -38,6 +39,8 @@ export function ResearchAccessForm() {
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = username.trim();
+
+    saveClientContact({ email: cleanEmail, name: cleanName });
 
     try {
       posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
@@ -78,6 +81,8 @@ export function ResearchAccessForm() {
     setError(null);
 
     const cleanEmail = signInEmail.trim().toLowerCase();
+    saveClientContact({ email: cleanEmail });
+
     try {
       posthog.identify(cleanEmail, { email: cleanEmail });
       posthog.capture("research_access_signup", { method: "signin" });
