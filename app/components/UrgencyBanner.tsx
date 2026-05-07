@@ -43,11 +43,13 @@ export function UrgencyBanner({
       : lineTwo.replace("{stacks}", String(initialCount ?? ""));
 
   return (
-    <div className="flex flex-col items-center justify-center text-center text-xs sm:text-sm">
-      <span className="font-bold tracking-wide">{lineOne}</span>
-      <span className="font-semibold text-white/90">
+    <div className="flex flex-col items-center justify-center text-center gap-0.5 sm:gap-0">
+      <span className="font-bold tracking-wide text-base sm:text-sm">
+        {lineOne}
+      </span>
+      <span className="font-semibold text-white/95 text-sm sm:text-sm">
         {renderedLineTwo} <span className="text-white/50">|</span>{" "}
-        <span className="text-white/80">{shippingText}</span>
+        <span className="text-white/85">{shippingText}</span>
       </span>
     </div>
   );

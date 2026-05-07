@@ -32,7 +32,7 @@ export const siteCopy = {
   ],
 
   hero: {
-    eyebrow: "SECURE YOUR PROTOCOL",
+    eyebrow: "SECURE YOUR STACK",
     headline: "POWER CUT\u2122",
     subheadline:
       "A Curated Peptide Stack Built Around A Structured 10-Week Protocol For Fat Loss, Recovery And Lean Muscle Growth",
