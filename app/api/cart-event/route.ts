@@ -6,6 +6,12 @@ const ZAPIER_WEBHOOK_URL =
   process.env.ZAPIER_ADD_TO_CART_WEBHOOK_URL ||
   "https://hooks.zapier.com/hooks/catch/27218922/4ytdskf/";
 
+// Simple GET so production can be probed in a browser without making the
+// route public-write only. Returns 200 if the route is deployed.
+export async function GET() {
+  return NextResponse.json({ ok: true, method: "GET" });
+}
+
 export async function POST(req: NextRequest) {
   let payload: Record<string, unknown> = {};
 
@@ -30,16 +36,27 @@ export async function POST(req: NextRequest) {
     user_agent: userAgent,
   };
 
-  // Fire-and-forget. We resolve the response back to the browser before
-  // Zapier replies so the click handler never has to wait, and any failure
-  // is logged server-side instead of bubbling to the user.
-  fetch(ZAPIER_WEBHOOK_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  }).catch((err) => {
+  // Await the upstream fetch so Vercel's serverless runtime doesn't freeze the
+  // function before the request leaves the network. We still catch errors so
+  // the client always gets a 200 — Zapier outages must never block checkout.
+  let upstreamStatus: number | null = null;
+  try {
+    const res = await fetch(ZAPIER_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    upstreamStatus = res.status;
+    if (!res.ok) {
+      console.error(
+        "Zapier add-to-cart webhook non-OK:",
+        res.status,
+        await res.text(),
+      );
+    }
+  } catch (err) {
     console.error("Zapier add-to-cart webhook failed:", err);
-  });
+  }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, upstreamStatus });
 }
