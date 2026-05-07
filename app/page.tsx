@@ -79,7 +79,7 @@ export default function Home() {
 
                 {/* Headline */}
                 <h1 className="mt-8 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-up">
-                  Secure Your POWER CUT<span className="text-[0.5em] align-super">™</span> Stack
+                  The POWER CUT<span className="text-[0.5em] align-super">™</span> Protocol
                 </h1>
 
                 {/* Subheadline */}

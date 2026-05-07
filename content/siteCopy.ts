@@ -35,7 +35,7 @@ export const siteCopy = {
     eyebrow: "SECURE YOUR PROTOCOL",
     headline: "POWER CUT\u2122",
     subheadline:
-      "A Curated Peptide Stack Packaged With A Clear 10-Week Protocol For Rapid Fat Loss And Lean Muscle Growth",
+      "A Curated Peptide Stack Built Around A Structured 10-Week Protocol For Fat Loss, Recovery And Lean Muscle Growth",
     benefits: [
       {
         title: "Burn 2lbs Every Week",
