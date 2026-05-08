@@ -829,6 +829,12 @@ export default function Home() {
                     {item.label}
                   </a>
                 ))}
+                <a
+                  href="/policy"
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  Return Policy
+                </a>
               </nav>
             </div>
           </div>
