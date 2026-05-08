@@ -95,13 +95,7 @@ export default function PolicyPage() {
               </div>
 
               <p className="mt-6 text-center text-xs text-[var(--primary)]/50">
-                This policy was last updated on{" "}
-                {new Date().toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                .
+                This policy was last updated on February 2, 2026.
               </p>
             </div>
           </Container>
