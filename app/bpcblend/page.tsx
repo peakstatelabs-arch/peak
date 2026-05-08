@@ -91,7 +91,7 @@ export default function BpcBlendPage() {
 
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <a
-                    href="/#pricing"
+                    href="/#calculator"
                     className="btn-primary inline-flex h-12 items-center justify-center rounded-2xl px-6 text-base font-semibold"
                   >
                     See the POWER CUT Stack
