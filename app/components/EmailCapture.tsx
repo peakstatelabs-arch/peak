@@ -11,10 +11,14 @@ export function EmailCapture({
   emailTo,
   subject,
   bodyHint,
+  buttonLabel = "Join waitlist",
+  helperText = "Submitting opens your email app. You can swap this for a real form provider later.",
 }: {
   emailTo: string;
   subject: string;
   bodyHint: string;
+  buttonLabel?: string;
+  helperText?: string | null;
 }) {
   const [email, setEmail] = useState("");
   const [touched, setTouched] = useState(false);
@@ -65,10 +69,9 @@ export function EmailCapture({
               Please enter a valid email address.
             </p>
           ) : null}
-          <p className="mt-2 text-xs text-black/60">
-            Submitting opens your email app. You can swap this for a real form
-            provider later.
-          </p>
+          {helperText ? (
+            <p className="mt-2 text-xs text-black/60">{helperText}</p>
+          ) : null}
         </div>
         <button
           type="submit"
