@@ -339,7 +339,7 @@ export const siteCopy = {
       },
       {
         q: "Can I buy the components individually?",
-        a: "The POWER CUT\u2122 stack is specifically curated and sequenced for optimal research outcomes. While individual components exist elsewhere, our value comes from the complete system: curated compounds + proven protocol + community support.",
+        a: "Yes. If you're not ready for the full stack, each compound in POWER CUT\u2122 is also available as a single vial through our singles catalog \u2014 same lab-tested purity, same batch documentation. That said, the POWER CUT\u2122 stack is specifically curated and sequenced for optimal research outcomes, and the strongest results come from the complete system: curated compounds + proven protocol + community support.",
       },
     ],
   },
