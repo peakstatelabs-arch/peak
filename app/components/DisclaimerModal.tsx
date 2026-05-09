@@ -14,7 +14,7 @@ function setCookie(name: string, value: string, maxAgeSeconds: number) {
 
 const ONE_DAY = 60 * 60 * 24;
 
-const SUPPRESSED_PATHS = ["/thankyou", "/structured-peptides", "/bridge"];
+const SUPPRESSED_PATHS = ["/thankyou", "/structured-peptides", "/bridge", "/research-access"];
 
 export function DisclaimerModal() {
   const [visible, setVisible] = useState(false);
