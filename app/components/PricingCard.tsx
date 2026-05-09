@@ -125,6 +125,7 @@ export function PricingCard({
             }`}
             event="add_to_cart_click"
             eventProperties={{
+              product: "POWER CUT™ Stack",
               tier: name,
               tier_id: id,
               price,

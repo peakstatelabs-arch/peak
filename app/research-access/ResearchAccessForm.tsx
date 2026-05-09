@@ -10,6 +10,7 @@ export function ResearchAccessForm() {
   const [tab, setTab] = useState<Tab>("create");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [signInName, setSignInName] = useState("");
   const [signInEmail, setSignInEmail] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [signInAgreed, setSignInAgreed] = useState(false);
@@ -68,8 +69,8 @@ export function ResearchAccessForm() {
   function handleSignInSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    if (!signInEmail.trim()) {
-      setError("Please enter your email to sign in.");
+    if (!signInName.trim() || !signInEmail.trim()) {
+      setError("Please enter your name and email to sign in.");
       return;
     }
 
@@ -81,10 +82,11 @@ export function ResearchAccessForm() {
     setError(null);
 
     const cleanEmail = signInEmail.trim().toLowerCase();
-    saveClientContact({ email: cleanEmail });
+    const cleanName = signInName.trim();
+    saveClientContact({ email: cleanEmail, name: cleanName });
 
     try {
-      posthog.identify(cleanEmail, { email: cleanEmail });
+      posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
       posthog.capture("research_access_signup", { method: "signin" });
     } catch (err) {
       console.error("PostHog identify failed:", err);
@@ -209,6 +211,24 @@ export function ResearchAccessForm() {
         </form>
       ) : (
         <form onSubmit={handleSignInSubmit} className="mt-6 space-y-5">
+          <div>
+            <label
+              htmlFor="signin-name"
+              className="block text-sm font-bold text-[var(--primary)]"
+            >
+              Name
+            </label>
+            <input
+              id="signin-name"
+              name="signin-name"
+              type="text"
+              autoComplete="name"
+              value={signInName}
+              onChange={(e) => setSignInName(e.target.value)}
+              className="mt-2 w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white"
+            />
+          </div>
+
           <div>
             <label
               htmlFor="signin-email"
