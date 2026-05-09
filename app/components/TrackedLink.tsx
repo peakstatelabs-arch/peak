@@ -38,11 +38,13 @@ export function TrackedLink({
 
         if (webhookEndpoint && typeof window !== "undefined") {
           try {
-            const { email, name } = readClientContact();
+            const { email, name, sessionId } = readClientContact();
             const payload = {
               event,
               email: email ?? null,
               name: name ?? null,
+              user_id: email ?? null,
+              session_id: sessionId ?? null,
               url: window.location.href,
               timestamp: new Date().toISOString(),
               ...eventProperties,
