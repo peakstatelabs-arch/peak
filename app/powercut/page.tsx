@@ -54,14 +54,14 @@ export default function PowerCutProtocol() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
         <Container className="flex h-16 items-center justify-between">
-          <a href="/" className="flex items-center gap-2 font-bold text-lg">
+          <div className="flex items-center gap-2 font-bold text-lg">
             <img
               src="/logo.png"
               alt="Peak State Labs Logo"
               className="h-7 w-7 rounded-lg"
             />
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-          </a>
+          </div>
         </Container>
       </header>
 
@@ -1227,14 +1227,14 @@ export default function PowerCutProtocol() {
           </div>
           <div className="py-8 border-b border-white/10">
             <div className="flex items-center justify-center">
-              <a href="/" className="flex items-center gap-2 font-bold text-lg">
+              <div className="flex items-center gap-2 font-bold text-lg">
                 <img
                   src="/logo.png"
                   alt="Peak State Labs Logo"
                   className="h-7 w-7 rounded-lg"
                 />
                 <span>{siteCopy.brand.name}</span>
-              </a>
+              </div>
             </div>
           </div>
           <div className="pt-8">
