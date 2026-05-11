@@ -42,8 +42,15 @@ export function getEasternShippingState(): {
 /**
  * Computes how many stacks are still on offer, given an anchor calendar date
  * (Eastern time) on which the count equals `initial` from midnight through
- * 7:59 PM ET. The count decrements by 1 at every subsequent 8 PM ET boundary
- * and never drops below `minimum`.
+ * 7:59 PM ET. The count decrements by 1 at every subsequent 8 PM ET boundary,
+ * walks down to `minimum`, and then cycles back to `initial` on the next
+ * decrement. The cycle length is therefore `initial - minimum + 1` days.
+ *
+ * Example with initial=7, minimum=2:
+ *   anchor day  : 7   anchor +5 : 2
+ *   anchor +1   : 6   anchor +6 : 7   (cycles back up)
+ *   anchor +2   : 5   anchor +7 : 6
+ *   ...
  */
 export function getStacksLeft(opts: {
   initial: number;
@@ -73,5 +80,9 @@ export function getStacksLeft(opts: {
     decrements += 1;
   }
 
-  return Math.max(opts.minimum, opts.initial - decrements);
+  const cycleLength = opts.initial - opts.minimum + 1;
+  if (cycleLength <= 0) return opts.initial;
+
+  const positionInCycle = decrements % cycleLength;
+  return opts.initial - positionInCycle;
 }
