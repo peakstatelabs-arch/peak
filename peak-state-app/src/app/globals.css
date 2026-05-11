@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: 255 255 255;
+  --bg-elev: 249 250 251;
+  --bg-card: 255 255 255;
+  --fg: 9 9 11;
+  --fg-muted: 82 82 91;
+  --fg-subtle: 161 161 170;
+  --border: 228 228 231;
+  --accent: 132 204 22;
+  --accent-fg: 9 9 11;
+  --danger: 220 38 38;
+  --success: 22 163 74;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
+}
+
+html.dark {
+  --bg: 8 9 12;
+  --bg-elev: 16 18 22;
+  --bg-card: 20 22 27;
+  --fg: 244 244 245;
+  --fg-muted: 161 161 170;
+  --fg-subtle: 113 113 122;
+  --border: 39 39 46;
+  --accent: 163 230 53;
+  --accent-fg: 9 9 11;
+}
+
+html,
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  border-color: rgb(var(--border));
+}
+
+.card {
+  @apply rounded-card border border-border bg-bg-card p-5 shadow-sm;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50 disabled:pointer-events-none;
+}
+.btn-primary { @apply btn bg-accent text-accent-fg hover:bg-accent/90; }
+.btn-secondary { @apply btn bg-bg-elev text-fg border border-border hover:bg-border/40; }
+.btn-ghost { @apply btn text-fg-muted hover:text-fg hover:bg-bg-elev; }
+.btn-danger { @apply btn bg-danger text-white hover:bg-danger/90; }
+
+.input {
+  @apply w-full rounded-lg border border-border bg-bg-elev px-3.5 py-2.5 text-sm text-fg placeholder-fg-subtle focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition;
+}
+.label { @apply block text-sm font-medium text-fg-muted mb-1.5; }
+
+.skeleton {
+  @apply animate-pulse rounded-md bg-bg-elev;
+}
+
+.chip {
+  @apply inline-flex items-center gap-1 rounded-full bg-bg-elev border border-border px-2.5 py-1 text-xs font-medium text-fg-muted;
+}
+.chip-accent { @apply chip bg-accent/10 border-accent/30 text-accent; }
+
+/* PWA safe area */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-top { padding-top: env(safe-area-inset-top); }
+}

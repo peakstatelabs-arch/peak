@@ -1,0 +1,16 @@
+{
+  "name": "Peak State Labs",
+  "short_name": "Peak State",
+  "description": "Peak State Labs client portal — protocols, tracking, performance.",
+  "start_url": "/portal/dashboard",
+  "scope": "/portal/",
+  "id": "/portal/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08090c",
+  "theme_color": "#08090c",
+  "icons": [
+    { "src": "/portal/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/portal/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
