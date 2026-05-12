@@ -62,35 +62,35 @@ export default function PolicyPage() {
             <div className="max-w-2xl mx-auto">
               <div className="rounded-3xl border border-[var(--border)] bg-white p-6 sm:p-10 shadow-sm space-y-6 text-[var(--primary)]/80 leading-relaxed">
                 <p className="text-lg font-semibold text-[var(--primary)]">
-                  All sales are final. We do not accept returns, exchanges, or
-                  refunds under any circumstances.
+                  Due to the nature of our offerings, all sales are considered
+                  final.
                 </p>
 
                 <p>
-                  Once an order has been placed and payment has been processed,
-                  it is considered final and cannot be cancelled, returned, or
-                  refunded. This policy applies to every order, with no
-                  exceptions.
+                  Opened, used, or tampered products are not eligible for
+                  return, refund, or exchange.
                 </p>
 
                 <p>
-                  We understand that a no-returns policy is a firm commitment,
-                  and we ask that you take the time you need to review your
-                  selection before completing your purchase. If you have a
-                  question that would help you make an informed decision, we
-                  encourage you to reach out to us before placing your order
-                  rather than after.
+                  If there is an issue with your order or shipment, please
+                  contact us directly so our team can review the situation and
+                  work toward an appropriate resolution when applicable.
                 </p>
+
+                <div className="space-y-3">
+                  <p>Any approved returns must:</p>
+                  <ul className="list-disc pl-6 space-y-1">
+                    <li>be authorized in advance</li>
+                    <li>remain unopened and unused</li>
+                    <li>and be returned in original condition</li>
+                  </ul>
+                </div>
+
+                <p>Unauthorized returns may not be accepted.</p>
 
                 <p>
                   By completing a purchase with {siteCopy.brand.name}, you
-                  acknowledge that you have read, understood, and agreed to
-                  this policy in full.
-                </p>
-
-                <p>
-                  We appreciate your understanding and the trust you place in
-                  us with your order.
+                  acknowledge that you have reviewed and agreed to this policy.
                 </p>
               </div>
 
