@@ -31,6 +31,10 @@ type Product = {
   image?: string;
   cartId: string;
   startStock: number;
+  /** When true, render a Pre-Order badge instead of the in-stock counter and a placeholder button until a cartId is wired up. */
+  preorder?: boolean;
+  /** Human-readable ship date shown on the pre-order badge. */
+  shipsBy?: string;
 };
 
 const products: Product[] = [
@@ -69,6 +73,21 @@ const products: Product[] = [
     image: "/bpc-tb-product.png",
     cartId: "B62P3JVPTD6CA",
     startStock: 9,
+  },
+  {
+    id: "ghk-cu",
+    name: "GHK-Cu",
+    subtitle: "The Restorer",
+    dose: "50mg",
+    price: "$85",
+    description:
+      "Copper peptide signaling support. Helps with skin quality, tissue restoration, and hair vitality. Designed to support visible regeneration and biological renewal.",
+    image: "/GHKCU.png",
+    // TODO: replace with the live PayPal cart ID once the pre-order link is created.
+    cartId: "",
+    startStock: 0,
+    preorder: true,
+    shipsBy: "June 8",
   },
 ];
 
@@ -175,7 +194,7 @@ export default function SinglesCatalog() {
         {/* Product Grid */}
         <Section className="bg-white">
           <Container>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {products.map((product) => (
                 <div
                   key={product.id}
@@ -199,19 +218,40 @@ export default function SinglesCatalog() {
                       {product.description}
                     </p>
 
-                    <div className="mt-5 flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-2.5">
-                      <span className="relative flex h-2.5 w-2.5 shrink-0">
-                        <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-ping" />
-                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
-                      </span>
-                      <p className="text-sm font-bold text-red-700">
-                        Only{" "}
-                        <span className="font-extrabold">
-                          {currentStock(product.startStock)}
-                        </span>{" "}
-                        vials in stock
-                      </p>
-                    </div>
+                    {product.preorder ? (
+                      <div className="mt-5 flex items-center gap-2 rounded-xl bg-[var(--accent)]/15 border border-[var(--accent)]/40 px-3 py-2.5">
+                        <span className="relative flex h-2.5 w-2.5 shrink-0">
+                          <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
+                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--accent-dark)]" />
+                        </span>
+                        <p className="text-sm font-bold text-[var(--accent-dark)]">
+                          Pre-Order
+                          {product.shipsBy ? (
+                            <>
+                              {" "}
+                              · Ships{" "}
+                              <span className="font-extrabold">
+                                {product.shipsBy}
+                              </span>
+                            </>
+                          ) : null}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="mt-5 flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-2.5">
+                        <span className="relative flex h-2.5 w-2.5 shrink-0">
+                          <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-ping" />
+                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+                        </span>
+                        <p className="text-sm font-bold text-red-700">
+                          Only{" "}
+                          <span className="font-extrabold">
+                            {currentStock(product.startStock)}
+                          </span>{" "}
+                          vials in stock
+                        </p>
+                      </div>
+                    )}
 
                     <div className="mt-5 pt-5 border-t border-[var(--border)]">
                       <div className="flex items-end justify-between gap-4 mb-4">
@@ -224,11 +264,25 @@ export default function SinglesCatalog() {
                           </p>
                         </div>
                       </div>
-                      <div className="paypal-add-to-cart-host">
-                        <paypal-add-to-cart-button
-                          data-id={product.cartId}
-                        ></paypal-add-to-cart-button>
-                      </div>
+                      {product.cartId ? (
+                        <div className="paypal-add-to-cart-host">
+                          <paypal-add-to-cart-button
+                            data-id={product.cartId}
+                          ></paypal-add-to-cart-button>
+                        </div>
+                      ) : (
+                        // Placeholder rendered until the PayPal cart ID is wired up.
+                        // Swap the parent ternary by setting `cartId` on the product
+                        // and the existing PayPal flow takes over automatically.
+                        <button
+                          type="button"
+                          disabled
+                          aria-disabled="true"
+                          className="w-full inline-flex items-center justify-center rounded-xl bg-[var(--primary)]/90 text-white text-base font-semibold py-3.5 px-6 cursor-not-allowed opacity-90"
+                        >
+                          Pre-Order — Coming Soon
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
