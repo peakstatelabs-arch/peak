@@ -8,6 +8,7 @@ const PRODUCT_IDS = [
   "3GQWA553XEXNU",
   "SPCE9E3H3VVX2",
   "B62P3JVPTD6CA",
+  "MRUXNK54XGUQ6",
 ] as const;
 
 const VIEW_CART_IDS = ["pp-view-cart-header", "pp-view-cart-floating"] as const;
