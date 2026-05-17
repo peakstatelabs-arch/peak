@@ -156,7 +156,7 @@ export default function Home() {
                 href={siteCopy.brand.primaryCtaHref}
                 className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold mt-5"
               >
-                Order Now
+                {siteCopy.brand.primaryCtaLabel}
               </a>
             </div>
 

@@ -3,7 +3,7 @@ export const siteCopy = {
     name: "Peak State Labs",
     trademark: "POWER CUT\u2122",
     tagline: "The 10-Week Biological Shortcut to Your Dream Physique",
-    primaryCtaLabel: "Order Now",
+    primaryCtaLabel: "Get Access Now",
     primaryCtaHref: "#pricing",
     secondaryCtaLabel: "See What's Included",
     secondaryCtaHref: "#contents",
