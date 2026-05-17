@@ -489,24 +489,35 @@ export default function Home() {
                   {/* Product chips */}
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                     {[
-                      "Retatrutide",
-                      "CJC-1295 + Ipamorelin",
-                      "BPC-157 + TB-500",
-                    ].map((name) => (
+                      { label: "Retatrutide" },
+                      { label: "CJC-1295 + Ipamorelin" },
+                      { label: "BPC-157 + TB-500" },
+                      { label: "GHK-Cu (Pre-Order)", isNew: true },
+                    ].map((chip) => (
                       <span
-                        key={name}
-                        className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm font-semibold"
+                        key={chip.label}
+                        className={
+                          chip.isNew
+                            ? "inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/60 bg-[var(--accent)]/20 px-4 py-2 text-sm font-semibold shadow-[0_0_0_1px_var(--accent)]/30"
+                            : "inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm font-semibold"
+                        }
                       >
-                        <svg
-                          className="w-4 h-4 text-[var(--accent)] flex-shrink-0"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth={3}
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                        {name}
+                        {chip.isNew ? (
+                          <span className="inline-flex items-center rounded-full bg-[var(--accent)] px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[var(--primary)]">
+                            New
+                          </span>
+                        ) : (
+                          <svg
+                            className="w-4 h-4 text-[var(--accent)] flex-shrink-0"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={3}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                        {chip.label}
                       </span>
                     ))}
                   </div>
