@@ -83,8 +83,7 @@ const products: Product[] = [
     description:
       "Copper peptide signaling support. Helps with skin quality, tissue restoration, and hair vitality. Designed to support visible regeneration and biological renewal.",
     image: "/GHKCU.png",
-    // TODO: replace with the live PayPal cart ID once the pre-order link is created.
-    cartId: "",
+    cartId: "MRUXNK54XGUQ6",
     startStock: 0,
     preorder: true,
     shipsBy: "June 8",
