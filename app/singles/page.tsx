@@ -14,11 +14,19 @@ export const revalidate = 3600;
 
 const STOCK_EPOCH_MS = Date.UTC(2026, 4, 1);
 
-function currentStock(startStock: number): number {
-  const cycle = startStock - 1;
-  const days = Math.floor((Date.now() - STOCK_EPOCH_MS) / 86_400_000);
-  const offset = ((days % cycle) + cycle) % cycle;
-  return startStock - offset;
+function currentStock(
+  startStock: number,
+  opts?: { step?: number; anchorMs?: number; minimum?: number },
+): number {
+  const step = opts?.step ?? 1;
+  const anchorMs = opts?.anchorMs ?? STOCK_EPOCH_MS;
+  const minimum = opts?.minimum ?? 1;
+  const range = startStock - minimum;
+  if (range <= 0 || step <= 0) return startStock;
+  const stepsPerCycle = Math.floor(range / step) + 1;
+  const days = Math.floor((Date.now() - anchorMs) / 86_400_000);
+  const offset = ((days % stepsPerCycle) + stepsPerCycle) % stepsPerCycle;
+  return startStock - offset * step;
 }
 
 type Product = {
@@ -31,6 +39,10 @@ type Product = {
   image?: string;
   cartId: string;
   startStock: number;
+  /** Per-tick drop. Defaults to 1. */
+  stockStep?: number;
+  /** UTC midnight anchor for the stock cycle. Defaults to STOCK_EPOCH_MS. */
+  stockAnchorMs?: number;
   /** When true, render a Pre-Order badge instead of the in-stock counter and a placeholder button until a cartId is wired up. */
   preorder?: boolean;
   /** Human-readable ship date shown on the pre-order badge. */
@@ -84,7 +96,9 @@ const products: Product[] = [
       "Copper peptide signaling support. Helps with skin quality, tissue restoration, and hair vitality. Designed to support visible regeneration and biological renewal.",
     image: "/GHKCU.png",
     cartId: "MRUXNK54XGUQ6",
-    startStock: 0,
+    startStock: 17,
+    stockStep: 2,
+    stockAnchorMs: Date.UTC(2026, 4, 17),
     preorder: true,
     shipsBy: "June 8",
   },
@@ -225,10 +239,23 @@ export default function SinglesCatalog() {
                         </span>
                         <p className="text-sm font-bold text-[var(--accent-dark)]">
                           Pre-Order
+                          {product.startStock > 0 ? (
+                            <>
+                              {" "}
+                              •{" "}
+                              <span className="font-extrabold">
+                                {currentStock(product.startStock, {
+                                  step: product.stockStep,
+                                  anchorMs: product.stockAnchorMs,
+                                })}
+                              </span>{" "}
+                              vials remaining
+                            </>
+                          ) : null}
                           {product.shipsBy ? (
                             <>
                               {" "}
-                              · Ships{" "}
+                              • Ships{" "}
                               <span className="font-extrabold">
                                 {product.shipsBy}
                               </span>
