@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { siteCopy } from "@/content/siteCopy";
 import { DisclaimerModal } from "@/app/components/DisclaimerModal";
+import { FloatingCTA } from "@/app/components/FloatingCTA";
 import { PostHogInit } from "@/app/components/PostHogInit";
 
 const geistSans = localFont({
@@ -49,6 +50,7 @@ export default function RootLayout({
         <PostHogInit />
         <DisclaimerModal />
         {children}
+        <FloatingCTA />
       </body>
     </html>
   );
