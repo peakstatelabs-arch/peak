@@ -164,13 +164,13 @@ export function FloatingCTA() {
       >
         {/* Nudge tooltip */}
         <div
-          className={`absolute right-0 bottom-full mb-2 origin-bottom-right transition-all duration-300 ${
+          className={`absolute right-0 bottom-full mb-2 origin-bottom-right transition-all duration-500 sm:duration-300 ${
             nudge
-              ? "opacity-100 scale-100 translate-y-0"
-              : "opacity-0 scale-95 translate-y-1 pointer-events-none"
+              ? "opacity-90 sm:opacity-100 scale-100 translate-y-0"
+              : "opacity-0 scale-100 sm:scale-95 translate-y-1 pointer-events-none"
           }`}
         >
-          <div className="relative whitespace-nowrap rounded-2xl bg-white border border-[var(--border)] shadow-lg px-3.5 py-2 text-xs sm:text-sm font-medium text-[var(--primary)]">
+          <div className="relative whitespace-nowrap rounded-2xl bg-white border border-[var(--border)] shadow-sm sm:shadow-lg px-3 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-sm font-medium text-[var(--primary)]/80 sm:text-[var(--primary)]">
             Have questions? We can help.
             <span className="absolute -bottom-1 right-6 h-2 w-2 rotate-45 bg-white border-r border-b border-[var(--border)]" />
           </div>
@@ -181,11 +181,11 @@ export function FloatingCTA() {
           onClick={openModal}
           aria-label="Talk to a Peptide Expert"
           className={`group flex items-center gap-2.5 rounded-full bg-[var(--primary)] text-white pl-3.5 pr-4 sm:pl-4 sm:pr-5 h-12 sm:h-14 shadow-[0_10px_30px_rgba(21,80,144,0.35)] hover:shadow-[0_14px_38px_rgba(21,80,144,0.45)] hover:bg-[var(--primary-light)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 ${
-            nudge ? "animate-pulse-slow" : ""
+            nudge ? "sm:animate-pulse-slow" : ""
           }`}
         >
           <span className="relative flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-[var(--accent)]/25 ring-1 ring-[var(--accent)]/40">
-            <span className="absolute inset-0 rounded-full bg-[var(--accent)]/40 animate-ping opacity-60" />
+            <span className="absolute inset-0 rounded-full bg-[var(--accent)]/40 opacity-0 sm:opacity-60 sm:animate-ping" />
             <svg
               viewBox="0 0 24 24"
               fill="none"
