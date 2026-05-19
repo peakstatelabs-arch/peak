@@ -287,8 +287,7 @@ export default function Home() {
                     </h3>
                     <p className="mt-1.5 md:mt-3 text-sm md:text-base text-[var(--primary)]/70 leading-relaxed">
                       No confusion around where to begin or what comes next.
-                      Follow a simple path with support available when you
-                      need it.
+                      A simple path with support when you need it.
                     </p>
                   </div>
                 </div>
