@@ -235,17 +235,17 @@ export function FloatingCTA() {
           }`}
         >
           <div className="relative mx-auto sm:mx-0 w-full bg-white rounded-t-3xl sm:rounded-3xl border border-[var(--border)] shadow-2xl overflow-hidden">
-            {/* Accent header band */}
-            <div className="relative gradient-primary px-6 pt-6 pb-16 text-white">
+            {/* Compact header band */}
+            <div className="relative gradient-primary px-5 sm:px-6 py-4 text-white">
               <div className="pointer-events-none absolute inset-0 opacity-60">
-                <div className="absolute -top-16 -right-10 h-40 w-40 rounded-full bg-[var(--accent)]/30 blur-3xl" />
-                <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-[var(--accent)]/20 blur-2xl" />
+                <div className="absolute -top-16 -right-10 h-32 w-32 rounded-full bg-[var(--accent)]/30 blur-3xl" />
+                <div className="absolute -bottom-10 -left-10 h-24 w-24 rounded-full bg-[var(--accent)]/20 blur-2xl" />
               </div>
 
               <button
                 onClick={closeModal}
                 aria-label="Close"
-                className="absolute top-3 right-3 h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                className="absolute top-2.5 right-2.5 h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -260,87 +260,85 @@ export function FloatingCTA() {
                 </svg>
               </button>
 
-              <div className="relative inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-3 py-1 text-[10px] uppercase tracking-[0.14em] font-semibold text-[var(--accent-light)]">
+              <div className="relative inline-flex items-center gap-2 rounded-full bg-white/10 border border-white/15 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.14em] font-semibold text-[var(--accent-light)]">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] animate-pulse-slow" />
                 Free 15-min strategy call
               </div>
 
               <h2
                 id="peakcta-title"
-                className="relative mt-4 pr-8 text-[22px] sm:text-[24px] font-bold leading-[1.25] tracking-tight"
+                className="relative mt-2 pr-10 text-[19px] sm:text-[20px] font-bold leading-[1.25] tracking-tight"
               >
                 Get clarity before you commit
               </h2>
             </div>
 
-            {/* Body — overlaps header for a layered feel */}
-            <div className="-mt-8 px-6 pb-6">
-              <div className="rounded-2xl bg-white border border-[var(--border)] shadow-[0_8px_20px_rgba(21,80,144,0.06)] p-5">
-                <p className="text-[15px] leading-relaxed text-[var(--primary)]/80">
-                  Book a free 15-minute call and get clarity around your goals
-                  and whether the{" "}
-                  <span className="font-semibold text-[var(--primary)]">
-                    POWER CUT
-                  </span>{" "}
-                  system is the right starting point for you.
-                </p>
+            {/* Body */}
+            <div className="px-5 sm:px-6 pt-5 pb-6">
+              <p className="text-[15px] leading-relaxed text-[var(--primary)]/80">
+                Book a free 15-minute call and get clarity around your goals
+                and whether the{" "}
+                <span className="font-semibold text-[var(--primary)]">
+                  POWER CUT
+                </span>{" "}
+                system is the right starting point for you.
+              </p>
 
-                <button
-                  data-cal-link={CAL_LINK}
-                  data-cal-namespace={CAL_NAMESPACE}
-                  data-cal-config={JSON.stringify(CAL_CONFIG)}
-                  onClick={() => {
-                    sessionStorage.setItem("peakcta_booked_intent", "1");
-                  }}
-                  className="btn-primary mt-5 w-full h-12 rounded-2xl text-[15px] font-semibold inline-flex items-center justify-center gap-2"
+              <button
+                data-cal-link={CAL_LINK}
+                data-cal-namespace={CAL_NAMESPACE}
+                data-cal-config={JSON.stringify(CAL_CONFIG)}
+                onClick={() => {
+                  sessionStorage.setItem("peakcta_booked_intent", "1");
+                }}
+                className="btn-primary mt-5 w-full h-12 rounded-2xl text-[15px] font-semibold inline-flex items-center justify-center gap-2"
+              >
+                Find My Starting Point
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4"
                 >
-                  Find My Starting Point
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2.2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
+                  <path d="M5 12h14M13 5l7 7-7 7" />
+                </svg>
+              </button>
+
+              <ul className="mt-4 grid grid-cols-3 gap-2 text-[11px] sm:text-xs text-[var(--primary)]/75">
+                {[
+                  { label: "No pressure" },
+                  { label: "Personalized" },
+                  { label: "15 minutes" },
+                ].map((item) => (
+                  <li
+                    key={item.label}
+                    className="flex items-center justify-center gap-1.5 rounded-xl bg-[var(--muted)] border border-[var(--border)] py-2 px-1.5 text-center"
                   >
-                    <path d="M5 12h14M13 5l7 7-7 7" />
-                  </svg>
-                </button>
-
-                <ul className="mt-4 grid grid-cols-3 gap-2 text-[11px] sm:text-xs text-[var(--primary)]/75">
-                  {[
-                    { label: "No pressure" },
-                    { label: "Personalized" },
-                    { label: "15 minutes" },
-                  ].map((item) => (
-                    <li
-                      key={item.label}
-                      className="flex items-center justify-center gap-1.5 rounded-xl bg-[var(--muted)] border border-[var(--border)] py-2 px-1.5 text-center"
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-3 w-3 text-[var(--accent-dark)] flex-shrink-0"
                     >
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={3}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="h-3 w-3 text-[var(--accent-dark)] flex-shrink-0"
-                      >
-                        <path d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="font-medium whitespace-nowrap">
-                        {item.label}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span className="font-medium whitespace-nowrap">
+                      {item.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
 
-                <p className="mt-4 text-center text-[11px] text-[var(--primary)]/55">
-                  Guidance from our team — no obligation, no follow-up sales
-                  pressure.
-                </p>
-              </div>
+              <p className="mt-4 text-center text-[11px] text-[var(--primary)]/55">
+                Guidance from our team — no obligation, no follow-up sales
+                pressure.
+              </p>
             </div>
 
             <div
