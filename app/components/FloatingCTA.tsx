@@ -236,7 +236,7 @@ export function FloatingCTA() {
         >
           <div className="relative mx-auto sm:mx-0 w-full bg-white rounded-t-3xl sm:rounded-3xl border border-[var(--border)] shadow-2xl overflow-hidden">
             {/* Accent header band */}
-            <div className="relative gradient-primary px-6 pt-6 pb-12 text-white">
+            <div className="relative gradient-primary px-6 pt-6 pb-16 text-white">
               <div className="pointer-events-none absolute inset-0 opacity-60">
                 <div className="absolute -top-16 -right-10 h-40 w-40 rounded-full bg-[var(--accent)]/30 blur-3xl" />
                 <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-[var(--accent)]/20 blur-2xl" />
@@ -267,14 +267,14 @@ export function FloatingCTA() {
 
               <h2
                 id="peakcta-title"
-                className="relative mt-3 text-2xl sm:text-[26px] font-bold leading-tight"
+                className="relative mt-4 pr-8 text-[22px] sm:text-[24px] font-bold leading-[1.25] tracking-tight"
               >
                 Get clarity before you commit
               </h2>
             </div>
 
             {/* Body — overlaps header for a layered feel */}
-            <div className="-mt-7 px-6 pb-6">
+            <div className="-mt-8 px-6 pb-6">
               <div className="rounded-2xl bg-white border border-[var(--border)] shadow-[0_8px_20px_rgba(21,80,144,0.06)] p-5">
                 <p className="text-[15px] leading-relaxed text-[var(--primary)]/80">
                   Book a free 15-minute call and get clarity around your goals
