@@ -176,9 +176,9 @@ export default function Home() {
         </Section>
 
         {/* Support Included Section */}
-        <Section className="bg-[var(--muted)]">
+        <Section className="bg-[var(--muted)] !py-8 sm:!py-14">
           <Container>
-            <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
+            <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
               {/* Eyebrow */}
               <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-sm font-bold tracking-wider text-[var(--accent-dark)]">
                 <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
@@ -186,12 +186,12 @@ export default function Home() {
               </div>
 
               {/* Headline */}
-              <h2 className="mt-6 text-3xl sm:text-4xl font-bold tracking-tight">
+              <h2 className="mt-5 sm:mt-6 text-2xl sm:text-4xl font-bold tracking-tight">
                 You&rsquo;re Not Doing This Alone
               </h2>
 
               {/* Subheadline */}
-              <p className="mt-4 text-lg text-[var(--primary)]/70">
+              <p className="mt-3 sm:mt-4 text-base sm:text-lg text-[var(--primary)]/70">
                 Every POWER CUT
                 <span className="text-[0.6em] align-super">™</span> member
                 receives direct access to personalized guidance and support
@@ -199,97 +199,111 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Three-card row (desktop) / stacked (mobile) */}
-            <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+            {/* Compact horizontal cards on mobile, full vertical cards on md+ */}
+            <div className="grid md:grid-cols-3 gap-3 md:gap-6 lg:gap-8 max-w-5xl mx-auto">
               {/* Card 1 — 1-on-1 Guidance */}
-              <div className="rounded-3xl bg-white border border-[var(--border)] p-6 sm:p-8 shadow-sm card-hover">
-                <div className="w-12 h-12 rounded-2xl bg-[var(--accent)]/15 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-[var(--accent-dark)]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.75}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
-                    />
-                  </svg>
+              <div className="rounded-2xl md:rounded-3xl bg-white border border-[var(--border)] p-4 md:p-8 shadow-sm card-hover">
+                <div className="flex flex-row md:flex-col items-start gap-4 md:gap-0">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[var(--accent)]/15 flex items-center justify-center flex-shrink-0">
+                    <svg
+                      className="w-5 h-5 md:w-6 md:h-6 text-[var(--accent-dark)]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.75}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1 md:mt-5">
+                    <h3 className="text-base md:text-xl font-bold text-[var(--primary)]">
+                      1-on-1 Guidance
+                    </h3>
+                    <p className="mt-1.5 md:mt-3 text-sm md:text-base text-[var(--primary)]/70 leading-relaxed">
+                      Get direct answers whenever questions come up so you
+                      never feel stuck or left guessing.
+                    </p>
+                  </div>
                 </div>
-                <h3 className="mt-5 text-xl font-bold text-[var(--primary)]">
-                  1-on-1 Guidance
-                </h3>
-                <p className="mt-3 text-[var(--primary)]/70 leading-relaxed">
-                  Get direct answers whenever questions come up so you never
-                  feel stuck or left guessing.
-                </p>
               </div>
 
               {/* Card 2 — Private Community */}
-              <div className="rounded-3xl bg-white border border-[var(--border)] p-6 sm:p-8 shadow-sm card-hover">
-                <div className="w-12 h-12 rounded-2xl bg-[var(--accent)]/15 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-[var(--accent-dark)]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.75}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
-                    />
-                  </svg>
+              <div className="rounded-2xl md:rounded-3xl bg-white border border-[var(--border)] p-4 md:p-8 shadow-sm card-hover">
+                <div className="flex flex-row md:flex-col items-start gap-4 md:gap-0">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[var(--accent)]/15 flex items-center justify-center flex-shrink-0">
+                    <svg
+                      className="w-5 h-5 md:w-6 md:h-6 text-[var(--accent-dark)]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.75}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1 md:mt-5">
+                    <h3 className="text-base md:text-xl font-bold text-[var(--primary)]">
+                      Private Community
+                    </h3>
+                    <p className="mt-1.5 md:mt-3 text-sm md:text-base text-[var(--primary)]/70 leading-relaxed">
+                      Connect with others inside the POWER CUT
+                      <span className="text-[0.6em] align-super">™</span>{" "}
+                      community and follow real journeys happening in real
+                      time.
+                    </p>
+                  </div>
                 </div>
-                <h3 className="mt-5 text-xl font-bold text-[var(--primary)]">
-                  Private Community
-                </h3>
-                <p className="mt-3 text-[var(--primary)]/70 leading-relaxed">
-                  Connect with others inside the POWER CUT
-                  <span className="text-[0.6em] align-super">™</span> community
-                  and follow real journeys happening in real time.
-                </p>
               </div>
 
               {/* Card 3 — Clear Next Steps */}
-              <div className="rounded-3xl bg-white border border-[var(--border)] p-6 sm:p-8 shadow-sm card-hover">
-                <div className="w-12 h-12 rounded-2xl bg-[var(--accent)]/15 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-[var(--accent-dark)]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.75}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"
-                    />
-                  </svg>
+              <div className="rounded-2xl md:rounded-3xl bg-white border border-[var(--border)] p-4 md:p-8 shadow-sm card-hover">
+                <div className="flex flex-row md:flex-col items-start gap-4 md:gap-0">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[var(--accent)]/15 flex items-center justify-center flex-shrink-0">
+                    <svg
+                      className="w-5 h-5 md:w-6 md:h-6 text-[var(--accent-dark)]"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.75}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1 md:mt-5">
+                    <h3 className="text-base md:text-xl font-bold text-[var(--primary)]">
+                      Clear Next Steps
+                    </h3>
+                    <p className="mt-1.5 md:mt-3 text-sm md:text-base text-[var(--primary)]/70 leading-relaxed">
+                      No confusion around where to begin or what comes next.
+                      Follow a simple path with support available when you
+                      need it.
+                    </p>
+                  </div>
                 </div>
-                <h3 className="mt-5 text-xl font-bold text-[var(--primary)]">
-                  Clear Next Steps
-                </h3>
-                <p className="mt-3 text-[var(--primary)]/70 leading-relaxed">
-                  No confusion around where to begin or what comes next. Follow
-                  a simple path with support available when you need it.
-                </p>
               </div>
             </div>
 
             {/* CTA + reassurance */}
-            <div className="text-center mt-12 sm:mt-14">
+            <div className="text-center mt-8 sm:mt-12">
               <a
                 href={siteCopy.brand.primaryCtaHref}
                 className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
               >
                 {siteCopy.brand.primaryCtaLabel}
               </a>
-              <p className="mt-6 italic text-sm sm:text-base text-[var(--primary)]/60 max-w-xl mx-auto leading-relaxed">
+              <p className="mt-5 sm:mt-6 italic text-sm sm:text-base text-[var(--primary)]/60 max-w-xl mx-auto leading-relaxed">
                 Most people don&rsquo;t fail because they lack motivation. They
                 fail because they try to figure everything out alone.
               </p>
