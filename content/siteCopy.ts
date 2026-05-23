@@ -11,17 +11,8 @@ export const siteCopy = {
 
   urgencyBanner: {
     lineOne: "MAY BATCH LIVE:",
-    // {stacks} is replaced by the live count computed in UrgencyBanner.
-    lineTwo: "Only {stacks} Stacks Left",
+    lineTwo: "Only 4 Stacks Left",
     shippingText: "Ships within 24 Hours",
-    stacks: {
-      initial: 7,
-      minimum: 2,
-      // Eastern calendar date when the count equals `initial` through 7:59 PM ET.
-      // Drops by 1 at every 8 PM ET, then cycles back to `initial` the day
-      // after it touches `minimum` (cycle length = initial - minimum + 1 days).
-      anchorEasternDate: "2026-05-11",
-    },
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
 

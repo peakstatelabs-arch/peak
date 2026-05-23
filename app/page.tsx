@@ -21,7 +21,6 @@ export default function Home() {
             lineOne={siteCopy.urgencyBanner.lineOne}
             lineTwo={siteCopy.urgencyBanner.lineTwo}
             shippingText={siteCopy.urgencyBanner.shippingText}
-            stacks={siteCopy.urgencyBanner.stacks}
           />
         </Container>
       </div>
