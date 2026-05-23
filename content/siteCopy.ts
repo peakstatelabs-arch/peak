@@ -10,7 +10,7 @@ export const siteCopy = {
   },
 
   urgencyBanner: {
-    lineOne: "MAY BATCH LIVE:",
+    lineOne: "POWER CUT™ ACCESS OPEN",
     lineTwo: "Only 4 Stacks Left",
     shippingText: "Ships within 24 Hours",
     disclaimer: "For laboratory research only. Not for human consumption.",
