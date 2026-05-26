@@ -10,9 +10,9 @@ export const siteCopy = {
   },
 
   urgencyBanner: {
-    lineOne: "POWER CUT™ ACCESS OPEN",
-    lineTwo: "Inventory Nearly Gone",
-    shippingText: "Pre-Orders Next",
+    lineOne: "PRE-ORDER LIVE",
+    lineTwo: "Only 12 Stacks Left",
+    shippingText: "Ships 6/8",
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
 
@@ -61,11 +61,11 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "MAY BATCH LIVE: Guaranteed FREE same day shipping with orders placed by 3pm EDT.",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/8. Reserve your kit now to lock in priority access to Batch 004.",
     secureNoteAfterCutoff:
-      "MAY BATCH LIVE: You missed today’s same day shipping window. Secure your stack now and move to the front of the line for tomorrow’s free fulfillment cycle.",
-    timerLabel: "Time remaining for same day shipping:",
-    timerLabelAfterCutoff: "Time remaining for free next-day shipping window:",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/8. Reserve your kit now to lock in priority access to Batch 004.",
+    timerLabel: "Pre-order window closes in:",
+    timerLabelAfterCutoff: "Pre-order window closes in:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
   },
