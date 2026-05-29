@@ -379,6 +379,110 @@ function ResultsView({ inputs, onBack, onDownload }: ResultsViewProps) {
         </div>
       </div>
 
+      {/* When & How to Take It */}
+      <div className="mt-4 bg-white rounded-xl border border-[var(--border)] p-4 shadow-sm print:shadow-none print:p-2 print:mt-2 print:break-inside-avoid">
+        <h3 className="text-sm font-semibold text-[var(--primary)] mb-2 print:text-xs print:mb-1">
+          When &amp; How to Take Your Injection
+        </h3>
+        <ul className="space-y-1.5 text-xs text-[var(--primary)]/80 print:text-[10px] print:space-y-0.5">
+          <li className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2022;</span>
+            <span>
+              <strong>Once per week.</strong> Retatrutide is a long-acting, once-weekly injection.
+              Pick one day and take it on the same day each week.
+            </span>
+          </li>
+          <li className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2022;</span>
+            <span>
+              <strong>In the morning, ideally fasted</strong> &mdash; or at least{" "}
+              <strong>90 minutes before a big meal</strong>. This helps minimize nausea and lets the
+              dose settle before your largest meal of the day.
+            </span>
+          </li>
+          <li className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2022;</span>
+            <span>
+              <strong>Subcutaneous injection</strong> into the abdomen, thigh, or back of the arm.
+              Rotate sites each week to protect the tissue.
+            </span>
+          </li>
+          <li className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2022;</span>
+            <span>
+              <strong>Stay consistent.</strong> Same day, same time each week keeps blood levels
+              stable and results predictable. If you miss a dose, take it within 1&ndash;2 days &mdash;
+              otherwise skip it and resume your normal schedule (never double up).
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      {/* Optimize Your Results */}
+      <div className="mt-4 bg-white rounded-xl border border-[var(--border)] p-4 shadow-sm print:shadow-none print:p-2 print:mt-2 print:break-inside-avoid">
+        <h3 className="text-sm font-semibold text-[var(--primary)] mb-2 print:text-xs print:mb-1">
+          Tips to Optimize Your Results
+        </h3>
+        <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-[var(--primary)]/80 print:text-[10px] print:gap-y-1">
+          <div className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span>
+              <strong>Hydrate.</strong> Aim for at least half your body weight (lbs) in ounces of
+              water per day &mdash; appetite suppression can mask thirst.
+            </span>
+          </div>
+          <div className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span>
+              <strong>Electrolytes.</strong> Supplement sodium, potassium, and magnesium daily to
+              avoid fatigue, cramps, and headaches while eating less.
+            </span>
+          </div>
+          <div className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span>
+              <strong>Prioritize protein.</strong> Target <strong>1g of protein per pound of your
+              ideal body weight</strong> to preserve lean muscle while losing fat.
+            </span>
+          </div>
+          <div className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span>
+              <strong>Resistance train.</strong> Lift 3&ndash;4x per week to signal your body to
+              hold onto muscle and keep your metabolism high.
+            </span>
+          </div>
+          <div className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span>
+              <strong>Eat whole foods &amp; fiber.</strong> Lean proteins, vegetables, and fiber
+              improve digestion and help manage any GI side effects.
+            </span>
+          </div>
+          <div className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span>
+              <strong>Sleep 7&ndash;9 hours.</strong> Quality sleep supports recovery, hormones,
+              and appetite regulation &mdash; all critical for fat loss.
+            </span>
+          </div>
+          <div className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span>
+              <strong>Move daily.</strong> Aim for 8,000&ndash;10,000 steps to boost daily
+              calorie burn without taxing recovery.
+            </span>
+          </div>
+          <div className="flex items-start gap-1.5">
+            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span>
+              <strong>Limit alcohol &amp; ultra-processed foods.</strong> They add empty calories
+              and can worsen nausea and energy dips.
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Important Instructions - Compact */}
       <div className="mt-4 bg-white rounded-xl border border-[var(--border)] p-4 shadow-sm print:shadow-none print:p-2 print:mt-2">
         <h3 className="text-sm font-semibold text-[var(--primary)] mb-2 print:text-xs print:mb-1">
