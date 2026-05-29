@@ -147,7 +147,7 @@ function InputForm({ inputs, setInputs, weightLoss, onSubmit }: InputFormProps) 
               {/* Current Body Fat */}
               <div className="space-y-1">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-medium text-[var(--primary)]">Current Body Fat</label>
+                  <label className="text-xs font-medium text-[var(--primary)]">Current Body Fat (Optional)</label>
                   <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
                     {inputs.currentBodyFat}%
                   </span>
@@ -194,7 +194,7 @@ function InputForm({ inputs, setInputs, weightLoss, onSubmit }: InputFormProps) 
               {/* Goal Body Fat */}
               <div className="space-y-1">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-medium text-[var(--primary)]">Goal Body Fat</label>
+                  <label className="text-xs font-medium text-[var(--primary)]">Goal Body Fat (Optional)</label>
                   <span className="text-sm font-bold text-[var(--primary)] bg-[var(--accent)]/20 px-2 py-0.5 rounded">
                     {inputs.goalBodyFat}%
                   </span>
@@ -254,6 +254,9 @@ interface ResultsViewProps {
 
 function ResultsView({ inputs, onBack, onDownload }: ResultsViewProps) {
   const total = totalMg();
+  const hasSplitWeeks = retaSchedule.some(
+    (row) => unitsForDose(row.mg, inputs.vial) > 100,
+  );
 
   return (
     <div className="w-full max-w-3xl mx-auto animate-fade-in print:max-w-none print:mx-0 print:text-[11px]">
@@ -328,6 +331,7 @@ function ResultsView({ inputs, onBack, onDownload }: ResultsViewProps) {
           <div className="space-y-1 print:space-y-0.5">
             {retaSchedule.map((row) => {
               const units = unitsForDose(row.mg, inputs.vial);
+              const isSplit = units > 100;
               return (
                 <div
                   key={row.week}
@@ -346,11 +350,26 @@ function ResultsView({ inputs, onBack, onDownload }: ResultsViewProps) {
                   </p>
                   <p className="text-right font-bold text-[var(--accent-dark)] text-xs print:text-[10px]">
                     {units} units
+                    {isSplit && (
+                      <span className="text-[var(--primary)]/60 font-semibold"> *</span>
+                    )}
                   </p>
                 </div>
               );
             })}
           </div>
+
+          {/* Split-injection note */}
+          {hasSplitWeeks && (
+            <div className="mt-2 flex items-start gap-1.5 rounded-lg bg-[var(--accent)]/15 px-2.5 py-2 text-[11px] text-[var(--primary)]/80 print:text-[9px] print:mt-1 print:break-inside-avoid">
+              <span className="font-bold text-[var(--accent-dark)]">*</span>
+              <span>
+                <strong>Split injection:</strong> a 1mL syringe holds only 100 units, so any dose
+                marked with an asterisk exceeds one full syringe. Split these weeks into two
+                injections (e.g. 110 units = two draws of 55 units) to deliver the full dose.
+              </span>
+            </div>
+          )}
 
           {/* Total */}
           <div className="mt-2 pt-2 border-t border-[var(--border)] flex justify-between items-center print:mt-1 print:pt-1">
@@ -391,6 +410,28 @@ function ResultsView({ inputs, onBack, onDownload }: ResultsViewProps) {
             <span>Consult provider for adverse effects</span>
           </div>
         </div>
+      </div>
+
+      {/* Power Cut Stack Upsell + CTA - Hide on print */}
+      <div className="mt-4 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] p-5 text-white shadow-lg print:hidden">
+        <h3 className="text-lg font-bold mb-1.5">Maximize Your Results with the Full POWER CUT&trade; Stack</h3>
+        <p className="text-sm text-white/90 leading-relaxed mb-4">
+          Retatrutide is a powerful tool for fat loss &mdash; but if your goal is to{" "}
+          <strong>lose fat AND build lean muscle</strong> while protecting your recovery, energy,
+          and overall high performance, running Reta on its own only gets you part of the way.
+          Our complete <strong>POWER CUT&trade; Stack</strong> pairs Reta with CJC-1295 / Ipamorelin
+          and BPC-157 / TB-500 so you preserve lean mass, recover faster, sustain energy, and
+          come out the other side leaner and stronger &mdash; not just lighter.
+        </p>
+        <a
+          href="/powercut"
+          className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-[var(--primary)] shadow-md transition-all hover:scale-[1.02] hover:shadow-lg"
+        >
+          Explore the POWER CUT&trade; Stack
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </a>
       </div>
 
       {/* Print Footer */}
