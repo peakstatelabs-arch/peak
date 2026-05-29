@@ -425,56 +425,56 @@ function ResultsView({ inputs, onBack, onDownload }: ResultsViewProps) {
         </h3>
         <div className="grid sm:grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-[var(--primary)]/80 print:text-[10px] print:gap-y-1">
           <div className="flex items-start gap-1.5">
-            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2713;</span>
             <span>
               <strong>Hydrate.</strong> Aim for at least half your body weight (lbs) in ounces of
               water per day &mdash; appetite suppression can mask thirst.
             </span>
           </div>
           <div className="flex items-start gap-1.5">
-            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2713;</span>
             <span>
               <strong>Electrolytes.</strong> Supplement sodium, potassium, and magnesium daily to
               avoid fatigue, cramps, and headaches while eating less.
             </span>
           </div>
           <div className="flex items-start gap-1.5">
-            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2713;</span>
             <span>
               <strong>Prioritize protein.</strong> Target <strong>1g of protein per pound of your
               ideal body weight</strong> to preserve lean muscle while losing fat.
             </span>
           </div>
           <div className="flex items-start gap-1.5">
-            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2713;</span>
             <span>
               <strong>Resistance train.</strong> Lift 3&ndash;4x per week to signal your body to
               hold onto muscle and keep your metabolism high.
             </span>
           </div>
           <div className="flex items-start gap-1.5">
-            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2713;</span>
             <span>
               <strong>Eat whole foods &amp; fiber.</strong> Lean proteins, vegetables, and fiber
               improve digestion and help manage any GI side effects.
             </span>
           </div>
           <div className="flex items-start gap-1.5">
-            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2713;</span>
             <span>
               <strong>Sleep 7&ndash;9 hours.</strong> Quality sleep supports recovery, hormones,
               and appetite regulation &mdash; all critical for fat loss.
             </span>
           </div>
           <div className="flex items-start gap-1.5">
-            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2713;</span>
             <span>
               <strong>Move daily.</strong> Aim for 8,000&ndash;10,000 steps to boost daily
               calorie burn without taxing recovery.
             </span>
           </div>
           <div className="flex items-start gap-1.5">
-            <span className="text-[var(--accent)] font-bold mt-0.5">&check;</span>
+            <span className="text-[var(--accent)] font-bold mt-0.5">&#x2713;</span>
             <span>
               <strong>Limit alcohol &amp; ultra-processed foods.</strong> They add empty calories
               and can worsen nausea and energy dips.
@@ -490,27 +490,27 @@ function ResultsView({ inputs, onBack, onDownload }: ResultsViewProps) {
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-[var(--primary)]/80 print:text-[10px] print:gap-1">
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">&check;</span>
+            <span className="text-[var(--accent)] font-bold">&#x2713;</span>
             <span>Add 2mL BAC water to the vial</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">&check;</span>
+            <span className="text-[var(--accent)] font-bold">&#x2713;</span>
             <span>Store refrigerated at 36-46&deg;F (2-8&deg;C)</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">&check;</span>
+            <span className="text-[var(--accent)] font-bold">&#x2713;</span>
             <span>Inject subcutaneously, rotate sites</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">&check;</span>
+            <span className="text-[var(--accent)] font-bold">&#x2713;</span>
             <span>Administer at consistent times</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">&check;</span>
+            <span className="text-[var(--accent)] font-bold">&#x2713;</span>
             <span>Use a 1mL (100 unit) syringe</span>
           </div>
           <div className="flex items-start gap-1">
-            <span className="text-[var(--accent)] font-bold">&check;</span>
+            <span className="text-[var(--accent)] font-bold">&#x2713;</span>
             <span>Consult provider for adverse effects</span>
           </div>
         </div>
