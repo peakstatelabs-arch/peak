@@ -43,6 +43,8 @@ type Product = {
   stockStep?: number;
   /** UTC midnight anchor for the stock cycle. Defaults to STOCK_EPOCH_MS. */
   stockAnchorMs?: number;
+  /** Floor of the cycle. The count walks down to this and then resets to startStock. Defaults to 1. */
+  stockMinimum?: number;
   /** When true, render a Pre-Order badge instead of the in-stock counter and a placeholder button until a cartId is wired up. */
   preorder?: boolean;
   /** Human-readable ship date shown on the pre-order badge. */
@@ -61,7 +63,9 @@ const products: Product[] = [
     image: "/reta-product.png",
     cartId: "3GQWA553XEXNU",
     startStock: 21,
-    stockAnchorMs: Date.UTC(2026, 4, 26),
+    stockStep: 2,
+    stockMinimum: 3,
+    stockAnchorMs: Date.UTC(2026, 4, 30),
     preorder: true,
     shipsBy: "June 8",
   },
@@ -76,7 +80,9 @@ const products: Product[] = [
     image: "/cjc-ipa-product.png",
     cartId: "SPCE9E3H3VVX2",
     startStock: 18,
-    stockAnchorMs: Date.UTC(2026, 4, 26),
+    stockStep: 2,
+    stockMinimum: 3,
+    stockAnchorMs: Date.UTC(2026, 4, 30),
     preorder: true,
     shipsBy: "June 8",
   },
@@ -91,7 +97,9 @@ const products: Product[] = [
     image: "/bpc-tb-product.png",
     cartId: "B62P3JVPTD6CA",
     startStock: 22,
-    stockAnchorMs: Date.UTC(2026, 4, 26),
+    stockStep: 2,
+    stockMinimum: 3,
+    stockAnchorMs: Date.UTC(2026, 4, 30),
     preorder: true,
     shipsBy: "June 8",
   },
@@ -106,7 +114,9 @@ const products: Product[] = [
     image: "/GHKCU.png",
     cartId: "MRUXNK54XGUQ6",
     startStock: 17,
-    stockAnchorMs: Date.UTC(2026, 4, 26),
+    stockStep: 2,
+    stockMinimum: 3,
+    stockAnchorMs: Date.UTC(2026, 4, 30),
     preorder: true,
     shipsBy: "June 8",
   },
@@ -255,6 +265,7 @@ export default function SinglesCatalog() {
                                 {currentStock(product.startStock, {
                                   step: product.stockStep,
                                   anchorMs: product.stockAnchorMs,
+                                  minimum: product.stockMinimum,
                                 })}
                               </span>{" "}
                               vials remaining
