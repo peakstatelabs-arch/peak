@@ -908,24 +908,8 @@ export default function Home() {
                     </p>
 
                     {/* Credit benefit — tertiary focus */}
-                    <p className="mt-2.5 inline-flex items-start justify-center gap-2 text-sm sm:text-base text-[var(--primary)]/60 max-w-md leading-relaxed">
-                      <svg
-                        className="w-4 h-4 text-[var(--accent-dark)] flex-shrink-0 mt-0.5 sm:mt-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>
-                        Fully credited toward any future Peak State Labs
-                        purchase.
-                      </span>
+                    <p className="mt-2.5 text-center italic text-sm sm:text-base text-[var(--primary)]/60 leading-relaxed">
+                      Fully credited toward any future Peak State Labs purchase.
                     </p>
                   </div>
                 </div>
