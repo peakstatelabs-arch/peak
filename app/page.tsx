@@ -687,9 +687,9 @@ export default function Home() {
         {/* Body Composition Blueprint - low-ticket info product */}
         <Section className="bg-[var(--muted)]">
           <Container>
-            <div className="max-w-4xl mx-auto">
-              {/* Header */}
-              <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+            <div className="max-w-5xl mx-auto">
+              {/* Section heading (outside the card) */}
+              <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-10">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-sm font-bold tracking-wider text-[var(--accent-dark)]">
                   <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
                   <span>THE BLUEPRINT</span>
@@ -703,18 +703,18 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Main card */}
+              {/* Main product card */}
               <div className="rounded-3xl bg-white border border-[var(--border)] shadow-sm overflow-hidden">
-                {/* Product header band */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] text-white p-8 sm:p-10 text-center">
+                {/* Gradient header band — product name + description */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] text-white p-7 sm:p-10 text-center">
                   <div className="pointer-events-none absolute -top-16 -right-16 w-64 h-64 rounded-full bg-[var(--accent)]/20 blur-3xl" />
                   <div className="pointer-events-none absolute -bottom-20 -left-16 w-64 h-64 rounded-full bg-[var(--accent)]/10 blur-3xl" />
-                  <div className="relative">
+                  <div className="relative max-w-3xl mx-auto">
                     <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
                       The Body Composition Blueprint
                       <span className="text-[0.5em] align-super">™</span>
                     </h3>
-                    <p className="mt-4 text-base sm:text-lg text-white/85 max-w-2xl mx-auto leading-relaxed">
+                    <p className="mt-4 text-base sm:text-lg text-white/85 leading-relaxed">
                       The exact framework we use to help people approach fat
                       loss, lean muscle growth, GLP-1s, peptide research,
                       nutrition, training, recovery, and body recomposition
@@ -724,98 +724,109 @@ export default function Home() {
                 </div>
 
                 {/* Body */}
-                <div className="p-6 sm:p-10">
-                  <h4 className="text-xl font-bold text-[var(--primary)] text-center sm:text-left">
-                    Inside You&rsquo;ll Discover:
-                  </h4>
-                  <div className="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-6">
-                    {[
-                      {
-                        title: "The Body Composition Roadmap",
-                        body: "Understand the 4 levers that drive nearly every successful transformation.",
-                      },
-                      {
-                        title: "Beginner Peptide Guide",
-                        body: "Learn the major peptide categories, how they work, and where each fits into a body composition strategy.",
-                      },
-                      {
-                        title: "GLP-1 Comparison Chart",
-                        body: "Understand the differences between Semaglutide, Tirzepatide, and Retatrutide.",
-                      },
-                      {
-                        title: "How To Use GLP-1s While Building Lean Muscle",
-                        body: "The biggest mistakes people make when combining fat loss and muscle-building goals.",
-                      },
-                      {
-                        title: "Protein Calculator",
-                        body: "Calculate exactly how much protein your body needs to support muscle retention and recovery.",
-                      },
-                      {
-                        title: "Metabolic Typing Guide",
-                        body: "Learn how to structure your nutrition based on your unique metabolic profile.",
-                      },
-                      {
-                        title: "Workout Structure Framework",
-                        body: "The simple training model we recommend for maximizing body composition results.",
-                      },
-                      {
-                        title: "Sleep Optimization Protocol",
-                        body: "The overlooked variable that influences recovery, appetite, and body composition.",
-                      },
-                      {
-                        title: "Supplement Stack Guide",
-                        body: "The foundational supplements we use to support training, recovery, and metabolic health.",
-                      },
-                      {
-                        title: "Reconstitution Guide",
-                        body: "Learn the fundamentals of peptide preparation and handling.",
-                      },
-                      {
-                        title: "Injection Guide",
-                        body: "A simple beginner-friendly walkthrough covering common administration questions.",
-                      },
-                    ].map((item) => (
-                      <div key={item.title} className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--accent)]/20 flex items-center justify-center mt-0.5">
-                          <svg
-                            className="w-3 h-3 text-[var(--accent-dark)]"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={3}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                        </span>
-                        <div>
-                          <p className="font-bold text-[var(--primary)]">
-                            {item.title}
-                          </p>
-                          <p className="mt-1 text-sm text-[var(--primary)]/70 leading-relaxed">
-                            {item.body}
-                          </p>
+                <div className="p-5 sm:p-8 lg:p-10">
+                  {/* Inside You'll Discover — 2-col grid of mini-cards */}
+                  <div>
+                    <h4 className="text-lg sm:text-xl font-bold text-[var(--primary)] text-center sm:text-left">
+                      Inside You&rsquo;ll Discover
+                    </h4>
+                    <div className="mt-5 sm:mt-6 grid sm:grid-cols-2 gap-3 sm:gap-4">
+                      {[
+                        {
+                          title: "The Body Composition Roadmap",
+                          body: "Understand the 4 levers that drive nearly every successful transformation.",
+                        },
+                        {
+                          title: "Beginner Peptide Guide",
+                          body: "Learn the major peptide categories, how they work, and where each fits into a body composition strategy.",
+                        },
+                        {
+                          title: "GLP-1 Comparison Chart",
+                          body: "Understand the differences between Semaglutide, Tirzepatide, and Retatrutide.",
+                        },
+                        {
+                          title: "How To Use GLP-1s While Building Lean Muscle",
+                          body: "The biggest mistakes people make when combining fat loss and muscle-building goals.",
+                        },
+                        {
+                          title: "Protein Calculator",
+                          body: "Calculate exactly how much protein your body needs to support muscle retention and recovery.",
+                        },
+                        {
+                          title: "Metabolic Typing Guide",
+                          body: "Learn how to structure your nutrition based on your unique metabolic profile.",
+                        },
+                        {
+                          title: "Workout Structure Framework",
+                          body: "The simple training model we recommend for maximizing body composition results.",
+                        },
+                        {
+                          title: "Sleep Optimization Protocol",
+                          body: "The overlooked variable that influences recovery, appetite, and body composition.",
+                        },
+                        {
+                          title: "Supplement Stack Guide",
+                          body: "The foundational supplements we use to support training, recovery, and metabolic health.",
+                        },
+                        {
+                          title: "Reconstitution Guide",
+                          body: "Learn the fundamentals of peptide preparation and handling.",
+                        },
+                        {
+                          title: "Injection Guide",
+                          body: "A simple beginner-friendly walkthrough covering common administration questions.",
+                        },
+                      ].map((item) => (
+                        <div
+                          key={item.title}
+                          className="rounded-2xl border border-[var(--border)] bg-[var(--muted)]/60 p-4 sm:p-5 flex items-start gap-3 transition-colors hover:bg-[var(--muted)]"
+                        >
+                          <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--accent)]/20 flex items-center justify-center mt-0.5">
+                            <svg
+                              className="w-3.5 h-3.5 text-[var(--accent-dark)]"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={3}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </span>
+                          <div className="min-w-0">
+                            <p className="font-bold text-[var(--primary)] text-[15px] sm:text-base leading-snug">
+                              {item.title}
+                            </p>
+                            <p className="mt-1.5 text-sm text-[var(--primary)]/65 leading-relaxed">
+                              {item.body}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Bonus Resources */}
-                  <div className="mt-8 p-5 sm:p-6 rounded-2xl bg-[var(--muted)] border border-[var(--border)]">
-                    <h4 className="text-base font-bold text-[var(--primary)]">
-                      Bonus Resources Included
-                    </h4>
-                    <div className="mt-4 grid sm:grid-cols-2 gap-x-8 gap-y-3">
+                  {/* Bonus Resources — cyan-tinted panel */}
+                  <div className="mt-8 sm:mt-10 rounded-2xl bg-[var(--accent)]/10 border border-[var(--accent)]/30 p-5 sm:p-6">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-flex items-center rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[var(--primary)]">
+                        Bonus
+                      </span>
+                      <h4 className="text-base sm:text-lg font-bold text-[var(--primary)]">
+                        Bonus Resources Included
+                      </h4>
+                    </div>
+                    <div className="mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-2.5">
                       {[
                         "Research Cycle Calculator",
                         "Journal & Progress Tracking System",
                         "Body Composition Checklists",
                         "Peak State Reference Materials",
                       ].map((bonus) => (
-                        <div key={bonus} className="flex items-center gap-3">
+                        <div key={bonus} className="flex items-center gap-2.5">
                           <svg
                             className="w-4 h-4 text-[var(--accent-dark)] flex-shrink-0"
                             fill="none"
@@ -829,7 +840,7 @@ export default function Home() {
                               d="M5 13l4 4L19 7"
                             />
                           </svg>
-                          <span className="text-sm font-medium text-[var(--primary)]/80">
+                          <span className="text-sm font-semibold text-[var(--primary)]/85">
                             {bonus}
                           </span>
                         </div>
@@ -837,21 +848,33 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Perfect For */}
-                  <div className="mt-8">
-                    <h4 className="text-base font-bold text-[var(--primary)]">
+                  {/* Perfect For — clean 2-col list */}
+                  <div className="mt-8 sm:mt-10">
+                    <h4 className="text-base sm:text-lg font-bold text-[var(--primary)]">
                       Perfect For People Who Want To:
                     </h4>
-                    <ul className="mt-4 space-y-3">
+                    <ul className="mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-3">
                       {[
                         "Build a clear plan instead of piecing together information from YouTube, Reddit, and TikTok",
                         "Burn fat without sacrificing muscle",
                         "Learn how GLP-1s actually fit into a body composition strategy",
                         "Understand peptides before buying them",
                       ].map((point) => (
-                        <li key={point} className="flex items-start gap-3">
-                          <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-[var(--accent-dark)] mt-2.5" />
-                          <span className="text-[var(--primary)]/80 leading-relaxed">
+                        <li key={point} className="flex items-start gap-2.5">
+                          <svg
+                            className="w-4 h-4 text-[var(--accent-dark)] flex-shrink-0 mt-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          <span className="text-sm sm:text-base text-[var(--primary)]/80 leading-relaxed">
                             {point}
                           </span>
                         </li>
@@ -860,7 +883,7 @@ export default function Home() {
                   </div>
 
                   {/* CTA */}
-                  <div className="mt-10 text-center">
+                  <div className="mt-10 sm:mt-12 text-center">
                     <a
                       href="https://buy.stripe.com/9B64gydgzdkl61rem1afS0c"
                       target="_blank"
