@@ -28,7 +28,7 @@ export default function BodyCompThankYouPage() {
 
       <main>
         {/* Hero */}
-        <Section className="relative overflow-hidden gradient-hero !py-12 sm:!py-16">
+        <Section className="relative overflow-hidden gradient-hero !py-10 sm:!py-12">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
             <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
@@ -62,10 +62,10 @@ export default function BodyCompThankYouPage() {
         </Section>
 
         {/* Section 1 — Here's What To Do Next */}
-        <Section className="bg-[var(--muted)]">
+        <Section className="bg-[var(--muted)] !py-10 sm:!py-12">
           <Container>
             <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-10 sm:mb-12">
+              <div className="text-center mb-6 sm:mb-8">
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
                   Here&rsquo;s What To Do Next
                 </h2>
@@ -87,8 +87,9 @@ export default function BodyCompThankYouPage() {
                   },
                   {
                     n: "2",
-                    title: "Start with the Body Composition Roadmap.",
-                    body: "Everything else will make more sense once you understand the framework.",
+                    title:
+                      "Pick the section that solves your biggest problem right now.",
+                    body: "You don't need to read the Blueprint cover to cover. Start with the area that's most relevant to you and build momentum from there.",
                   },
                   {
                     n: "3",
@@ -125,10 +126,10 @@ export default function BodyCompThankYouPage() {
         </Section>
 
         {/* Section 2 — A Quick Thought */}
-        <Section className="bg-white">
+        <Section className="bg-white !py-10 sm:!py-12">
           <Container>
             <div className="max-w-3xl mx-auto">
-              <div className="text-center mb-8 sm:mb-10">
+              <div className="text-center mb-6 sm:mb-8">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-wider text-[var(--accent-dark)]">
                   <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
                   <span>A QUICK THOUGHT</span>
@@ -160,7 +161,7 @@ export default function BodyCompThankYouPage() {
         </Section>
 
         {/* Section 3 — Have Questions? */}
-        <Section className="bg-gradient-to-br from-[var(--muted)] to-[var(--accent)]/10">
+        <Section className="bg-gradient-to-br from-[var(--muted)] to-[var(--accent)]/10 !py-10 sm:!py-12">
           <Container>
             <div className="max-w-3xl mx-auto">
               <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] text-white p-8 sm:p-12 shadow-2xl">
