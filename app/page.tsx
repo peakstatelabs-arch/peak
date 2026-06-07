@@ -879,7 +879,7 @@ export default function Home() {
                   </div>
 
                   {/* CTA */}
-                  <div className="mt-10 sm:mt-12 text-center">
+                  <div className="mt-10 sm:mt-12 flex flex-col items-center text-center">
                     <a
                       href="https://buy.stripe.com/9B64gydgzdkl61rem1afS0c"
                       target="_blank"
@@ -901,9 +901,31 @@ export default function Home() {
                         />
                       </svg>
                     </a>
-                    <p className="mt-4 text-sm text-[var(--primary)]/50 max-w-md mx-auto leading-relaxed">
-                      $47 one-time payment. Fully credited toward any future
-                      Peak State Labs purchase.
+
+                    {/* Price — secondary focus */}
+                    <p className="mt-5 text-xl sm:text-2xl font-bold text-[var(--primary)]">
+                      $47 one-time payment.
+                    </p>
+
+                    {/* Credit benefit — tertiary focus */}
+                    <p className="mt-2.5 inline-flex items-start justify-center gap-2 text-sm sm:text-base text-[var(--primary)]/60 max-w-md leading-relaxed">
+                      <svg
+                        className="w-4 h-4 text-[var(--accent-dark)] flex-shrink-0 mt-0.5 sm:mt-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      <span>
+                        Fully credited toward any future Peak State Labs
+                        purchase.
+                      </span>
                     </p>
                   </div>
                 </div>
