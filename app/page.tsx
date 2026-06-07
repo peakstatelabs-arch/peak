@@ -772,10 +772,6 @@ export default function Home() {
                           title: "Reconstitution Guide",
                           body: "Learn the fundamentals of peptide preparation and handling.",
                         },
-                        {
-                          title: "Injection Guide",
-                          body: "A simple beginner-friendly walkthrough covering common administration questions.",
-                        },
                       ].map((item) => (
                         <div
                           key={item.title}
