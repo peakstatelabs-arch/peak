@@ -10,9 +10,18 @@ export const siteCopy = {
   },
 
   urgencyBanner: {
-    lineOne: "PRE-ORDER LIVE",
-    lineTwo: "Only 5 Stacks Left",
-    shippingText: "Ships 6/8",
+    lineOne: "JUNE BATCH LIVE:",
+    // {stacks} is replaced by the live count computed in UrgencyBanner.
+    lineTwo: "Only {stacks} Stacks Left",
+    shippingText: "Ships within 24 Hours",
+    stacks: {
+      initial: 4,
+      minimum: 1,
+      // Eastern calendar date when the count equals `initial` through 7:59 PM ET.
+      // Drops by 1 at every 8 PM ET, then cycles back to `initial` the day
+      // after it touches `minimum` (cycle length = initial - minimum + 1 days).
+      anchorEasternDate: "2026-06-08",
+    },
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
 
@@ -61,11 +70,11 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/8. Reserve your kit now to lock in priority access to Batch 004.",
+      "JUNE BATCH LIVE: Guaranteed FREE same day shipping with orders placed by 3pm EDT.",
     secureNoteAfterCutoff:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/8. Reserve your kit now to lock in priority access to Batch 004.",
-    timerLabel: "Pre-order window closes in:",
-    timerLabelAfterCutoff: "Pre-order window closes in:",
+      "JUNE BATCH LIVE: You missed today’s same day shipping window. Secure your stack now and move to the front of the line for tomorrow’s free fulfillment cycle.",
+    timerLabel: "Time remaining for same day shipping:",
+    timerLabelAfterCutoff: "Time remaining for free next-day shipping window:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
   },
