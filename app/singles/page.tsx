@@ -255,7 +255,7 @@ export default function SinglesCatalog() {
                           <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
                           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--accent-dark)]" />
                         </span>
-                        <p className="text-sm font-bold text-[var(--accent-dark)]">
+                        <p className="text-sm font-bold text-[var(--accent-dark)] whitespace-nowrap">
                           Only{" "}
                           <span className="font-extrabold">
                             {currentStock(product.startStock, {
