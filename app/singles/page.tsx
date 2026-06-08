@@ -256,30 +256,15 @@ export default function SinglesCatalog() {
                           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--accent-dark)]" />
                         </span>
                         <p className="text-sm font-bold text-[var(--accent-dark)]">
-                          Pre-Order
-                          {product.startStock > 0 ? (
-                            <>
-                              {" "}
-                              •{" "}
-                              <span className="font-extrabold">
-                                {currentStock(product.startStock, {
-                                  step: product.stockStep,
-                                  anchorMs: product.stockAnchorMs,
-                                  minimum: product.stockMinimum,
-                                })}
-                              </span>{" "}
-                              vials remaining
-                            </>
-                          ) : null}
-                          {product.shipsBy ? (
-                            <>
-                              {" "}
-                              • Ships{" "}
-                              <span className="font-extrabold">
-                                {product.shipsBy}
-                              </span>
-                            </>
-                          ) : null}
+                          Only{" "}
+                          <span className="font-extrabold">
+                            {currentStock(product.startStock, {
+                              step: product.stockStep,
+                              anchorMs: product.stockAnchorMs,
+                              minimum: product.stockMinimum,
+                            })}
+                          </span>{" "}
+                          vials remaining
                         </p>
                       </div>
                     ) : (

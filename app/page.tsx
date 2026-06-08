@@ -624,10 +624,10 @@ export default function Home() {
                   {/* Product chips */}
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                     {[
-                      "Retatrutide (Pre-Order)",
-                      "CJC-1295 + Ipamorelin (Pre-Order)",
-                      "BPC-157 + TB-500 (Pre-Order)",
-                      "GHK-Cu (Pre-Order)",
+                      "Retatrutide",
+                      "CJC-1295 + Ipamorelin",
+                      "BPC-157 + TB-500",
+                      "GHK-Cu",
                     ].map((name) => (
                       <span
                         key={name}
