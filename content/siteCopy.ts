@@ -10,7 +10,7 @@ export const siteCopy = {
   },
 
   urgencyBanner: {
-    lineOne: "JPOWER CUT™ ACCESS OPEN",
+    lineOne: "POWER CUT™ ACCESS OPEN",
     // {stacks} is replaced by the live count computed in UrgencyBanner.
     lineTwo: "Only {stacks} Stacks Left",
     shippingText: "Ships within 24 Hours",
