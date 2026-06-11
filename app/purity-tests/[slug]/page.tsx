@@ -1,19 +1,42 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { Container } from "@/app/components/Container";
 import { siteCopy } from "@/content/siteCopy";
+import { PURITY_TESTS } from "../data";
 
-export const metadata: Metadata = {
-  title: "GHK-Cu 50mg Purity Test — Peak State Labs",
-  description:
-    "Third-party purity test documentation for GHK-Cu 50mg by Peak State Labs.",
-};
+export function generateStaticParams() {
+  return Object.keys(PURITY_TESTS).map((slug) => ({ slug }));
+}
 
-const IMAGES = [
-  "/GHKCU%20Lab%20Report/1.png",
-  "/GHKCU%20Lab%20Report/2.png",
-];
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const test = PURITY_TESTS[slug];
+  if (!test) {
+    return {
+      title: "Purity Test Not Found — Peak State Labs",
+    };
+  }
+  return {
+    title: `${test.title} — Peak State Labs`,
+    description: `Third-party purity test documentation for ${test.name} ${test.amount} by Peak State Labs.`,
+  };
+}
 
-export default function GHKCuPurityTestPage() {
+export default async function PurityTestPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const test = PURITY_TESTS[slug];
+  if (!test) notFound();
+
+  const isMulti = test.images.length > 1;
+
   return (
     <div className="min-h-screen bg-[var(--muted)] text-[var(--primary)]">
       {/* Header */}
@@ -46,17 +69,25 @@ export default function GHKCuPurityTestPage() {
                 <span>Purity Test · Verified</span>
               </div>
               <h1 className="mt-5 text-3xl sm:text-4xl font-bold tracking-tight">
-                GHK-Cu 50mg Lab Report
+                {test.title}
               </h1>
               <p className="mt-3 text-base sm:text-lg text-[var(--primary)]/70 max-w-2xl mx-auto leading-relaxed">
-                Third-party purity documentation for GHK-Cu 50mg. Both pages are
-                displayed below.
+                Third-party purity documentation for {test.name} {test.amount}.
+                {isMulti
+                  ? " Both pages are displayed below."
+                  : " The full report is displayed below."}
               </p>
             </div>
 
-            {/* Side-by-side images */}
-            <div className="grid md:grid-cols-2 gap-5 sm:gap-6">
-              {IMAGES.map((src, i) => (
+            {/* Image(s) */}
+            <div
+              className={
+                isMulti
+                  ? "grid md:grid-cols-2 gap-5 sm:gap-6"
+                  : "max-w-3xl mx-auto"
+              }
+            >
+              {test.images.map((src, i) => (
                 <a
                   key={src}
                   href={src}
@@ -67,17 +98,19 @@ export default function GHKCuPurityTestPage() {
                   <div className="p-3 sm:p-4 bg-white">
                     <img
                       src={src}
-                      alt={`GHK-Cu 50mg Purity Test page ${i + 1}`}
+                      alt={`${test.title}${isMulti ? ` — Page ${i + 1}` : ""}`}
                       className="w-full h-auto rounded-xl"
                     />
                   </div>
                   <div className="px-5 py-4 border-t border-[var(--border)] bg-[var(--muted)]/60 flex items-center justify-between gap-3">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-widest text-[var(--accent-dark)]">
-                        Page {i + 1} of {IMAGES.length}
+                        {isMulti
+                          ? `Page ${i + 1} of ${test.images.length}`
+                          : "Certificate of Analysis"}
                       </p>
                       <p className="text-sm font-semibold text-[var(--primary)] mt-0.5">
-                        GHK-Cu 50mg
+                        {test.name} {test.amount}
                       </p>
                     </div>
                     <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--primary)]/60 group-hover:text-[var(--accent-dark)] transition-colors">
