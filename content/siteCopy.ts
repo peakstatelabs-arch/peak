@@ -12,7 +12,8 @@ export const siteCopy = {
   urgencyBanner: {
     lineOne: "POWER CUT™ ACCESS OPEN",
     // {stacks} is replaced by the live count computed in UrgencyBanner.
-    lineTwo: "Only {stacks} Stacks Left",
+    // {noun} is replaced with "Stack" (count === 1) or "Stacks" (otherwise).
+    lineTwo: "Only {stacks} {noun} Left",
     shippingText: "Ships within 24 Hours",
     stacks: {
       initial: 4,
