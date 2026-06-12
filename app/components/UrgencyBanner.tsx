@@ -37,10 +37,10 @@ export function UrgencyBanner({
     return () => clearInterval(interval);
   }, [stacks]);
 
-  const renderedLineTwo =
-    count != null
-      ? lineTwo.replace("{stacks}", String(count))
-      : lineTwo.replace("{stacks}", String(initialCount ?? ""));
+  const effectiveCount = count ?? initialCount;
+  const renderedLineTwo = lineTwo
+    .replace("{stacks}", String(effectiveCount ?? ""))
+    .replace("{noun}", effectiveCount === 1 ? "Stack" : "Stacks");
 
   return (
     <div className="flex flex-col items-center justify-center text-center gap-0.5 sm:gap-0">
