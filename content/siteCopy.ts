@@ -16,12 +16,12 @@ export const siteCopy = {
     lineTwo: "Only {stacks} {noun} Left",
     shippingText: "Ships 6/22",
     stacks: {
-      initial: 4,
+      initial: 12,
       minimum: 1,
       // Eastern calendar date when the count equals `initial` through 7:59 PM ET.
       // Drops by 1 at every 8 PM ET, then cycles back to `initial` the day
       // after it touches `minimum` (cycle length = initial - minimum + 1 days).
-      anchorEasternDate: "2026-06-09",
+      anchorEasternDate: "2026-06-13",
     },
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
@@ -71,9 +71,9 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/22. Reserve your kit now to lock in priority access to the June batch.",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/22. Reserve your kit now to lock in priority access to our next batch.",
     secureNoteAfterCutoff:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/22. Reserve your kit now to lock in priority access to the June batch.",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/22. Reserve your kit now to lock in priority access to our next batch.",
     timerLabel: "Pre-order window closes in:",
     timerLabelAfterCutoff: "Pre-order window closes in:",
     researchDisclaimer:
