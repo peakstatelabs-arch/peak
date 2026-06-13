@@ -3,18 +3,18 @@ export const siteCopy = {
     name: "Peak State Labs",
     trademark: "POWER CUT\u2122",
     tagline: "The 10-Week Biological Shortcut to Your Dream Physique",
-    primaryCtaLabel: "Get Access Now",
+    primaryCtaLabel: "Lock In Pre-Order",
     primaryCtaHref: "#pricing",
     secondaryCtaLabel: "See What's Included",
     secondaryCtaHref: "#contents",
   },
 
   urgencyBanner: {
-    lineOne: "POWER CUT™ ACCESS OPEN",
+    lineOne: "PRE-ORDER LIVE",
     // {stacks} is replaced by the live count computed in UrgencyBanner.
     // {noun} is replaced with "Stack" (count === 1) or "Stacks" (otherwise).
     lineTwo: "Only {stacks} {noun} Left",
-    shippingText: "Ships within 24 Hours",
+    shippingText: "Ships 6/22",
     stacks: {
       initial: 4,
       minimum: 1,
@@ -71,11 +71,11 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "JUNE BATCH LIVE: Guaranteed FREE same day shipping with orders placed by 3pm EDT.",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/22. Reserve your kit now to lock in priority access to the June batch.",
     secureNoteAfterCutoff:
-      "JUNE BATCH LIVE: You missed today’s same day shipping window. Secure your stack now and move to the front of the line for tomorrow’s free fulfillment cycle.",
-    timerLabel: "Time remaining for same day shipping:",
-    timerLabelAfterCutoff: "Time remaining for free next-day shipping window:",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 6/22. Reserve your kit now to lock in priority access to the June batch.",
+    timerLabel: "Pre-order window closes in:",
+    timerLabelAfterCutoff: "Pre-order window closes in:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
   },
