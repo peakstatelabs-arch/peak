@@ -47,6 +47,46 @@ function timeFor(timeOfDay: string | null, profile: ProfilePrefs): string {
   return timeOfDay === "morning" ? profile.morning_time : profile.evening_time;
 }
 
+function DaySection({
+  label,
+  time,
+  doses,
+  tone,
+}: {
+  label: "AM" | "PM";
+  time: string;
+  doses: Dose[];
+  tone: "warm" | "cool";
+}) {
+  const labelColor = tone === "warm" ? "text-amber-300" : "text-sky-300";
+  return (
+    <div className="px-0.5">
+      <div className="flex items-baseline gap-1 mb-0.5">
+        <span className={cn("text-[9px] font-bold tracking-wider", labelColor)}>{label}</span>
+        <span className="text-[9px] text-fg-subtle leading-none">{time}</span>
+      </div>
+      <div className="flex flex-col gap-0.5">
+        {doses.slice(0, 2).map((d) => (
+          <span
+            key={d.id}
+            className={cn(
+              "text-[10px] sm:text-[11px] leading-tight font-semibold truncate",
+              PEPTIDE_TEXT[d.peptide_name] ?? "text-fg-muted",
+              d.taken && "line-through opacity-60"
+            )}
+            title={d.peptide_name}
+          >
+            {shortLabel(d.peptide_name)}
+          </span>
+        ))}
+        {doses.length > 2 && (
+          <span className="text-[9px] text-fg-subtle leading-tight">+{doses.length - 2} more</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function DoseCalendar({
   doses,
   onChanged,
@@ -107,11 +147,11 @@ export function DoseCalendar({
 
       <div className="grid grid-cols-7 gap-1">
         {grid.map((cell, i) => {
-          if (!cell) return <div key={i} className="min-h-[64px]" />;
+          if (!cell) return <div key={i} className="min-h-[72px]" />;
           const iso = cell.toISOString().slice(0, 10);
-          const day = (byDay.get(iso) ?? [])
-            .slice()
-            .sort((a, b) => (a.time_of_day ?? "").localeCompare(b.time_of_day ?? ""));
+          const day = byDay.get(iso) ?? [];
+          const morning = day.filter((d) => d.time_of_day === "morning");
+          const evening = day.filter((d) => d.time_of_day !== "morning");
           const isToday = iso === todayISO();
           const isSelected = iso === selected;
           const inMonth = cell.getMonth() === cursor.getMonth();
@@ -120,7 +160,7 @@ export function DoseCalendar({
               key={i}
               onClick={() => setSelected(iso)}
               className={cn(
-                "min-h-[64px] sm:min-h-[88px] rounded-md border text-xs flex flex-col items-stretch justify-start p-1 transition text-left overflow-hidden",
+                "min-h-[72px] sm:min-h-[100px] rounded-md border text-xs flex flex-col items-stretch justify-start p-1 transition text-left overflow-hidden",
                 isSelected
                   ? "border-accent bg-accent/10"
                   : isToday
@@ -132,30 +172,25 @@ export function DoseCalendar({
               <span className={cn("font-medium text-[11px] leading-none mb-1 px-0.5", isToday && "text-accent")}>
                 {cell.getDate()}
               </span>
-              {day.length > 0 && (
-                <div className="flex flex-col gap-0.5">
-                  {day.slice(0, 3).map((d) => (
-                    <span
-                      key={d.id}
-                      className={cn(
-                        "text-[9px] sm:text-[10px] leading-tight font-semibold truncate",
-                        PEPTIDE_TEXT[d.peptide_name] ?? "text-fg-muted",
-                        d.taken && "line-through opacity-60"
-                      )}
-                      title={`${d.peptide_name} · ${compactTime(timeFor(d.time_of_day, profile))}`}
-                    >
-                      {shortLabel(d.peptide_name)}{" "}
-                      <span className="text-fg-subtle font-normal">
-                        {compactTime(timeFor(d.time_of_day, profile))}
-                      </span>
-                    </span>
-                  ))}
-                  {day.length > 3 && (
-                    <span className="text-[9px] text-fg-subtle leading-tight">
-                      +{day.length - 3} more
-                    </span>
-                  )}
-                </div>
+
+              {morning.length > 0 && (
+                <DaySection
+                  label="AM"
+                  time={compactTime(profile.morning_time)}
+                  doses={morning}
+                  tone="warm"
+                />
+              )}
+              {morning.length > 0 && evening.length > 0 && (
+                <div className="border-t border-border my-0.5" />
+              )}
+              {evening.length > 0 && (
+                <DaySection
+                  label="PM"
+                  time={compactTime(profile.evening_time)}
+                  doses={evening}
+                  tone="cool"
+                />
               )}
             </button>
           );
@@ -208,47 +243,117 @@ function SelectedDayDetail({
     day: "numeric",
   });
 
+  const morning = doses.filter((d) => d.time_of_day === "morning");
+  const evening = doses.filter((d) => d.time_of_day !== "morning");
+
   return (
     <div className="mt-5 border-t border-border pt-4">
       <div className="text-sm font-medium mb-3">{dayLabel}</div>
       {doses.length === 0 ? (
         <p className="text-sm text-fg-muted">No doses scheduled.</p>
       ) : (
-        <ul className="space-y-2">
-          {doses
-            .sort((a, b) => (a.time_of_day ?? "").localeCompare(b.time_of_day ?? ""))
-            .map((d) => (
-              <li key={d.id}>
-                <button
-                  onClick={() => toggle(d)}
-                  disabled={busy === d.id}
-                  className="w-full flex items-center justify-between gap-3 rounded-lg border border-border bg-bg-elev px-3 py-2.5 hover:border-accent/40 text-left transition"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span
-                      className={cn(
-                        "h-4 w-4 rounded-full border-2 flex-shrink-0",
-                        d.taken ? "border-accent bg-accent" : "border-border"
-                      )}
-                    />
-                    <div className="min-w-0">
-                      <div className="text-sm font-medium truncate">{d.peptide_name}</div>
-                      <div className="text-xs text-fg-subtle truncate">
-                        {d.dose_mg} mg · {d.time_of_day === "morning" ? profile.morning_time : profile.evening_time}
-                        {d.notes ? ` · ${d.notes}` : ""}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-xs text-fg-muted flex-shrink-0">
-                    {d.taken ? "Logged" : "Tap to log"}
-                  </span>
-                </button>
-              </li>
-            ))}
-        </ul>
+        <div className="space-y-5">
+          {morning.length > 0 && (
+            <DoseGroup
+              label="Morning"
+              clock={formatClockLong(profile.morning_time)}
+              tone="warm"
+              doses={morning}
+              busy={busy}
+              onToggle={toggle}
+            />
+          )}
+          {evening.length > 0 && (
+            <DoseGroup
+              label="Evening"
+              clock={formatClockLong(profile.evening_time)}
+              tone="cool"
+              doses={evening}
+              busy={busy}
+              onToggle={toggle}
+            />
+          )}
+        </div>
       )}
     </div>
   );
+}
+
+function DoseGroup({
+  label,
+  clock,
+  tone,
+  doses,
+  busy,
+  onToggle,
+}: {
+  label: "Morning" | "Evening";
+  clock: string;
+  tone: "warm" | "cool";
+  doses: Dose[];
+  busy: string | null;
+  onToggle: (d: Dose) => void;
+}) {
+  const headerColor = tone === "warm" ? "text-amber-300" : "text-sky-300";
+  const wrapBorder = tone === "warm" ? "border-amber-400/20" : "border-sky-400/20";
+  const wrapBg = tone === "warm" ? "bg-amber-400/5" : "bg-sky-400/5";
+
+  return (
+    <div className={cn("rounded-lg border p-3", wrapBorder, wrapBg)}>
+      <div className="flex items-baseline gap-2 mb-2.5">
+        <span className={cn("text-xs font-bold uppercase tracking-widest", headerColor)}>
+          {label}
+        </span>
+        <span className="text-xs text-fg-muted">· {clock}</span>
+      </div>
+      <ul className="space-y-2">
+        {doses.map((d) => (
+          <li key={d.id}>
+            <button
+              onClick={() => onToggle(d)}
+              disabled={busy === d.id}
+              className="w-full flex items-center justify-between gap-3 rounded-lg border border-border bg-bg-card px-3 py-2.5 hover:border-accent/40 text-left transition"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <span
+                  className={cn(
+                    "h-4 w-4 rounded-full border-2 flex-shrink-0",
+                    d.taken ? "border-accent bg-accent" : "border-border"
+                  )}
+                />
+                <div className="min-w-0">
+                  <div
+                    className={cn(
+                      "text-sm font-semibold truncate",
+                      PEPTIDE_TEXT[d.peptide_name] ?? "text-fg"
+                    )}
+                  >
+                    {d.peptide_name}
+                  </div>
+                  <div className="text-xs text-fg-subtle truncate">
+                    {d.dose_mg} mg{d.notes ? ` · ${d.notes}` : ""}
+                  </div>
+                </div>
+              </div>
+              <span className="text-xs text-fg-muted flex-shrink-0">
+                {d.taken ? "Logged" : "Tap to log"}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function formatClockLong(t: string): string {
+  const [hStr, mStr] = t.split(":");
+  let h = Number(hStr);
+  const m = Number(mStr);
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12;
+  if (h === 0) h = 12;
+  return `${h}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
 function Legend() {
