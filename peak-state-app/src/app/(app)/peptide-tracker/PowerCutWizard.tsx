@@ -81,15 +81,15 @@ export function PowerCutWizard({
     const { error: pErr } = await supabase.from("peptide_protocols").insert(inserts);
     if (pErr) { setError("Couldn't save protocol: " + pErr.message); setSaving(false); return; }
 
-    // Clear conflicting unlogged doses in window
-    const startISO = startDate;
-    const endISO = endDate;
+    // Clear ALL future unlogged doses for these peptides so starting a new
+    // protocol gives a clean slate (doesn't only scope to the new window —
+    // that left orphans from prior protocols hanging around).
+    const todayISO = new Date().toISOString().slice(0, 10);
     await supabase
       .from("peptide_doses")
       .delete()
       .eq("user_id", user.id)
-      .gte("scheduled_for", startISO)
-      .lte("scheduled_for", endISO)
+      .gte("scheduled_for", todayISO)
       .eq("taken", false)
       .in("peptide_name", peptideNames);
 

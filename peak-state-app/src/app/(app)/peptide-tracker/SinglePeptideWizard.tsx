@@ -141,6 +141,17 @@ export function SinglePeptideWizard({
     });
     if (pErr) { setError(pErr.message); setSaving(false); return; }
 
+    // Clear ALL future unlogged doses for this peptide so starting a new
+    // protocol gives a clean slate (no orphans from prior tests).
+    const todayISO = new Date().toISOString().slice(0, 10);
+    await supabase
+      .from("peptide_doses")
+      .delete()
+      .eq("user_id", user.id)
+      .gte("scheduled_for", todayISO)
+      .eq("taken", false)
+      .eq("peptide_name", config.peptide_name);
+
     const batch = 200;
     for (let i = 0; i < rows.length; i += batch) {
       const slice = rows.slice(i, i + batch).map((r) => ({
