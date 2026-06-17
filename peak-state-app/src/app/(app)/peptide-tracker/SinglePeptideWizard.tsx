@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { generateSingleSchedule, type DoseRow } from "@/lib/schedule";
+import { requestNotificationPermission, notificationsSupported } from "@/lib/notifications";
 import type { ProfilePrefs } from "./Client";
 
 type Choice = "single-reta" | "single-cjc" | "single-bpc" | "single-ghk";
@@ -94,6 +95,7 @@ export function SinglePeptideWizard({
   const [startDate, setStartDate] = useState(todayISO());
   const [morningTime, setMorningTime] = useState(profile.morning_time);
   const [eveningTime, setEveningTime] = useState(profile.evening_time);
+  const [enableReminders, setEnableReminders] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -116,10 +118,23 @@ export function SinglePeptideWizard({
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setError("Not signed in."); setSaving(false); return; }
 
-    await supabase
-      .from("profiles")
-      .update({ morning_time: morningTime, evening_time: eveningTime })
-      .eq("id", user.id);
+    // If they opted in, ask for notification permission now (user gesture).
+    let notificationsOn = false;
+    if (enableReminders) {
+      const perm = await requestNotificationPermission();
+      notificationsOn = perm === "granted";
+    }
+
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const profileUpdate: Record<string, unknown> = {
+      morning_time: morningTime,
+      evening_time: eveningTime,
+      timezone: tz,
+    };
+    // Only flip reminders ON here; never auto-disable (the Reminders panel
+    // is the single off-switch so we don't clobber other active protocols).
+    if (notificationsOn) profileUpdate.notifications_enabled = true;
+    await supabase.from("profiles").update(profileUpdate).eq("id", user.id);
 
     const startISO = startDate;
     const endISO = new Date(new Date(startDate + "T00:00:00").getTime() + weeks * 7 * 86400000)
@@ -239,7 +254,7 @@ export function SinglePeptideWizard({
           </div>
           <div>
             <label className="label">
-              {time === "morning" ? "Morning reminder time" : "Evening reminder time"}
+              {time === "morning" ? "Morning dose time" : "Evening dose time"}
             </label>
             <input
               type="time"
@@ -253,6 +268,23 @@ export function SinglePeptideWizard({
             />
           </div>
         </div>
+
+        <label className="flex items-start gap-3 rounded-lg border border-border bg-bg-elev p-3 cursor-pointer">
+          <input
+            type="checkbox"
+            className="mt-0.5 h-4 w-4 accent-[rgb(var(--accent))]"
+            checked={enableReminders}
+            onChange={(e) => setEnableReminders(e.target.checked)}
+          />
+          <span className="text-sm">
+            <span className="font-medium">Remind me for every dose</span>
+            <span className="block text-xs text-fg-muted mt-0.5">
+              Turns on browser notifications for all doses at the time above.
+              You can turn them all off anytime from the Reminders panel.
+              {!notificationsSupported() && " (Your browser doesn't support notifications.)"}
+            </span>
+          </span>
+        </label>
       </div>
 
       <div className="card">

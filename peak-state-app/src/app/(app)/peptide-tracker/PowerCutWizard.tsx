@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { STACK_PROTOCOLS, getStackProtocol, type StackProtocol } from "@/lib/protocols";
 import { generatePowerCutSchedule, type DoseRow } from "@/lib/schedule";
+import { requestNotificationPermission, notificationsSupported } from "@/lib/notifications";
 import type { ProfilePrefs } from "./Client";
 
 export function PowerCutWizard({
@@ -27,6 +28,7 @@ export function PowerCutWizard({
   const [startDate, setStartDate] = useState(nextMondayISO());
   const [morningTime, setMorningTime] = useState(profile.morning_time);
   const [eveningTime, setEveningTime] = useState(profile.evening_time);
+  const [enableReminders, setEnableReminders] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,11 +53,24 @@ export function PowerCutWizard({
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setError("Not signed in."); setSaving(false); return; }
 
-    // Save preferred dosing times
-    await supabase
-      .from("profiles")
-      .update({ morning_time: morningTime, evening_time: eveningTime })
-      .eq("id", user.id);
+    // If they opted in, ask for notification permission now (user gesture).
+    let notificationsOn = false;
+    if (enableReminders) {
+      const perm = await requestNotificationPermission();
+      notificationsOn = perm === "granted";
+    }
+
+    // Save preferred dosing times + reminder opt-in
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const profileUpdate: Record<string, unknown> = {
+      morning_time: morningTime,
+      evening_time: eveningTime,
+      timezone: tz,
+    };
+    // Only flip reminders ON here; never auto-disable (the Reminders panel
+    // is the single off-switch so we don't clobber other active protocols).
+    if (notificationsOn) profileUpdate.notifications_enabled = true;
+    await supabase.from("profiles").update(profileUpdate).eq("id", user.id);
 
     const protocolType = `power_cut_${track}`;
     const name = `POWER CUT™ — ${track === "foundation" ? "Foundation" : "Performance"} (${stacks} stack${stacks > 1 ? "s" : ""})`;
@@ -186,14 +201,31 @@ export function PowerCutWizard({
             </div>
             <div></div>
             <div>
-              <label className="label">Morning reminder (Reta)</label>
+              <label className="label">Morning dose time (Reta)</label>
               <input type="time" className="input" value={morningTime} onChange={(e) => setMorningTime(e.target.value)} />
             </div>
             <div>
-              <label className="label">Evening reminder (CJC + BPC)</label>
+              <label className="label">Evening dose time (CJC + BPC)</label>
               <input type="time" className="input" value={eveningTime} onChange={(e) => setEveningTime(e.target.value)} />
             </div>
           </div>
+
+          <label className="flex items-start gap-3 rounded-lg border border-border bg-bg-elev p-3 mb-5 cursor-pointer">
+            <input
+              type="checkbox"
+              className="mt-0.5 h-4 w-4 accent-[rgb(var(--accent))]"
+              checked={enableReminders}
+              onChange={(e) => setEnableReminders(e.target.checked)}
+            />
+            <span className="text-sm">
+              <span className="font-medium">Remind me for every dose</span>
+              <span className="block text-xs text-fg-muted mt-0.5">
+                Turns on browser notifications for all doses in this protocol at the times above.
+                You can turn them all off anytime from the Reminders panel.
+                {!notificationsSupported() && " (Your browser doesn't support notifications.)"}
+              </span>
+            </span>
+          </label>
 
           <button onClick={() => setStep("review")} className="btn-primary w-full">
             Review my schedule →
@@ -214,6 +246,19 @@ export function PowerCutWizard({
       <SchedulePreview protocol={protocol} trackLabel={trackLabel} />
 
       <DosePreviewList rows={previewRows.slice(0, 21)} totalCount={previewRows.length} />
+
+      <div className="card flex items-center gap-3 text-sm">
+        <span
+          className={`h-2.5 w-2.5 rounded-full flex-shrink-0 ${
+            enableReminders ? "bg-accent" : "bg-fg-subtle"
+          }`}
+        />
+        <span className="text-fg-muted">
+          {enableReminders
+            ? `Reminders ON — you'll be notified at ${formatClock(morningTime)} and ${formatClock(eveningTime)}.`
+            : "Reminders off. You can enable them later from the Reminders panel."}
+        </span>
+      </div>
 
       {error && <div className="card border-danger/30 bg-danger/10 text-danger text-sm">{error}</div>}
 
@@ -311,4 +356,14 @@ function nextMondayISO(): string {
 
 function dayName(d: Date): string {
   return d.toLocaleDateString("en-US", { weekday: "long" });
+}
+
+function formatClock(t: string): string {
+  const [hStr, mStr] = t.split(":");
+  let h = Number(hStr);
+  const m = Number(mStr);
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12;
+  if (h === 0) h = 12;
+  return `${h}:${String(m).padStart(2, "0")} ${ampm}`;
 }

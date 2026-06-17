@@ -12,6 +12,41 @@ const PEPTIDE_COLOR: Record<string, string> = {
   "GHK-Cu": "bg-amber-400",
 };
 
+// Text color per compound for the calendar labels.
+const PEPTIDE_TEXT: Record<string, string> = {
+  "Retatrutide": "text-accent",
+  "CJC-1295 + Ipamorelin": "text-blue-400",
+  "BPC-157 + TB-500": "text-fuchsia-400",
+  "GHK-Cu": "text-amber-400",
+};
+
+// Compact label shown inside calendar cells.
+const PEPTIDE_SHORT: Record<string, string> = {
+  "Retatrutide": "Reta",
+  "CJC-1295 + Ipamorelin": "CJC + Ipa",
+  "BPC-157 + TB-500": "BPC + TB",
+  "GHK-Cu": "GHK-Cu",
+};
+
+function shortLabel(name: string) {
+  return PEPTIDE_SHORT[name] ?? name;
+}
+
+// "08:00" -> "8a", "20:00" -> "8p"
+function compactTime(t: string): string {
+  const [hStr, mStr] = t.split(":");
+  let h = Number(hStr);
+  const m = Number(mStr);
+  const ampm = h >= 12 ? "p" : "a";
+  h = h % 12;
+  if (h === 0) h = 12;
+  return m === 0 ? `${h}${ampm}` : `${h}:${String(m).padStart(2, "0")}${ampm}`;
+}
+
+function timeFor(timeOfDay: string | null, profile: ProfilePrefs): string {
+  return timeOfDay === "morning" ? profile.morning_time : profile.evening_time;
+}
+
 export function DoseCalendar({
   doses,
   onChanged,
@@ -72,9 +107,11 @@ export function DoseCalendar({
 
       <div className="grid grid-cols-7 gap-1">
         {grid.map((cell, i) => {
-          if (!cell) return <div key={i} className="aspect-square" />;
+          if (!cell) return <div key={i} className="min-h-[64px]" />;
           const iso = cell.toISOString().slice(0, 10);
-          const day = byDay.get(iso);
+          const day = (byDay.get(iso) ?? [])
+            .slice()
+            .sort((a, b) => (a.time_of_day ?? "").localeCompare(b.time_of_day ?? ""));
           const isToday = iso === todayISO();
           const isSelected = iso === selected;
           const inMonth = cell.getMonth() === cursor.getMonth();
@@ -83,7 +120,7 @@ export function DoseCalendar({
               key={i}
               onClick={() => setSelected(iso)}
               className={cn(
-                "aspect-square rounded-md border text-xs relative flex flex-col items-center justify-start pt-1 transition",
+                "min-h-[64px] sm:min-h-[88px] rounded-md border text-xs flex flex-col items-stretch justify-start p-1 transition text-left overflow-hidden",
                 isSelected
                   ? "border-accent bg-accent/10"
                   : isToday
@@ -92,19 +129,32 @@ export function DoseCalendar({
                 !inMonth && "opacity-40"
               )}
             >
-              <span className={cn("font-medium", isToday && "text-accent")}>{cell.getDate()}</span>
-              {day && day.length > 0 && (
-                <div className="flex gap-0.5 mt-1 flex-wrap justify-center px-1">
-                  {dedupePeptides(day).slice(0, 4).map((peptide, j) => (
+              <span className={cn("font-medium text-[11px] leading-none mb-1 px-0.5", isToday && "text-accent")}>
+                {cell.getDate()}
+              </span>
+              {day.length > 0 && (
+                <div className="flex flex-col gap-0.5">
+                  {day.slice(0, 3).map((d) => (
                     <span
-                      key={j}
+                      key={d.id}
                       className={cn(
-                        "h-1.5 w-1.5 rounded-full",
-                        PEPTIDE_COLOR[peptide] ?? "bg-fg-muted",
-                        day.find((d) => d.peptide_name === peptide && d.taken) ? "opacity-100" : "opacity-50"
+                        "text-[9px] sm:text-[10px] leading-tight font-semibold truncate",
+                        PEPTIDE_TEXT[d.peptide_name] ?? "text-fg-muted",
+                        d.taken && "line-through opacity-60"
                       )}
-                    />
+                      title={`${d.peptide_name} · ${compactTime(timeFor(d.time_of_day, profile))}`}
+                    >
+                      {shortLabel(d.peptide_name)}{" "}
+                      <span className="text-fg-subtle font-normal">
+                        {compactTime(timeFor(d.time_of_day, profile))}
+                      </span>
+                    </span>
                   ))}
+                  {day.length > 3 && (
+                    <span className="text-[9px] text-fg-subtle leading-tight">
+                      +{day.length - 3} more
+                    </span>
+                  )}
                 </div>
               )}
             </button>
@@ -235,10 +285,6 @@ function buildGrid(cursor: Date): (Date | null)[] {
     cells.push(new Date(last.getFullYear(), last.getMonth(), last.getDate() + 1));
   }
   return cells;
-}
-
-function dedupePeptides(doses: Dose[]): string[] {
-  return Array.from(new Set(doses.map((d) => d.peptide_name)));
 }
 
 function todayISO(): string {

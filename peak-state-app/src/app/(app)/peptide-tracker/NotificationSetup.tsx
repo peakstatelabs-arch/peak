@@ -126,7 +126,8 @@ export function NotificationSetup({
         <div>
           <h2 className="font-semibold">Reminders</h2>
           <p className="text-xs text-fg-muted mt-0.5">
-            Pick the time you dose. We'll send a browser notification so you don't miss it.
+            Master switch for all dose reminders. Change your times here, or turn every
+            reminder on or off at once.
           </p>
         </div>
         <span
