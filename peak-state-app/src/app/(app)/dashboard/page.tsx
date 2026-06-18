@@ -36,39 +36,142 @@ async function DosingCard() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const today = todayISO();
-  const { data: doses } = await supabase
-    .from("peptide_doses")
-    .select("id, peptide_name, dose_mg, time_of_day, taken, scheduled_for")
-    .eq("user_id", user!.id)
-    .eq("scheduled_for", today)
-    .order("time_of_day");
 
+  const [{ data: doses }, { data: protocols }] = await Promise.all([
+    supabase
+      .from("peptide_doses")
+      .select("id, peptide_name, dose_mg, time_of_day, taken, scheduled_for")
+      .eq("user_id", user!.id)
+      .eq("scheduled_for", today)
+      .order("time_of_day"),
+    supabase
+      .from("peptide_protocols")
+      .select("name, peptide_name, protocol_type, stacks, bpc_track, active")
+      .eq("user_id", user!.id)
+      .eq("active", true),
+  ]);
+
+  const hasProtocol = (protocols?.length ?? 0) > 0;
+  const protocolLabel = summarizeProtocols(protocols ?? []);
+
+  // No protocol at all → onboarding CTA
+  if (!hasProtocol) {
+    return (
+      <div className="card">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold">Today's dosing</h3>
+        </div>
+        <p className="text-sm text-fg-muted">
+          No protocol yet.{" "}
+          <Link href="/peptide-tracker" className="text-accent hover:underline">Build a protocol</Link>{" "}
+          to start your schedule.
+        </p>
+      </div>
+    );
+  }
+
+  // Has a protocol but nothing today → show next dose
+  if (!doses || doses.length === 0) {
+    const { data: upcoming } = await supabase
+      .from("peptide_doses")
+      .select("id, peptide_name, dose_mg, time_of_day, scheduled_for")
+      .eq("user_id", user!.id)
+      .gt("scheduled_for", today)
+      .order("scheduled_for")
+      .limit(12);
+
+    const nextDay = upcoming?.[0]?.scheduled_for ?? null;
+    const nextDoses = nextDay ? upcoming!.filter((d) => d.scheduled_for === nextDay) : [];
+
+    return (
+      <div className="card">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-semibold">Today's dosing</h3>
+          <Link href="/peptide-tracker" className="text-xs text-fg-muted hover:text-fg">View all →</Link>
+        </div>
+
+        <div className="flex items-center gap-2 mb-3">
+          <span className="h-2 w-2 rounded-full bg-accent" />
+          <span className="text-sm text-fg-muted">Rest day — nothing scheduled today.</span>
+        </div>
+
+        {nextDay ? (
+          <div className="rounded-lg border border-border bg-bg-elev p-3">
+            <div className="text-xs uppercase tracking-wide text-fg-subtle mb-2">
+              Next dose · {relativeDayLabel(nextDay)}
+            </div>
+            <ul className="space-y-1.5">
+              {nextDoses.map((d) => (
+                <li key={d.id} className="flex items-center justify-between text-sm">
+                  <span className="font-medium">{d.peptide_name}</span>
+                  <span className="text-xs text-fg-subtle">
+                    {d.dose_mg} mg · {d.time_of_day === "morning" ? "AM" : "PM"}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="text-sm text-fg-muted">No upcoming doses scheduled.</p>
+        )}
+
+        {protocolLabel && (
+          <p className="text-xs text-fg-subtle mt-3">On: {protocolLabel}</p>
+        )}
+      </div>
+    );
+  }
+
+  // Has doses today
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold">Today's dosing</h3>
         <Link href="/peptide-tracker" className="text-xs text-fg-muted hover:text-fg">View all →</Link>
       </div>
-      {!doses || doses.length === 0 ? (
-        <p className="text-sm text-fg-muted">
-          Nothing scheduled today. <Link href="/peptide-tracker" className="text-accent hover:underline">Build a protocol</Link>.
-        </p>
-      ) : (
-        <ul className="space-y-2">
-          {doses.map((d) => (
-            <li key={d.id} className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-3">
-                <span className={`h-2 w-2 rounded-full ${d.taken ? "bg-success" : "bg-fg-subtle"}`} />
-                <span className="font-medium">{d.peptide_name}</span>
-                <span className="text-fg-muted">{d.dose_mg} mg</span>
-              </div>
-              <span className="text-xs text-fg-subtle">{d.time_of_day ?? ""}</span>
-            </li>
-          ))}
-        </ul>
+      <ul className="space-y-2">
+        {doses.map((d) => (
+          <li key={d.id} className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-3">
+              <span className={`h-2 w-2 rounded-full ${d.taken ? "bg-success" : "bg-fg-subtle"}`} />
+              <span className="font-medium">{d.peptide_name}</span>
+              <span className="text-fg-muted">{d.dose_mg} mg</span>
+            </div>
+            <span className="text-xs text-fg-subtle">
+              {d.time_of_day === "morning" ? "AM" : d.time_of_day === "evening" ? "PM" : (d.time_of_day ?? "")}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {protocolLabel && (
+        <p className="text-xs text-fg-subtle mt-3">On: {protocolLabel}</p>
       )}
     </div>
   );
+}
+
+function summarizeProtocols(
+  protocols: { protocol_type: string | null; stacks: number | null; bpc_track: string | null; peptide_name: string }[]
+): string {
+  if (protocols.length === 0) return "";
+  const powerCut = protocols.find((p) => p.protocol_type?.startsWith("power_cut"));
+  if (powerCut) {
+    const track = powerCut.bpc_track === "performance" ? "Performance" : "Foundation";
+    const stacks = powerCut.stacks ?? 1;
+    return `POWER CUT™ — ${track} · ${stacks} stack${stacks > 1 ? "s" : ""}`;
+  }
+  const names = Array.from(new Set(protocols.map((p) => p.peptide_name)));
+  return names.join(", ");
+}
+
+function relativeDayLabel(iso: string): string {
+  const d = new Date(iso + "T00:00:00");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diff = Math.round((d.getTime() - today.getTime()) / 86400000);
+  const rel = diff === 1 ? "tomorrow" : diff <= 0 ? "today" : `in ${diff} days`;
+  const date = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  return `${date} · ${rel}`;
 }
 
 async function WeightCard() {
