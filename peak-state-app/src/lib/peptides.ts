@@ -1,3 +1,11 @@
+export type PeptideProtocol = {
+  name: string;
+  dose: string;
+  subtitle?: string;
+  focusLabel?: string;
+  focus?: string[];
+};
+
 export type PeptideRef = {
   slug: string;
   name: string;
@@ -8,6 +16,12 @@ export type PeptideRef = {
   timing: string;
   description: string;
   cautions: string;
+  extended?: {
+    intro?: string;
+    question?: string;
+    protocols?: PeptideProtocol[];
+    rationale?: string[];
+  };
 };
 
 export const PEPTIDES: PeptideRef[] = [
@@ -53,12 +67,50 @@ export const PEPTIDES: PeptideRef[] = [
     name: "GHK-Cu",
     vialMg: 50,
     category: "Copper peptide — skin / hair / longevity",
-    doseRange: "1–3 mg per administration.",
-    frequency: "Daily or 3–5× weekly, often evening.",
+    doseRange: "2–3 mg daily (lower when stacked with BPC-157 + TB-500).",
+    frequency: "Daily, often evening.",
     timing: "Evening, before bed.",
     description:
       "Copper-binding tripeptide studied for skin repair, hair follicle support, and tissue remodeling.",
     cautions: "Avoid combining with vitamin C at injection time. Not for human consumption.",
+    extended: {
+      question: "Should you use GHK-Cu by itself, or stack it with BPC-157 + TB-500?",
+      intro:
+        "Both approaches work. The right one depends on what you're chasing. Pick standalone if regeneration and longevity are the focus. Pick the stack if recovery is the priority.",
+      protocols: [
+        {
+          name: "Option 1 — GHK-Cu standalone",
+          dose: "3 mg daily",
+          subtitle: "GHK-Cu at the center of the protocol.",
+          focusLabel: "Best for",
+          focus: [
+            "Healthy aging",
+            "Skin quality",
+            "Hair quality",
+            "Regeneration",
+            "Collagen support",
+            "Long-term wellness",
+          ],
+        },
+        {
+          name: "Option 2 — GHK-Cu + BPC-157 + TB-500",
+          dose: "2 mg daily",
+          subtitle: "A recovery ecosystem. Each peptide carries a different load.",
+          focusLabel: "GHK-Cu contributes",
+          focus: [
+            "Regeneration",
+            "Collagen + skin quality",
+            "Healthy aging",
+            "Tissue remodeling",
+          ],
+        },
+      ],
+      rationale: [
+        "When you pair GHK-Cu with BPC-157 + TB-500, BPC + TB cover recovery, mobility, training recovery, and soft-tissue support.",
+        "Because the regenerative workload is shared across multiple complementary peptides, GHK-Cu is reduced from 3 mg to 2 mg daily in the combo.",
+        "Think of it like a team of specialists rather than five quarterbacks — GHK-Cu handles regenerative signaling; BPC + TB handle recovery pathways.",
+      ],
+    },
   },
 ];
 
