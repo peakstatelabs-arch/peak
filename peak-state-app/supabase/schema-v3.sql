@@ -20,3 +20,8 @@ alter table public.profiles add column if not exists active_program_started date
 -- indexes for dashboard + calendar queries
 create index if not exists ws_user_sched_idx on public.workout_sessions (user_id, scheduled_for);
 create index if not exists ws_sets_user_idx on public.workout_sets (user_id, exercise);
+
+-- v3.1 — phase tracking + custom-plan column
+alter table public.workout_sessions add column if not exists phase_label text;
+alter table public.workout_sessions add column if not exists workout_index int;
+alter table public.profiles add column if not exists workout_preferences jsonb;

@@ -1,7 +1,7 @@
 "use client";
 
 import { getProgram } from "@/lib/programs";
-import { relativeDayLabel, isoDate } from "@/lib/workout";
+import { relativeDayLabel, isoDate, workoutForSession } from "@/lib/workout";
 import type { Session } from "./WorkoutsClient";
 
 export function TodayWorkout({
@@ -75,8 +75,8 @@ function SessionCard({
   highlight?: boolean;
 }) {
   const program = session.program_slug ? getProgram(session.program_slug) : undefined;
-  const day = program?.days.find((d) => d.label === session.day_label);
-  const exCount = day?.exercises.length ?? 0;
+  const wt = program ? workoutForSession(program, session.day_label, session.phase_label) : undefined;
+  const exCount = wt?.exercises.length ?? 0;
 
   return (
     <button

@@ -1,4 +1,4 @@
-import { type Program } from "./programs";
+import { type Program, phaseForWeek, recommendedWeekdays } from "./programs";
 
 const DAY = 86400000;
 export const isoDate = (d: Date) => d.toISOString().slice(0, 10);
@@ -7,10 +7,12 @@ export type ScheduledSession = {
   program_slug: string;
   day_label: string;
   focus: string;
+  workout_index: number; // 0-based index into the phase's workouts (for the logger)
+  phase_label: string;
+  week_in_phase: number; // 1-based
   scheduled_for: string;
 };
 
-/** Roll a date forward to the next given weekday (1=Mon … 7=Sun), inclusive. */
 function rollTo(d: Date, weekday: number): Date {
   const out = new Date(d);
   const cur = out.getDay() === 0 ? 7 : out.getDay();
@@ -19,30 +21,49 @@ function rollTo(d: Date, weekday: number): Date {
 }
 
 /**
- * Lay a program's training days onto the calendar for `weeks`, anchored on the
- * Monday of the start week. Each program day has a fixed weekday.
+ * Lay a multi-phase program onto the calendar.
+ *  - Anchors on the Monday of the start week.
+ *  - For each week, picks the right phase, lays its N workouts on the chosen
+ *    weekdays (defaults to recommended even spacing for that N).
  */
 export function generateProgramSchedule(opts: {
   program: Program;
   startDate: Date;
-  weeks: number;
+  weekdays?: number[]; // override; otherwise inferred per-phase from workout count
 }): ScheduledSession[] {
-  const { program, startDate, weeks } = opts;
+  const { program, startDate } = opts;
   const week1Monday = rollTo(startDate, 1);
   const out: ScheduledSession[] = [];
-  for (let w = 0; w < weeks; w++) {
-    const monday = new Date(week1Monday.getTime() + w * 7 * DAY);
-    for (const day of program.days) {
-      const date = new Date(monday.getTime() + (day.weekday - 1) * DAY);
-      out.push({
-        program_slug: program.slug,
-        day_label: day.label,
-        focus: day.focus,
-        scheduled_for: isoDate(date),
+
+  let weekIdx = 0;
+  for (const phase of program.phases) {
+    const days = opts.weekdays?.slice(0, phase.workouts.length) ??
+      recommendedWeekdays(phase.workouts.length);
+
+    for (let pw = 0; pw < phase.weeks; pw++) {
+      const monday = new Date(week1Monday.getTime() + (weekIdx + pw) * 7 * DAY);
+      phase.workouts.forEach((wkout, i) => {
+        const weekday = days[i] ?? days[days.length - 1];
+        const date = new Date(monday.getTime() + (weekday - 1) * DAY);
+        out.push({
+          program_slug: program.slug,
+          day_label: wkout.label,
+          focus: wkout.focus,
+          workout_index: i,
+          phase_label: phase.label,
+          week_in_phase: pw + 1,
+          scheduled_for: isoDate(date),
+        });
       });
     }
+    weekIdx += phase.weeks;
   }
   return out;
+}
+
+/** Build session name shown to clients: phase + day label. */
+export function sessionName(s: ScheduledSession): string {
+  return `${s.day_label} · ${s.phase_label}`;
 }
 
 /** Estimated 1RM via Epley formula. */
@@ -58,12 +79,10 @@ export type LoggedSet = {
   reps: number | null;
 };
 
-/** Total volume = sum(weight × reps) across logged sets. */
 export function totalVolume(sets: LoggedSet[]): number {
   return sets.reduce((acc, s) => acc + (s.weight_lb ?? 0) * (s.reps ?? 0), 0);
 }
 
-/** Best estimated 1RM per exercise from a set of logged rows. */
 export function bestE1RMByExercise(sets: LoggedSet[]): Map<string, number> {
   const m = new Map<string, number>();
   for (const s of sets) {
@@ -88,3 +107,26 @@ export function relativeDayLabel(iso: string): string {
   const date = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
   return `${date} · ${rel}`;
 }
+
+/** Pull the workout definition for a saved session. */
+export function workoutForSession(
+  program: Program,
+  dayLabel: string | null,
+  phaseLabel: string | null
+) {
+  if (!dayLabel) return undefined;
+  const phase = phaseLabel
+    ? program.phases.find((ph) => ph.label === phaseLabel)
+    : undefined;
+  if (phase) {
+    return phase.workouts.find((wt) => wt.label === dayLabel);
+  }
+  // legacy fallback: scan all phases
+  for (const ph of program.phases) {
+    const found = ph.workouts.find((wt) => wt.label === dayLabel);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+export { phaseForWeek, recommendedWeekdays };

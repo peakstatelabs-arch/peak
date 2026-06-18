@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { getProgram } from "@/lib/programs";
-import { isoDate, relativeDayLabel } from "@/lib/workout";
+import { isoDate, workoutForSession } from "@/lib/workout";
 import type { Session } from "./WorkoutsClient";
 
 export function WorkoutCalendar({
@@ -107,7 +107,8 @@ export function WorkoutCalendar({
             <div className="space-y-2">
               {selectedSessions.map((s) => {
                 const program = s.program_slug ? getProgram(s.program_slug) : undefined;
-                const exCount = program?.days.find((d) => d.label === s.day_label)?.exercises.length ?? 0;
+                const wt = program ? workoutForSession(program, s.day_label, s.phase_label) : undefined;
+                const exCount = wt?.exercises.length ?? 0;
                 return (
                   <button
                     key={s.id}

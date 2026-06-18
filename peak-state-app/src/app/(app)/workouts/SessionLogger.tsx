@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { getProgram, type Exercise } from "@/lib/programs";
-import { estimate1RM, bestE1RMByExercise, relativeDayLabel } from "@/lib/workout";
+import { getProgram, exerciseVideoUrl, type Exercise } from "@/lib/programs";
+import { estimate1RM, bestE1RMByExercise, relativeDayLabel, workoutForSession } from "@/lib/workout";
 import { cn } from "@/lib/utils";
 import type { Session, WorkoutSet } from "./WorkoutsClient";
 
@@ -14,6 +14,8 @@ type Cell = {
   completed: boolean;
   isPr: boolean;
 };
+
+type Block = { letter: string; exercises: { ex: Exercise; idx: number }[] };
 
 const keyOf = (exIdx: number, setNo: number) => `${exIdx}-${setNo}`;
 
@@ -32,9 +34,8 @@ export function SessionLogger({
 }) {
   const supabase = createClient();
   const program = session.program_slug ? getProgram(session.program_slug) : undefined;
-  const day = program?.days.find((d) => d.label === session.day_label);
+  const workout = program ? workoutForSession(program, session.day_label, session.phase_label) : undefined;
 
-  // Historical bests (exclude this session) for PR detection + "previous" reference.
   const histBest = useMemo(
     () => bestE1RMByExercise(allSets.filter((s) => s.session_id !== session.id && s.completed)),
     [allSets, session.id]
@@ -49,13 +50,25 @@ export function SessionLogger({
     return m;
   }, [allSets, session.id]);
 
-  // Initialize cells from any sets already logged for this session.
+  // Group exercises by letter (A1+A2 = superset block)
+  const blocks: Block[] = useMemo(() => {
+    if (!workout) return [];
+    const m = new Map<string, { ex: Exercise; idx: number }[]>();
+    workout.exercises.forEach((ex, idx) => {
+      const letter = ex.code.replace(/[0-9]/g, "") || "Z";
+      if (!m.has(letter)) m.set(letter, []);
+      m.get(letter)!.push({ ex, idx });
+    });
+    return Array.from(m.entries()).map(([letter, exercises]) => ({ letter, exercises }));
+  }, [workout]);
+
   const [cells, setCells] = useState<Record<string, Cell>>(() => {
     const init: Record<string, Cell> = {};
-    if (day) {
-      day.exercises.forEach((ex, exIdx) => {
+    if (workout) {
+      workout.exercises.forEach((ex, exIdx) => {
+        const targetSets = parseSetsCount(ex.sets);
         const existing = allSets.filter((s) => s.session_id === session.id && s.exercise === ex.name);
-        for (let n = 1; n <= ex.sets; n++) {
+        for (let n = 1; n <= targetSets; n++) {
           const row = existing.find((s) => s.set_number === n);
           init[keyOf(exIdx, n)] = {
             id: row?.id ?? null,
@@ -75,7 +88,6 @@ export function SessionLogger({
   const [prToast, setPrToast] = useState<string | null>(null);
   const [finishing, setFinishing] = useState(false);
 
-  // Rest timer countdown.
   useEffect(() => {
     if (!rest) return;
     if (rest.left <= 0) {
@@ -87,11 +99,13 @@ export function SessionLogger({
     return () => clearTimeout(t);
   }, [rest]);
 
-  if (!day) {
+  if (!workout) {
     return (
       <div className="space-y-4">
         <button onClick={onClose} className="btn-ghost text-sm">← Back</button>
-        <div className="card">This session's program could not be loaded.</div>
+        <div className="card">
+          We couldn't load this session's workout. It may be from a deleted program.
+        </div>
       </div>
     );
   }
@@ -106,7 +120,6 @@ export function SessionLogger({
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Un-complete: just flip the flag.
     if (cell.completed) {
       setCell(k, { completed: false, isPr: false });
       if (cell.id) await supabase.from("workout_sets").update({ completed: false, is_pr: false }).eq("id", cell.id);
@@ -116,7 +129,6 @@ export function SessionLogger({
     const weight = cell.weight ? Number(cell.weight) : null;
     const reps = cell.reps ? Number(cell.reps) : null;
 
-    // PR detection
     let isPr = false;
     if (weight && reps) {
       const e1 = estimate1RM(weight, reps);
@@ -124,7 +136,7 @@ export function SessionLogger({
       if (e1 > best) {
         isPr = true;
         runningBest.current.set(ex.name, e1);
-        setPrToast(`New PR — ${ex.name}: ${e1} lb e1RM`);
+        setPrToast(`New PR — ${ex.name}: ${e1} ${weightUnit} e1RM`);
         try { navigator.vibrate?.([60, 40, 120]); } catch {}
         setTimeout(() => setPrToast(null), 3500);
       }
@@ -150,14 +162,12 @@ export function SessionLogger({
       setCell(k, { completed: true, isPr, id: data?.id ?? null });
     }
 
-    // Start rest timer.
-    if (ex.restSec) setRest({ left: ex.restSec, total: ex.restSec });
+    if (ex.restSec > 0) setRest({ left: ex.restSec, total: ex.restSec });
   }
 
   async function finishWorkout() {
     setFinishing(true);
-    await supabase
-      .from("workout_sessions")
+    await supabase.from("workout_sessions")
       .update({ completed: true, completed_at: new Date().toISOString() })
       .eq("id", session.id);
     setFinishing(false);
@@ -165,7 +175,7 @@ export function SessionLogger({
     onClose();
   }
 
-  const totalSets = day.exercises.reduce((a, ex) => a + ex.sets, 0);
+  const totalSets = workout.exercises.reduce((a, ex) => a + parseSetsCount(ex.sets), 0);
   const doneSets = Object.values(cells).filter((c) => c.completed).length;
   const pct = totalSets ? Math.round((doneSets / totalSets) * 100) : 0;
 
@@ -177,11 +187,12 @@ export function SessionLogger({
       </div>
 
       <div>
-        <h2 className="font-display text-2xl font-semibold">{day.label}</h2>
-        <p className="text-sm text-fg-muted">{day.focus} · {relativeDayLabel(session.scheduled_for)}</p>
+        <h2 className="font-display text-2xl font-semibold">{workout.label}</h2>
+        <p className="text-sm text-fg-muted">
+          {workout.focus} · {session.phase_label ?? ""}{session.phase_label ? " · " : ""}{relativeDayLabel(session.scheduled_for)}
+        </p>
       </div>
 
-      {/* Progress bar */}
       <div className="card">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="text-fg-muted">{doneSets} / {totalSets} sets</span>
@@ -192,78 +203,32 @@ export function SessionLogger({
         </div>
       </div>
 
-      {/* Exercises */}
       <div className="space-y-4">
-        {day.exercises.map((ex, exIdx) => {
-          const prev = lastByExercise.get(ex.name);
-          const best = histBest.get(ex.name);
-          return (
-            <div key={exIdx} className="card">
-              <div className="flex items-start justify-between gap-3 mb-1">
-                <div>
-                  <h3 className="font-semibold">{ex.name}</h3>
-                  <div className="text-xs text-fg-muted mt-0.5">
-                    {ex.sets} × {ex.reps}{ex.muscle ? ` · ${ex.muscle}` : ""}
-                  </div>
-                </div>
-                {best ? <span className="chip text-[10px]">Best {best} lb e1RM</span> : null}
+        {blocks.map((block) => (
+          <div key={block.letter} className="card">
+            {block.exercises.length > 1 && (
+              <div className="flex items-center gap-2 mb-3">
+                <span className="chip-accent text-[10px]">Superset {block.letter}</span>
+                <span className="text-xs text-fg-muted">Alternate {block.exercises.length} exercises</span>
               </div>
-              {ex.cue && <p className="text-xs text-fg-subtle italic mb-2">{ex.cue}</p>}
-              {prev && (
-                <p className="text-xs text-fg-subtle mb-2">
-                  Last time: {prev.weight_lb ?? "—"} {weightUnit} × {prev.reps ?? "—"}
-                </p>
-              )}
-
-              <div className="space-y-1.5">
-                <div className="grid grid-cols-[2rem_1fr_1fr_2.5rem] gap-2 text-[10px] uppercase tracking-wide text-fg-subtle px-1">
-                  <span>Set</span>
-                  <span>{weightUnit}</span>
-                  <span>Reps</span>
-                  <span></span>
-                </div>
-                {Array.from({ length: ex.sets }, (_, i) => i + 1).map((setNo) => {
-                  const k = keyOf(exIdx, setNo);
-                  const cell = cells[k];
-                  return (
-                    <div key={setNo} className="grid grid-cols-[2rem_1fr_1fr_2.5rem] gap-2 items-center">
-                      <span className="text-sm text-fg-muted text-center">{setNo}</span>
-                      <input
-                        type="number"
-                        inputMode="decimal"
-                        className={cn("input py-2 text-center", cell.completed && "opacity-60")}
-                        placeholder={prev?.weight_lb != null ? String(prev.weight_lb) : "0"}
-                        value={cell.weight}
-                        onChange={(e) => setCell(k, { weight: e.target.value })}
-                      />
-                      <input
-                        type="number"
-                        inputMode="numeric"
-                        className={cn("input py-2 text-center", cell.completed && "opacity-60")}
-                        placeholder={ex.reps}
-                        value={cell.reps}
-                        onChange={(e) => setCell(k, { reps: e.target.value })}
-                      />
-                      <button
-                        onClick={() => toggleSet(ex, exIdx, setNo)}
-                        className={cn(
-                          "h-9 w-9 rounded-lg border-2 flex items-center justify-center transition relative",
-                          cell.completed ? "border-accent bg-accent text-accent-fg" : "border-border hover:border-accent/50"
-                        )}
-                        aria-label={cell.completed ? "Mark set incomplete" : "Complete set"}
-                      >
-                        {cell.completed ? "✓" : ""}
-                        {cell.isPr && (
-                          <span className="absolute -top-1.5 -right-1.5 text-[8px] bg-amber-400 text-black font-bold rounded-full px-1">PR</span>
-                        )}
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
+            )}
+            <div className={cn(block.exercises.length > 1 && "space-y-4")}>
+              {block.exercises.map(({ ex, idx }) => (
+                <ExerciseBlock
+                  key={idx}
+                  ex={ex}
+                  exIdx={idx}
+                  cells={cells}
+                  setCell={setCell}
+                  toggleSet={toggleSet}
+                  prevSet={lastByExercise.get(ex.name)}
+                  bestE1RM={histBest.get(ex.name)}
+                  weightUnit={weightUnit}
+                />
+              ))}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
       {!session.completed && (
@@ -272,14 +237,12 @@ export function SessionLogger({
         </button>
       )}
 
-      {/* PR toast */}
       {prToast && (
         <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-50 rounded-full bg-amber-400 text-black text-sm font-semibold px-4 py-2 shadow-lg">
           🏆 {prToast}
         </div>
       )}
 
-      {/* Rest timer */}
       {rest && (
         <div className="fixed bottom-20 lg:bottom-4 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-sm">
           <div className="rounded-xl border border-accent/40 bg-bg-card shadow-xl p-3 flex items-center gap-3">
@@ -296,4 +259,108 @@ export function SessionLogger({
       )}
     </div>
   );
+}
+
+function ExerciseBlock({
+  ex, exIdx, cells, setCell, toggleSet, prevSet, bestE1RM, weightUnit,
+}: {
+  ex: Exercise;
+  exIdx: number;
+  cells: Record<string, Cell>;
+  setCell: (k: string, patch: Partial<Cell>) => void;
+  toggleSet: (ex: Exercise, exIdx: number, setNo: number) => void;
+  prevSet?: WorkoutSet;
+  bestE1RM?: number;
+  weightUnit: string;
+}) {
+  const targetSets = parseSetsCount(ex.sets);
+  return (
+    <div>
+      <div className="flex items-start justify-between gap-3 mb-1">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-fg-subtle text-xs">{ex.code}</span>
+            <h3 className="font-semibold truncate">{ex.name}</h3>
+          </div>
+          <div className="text-xs text-fg-muted mt-0.5">
+            {ex.sets} × {ex.reps}{ex.restSec > 0 ? ` · rest ${ex.restSec}s` : " · no rest"}
+          </div>
+        </div>
+        <a
+          href={exerciseVideoUrl(ex)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-ghost text-xs px-2 py-1 flex items-center gap-1 flex-shrink-0"
+          title="Watch a demo"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
+            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.4.5A3 3 0 0 0 .5 6.2C0 8 0 12 0 12s0 4 .5 5.8a3 3 0 0 0 2.1 2.1c1.8.5 9.4.5 9.4.5s7.6 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.8.5-5.8.5-5.8s0-4-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" />
+          </svg>
+          Demo
+        </a>
+      </div>
+      {ex.note && <p className="text-xs text-fg-subtle italic mb-2">{ex.note}</p>}
+      {bestE1RM ? <span className="chip text-[10px] mb-2 inline-block">Best {bestE1RM} {weightUnit} e1RM</span> : null}
+      {prevSet && (
+        <p className="text-xs text-fg-subtle mb-2">
+          Last: {prevSet.weight_lb ?? "—"} {weightUnit} × {prevSet.reps ?? "—"}
+        </p>
+      )}
+
+      <div className="space-y-1.5">
+        <div className="grid grid-cols-[2rem_1fr_1fr_2.5rem] gap-2 text-[10px] uppercase tracking-wide text-fg-subtle px-1">
+          <span>Set</span>
+          <span>{weightUnit}</span>
+          <span>Reps</span>
+          <span></span>
+        </div>
+        {Array.from({ length: targetSets }, (_, i) => i + 1).map((setNo) => {
+          const k = keyOf(exIdx, setNo);
+          const cell = cells[k];
+          if (!cell) return null;
+          return (
+            <div key={setNo} className="grid grid-cols-[2rem_1fr_1fr_2.5rem] gap-2 items-center">
+              <span className="text-sm text-fg-muted text-center">{setNo}</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                className={cn("input py-2 text-center", cell.completed && "opacity-60")}
+                placeholder={prevSet?.weight_lb != null ? String(prevSet.weight_lb) : "0"}
+                value={cell.weight}
+                onChange={(e) => setCell(k, { weight: e.target.value })}
+              />
+              <input
+                type="number"
+                inputMode="numeric"
+                className={cn("input py-2 text-center", cell.completed && "opacity-60")}
+                placeholder={ex.reps}
+                value={cell.reps}
+                onChange={(e) => setCell(k, { reps: e.target.value })}
+              />
+              <button
+                onClick={() => toggleSet(ex, exIdx, setNo)}
+                className={cn(
+                  "h-9 w-9 rounded-lg border-2 flex items-center justify-center transition relative",
+                  cell.completed ? "border-accent bg-accent text-accent-fg" : "border-border hover:border-accent/50"
+                )}
+                aria-label={cell.completed ? "Mark set incomplete" : "Complete set"}
+              >
+                {cell.completed ? "✓" : ""}
+                {cell.isPr && (
+                  <span className="absolute -top-1.5 -right-1.5 text-[8px] bg-amber-400 text-black font-bold rounded-full px-1">PR</span>
+                )}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/** Parse "5", "4 sets", "6 sets of 6,6,4,4,2,2" → numeric set count. */
+function parseSetsCount(sets: string): number {
+  const m = sets.match(/(\d+)/);
+  if (!m) return 3;
+  return Number(m[1]);
 }

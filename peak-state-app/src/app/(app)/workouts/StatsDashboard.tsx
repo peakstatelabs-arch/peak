@@ -58,11 +58,12 @@ export function StatsDashboard({
             <div className="text-xs uppercase tracking-wide text-fg-subtle">Current program</div>
             <div className="font-display text-lg font-semibold mt-0.5">{program.name}</div>
             <div className="text-xs text-fg-muted mt-0.5">
-              {GOAL_LABEL[program.goal]} · {program.daysPerWeek} days/wk · {program.level}
+              {GOAL_LABEL[program.goal]} · {program.audience} · {program.location} · {program.level}
             </div>
           </div>
           <div className="h-12 w-12 rounded-full bg-accent/15 flex items-center justify-center">
-            <span className="text-accent text-lg font-bold">{program.daysPerWeek}</span>
+            <span className="text-accent text-lg font-bold">{program.totalWeeks}</span>
+            <span className="sr-only">weeks</span>
           </div>
         </div>
       )}

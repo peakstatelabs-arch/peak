@@ -29,7 +29,7 @@ async function Loader() {
   const [{ data: sessions }, { data: sets }, { data: profile }] = await Promise.all([
     supabase
       .from("workout_sessions")
-      .select("id, name, program_slug, day_label, focus, scheduled_for, completed, completed_at, notes")
+      .select("id, name, program_slug, day_label, focus, phase_label, workout_index, scheduled_for, completed, completed_at, notes")
       .eq("user_id", user.id)
       .gte("scheduled_for", back)
       .lte("scheduled_for", forward)

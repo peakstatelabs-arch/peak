@@ -15,6 +15,8 @@ export type Session = {
   program_slug: string | null;
   day_label: string | null;
   focus: string | null;
+  phase_label: string | null;
+  workout_index: number | null;
   scheduled_for: string;
   completed: boolean;
   completed_at: string | null;
