@@ -5,5 +5,11 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "cleanUrls": true
+  "cleanUrls": true,
+  "crons": [
+    {
+      "path": "/api/cron/dose-reminders",
+      "schedule": "*/5 * * * *"
+    }
+  ]
 }
