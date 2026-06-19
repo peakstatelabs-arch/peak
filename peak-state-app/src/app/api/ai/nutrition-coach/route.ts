@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropic, AI_MODEL, AI_NOT_CONFIGURED, textOf } from "@/lib/ai";
+import { metabolicSystemBlock } from "@/lib/ai-metabolic";
 
 export const runtime = "nodejs";
 
@@ -69,7 +70,7 @@ export async function POST(request: Request) {
     const res = await anthropic.messages.create({
       model: AI_MODEL,
       max_tokens: 1024,
-      system: `${SYSTEM}\n\n${ctxLines.join("\n")}`,
+      system: `${SYSTEM}\n\n${ctxLines.join("\n")}${metabolicSystemBlock(body.context.metabolicType ?? null)}`,
       messages: body.messages.slice(-12).map((m) => ({ role: m.role, content: m.content })),
     });
     return NextResponse.json({ reply: textOf(res.content) });

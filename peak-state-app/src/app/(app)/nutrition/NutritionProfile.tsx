@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { computeTargets, type Goal, type MacroTargets, type Sex } from "@/lib/nutrition";
+import { macrosFromType, TYPE_INFO, type MetabolicType } from "@/lib/metabolic";
+import { cn } from "@/lib/utils";
 
 export function NutritionProfile({
   targets,
@@ -30,10 +32,20 @@ export function NutritionProfile({
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
 
-  const out = useMemo(
+  const base = useMemo(
     () => computeTargets({ sex, age, weightLb, heightIn, activity, goal }),
     [sex, age, weightLb, heightIn, activity, goal]
   );
+
+  // If a metabolic type is set, the TYPE drives the macro split (calories from
+  // goal), with a protein safety floor. Otherwise fall back to goal-based macros.
+  const typed = metabolicType && metabolicType in TYPE_INFO;
+  const macros = useMemo(() => {
+    if (typed) return macrosFromType(base.kcal, metabolicType as MetabolicType, weightLb);
+    return { protein: base.protein, carbs: base.carbs, fat: base.fat };
+  }, [typed, base, metabolicType, weightLb]);
+
+  const out = { ...base, ...macros };
 
   async function saveTargets() {
     setSaving(true);
@@ -88,13 +100,26 @@ export function NutritionProfile({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5">
           <Stat label="BMR" v={`${out.bmr}`} unit="kcal" />
           <Stat label="TDEE" v={`${out.tdee}`} unit="kcal" />
           <Stat label="Target" v={`${out.kcal}`} unit="kcal" highlight />
           <Stat label="Protein" v={`${out.protein}`} unit="g" />
           <Stat label="Carbs" v={`${out.carbs}`} unit="g" />
+          <Stat label="Fat" v={`${out.fat}`} unit="g" />
         </div>
+
+        {typed ? (
+          <p className="text-xs text-fg-subtle mt-3">
+            Macros use your <span className={TYPE_INFO[metabolicType as MetabolicType].accent}>{TYPE_INFO[metabolicType as MetabolicType].name}</span> split
+            ({TYPE_INFO[metabolicType as MetabolicType].split.protein}/{TYPE_INFO[metabolicType as MetabolicType].split.carbs}/{TYPE_INFO[metabolicType as MetabolicType].split.fat}) with a protein safety floor.
+            Calories come from your goal.
+          </p>
+        ) : (
+          <p className="text-xs text-fg-subtle mt-3">
+            Take the metabolic type quiz below to tailor your macro split to how your body burns fuel.
+          </p>
+        )}
 
         <div className="mt-5 flex items-center gap-3">
           <button onClick={saveTargets} disabled={saving} className="btn-primary">
@@ -112,10 +137,15 @@ export function NutritionProfile({
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="chip-accent text-[10px] mb-1 inline-block">Metabolic typing</div>
-            <h3 className="font-display text-lg font-semibold">Find your metabolic type</h3>
+            <h3 className={cn(
+              "font-display text-lg font-semibold",
+              typed && TYPE_INFO[metabolicType as MetabolicType].accent
+            )}>
+              {typed ? TYPE_INFO[metabolicType as MetabolicType].name : "Find your metabolic type"}
+            </h3>
             <p className="text-sm text-fg-muted mt-1 max-w-md">
-              {metabolicType
-                ? `Your type: ${metabolicType}. Retake the quiz any time.`
+              {typed
+                ? `${TYPE_INFO[metabolicType as MetabolicType].tagline} Macro split: ${TYPE_INFO[metabolicType as MetabolicType].split.protein}/${TYPE_INFO[metabolicType as MetabolicType].split.carbs}/${TYPE_INFO[metabolicType as MetabolicType].split.fat}.`
                 : "A short quiz tunes your macros and meal plan to how your body burns fuel."}
             </p>
           </div>

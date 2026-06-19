@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAnthropic, AI_MODEL, AI_NOT_CONFIGURED, extractJson, textOf } from "@/lib/ai";
+import { metabolicSystemBlock } from "@/lib/ai-metabolic";
 
 export const runtime = "nodejs";
 
@@ -77,7 +78,7 @@ Build the 7-day plan now.`;
     const res = await anthropic.messages.create({
       model: AI_MODEL,
       max_tokens: 8000,
-      system: SYSTEM,
+      system: SYSTEM + metabolicSystemBlock(body.metabolicType),
       messages: [{ role: "user", content: userMsg }],
     });
     const parsed = extractJson(textOf(res.content));
