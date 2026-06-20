@@ -276,27 +276,25 @@ function ExerciseBlock({
   const targetSets = parseSetsCount(ex.sets);
   return (
     <div>
-      <div className="flex items-start justify-between gap-3 mb-1">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-fg-subtle text-xs">{ex.code}</span>
-            <h3 className="font-semibold truncate">{ex.name}</h3>
-          </div>
-          <div className="text-xs text-fg-muted mt-0.5">
-            {ex.sets} × {ex.reps}{ex.restSec > 0 ? ` · rest ${ex.restSec}s` : " · no rest"}
-          </div>
+      <div className="mb-1">
+        <div className="flex items-baseline gap-2">
+          <span className="text-fg-subtle text-xs flex-shrink-0">{ex.code}</span>
+          <h3 className="font-semibold leading-snug">{ex.name}</h3>
+        </div>
+        <div className="text-xs text-fg-muted mt-0.5">
+          {ex.sets} × {ex.reps}{ex.restSec > 0 ? ` · rest ${ex.restSec}s` : " · no rest"}
         </div>
         <a
           href={exerciseVideoUrl(ex)}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-ghost text-xs px-2 py-1 flex items-center gap-1 flex-shrink-0"
+          className="inline-flex items-center gap-1 mt-1 text-xs text-accent hover:underline"
           title="Watch a demo"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="h-3.5 w-3.5">
             <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.4.5A3 3 0 0 0 .5 6.2C0 8 0 12 0 12s0 4 .5 5.8a3 3 0 0 0 2.1 2.1c1.8.5 9.4.5 9.4.5s7.6 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.8.5-5.8.5-5.8s0-4-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z" />
           </svg>
-          Demo
+          Watch demo
         </a>
       </div>
       {ex.note && <p className="text-xs text-fg-subtle italic mb-2">{ex.note}</p>}
