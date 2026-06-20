@@ -7,10 +7,6 @@ export const metadata: Metadata = {
   description: "Peak State Labs client portal — protocols, tracking, performance.",
   applicationName: "Peak State Labs",
   manifest: "/portal/manifest.json",
-  icons: {
-    icon: "/portal/logo.png",
-    apple: "/portal/icons/icon-192.png",
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
