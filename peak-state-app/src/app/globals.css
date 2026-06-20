@@ -3,15 +3,16 @@
 @tailwind utilities;
 
 :root {
+  /* Light mode — pulled from peakstate.shop marketing site palette */
   --bg: 255 255 255;
-  --bg-elev: 249 250 251;
+  --bg-elev: 240 249 250;        /* soft cyan-white */
   --bg-card: 255 255 255;
-  --fg: 9 9 11;
-  --fg-muted: 82 82 91;
-  --fg-subtle: 161 161 170;
-  --border: 228 228 231;
-  --accent: 132 204 22;
-  --accent-fg: 9 9 11;
+  --fg: 21 80 144;                /* brand navy (primary text) */
+  --fg-muted: 26 106 184;         /* primary-light */
+  --fg-subtle: 110 138 163;       /* blue-gray */
+  --border: 206 232 235;          /* soft cyan-tinted */
+  --accent: 79 201 212;           /* accent-dark — strong contrast on white */
+  --accent-fg: 255 255 255;       /* white text on cyan buttons */
   --danger: 220 38 38;
   --success: 22 163 74;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
@@ -19,15 +20,16 @@
 }
 
 html.dark {
-  --bg: 8 9 12;
-  --bg-elev: 16 18 22;
-  --bg-card: 20 22 27;
-  --fg: 244 244 245;
-  --fg-muted: 161 161 170;
-  --fg-subtle: 113 113 122;
-  --border: 39 39 46;
-  --accent: 163 230 53;
-  --accent-fg: 9 9 11;
+  /* Dark mode — matches the box mockup: deep navy bg, soft white text, cyan accent */
+  --bg: 8 17 31;                  /* near-black navy */
+  --bg-elev: 15 26 43;
+  --bg-card: 20 32 54;
+  --fg: 240 249 250;              /* soft white */
+  --fg-muted: 168 197 217;        /* light blue-gray */
+  --fg-subtle: 110 138 163;
+  --border: 31 48 80;             /* navy-tinted border */
+  --accent: 120 220 229;          /* brand cyan from box logo */
+  --accent-fg: 8 17 31;           /* deep navy text on cyan */
 }
 
 html,

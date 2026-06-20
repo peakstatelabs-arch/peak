@@ -7,14 +7,31 @@ type Ctx = { theme: Theme; toggle: () => void; setTheme: (t: Theme) => void };
 
 const ThemeCtx = createContext<Ctx | null>(null);
 
+function osTheme(): Theme {
+  if (typeof window === "undefined") return "dark";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("dark");
 
   useEffect(() => {
-    const stored = (typeof window !== "undefined" &&
-      (localStorage.getItem("psl-theme") as Theme | null)) || "dark";
-    setThemeState(stored);
-    document.documentElement.classList.toggle("dark", stored === "dark");
+    const stored = localStorage.getItem("psl-theme") as Theme | null;
+    const initial = stored ?? osTheme();
+    setThemeState(initial);
+    document.documentElement.classList.toggle("dark", initial === "dark");
+
+    // No manual preference yet? Track OS changes live so the app stays in
+    // sync if the user flips their phone/desktop theme.
+    if (stored) return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (e: MediaQueryListEvent) => {
+      const next: Theme = e.matches ? "dark" : "light";
+      setThemeState(next);
+      document.documentElement.classList.toggle("dark", next === "dark");
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
   }, []);
 
   const setTheme = (t: Theme) => {
