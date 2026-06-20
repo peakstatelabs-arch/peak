@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { PageHeader } from "@/components/PageHeader";
 import { computeClientRows, formatRelative, type PillarKey } from "@/lib/admin/compliance";
 import { MessageClientForm } from "./MessageClientForm";
 
@@ -108,13 +107,15 @@ export default async function ClientDetailPage({
         <Link href="/admin/dashboard" className="text-sm text-fg-muted hover:text-fg">← Back to dashboard</Link>
       </div>
 
-      <PageHeader
-        title={name}
-        description={email || ""}
-        action={
-          <MessageClientForm clientId={id} clientName={name} deviceCount={deviceCount ?? 0} />
-        }
-      />
+      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div className="min-w-0">
+          <h1 className="font-display text-2xl lg:text-3xl font-semibold tracking-tight truncate">
+            {name}
+          </h1>
+          {email && <p className="mt-1 text-sm text-fg-muted truncate">{email}</p>}
+        </div>
+        <MessageClientForm clientId={id} clientName={name} deviceCount={deviceCount ?? 0} />
+      </div>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <Stat label="Overall (7d)" value={row.overallPct === null ? "—" : `${row.overallPct}%`} />

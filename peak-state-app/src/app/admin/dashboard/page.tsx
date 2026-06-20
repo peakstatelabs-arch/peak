@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { PageHeader } from "@/components/PageHeader";
 import {
   computeClientRows,
   sortRows,
@@ -52,11 +51,17 @@ export default async function AdminDashboardPage({
 
   return (
     <>
-      <PageHeader
-        title="Coaching dashboard"
-        description={`Compliance and red flags across all ${sorted.length} clients.`}
-        action={<WindowToggle current={windowDays} />}
-      />
+      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h1 className="font-display text-2xl lg:text-3xl font-semibold tracking-tight">
+            Coaching dashboard
+          </h1>
+          <p className="mt-1 text-sm text-fg-muted">
+            Compliance and red flags across all {sorted.length} client{sorted.length === 1 ? "" : "s"}.
+          </p>
+        </div>
+        <WindowToggle current={windowDays} />
+      </div>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <SummaryCard label="Clients" value={String(sorted.length)} />
@@ -65,7 +70,18 @@ export default async function AdminDashboardPage({
         <SummaryCard label="Active today" value={String(summary.activeToday)} />
       </section>
 
-      <section className="card overflow-hidden p-0">
+      {/* Mobile: stacked cards */}
+      <section className="md:hidden space-y-3">
+        {sorted.length === 0 && (
+          <div className="card text-center text-fg-muted">No clients yet.</div>
+        )}
+        {sorted.map((row) => (
+          <MobileCard key={row.id} row={row} />
+        ))}
+      </section>
+
+      {/* Desktop: table */}
+      <section className="hidden md:block card overflow-hidden p-0">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="text-fg-subtle text-xs uppercase tracking-wide bg-bg-elev/40">
@@ -145,6 +161,93 @@ function SummaryCard({
 
 function PillarHead({ label }: { label: string }) {
   return <th className="text-right px-2 py-3 hidden md:table-cell">{label}</th>;
+}
+
+function MobileCard({ row }: { row: ClientRow }) {
+  const name =
+    [row.firstName, row.lastName].filter(Boolean).join(" ") || row.email || "—";
+  return (
+    <Link
+      href={`/admin/clients/${row.id}`}
+      className="card block active:bg-bg-elev/50 transition-colors"
+    >
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <div className="min-w-0">
+          <div className="font-semibold truncate">{name}</div>
+          <div className="text-xs text-fg-subtle truncate">{row.email}</div>
+        </div>
+        <OverallChip pct={row.overallPct} />
+      </div>
+
+      {(row.peptideProtocolName || row.programSlug) && (
+        <div className="text-xs text-fg-muted mb-3 truncate">
+          {row.peptideProtocolName ?? "—"}
+          {row.programSlug && (
+            <span className="text-fg-subtle">
+              {" · "}
+              {row.programSlug}
+              {row.programWeek ? ` · Wk ${row.programWeek}` : ""}
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="grid grid-cols-4 gap-2 mb-3">
+        <MiniPillar label="Pep" stat={row.pillars.peptide} />
+        <MiniPillar label="Wrk" stat={row.pillars.workout} />
+        <MiniPillar label="Nut" stat={row.pillars.nutrition} />
+        <MiniPillar label="Chk" stat={row.pillars.checkin} />
+      </div>
+
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs text-fg-subtle">{formatRelative(row.lastActivity)}</span>
+        {row.flags.length > 0 ? (
+          <div className="flex flex-wrap justify-end gap-1">
+            {row.flags.map((f) => (
+              <span
+                key={f.key}
+                className="inline-flex items-center rounded-full bg-danger/10 border border-danger/30 text-danger px-2 py-0.5 text-[11px] font-medium"
+              >
+                {f.label}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <span className="text-xs text-accent">✓ No flags</span>
+        )}
+      </div>
+    </Link>
+  );
+}
+
+function MiniPillar({
+  label,
+  stat,
+}: {
+  label: string;
+  stat: { active: boolean; pct: number | null };
+}) {
+  if (!stat.active) {
+    return (
+      <div className="rounded-lg border border-border bg-bg-elev/40 px-2 py-1.5 text-center opacity-50">
+        <div className="text-[10px] uppercase tracking-wide text-fg-subtle">{label}</div>
+        <div className="text-xs text-fg-subtle">—</div>
+      </div>
+    );
+  }
+  const tone =
+    stat.pct === null ? "text-fg-subtle"
+    : stat.pct >= 80 ? "text-accent"
+    : stat.pct >= 60 ? "text-fg"
+    : "text-danger";
+  return (
+    <div className="rounded-lg border border-border bg-bg-elev/40 px-2 py-1.5 text-center">
+      <div className="text-[10px] uppercase tracking-wide text-fg-subtle">{label}</div>
+      <div className={`text-sm font-semibold ${tone}`}>
+        {stat.pct === null ? "—" : `${stat.pct}%`}
+      </div>
+    </div>
+  );
 }
 
 function Row({ row }: { row: ClientRow }) {

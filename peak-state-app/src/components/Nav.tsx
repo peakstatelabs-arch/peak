@@ -160,13 +160,24 @@ function FlameIcon() {
   );
 }
 
-export function BottomTabBar() {
+const ADMIN_TAB: NavItem = {
+  href: "/admin/dashboard",
+  label: "Admin",
+  short: "Admin",
+  icon: <IconShield />,
+};
+
+export function BottomTabBar({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
+  const items = isAdmin ? [...MOBILE_ITEMS, ADMIN_TAB] : MOBILE_ITEMS;
   return (
     <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-bg/85 backdrop-blur-xl supports-[backdrop-filter]:bg-bg/75 border-t border-border/70 safe-bottom">
-      <ul className="grid grid-cols-5">
-        {MOBILE_ITEMS.map((item) => {
-          const active = pathname === item.href || pathname?.startsWith(item.href + "/");
+      <ul className={cn("grid", isAdmin ? "grid-cols-6" : "grid-cols-5")}>
+        {items.map((item) => {
+          const active =
+            item.href === "/admin/dashboard"
+              ? pathname?.startsWith("/admin") ?? false
+              : pathname === item.href || (pathname?.startsWith(item.href + "/") ?? false);
           return (
             <li key={item.href}>
               <Link

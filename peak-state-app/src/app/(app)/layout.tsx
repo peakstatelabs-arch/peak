@@ -63,7 +63,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <main className="flex-1 px-4 lg:px-8 py-6 lg:py-8 pb-28 lg:pb-8 max-w-6xl w-full mx-auto">
           {children}
         </main>
-        <BottomTabBar />
+        <BottomTabBar isAdmin={isAdmin} />
       </div>
       <OfflineBoundary />
     </div>

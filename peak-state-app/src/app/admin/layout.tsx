@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
+import { BottomTabBar } from "@/components/Nav";
+import { AdminTopNav } from "./AdminTopNav";
 
 export const metadata = { title: "Admin — Peak State Labs" };
 
@@ -18,22 +20,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-bg">
-      <header className="border-b border-border bg-bg-elev/40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/admin" className="flex items-center gap-3">
-            <Logo size={32} />
-            <span className="font-display font-semibold">Admin</span>
+      <header className="sticky top-0 z-30 border-b border-border bg-bg/80 backdrop-blur-xl supports-[backdrop-filter]:bg-bg/60 safe-top">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-3">
+          <Link href="/admin/dashboard" className="flex items-center gap-2.5 min-w-0">
+            <Logo size={28} />
+            <span className="font-display font-semibold tracking-tight truncate">
+              Admin
+            </span>
           </Link>
-          <nav className="flex items-center gap-4 text-sm">
-            <Link href="/admin/dashboard" className="text-fg-muted hover:text-fg">Dashboard</Link>
-            <Link href="/admin" className="text-fg-muted hover:text-fg">Clients</Link>
-            <Link href="/admin/protocols" className="text-fg-muted hover:text-fg">Protocols</Link>
-            <Link href="/admin/check-ins" className="text-fg-muted hover:text-fg">Check-ins</Link>
-            <Link href="/dashboard" className="text-fg-muted hover:text-fg">← Client view</Link>
-          </nav>
+          <AdminTopNav />
         </div>
       </header>
-      <main className="max-w-6xl mx-auto px-6 py-8">{children}</main>
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-5 md:py-8 pb-28 md:pb-8">
+        {children}
+      </main>
+      <BottomTabBar isAdmin />
     </div>
   );
 }
