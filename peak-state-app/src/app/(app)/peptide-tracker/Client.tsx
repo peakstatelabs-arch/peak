@@ -153,7 +153,11 @@ function groupProtocols(protocols: Protocol[]): ProtocolGroup[] {
 
   for (const p of protocols) {
     if (p.protocol_type?.startsWith("power_cut")) {
-      const key = `${p.protocol_type}::${p.name}::${p.start_date}`;
+      // Stack key intentionally excludes `name` because the wizard appends
+      // " · <compound>" to each child row's name (so names differ across
+      // rows of the same stack). Track + stacks + start_date is what
+      // actually identifies one stack assignment.
+      const key = `${p.protocol_type}::${p.bpc_track ?? ""}::${p.stacks ?? ""}::${p.start_date}`;
       if (!groups.has(key)) {
         groups.set(key, []);
         order.push(key);
@@ -178,10 +182,12 @@ function groupProtocols(protocols: Protocol[]): ProtocolGroup[] {
       // member fall back to rendering as a single row.
       if (items.length < 2) return { kind: "single", protocol: items[0] };
       const first = items[0];
+      // Strip " · <compound>" suffix the wizard appends to each child name.
+      const stackName = first.name.split(" · ")[0];
       return {
         kind: "stack",
         key,
-        name: first.name,
+        name: stackName,
         track: first.bpc_track,
         stacks: first.stacks,
         protocols: items,
