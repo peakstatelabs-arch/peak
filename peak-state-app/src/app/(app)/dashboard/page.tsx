@@ -60,14 +60,14 @@ async function TodayHero() {
       .limit(1),
   ]);
 
-  // Nobody assigned a protocol yet
+  // Admins can land here without a protocol (the wizard gate skips them).
   if (!protocols || protocols.length === 0) {
     return (
       <section className="card text-center py-10">
-        <p className="text-fg-muted">
-          Your coach is finalizing your protocol. It&apos;ll appear here as soon as it&apos;s
-          ready.
-        </p>
+        <p className="text-fg-muted">No active protocol.</p>
+        <Link href="/onboard-protocol" className="btn-primary mt-4 inline-flex">
+          Set one up
+        </Link>
       </section>
     );
   }

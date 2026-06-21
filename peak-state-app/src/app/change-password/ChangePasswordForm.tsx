@@ -41,7 +41,9 @@ export function ChangePasswordForm({ firstLogin = true }: { firstLogin?: boolean
     }
     setSuccess("Password updated.");
     setTimeout(() => {
-      router.push(firstLogin ? "/welcome" : "/profile");
+      // Gates in (app)/layout walk first-time users through terms → protocol
+      // wizard automatically; non-first-login just goes back to profile.
+      router.push(firstLogin ? "/dashboard" : "/profile");
       router.refresh();
     }, 600);
   }

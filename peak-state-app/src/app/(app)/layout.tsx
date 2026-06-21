@@ -59,6 +59,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const isAdmin = profile?.role === "admin";
   const enabledModules = (profile?.enabled_modules ?? []) as string[];
+
+  // Force clients (not admins) through the protocol wizard if they have no
+  // active peptide protocol yet. Self-healing — if they cancel all protocols
+  // later, the next page visit re-prompts.
+  if (!isAdmin) {
+    const { count } = await supabase
+      .from("peptide_protocols")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("active", true);
+    if ((count ?? 0) === 0) redirect("/onboard-protocol");
+  }
+
   const streak = await computeStreak(supabase, user.id);
 
   return (
