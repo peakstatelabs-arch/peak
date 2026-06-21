@@ -29,6 +29,21 @@ function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+const TRACK_META: Record<Track, { label: string; frequency: string; blurb: string }> = {
+  foundation: {
+    label: "Foundation",
+    frequency: "BPC 2× weekly",
+    blurb:
+      "Designed for simplicity and consistency. Best for those who want effective recovery with minimal injections and low friction.",
+  },
+  performance: {
+    label: "Performance",
+    frequency: "BPC 3× weekly",
+    blurb:
+      "Increased frequency for enhanced recovery signaling. Ideal for those looking to maximize results and don't mind a slightly higher level of commitment.",
+  },
+};
+
 type SingleConfig = {
   slug: SingleSlug;
   label: string;
@@ -361,25 +376,31 @@ export function ProtocolWizard({
           {/* Foundation vs Performance */}
           <div>
             <label className="label">Track</label>
-            <div className="grid grid-cols-2 gap-2">
-              {(["foundation", "performance"] as const).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setTrack(t)}
-                  className={
-                    "rounded-lg border px-3 py-3 text-left text-sm " +
-                    (track === t
-                      ? "border-accent bg-accent/10 text-fg"
-                      : "border-border bg-bg-elev text-fg-muted hover:text-fg")
-                  }
-                >
-                  <div className="font-medium">{t === "foundation" ? "Foundation" : "Performance"}</div>
-                  <div className="text-xs text-fg-subtle mt-0.5">
-                    BPC {t === "foundation" ? "2× weekly" : "3× weekly"}
-                  </div>
-                </button>
-              ))}
+            <div className="grid sm:grid-cols-2 gap-2">
+              {(["foundation", "performance"] as const).map((t) => {
+                const meta = TRACK_META[t];
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setTrack(t)}
+                    className={
+                      "rounded-lg border px-3 py-3 text-left text-sm " +
+                      (track === t
+                        ? "border-accent bg-accent/10 text-fg"
+                        : "border-border bg-bg-elev text-fg-muted hover:text-fg")
+                    }
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <div className="font-medium">{meta.label}</div>
+                      <div className="text-xs text-fg-subtle">{meta.frequency}</div>
+                    </div>
+                    <div className="text-xs text-fg-muted mt-1 leading-snug">
+                      {meta.blurb}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -542,27 +563,31 @@ export function ProtocolWizard({
         {selectedSingles.has("bpc") && (
           <div>
             <label className="label">BPC-157 + TB-500 frequency</label>
-            <div className="grid grid-cols-2 gap-2">
-              {(["foundation", "performance"] as const).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setBpcVariant(t)}
-                  className={
-                    "rounded-lg border px-3 py-3 text-left text-sm " +
-                    (bpcVariant === t
-                      ? "border-accent bg-accent/10 text-fg"
-                      : "border-border bg-bg-elev text-fg-muted hover:text-fg")
-                  }
-                >
-                  <div className="font-medium">
-                    {t === "foundation" ? "Foundation" : "Performance"}
-                  </div>
-                  <div className="text-xs text-fg-subtle mt-0.5">
-                    {t === "foundation" ? "2× weekly" : "3× weekly"}
-                  </div>
-                </button>
-              ))}
+            <div className="grid sm:grid-cols-2 gap-2">
+              {(["foundation", "performance"] as const).map((t) => {
+                const meta = TRACK_META[t];
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setBpcVariant(t)}
+                    className={
+                      "rounded-lg border px-3 py-3 text-left text-sm " +
+                      (bpcVariant === t
+                        ? "border-accent bg-accent/10 text-fg"
+                        : "border-border bg-bg-elev text-fg-muted hover:text-fg")
+                    }
+                  >
+                    <div className="flex items-baseline justify-between gap-2">
+                      <div className="font-medium">{meta.label}</div>
+                      <div className="text-xs text-fg-subtle">
+                        {t === "foundation" ? "2× weekly" : "3× weekly"}
+                      </div>
+                    </div>
+                    <div className="text-xs text-fg-muted mt-1 leading-snug">{meta.blurb}</div>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
