@@ -25,7 +25,7 @@ export const NAV_ITEMS: NavItem[] = [
 ];
 
 const MOBILE_ITEMS = NAV_ITEMS.filter((n) =>
-  ["/dashboard", "/peptide-tracker", "/body-tracker", "/workouts", "/profile"].includes(n.href)
+  ["/dashboard", "/peptide-tracker", "/body-tracker", "/workouts", "/nutrition", "/community", "/profile"].includes(n.href)
 );
 
 export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
@@ -173,7 +173,7 @@ export function BottomTabBar({ isAdmin = false }: { isAdmin?: boolean }) {
   const items = isAdmin ? [...MOBILE_ITEMS, ADMIN_TAB] : MOBILE_ITEMS;
   return (
     <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-bg/85 backdrop-blur-xl supports-[backdrop-filter]:bg-bg/75 border-t border-border/70 safe-bottom">
-      <ul className={cn("grid", isAdmin ? "grid-cols-6" : "grid-cols-5")}>
+      <ul className={cn("grid", isAdmin ? "grid-cols-8" : "grid-cols-7")}>
         {items.map((item) => {
           const active =
             item.href === "/admin/dashboard"
@@ -184,12 +184,12 @@ export function BottomTabBar({ isAdmin = false }: { isAdmin?: boolean }) {
               <Link
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium",
+                  "flex flex-col items-center justify-center gap-0.5 px-0.5 py-2.5 text-[10px] font-medium truncate",
                   active ? "text-accent" : "text-fg-muted"
                 )}
               >
-                <span className="h-5 w-5">{item.icon}</span>
-                {item.short ?? item.label}
+                <span className="h-5 w-5 flex-shrink-0">{item.icon}</span>
+                <span className="truncate max-w-full">{item.short ?? item.label}</span>
               </Link>
             </li>
           );
