@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useTheme } from "@/components/ThemeProvider";
+import { ThemeSegmented } from "@/components/ThemeSegmented";
 
 export type NavItem = {
   href: string;
@@ -74,7 +74,8 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
           </Link>
         )}
       </nav>
-      <div className="p-3 border-t border-border">
+      <div className="p-3 border-t border-border space-y-2">
+        <ThemeSegmented />
         <SignOutButton />
       </div>
     </aside>
@@ -198,20 +199,6 @@ export function BottomTabBar({ isAdmin = false }: { isAdmin?: boolean }) {
   );
 }
 
-export function ThemeToggleButton() {
-  const { theme, toggle } = useTheme();
-  return (
-    <button
-      onClick={toggle}
-      aria-label="Toggle theme"
-      className="btn-ghost px-2 py-1.5"
-      title={theme === "dark" ? "Switch to light" : "Switch to dark"}
-    >
-      {theme === "dark" ? <IconSun /> : <IconMoon />}
-    </button>
-  );
-}
-
 export function SignOutButton() {
   return (
     <form action="/portal/auth/signout" method="post">
@@ -241,6 +228,4 @@ function IconChart() { return <I><path d="M3 3v18h18" /><path d="m7 14 4-4 3 3 5
 function IconUsers() { return <I><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></I>; }
 function IconUser() { return <I><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></I>; }
 function IconShield() { return <I><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /></I>; }
-function IconSun() { return <I><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></I>; }
-function IconMoon() { return <I><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></I>; }
 function IconLogout() { return <I><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></I>; }

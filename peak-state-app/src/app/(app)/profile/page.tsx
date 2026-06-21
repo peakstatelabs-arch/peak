@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/PageHeader";
 import { ChangePasswordForm } from "@/app/change-password/ChangePasswordForm";
 import { ProfileForm } from "./ProfileForm";
-import { ThemeToggleButton } from "@/components/Nav";
+import { ThemeSegmented } from "@/components/ThemeSegmented";
 
 export const metadata = { title: "Profile — Peak State Labs" };
 
@@ -27,15 +27,17 @@ export default async function ProfilePage() {
             <div className="flex justify-between"><dt className="text-fg-muted">Email</dt><dd>{user.email}</dd></div>
             <div className="flex justify-between"><dt className="text-fg-muted">Member since</dt><dd>{new Date(user.created_at).toLocaleDateString()}</dd></div>
           </dl>
-          <div className="border-t border-border mt-4 pt-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Appearance</span>
-              <ThemeToggleButton />
-            </div>
-          </div>
         </section>
 
         <section className="card">
+          <h3 className="font-semibold mb-1">Appearance</h3>
+          <p className="text-xs text-fg-subtle mb-3">
+            Match your device, or pick a side.
+          </p>
+          <ThemeSegmented />
+        </section>
+
+        <section className="card md:col-span-2">
           <h3 className="font-semibold mb-3">Your info</h3>
           <ProfileForm
             firstName={profile?.first_name ?? ""}
