@@ -21,6 +21,22 @@ function arrayBufferToBase64(buf: ArrayBuffer | null): string {
   return btoa(bin);
 }
 
+function deniedMessage(): string {
+  if (typeof window === "undefined") return "Permission denied.";
+  const ua = window.navigator.userAgent;
+  const isIOS = /iPad|iPhone|iPod/.test(ua);
+  const isStandalone =
+    window.matchMedia?.("(display-mode: standalone)").matches ||
+    (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+
+  // iOS Safari (not a PWA): the actual fix is "install to home screen first".
+  if (isIOS && !isStandalone) {
+    return "On iPhone you need to add Peak State Labs to your home screen first: tap Share → Add to Home Screen, then open the app from the icon and try again.";
+  }
+  // Anything else with a denied permission: usually a prior block or private window.
+  return "Notifications are blocked for this site. Open your browser site settings (or try a non-private window), allow notifications, and try again.";
+}
+
 export function EnableRemindersButton() {
   const router = useRouter();
   const supabase = createClient();
@@ -45,7 +61,7 @@ export function EnableRemindersButton() {
       let perm = Notification.permission;
       if (perm !== "granted") perm = await Notification.requestPermission();
       if (perm !== "granted") {
-        setError("Permission denied. You can turn this on later from the Tracker.");
+        setError(deniedMessage());
         return;
       }
 
