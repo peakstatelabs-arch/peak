@@ -3,12 +3,12 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
 import { PEPTIDES, findPeptide, type PeptideProtocol } from "@/lib/peptides";
 import { ReconstitutionCalc } from "@/components/ReconstitutionCalc";
+import { requireModule } from "@/lib/modules";
 
-export function generateStaticParams() {
-  return PEPTIDES.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export default async function PeptideDetail({ params }: { params: Promise<{ slug: string }> }) {
+  await requireModule("dosing-guide");
   const { slug } = await params;
   const p = findPeptide(slug);
   if (!p) notFound();

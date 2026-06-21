@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/PageHeader";
 import { ChangePasswordForm } from "@/app/change-password/ChangePasswordForm";
 import { ProfileForm } from "./ProfileForm";
+import { ModuleToggles } from "./ModuleToggles";
 import { ThemeSegmented } from "@/components/ThemeSegmented";
 
 export const metadata = { title: "Profile — Peak State Labs" };
@@ -13,7 +14,7 @@ export default async function ProfilePage() {
   if (!user) redirect("/login");
   const { data: profile } = await supabase
     .from("profiles")
-    .select("first_name, last_name, goal_weight_lb")
+    .select("first_name, last_name, goal_weight_lb, enabled_modules")
     .eq("id", user.id)
     .single();
 
@@ -35,6 +36,14 @@ export default async function ProfilePage() {
             Match your device, or pick a side.
           </p>
           <ThemeSegmented />
+        </section>
+
+        <section className="card md:col-span-2">
+          <h3 className="font-semibold mb-1">More features</h3>
+          <p className="text-xs text-fg-subtle mb-4">
+            Turn on what you want. Off by default to keep things focused.
+          </p>
+          <ModuleToggles initial={(profile?.enabled_modules ?? []) as string[]} />
         </section>
 
         <section className="card md:col-span-2">

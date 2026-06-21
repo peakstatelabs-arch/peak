@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { PEPTIDES } from "@/lib/peptides";
+import { requireModule } from "@/lib/modules";
 
 export const metadata = { title: "Dosing Guide — Peak State Labs" };
+export const dynamic = "force-dynamic";
 
-export default function DosingGuide() {
+export default async function DosingGuide() {
+  await requireModule("dosing-guide");
   return (
     <>
       <PageHeader

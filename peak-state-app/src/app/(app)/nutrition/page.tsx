@@ -2,12 +2,15 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { CardSkeleton } from "@/components/Skeleton";
 import { createClient } from "@/lib/supabase/server";
+import { requireModule } from "@/lib/modules";
 import { NutritionClient } from "./NutritionClient";
 import { DEFAULT_TARGETS, todayISO } from "@/lib/nutrition";
 
 export const metadata = { title: "Nutrition — Peak State Labs" };
+export const dynamic = "force-dynamic";
 
-export default function NutritionPage() {
+export default async function NutritionPage() {
+  await requireModule("nutrition");
   return (
     <>
       <PageHeader title="Nutrition" description="Track meals. Hit your macros. Stay in your range." />

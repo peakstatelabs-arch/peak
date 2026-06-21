@@ -2,8 +2,10 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { EnableRemindersButton } from "./EnableRemindersButton";
 
 export const metadata = { title: "Welcome — Peak State Labs" };
+export const dynamic = "force-dynamic";
 
 export default async function WelcomePage() {
   const supabase = await createClient();
@@ -18,45 +20,76 @@ export default async function WelcomePage() {
 
   if (profile?.must_change_password) redirect("/change-password");
 
+  const today = new Date().toISOString().slice(0, 10);
+
+  const [{ data: nextDose }, { data: protocol }] = await Promise.all([
+    supabase
+      .from("peptide_doses")
+      .select("scheduled_for, peptide_name")
+      .eq("user_id", user.id)
+      .gte("scheduled_for", today)
+      .order("scheduled_for")
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("peptide_protocols")
+      .select("name")
+      .eq("user_id", user.id)
+      .eq("active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  const protocolName = protocol?.name?.split(" · ")[0] ?? null;
+  const startDate = nextDose?.scheduled_for ?? null;
+
   return (
     <main className="min-h-screen flex items-center justify-center px-6 py-12 bg-bg">
-      <div className="w-full max-w-xl">
-        <div className="flex flex-col items-center mb-10">
-          <Logo size={56} />
+      <div className="w-full max-w-md">
+        <div className="flex flex-col items-center mb-8">
+          <Logo size={48} />
         </div>
-        <div className="card space-y-6">
-          <div>
-            <h1 className="font-display text-2xl font-semibold tracking-tight">
-              Welcome{profile?.first_name ? `, ${profile.first_name}` : ""}.
-            </h1>
-            <p className="mt-2 text-fg-muted">
-              You're set up. Here's a quick tour of what you'll find inside.
+        <div className="card text-center">
+          <h1 className="font-display text-2xl font-semibold tracking-tight">
+            Welcome{profile?.first_name ? `, ${profile.first_name}` : ""}.
+          </h1>
+
+          {protocolName && startDate ? (
+            <p className="mt-4 text-fg-muted leading-relaxed">
+              Your <span className="font-semibold text-fg">{protocolName}</span> protocol starts{" "}
+              <span className="font-semibold text-fg">{prettyDate(startDate)}</span>.
+              <br />
+              We&apos;ll remind you before every dose so nothing slips.
             </p>
+          ) : (
+            <p className="mt-4 text-fg-muted leading-relaxed">
+              You&apos;re in. Your coach will assign your protocol shortly — turn on reminders now
+              and you&apos;ll get a ping the moment your first dose is due.
+            </p>
+          )}
+
+          <div className="mt-7">
+            <EnableRemindersButton />
+            <Link
+              href="/dashboard"
+              className="block mt-3 text-sm text-fg-subtle hover:text-fg"
+            >
+              Skip for now
+            </Link>
           </div>
-          <ul className="space-y-3 text-sm">
-            <Item title="Dashboard" body="Your daily snapshot — dosing schedule, weight, compliance streak." />
-            <Item title="Peptide Tracker" body="Build protocols, log doses, see your calendar, get reminders." />
-            <Item title="Body Tracker" body="Daily weight, measurements, progress photos, and trend charts." />
-            <Item title="Workouts & Nutrition" body="Programs, logger, macros and meal plans tuned to your goals." />
-            <Item title="Community" body="See other clients' milestones — accountability, no data sharing." />
-          </ul>
-          <Link href="/dashboard" className="btn-primary w-full">
-            Enter the portal
-          </Link>
         </div>
       </div>
     </main>
   );
 }
 
-function Item({ title, body }: { title: string; body: string }) {
-  return (
-    <li className="flex gap-3">
-      <span className="mt-1 h-2 w-2 rounded-full bg-accent flex-shrink-0" />
-      <div>
-        <div className="font-medium">{title}</div>
-        <div className="text-fg-muted">{body}</div>
-      </div>
-    </li>
-  );
+function prettyDate(iso: string): string {
+  const d = new Date(iso + "T00:00:00");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diff = Math.round((d.getTime() - today.getTime()) / 86400000);
+  const label = diff === 0 ? "today" : diff === 1 ? "tomorrow" : "";
+  const date = d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  return label ? `${date} (${label})` : date;
 }

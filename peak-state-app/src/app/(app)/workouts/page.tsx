@@ -2,11 +2,14 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { CardSkeleton } from "@/components/Skeleton";
 import { createClient } from "@/lib/supabase/server";
+import { requireModule } from "@/lib/modules";
 import { WorkoutsClient } from "./WorkoutsClient";
 
 export const metadata = { title: "Workouts — Peak State Labs" };
+export const dynamic = "force-dynamic";
 
-export default function WorkoutsPage() {
+export default async function WorkoutsPage() {
+  await requireModule("workouts");
   return (
     <>
       <PageHeader title="Training" description="Your programs, calendar, and every lift — tracked." />

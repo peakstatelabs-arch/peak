@@ -10,26 +10,47 @@ export type NavItem = {
   label: string;
   icon: React.ReactNode;
   short?: string;
+  module?: string; // Hide unless this opt-in module is enabled
 };
 
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", short: "Home", icon: <IconHome /> },
   { href: "/peptide-tracker", label: "Peptide Tracker", short: "Tracker", icon: <IconSyringe /> },
-  { href: "/dosing-guide", label: "Dosing Guide", short: "Guide", icon: <IconBook /> },
+  { href: "/dosing-guide", label: "Dosing Guide", short: "Guide", icon: <IconBook />, module: "dosing-guide" },
   { href: "/body-tracker", label: "Body Tracker", short: "Body", icon: <IconScale /> },
-  { href: "/workouts", label: "Workouts", short: "Train", icon: <IconDumbbell /> },
-  { href: "/nutrition", label: "Nutrition", short: "Food", icon: <IconBowl /> },
-  { href: "/progress", label: "Progress", short: "Stats", icon: <IconChart /> },
-  { href: "/community", label: "Community", short: "Crew", icon: <IconUsers /> },
+  { href: "/workouts", label: "Workouts", short: "Train", icon: <IconDumbbell />, module: "workouts" },
+  { href: "/nutrition", label: "Nutrition", short: "Food", icon: <IconBowl />, module: "nutrition" },
+  { href: "/community", label: "Community", short: "Crew", icon: <IconUsers />, module: "community" },
   { href: "/profile", label: "Profile", short: "Me", icon: <IconUser /> },
 ];
 
-const MOBILE_ITEMS = NAV_ITEMS.filter((n) =>
-  ["/dashboard", "/peptide-tracker", "/body-tracker", "/workouts", "/nutrition", "/community", "/profile"].includes(n.href)
-);
+const MOBILE_HREFS = new Set([
+  "/dashboard",
+  "/peptide-tracker",
+  "/body-tracker",
+  "/workouts",
+  "/nutrition",
+  "/community",
+  "/profile",
+]);
 
-export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
+function visibleItems(enabledModules: string[]): NavItem[] {
+  return NAV_ITEMS.filter((n) => !n.module || enabledModules.includes(n.module));
+}
+
+function visibleMobileItems(enabledModules: string[]): NavItem[] {
+  return visibleItems(enabledModules).filter((n) => MOBILE_HREFS.has(n.href));
+}
+
+export function Sidebar({
+  isAdmin,
+  enabledModules = [],
+}: {
+  isAdmin: boolean;
+  enabledModules?: string[];
+}) {
   const pathname = usePathname();
+  const items = visibleItems(enabledModules);
   return (
     <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-border bg-bg-elev/40 h-screen sticky top-0">
       <div className="px-5 pt-6 pb-5">
@@ -41,7 +62,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         </Link>
       </div>
       <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-        {NAV_ITEMS.map((item) => {
+        {items.map((item) => {
           const active = pathname === item.href || pathname?.startsWith(item.href + "/");
           return (
             <Link
@@ -168,12 +189,28 @@ const ADMIN_TAB: NavItem = {
   icon: <IconShield />,
 };
 
-export function BottomTabBar({ isAdmin = false }: { isAdmin?: boolean }) {
+export function BottomTabBar({
+  isAdmin = false,
+  enabledModules = [],
+}: {
+  isAdmin?: boolean;
+  enabledModules?: string[];
+}) {
   const pathname = usePathname();
-  const items = isAdmin ? [...MOBILE_ITEMS, ADMIN_TAB] : MOBILE_ITEMS;
+  const base = visibleMobileItems(enabledModules);
+  const items = isAdmin ? [...base, ADMIN_TAB] : base;
+  const cols = items.length;
+  // Tailwind needs literal class names — switch on the count we know we'll see.
+  const gridCols =
+    cols === 3 ? "grid-cols-3" :
+    cols === 4 ? "grid-cols-4" :
+    cols === 5 ? "grid-cols-5" :
+    cols === 6 ? "grid-cols-6" :
+    cols === 7 ? "grid-cols-7" :
+    "grid-cols-8";
   return (
     <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-bg/85 backdrop-blur-xl supports-[backdrop-filter]:bg-bg/75 border-t border-border/70 safe-bottom">
-      <ul className={cn("grid", isAdmin ? "grid-cols-8" : "grid-cols-7")}>
+      <ul className={cn("grid", gridCols)}>
         {items.map((item) => {
           const active =
             item.href === "/admin/dashboard"

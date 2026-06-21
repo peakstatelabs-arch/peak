@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { CardSkeleton } from "@/components/Skeleton";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
+import { requireModule } from "@/lib/modules";
 import { backfillStreakMilestones, challengeForWeek, type Challenge } from "@/lib/community";
 import { weekKey } from "@/lib/utils";
 import { CommunityClient } from "./Client";
@@ -9,7 +10,8 @@ import { CommunityClient } from "./Client";
 export const metadata = { title: "Community — Peak State Labs" };
 export const dynamic = "force-dynamic";
 
-export default function CommunityPage() {
+export default async function CommunityPage() {
+  await requireModule("community");
   return (
     <>
       <PageHeader title="Community" description="Quiet accountability. Share wins, cheer the crew on." />
