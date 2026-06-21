@@ -7,16 +7,20 @@ import { todayISO } from "@/lib/utils";
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
 
 type Weight = { id: string; weight_lb: number; logged_for: string; notes: string | null };
-type Measurement = { id: string; logged_for: string; waist_in: number | null; chest_in: number | null; hip_in: number | null; arm_in: number | null; thigh_in: number | null; body_fat_pct: number | null; notes: string | null };
+type BfEntry = { id: string; logged_for: string; body_fat_pct: number };
 
 export function BodyTrackerClient({
   weights,
-  measurements,
+  bfEntries,
   goalWeight,
+  goalBf,
+  bfEnabled,
 }: {
   weights: Weight[];
-  measurements: Measurement[];
+  bfEntries: BfEntry[];
   goalWeight: number | null;
+  goalBf: number | null;
+  bfEnabled: boolean;
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -112,7 +116,11 @@ export function BodyTrackerClient({
         )}
       </div>
 
-      <MeasurementsCard initial={measurements} />
+      <BodyFatCard
+        entries={bfEntries}
+        goalBf={goalBf}
+        enabled={bfEnabled}
+      />
 
       <div className="card">
         <h3 className="font-semibold mb-3">History</h3>
@@ -133,92 +141,181 @@ export function BodyTrackerClient({
   );
 }
 
-function MeasurementsCard({ initial }: { initial: Measurement[] }) {
+function BodyFatCard({
+  entries,
+  goalBf,
+  enabled,
+}: {
+  entries: BfEntry[];
+  goalBf: number | null;
+  enabled: boolean;
+}) {
   const router = useRouter();
   const supabase = createClient();
-  const [open, setOpen] = useState(false);
-  const [waist, setWaist] = useState("");
-  const [chest, setChest] = useState("");
-  const [hip, setHip] = useState("");
-  const [arm, setArm] = useState("");
-  const [thigh, setThigh] = useState("");
+  const [on, setOn] = useState(enabled);
+  const [goal, setGoal] = useState(goalBf?.toString() ?? "");
   const [bf, setBf] = useState("");
   const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
 
-  async function save(e: React.FormEvent) {
-    e.preventDefault();
-    setSaving(true);
+  async function toggle() {
+    const next = !on;
+    setOn(next);
     const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from("body_measurements").insert({
-      user_id: user!.id,
-      logged_for: todayISO(),
-      waist_in: waist ? Number(waist) : null,
-      chest_in: chest ? Number(chest) : null,
-      hip_in: hip ? Number(hip) : null,
-      arm_in: arm ? Number(arm) : null,
-      thigh_in: thigh ? Number(thigh) : null,
-      body_fat_pct: bf ? Number(bf) : null,
-    });
-    setSaving(false);
-    setOpen(false);
-    setWaist(""); setChest(""); setHip(""); setArm(""); setThigh(""); setBf("");
+    await supabase
+      .from("profiles")
+      .update({ bf_tracking_enabled: next })
+      .eq("id", user!.id);
     router.refresh();
   }
+
+  async function saveGoal() {
+    setErr(null);
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await supabase
+      .from("profiles")
+      .update({ goal_bf_pct: goal ? Number(goal) : null })
+      .eq("id", user!.id);
+    if (error) { setErr("Couldn't save goal."); return; }
+    setMsg("Goal updated.");
+    router.refresh();
+  }
+
+  async function logBf(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    setErr(null);
+    setMsg(null);
+    const { data: { user } } = await supabase.auth.getUser();
+    const today = todayISO();
+    // One BF entry per day — replace today's if it exists, otherwise insert.
+    const { data: existing } = await supabase
+      .from("body_measurements")
+      .select("id")
+      .eq("user_id", user!.id)
+      .eq("logged_for", today)
+      .maybeSingle();
+    const value = Number(bf);
+    const { error } = existing
+      ? await supabase
+          .from("body_measurements")
+          .update({ body_fat_pct: value })
+          .eq("id", existing.id)
+      : await supabase
+          .from("body_measurements")
+          .insert({ user_id: user!.id, logged_for: today, body_fat_pct: value });
+    setSaving(false);
+    if (error) { setErr("Couldn't save. Try again."); return; }
+    setMsg("Logged.");
+    setBf("");
+    router.refresh();
+  }
+
+  const chart = [...entries].reverse().map((e) => ({ d: e.logged_for, b: e.body_fat_pct }));
 
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold">Measurements</h3>
-        <button onClick={() => setOpen((v) => !v)} className="btn-secondary text-xs">
-          {open ? "Cancel" : "+ Log measurements"}
+        <h3 className="font-semibold">Body fat</h3>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={on}
+          onClick={toggle}
+          className={
+            "relative inline-flex h-6 w-11 items-center rounded-full transition " +
+            (on ? "bg-accent" : "bg-border")
+          }
+        >
+          <span
+            className={
+              "inline-block h-5 w-5 transform rounded-full bg-white transition " +
+              (on ? "translate-x-5" : "translate-x-0.5")
+            }
+          />
         </button>
       </div>
-      {open && (
-        <form onSubmit={save} className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
-          <Num label="Waist (in)" v={waist} on={setWaist} />
-          <Num label="Chest (in)" v={chest} on={setChest} />
-          <Num label="Hip (in)" v={hip} on={setHip} />
-          <Num label="Arm (in)" v={arm} on={setArm} />
-          <Num label="Thigh (in)" v={thigh} on={setThigh} />
-          <Num label="Body fat %" v={bf} on={setBf} />
-          <div className="col-span-full">
-            <button disabled={saving} className="btn-primary w-full">{saving ? "Saving…" : "Save measurements"}</button>
-          </div>
-        </form>
-      )}
-      {initial.length === 0 ? (
-        <p className="text-sm text-fg-muted">No measurements logged yet.</p>
+
+      {!on ? (
+        <p className="text-sm text-fg-muted">
+          Body fat tracking is off. Flip the switch to set a goal and log weekly.
+        </p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="text-fg-subtle text-xs uppercase tracking-wide">
-              <tr><th className="text-left py-2">Date</th><th>Waist</th><th>Chest</th><th>Hip</th><th>Arm</th><th>Thigh</th><th>BF%</th></tr>
-            </thead>
-            <tbody>
-              {initial.slice(0, 8).map((m) => (
-                <tr key={m.id} className="border-t border-border">
-                  <td className="py-2 text-fg-muted">{m.logged_for}</td>
-                  <td className="text-center">{m.waist_in ?? "—"}</td>
-                  <td className="text-center">{m.chest_in ?? "—"}</td>
-                  <td className="text-center">{m.hip_in ?? "—"}</td>
-                  <td className="text-center">{m.arm_in ?? "—"}</td>
-                  <td className="text-center">{m.thigh_in ?? "—"}</td>
-                  <td className="text-center">{m.body_fat_pct ?? "—"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-5">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className="label">Goal body fat %</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  step="0.1"
+                  className="input flex-1"
+                  placeholder="e.g. 15"
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                />
+                <button onClick={saveGoal} className="btn-secondary">Save</button>
+              </div>
+            </div>
+            <form onSubmit={logBf}>
+              <label className="label">Log this week</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  step="0.1"
+                  className="input flex-1"
+                  placeholder="Body fat %"
+                  value={bf}
+                  onChange={(e) => setBf(e.target.value)}
+                  required
+                />
+                <button type="submit" disabled={saving} className="btn-primary">
+                  {saving ? "…" : "Log"}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {msg && <p className="text-success text-sm">{msg}</p>}
+          {err && <p className="text-danger text-sm">{err}</p>}
+
+          <div>
+            <h4 className="text-sm font-medium text-fg-muted mb-2">Trend</h4>
+            {chart.length < 2 ? (
+              <p className="text-sm text-fg-muted">Log at least two entries to see the trend.</p>
+            ) : (
+              <div className="h-56">
+                <ResponsiveContainer>
+                  <LineChart data={chart} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
+                    <XAxis dataKey="d" tick={{ fontSize: 10, fill: "rgb(var(--fg-subtle))" }} />
+                    <YAxis tick={{ fontSize: 10, fill: "rgb(var(--fg-subtle))" }} domain={["dataMin - 1", "dataMax + 1"]} />
+                    <Tooltip contentStyle={{ background: "rgb(var(--bg-card))", border: "1px solid rgb(var(--border))", borderRadius: 8, fontSize: 12 }} />
+                    {goalBf && <ReferenceLine y={goalBf} stroke="rgb(var(--accent))" strokeDasharray="4 4" label={{ value: "goal", fill: "rgb(var(--accent))", fontSize: 10 }} />}
+                    <Line type="monotone" dataKey="b" stroke="rgb(var(--accent))" strokeWidth={2} dot={{ r: 2 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h4 className="text-sm font-medium text-fg-muted mb-2">History</h4>
+            {entries.length === 0 ? (
+              <p className="text-sm text-fg-muted">No body fat entries yet.</p>
+            ) : (
+              <ul className="divide-y divide-border">
+                {entries.slice(0, 12).map((e) => (
+                  <li key={e.id} className="flex justify-between py-2 text-sm">
+                    <span className="text-fg-muted">{e.logged_for}</span>
+                    <span className="font-medium">{e.body_fat_pct}%</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function Num({ label, v, on }: { label: string; v: string; on: (s: string) => void }) {
-  return (
-    <div>
-      <label className="label">{label}</label>
-      <input type="number" step="0.1" className="input" value={v} onChange={(e) => on(e.target.value)} />
     </div>
   );
 }

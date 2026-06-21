@@ -154,15 +154,17 @@ export function ProtocolWizard({
 
       // Profile updates: goal weight + stash metadata
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      await supabase
-        .from("profiles")
-        .update({
-          goal_weight_lb: gw,
-          timezone: tz,
-          morning_time: morningTime,
-          evening_time: eveningTime,
-        })
-        .eq("id", user.id);
+      const profileUpdate: Record<string, unknown> = {
+        goal_weight_lb: gw,
+        timezone: tz,
+        morning_time: morningTime,
+        evening_time: eveningTime,
+      };
+      // If they entered any BF info, persist goal + flip tracking on so
+      // the Body Tracker shows the BF card without an extra opt-in step.
+      if (goalBF) profileUpdate.goal_bf_pct = Number(goalBF);
+      if (goalBF || currentBF) profileUpdate.bf_tracking_enabled = true;
+      await supabase.from("profiles").update(profileUpdate).eq("id", user.id);
 
       // Optionally also log a baseline weight + body fat
       const today = todayISO();
