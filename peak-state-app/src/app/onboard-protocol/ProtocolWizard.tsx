@@ -316,13 +316,11 @@ export function ProtocolWizard({
           <button
             type="button"
             onClick={() => setPath("power-cut")}
-            className="card text-left hover:border-accent transition border-accent/30"
+            className="card text-left hover:border-accent transition"
           >
-            <span className="chip-accent text-[10px]">Recommended</span>
-            <h3 className="font-display text-lg font-semibold mt-2">POWER CUT™ Stack</h3>
+            <h3 className="font-display text-lg font-semibold">POWER CUT™ Stack</h3>
             <p className="text-sm text-fg-muted mt-1">
-              Retatrutide + CJC/Ipa + BPC/TB. Full 24-week recomp protocol with weekly Reta
-              titration baked in.
+              Retatrutide + CJC/Ipa + BPC/TB
             </p>
             <div className="mt-3 text-xs text-accent font-medium">Configure →</div>
           </button>
@@ -332,11 +330,9 @@ export function ProtocolWizard({
             onClick={() => setPath("singles")}
             className="card text-left hover:border-accent transition"
           >
-            <span className="chip text-[10px]">À la carte</span>
-            <h3 className="font-display text-lg font-semibold mt-2">Single Vials</h3>
+            <h3 className="font-display text-lg font-semibold">Single Vials</h3>
             <p className="text-sm text-fg-muted mt-1">
-              Pick one or more individual peptides — Reta, CJC/Ipa, BPC/TB, or GHK-Cu. Sane
-              defaults preloaded.
+              Retatrutide · CJC/Ipa · BPC/TB · GHK-Cu
             </p>
             <div className="mt-3 text-xs text-accent font-medium">Configure →</div>
           </button>
