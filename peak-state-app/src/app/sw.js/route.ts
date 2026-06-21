@@ -1,4 +1,30 @@
-const CACHE = "psl-v3";
+// Service worker generated per build. The cache name is tied to the deploy
+// SHA so every push to Vercel invalidates the previous shell — no more
+// "open it in incognito to see the new build" surprises.
+
+const VERSION =
+  process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ||
+  process.env.NEXT_PUBLIC_BUILD_ID ||
+  String(Date.now());
+
+export const dynamic = "force-static";
+export const revalidate = false;
+
+export function GET() {
+  const body = swSource(VERSION);
+  return new Response(body, {
+    headers: {
+      "Content-Type": "application/javascript; charset=utf-8",
+      // Don't let HTTP caches keep an old SW alive across deploys.
+      "Cache-Control": "public, max-age=0, must-revalidate",
+      "Service-Worker-Allowed": "/portal/",
+    },
+  });
+}
+
+function swSource(version: string): string {
+  return `// Peak State Labs SW — build ${version}
+const CACHE = "psl-${version}";
 const PRECACHE = [
   "/portal/",
   "/portal/dashboard",
@@ -26,14 +52,34 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
 
+  // Never cache: API, auth, the SW itself, or anything outside /portal
   if (
     url.pathname.startsWith("/portal/api/") ||
     url.pathname.startsWith("/portal/auth/") ||
+    url.pathname === "/portal/sw.js" ||
     !url.pathname.startsWith("/portal/")
   ) {
     return;
   }
 
+  // Network-first for HTML so new builds show up immediately; cache as fallback.
+  const isHTML = req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html");
+  if (isHTML) {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          if (res && res.status === 200 && res.type === "basic") {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+          }
+          return res;
+        })
+        .catch(() => caches.match(req).then((r) => r || caches.match("/portal/")))
+    );
+    return;
+  }
+
+  // Stale-while-revalidate for everything else (static assets).
   event.respondWith(
     caches.open(CACHE).then(async (cache) => {
       const cached = await cache.match(req);
@@ -50,7 +96,6 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Clicking a notification opens (or focuses) the peptide tracker.
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const data = event.notification.data || {};
@@ -70,7 +115,6 @@ self.addEventListener("notificationclick", (event) => {
   );
 });
 
-// Web Push — fired when our server sends a push, even if the app is closed.
 self.addEventListener("push", (event) => {
   let data = { title: "Peak State Labs", body: "", url: "/portal/peptide-tracker", tag: "psl" };
   try {
@@ -90,7 +134,6 @@ self.addEventListener("push", (event) => {
   );
 });
 
-// If a push subscription gets refreshed by the browser, drop the stale one.
 self.addEventListener("pushsubscriptionchange", (event) => {
   event.waitUntil(
     fetch("/portal/api/push/unsubscribe", {
@@ -100,3 +143,5 @@ self.addEventListener("pushsubscriptionchange", (event) => {
     }).catch(() => {})
   );
 });
+`;
+}

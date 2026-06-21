@@ -2,7 +2,17 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const BASE = "/portal";
-const PUBLIC_PATHS = ["/login", "/auth/callback"];
+// Public = unauthenticated visitors are allowed in. /accept-terms requires a
+// session but isn't under (app), so signed-in-but-not-yet-accepted users hit
+// it directly without bouncing to /login.
+const PUBLIC_PATHS = [
+  "/login",
+  "/auth/callback",
+  "/forgot-password",
+  "/reset-password",
+  "/terms",
+  "/privacy",
+];
 
 function stripBase(p: string) {
   if (p === BASE) return "/";

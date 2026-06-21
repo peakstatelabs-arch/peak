@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/Logo";
 import { BottomTabBar } from "@/components/Nav";
+import { TERMS_VERSION } from "@/lib/legal";
 import { AdminTopNav } from "./AdminTopNav";
 
 export const metadata = { title: "Admin — Peak State Labs" };
@@ -13,10 +14,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!user) redirect("/login");
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, terms_accepted_at, terms_version")
     .eq("id", user.id)
     .single();
   if (profile?.role !== "admin") redirect("/dashboard");
+  if (!profile?.terms_accepted_at || profile.terms_version !== TERMS_VERSION) {
+    redirect("/accept-terms");
+  }
 
   return (
     <div className="min-h-screen bg-bg">

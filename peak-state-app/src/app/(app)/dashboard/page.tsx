@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/PageHeader";
 import { CardSkeleton } from "@/components/Skeleton";
+import { OnboardingChecklist, type ChecklistData } from "@/components/OnboardingChecklist";
 import { todayISO } from "@/lib/utils";
 
 export const metadata = { title: "Dashboard — Peak State Labs" };
@@ -11,6 +12,9 @@ export default async function Dashboard() {
   return (
     <>
       <PageHeader title="Today" description="Your daily snapshot." />
+      <Suspense fallback={null}>
+        <OnboardingSection />
+      </Suspense>
       <div className="grid gap-4 md:grid-cols-2">
         <Suspense fallback={<CardSkeleton />}>
           <DosingCard />
@@ -30,6 +34,41 @@ export default async function Dashboard() {
       </Suspense>
     </>
   );
+}
+
+async function OnboardingSection() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const [profileR, doseR, checkinR] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("notifications_enabled, goal_weight_lb, metabolic_type, nutrition_targets")
+      .eq("id", user.id)
+      .single(),
+    supabase
+      .from("peptide_doses")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("taken", true),
+    supabase
+      .from("weekly_checkins")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id),
+  ]);
+
+  const p = profileR.data;
+  const data: ChecklistData = {
+    remindersEnabled: Boolean(p?.notifications_enabled),
+    goalWeightSet: p?.goal_weight_lb !== null && p?.goal_weight_lb !== undefined,
+    metabolicQuizDone: Boolean(p?.metabolic_type),
+    nutritionTargetsSet: Boolean(p?.nutrition_targets),
+    firstDoseLogged: (doseR.count ?? 0) > 0,
+    firstCheckinDone: (checkinR.count ?? 0) > 0,
+  };
+
+  return <OnboardingChecklist data={data} />;
 }
 
 async function DosingCard() {

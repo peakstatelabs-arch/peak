@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Sidebar, MobileTopBar, BottomTabBar } from "@/components/Nav";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { OfflineBoundary } from "@/components/OfflineBoundary";
+import { TERMS_VERSION } from "@/lib/legal";
 
 async function computeStreak(supabase: Awaited<ReturnType<typeof createClient>>, userId: string): Promise<number> {
   const since = new Date();
@@ -45,11 +46,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("must_change_password, disclaimer_dismissed, role, first_name")
+    .select("must_change_password, disclaimer_dismissed, role, first_name, terms_accepted_at, terms_version")
     .eq("id", user.id)
     .single();
 
   if (profile?.must_change_password) redirect("/change-password");
+  if (!profile?.terms_accepted_at || profile.terms_version !== TERMS_VERSION) {
+    redirect("/accept-terms");
+  }
 
   const isAdmin = profile?.role === "admin";
   const streak = await computeStreak(supabase, user.id);

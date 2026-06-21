@@ -1,10 +1,17 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Logo } from "@/components/Logo";
-import { LoginForm } from "./LoginForm";
+import { createClient } from "@/lib/supabase/server";
+import { ChangePasswordForm } from "@/app/change-password/ChangePasswordForm";
 
-export const metadata = { title: "Sign in — Peak State Labs" };
+export const metadata = { title: "Set new password — Peak State Labs" };
 
-export default function LoginPage() {
+export default async function ResetPasswordPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  // If the reset link expired or someone hit this URL without a session,
+  // bounce them to forgot-password to start over.
+  if (!user) redirect("/forgot-password");
+
   return (
     <main className="min-h-screen flex items-center justify-center px-6 py-12 bg-bg">
       <div className="absolute inset-0 -z-10 opacity-40 pointer-events-none">
@@ -16,25 +23,14 @@ export default function LoginPage() {
           <h1 className="mt-5 font-display text-2xl font-semibold tracking-tight">
             Peak State <span className="text-accent">Labs</span>
           </h1>
-          <p className="mt-1 text-sm text-fg-muted">Client portal</p>
         </div>
-
         <div className="card">
-          <h2 className="text-lg font-semibold mb-1">Sign in</h2>
+          <h2 className="text-lg font-semibold mb-1">Pick a new password</h2>
           <p className="text-sm text-fg-muted mb-6">
-            Enter the credentials provided by your coach.
+            At least 10 characters. You&apos;ll be signed in after you save.
           </p>
-          <LoginForm />
+          <ChangePasswordForm firstLogin={false} />
         </div>
-
-        <p className="mt-8 text-center text-xs text-fg-subtle">
-          For research and educational purposes only. Not medical advice.
-        </p>
-        <p className="mt-2 text-center text-xs text-fg-subtle">
-          <Link href="/terms" className="hover:text-fg">Terms</Link>
-          <span className="mx-2">·</span>
-          <Link href="/privacy" className="hover:text-fg">Privacy</Link>
-        </p>
       </div>
     </main>
   );
