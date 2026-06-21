@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { PEPTIDES } from "@/lib/peptides";
-import { requireModule } from "@/lib/modules";
+import { requireModule } from "@/lib/modules-server";
 
 export const metadata = { title: "Dosing Guide — Peak State Labs" };
 export const dynamic = "force-dynamic";

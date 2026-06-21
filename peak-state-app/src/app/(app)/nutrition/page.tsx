@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { CardSkeleton } from "@/components/Skeleton";
 import { createClient } from "@/lib/supabase/server";
-import { requireModule } from "@/lib/modules";
+import { requireModule } from "@/lib/modules-server";
 import { NutritionClient } from "./NutritionClient";
 import { DEFAULT_TARGETS, todayISO } from "@/lib/nutrition";
 

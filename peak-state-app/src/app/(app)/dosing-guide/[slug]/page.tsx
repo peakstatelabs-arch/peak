@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
 import { PEPTIDES, findPeptide, type PeptideProtocol } from "@/lib/peptides";
 import { ReconstitutionCalc } from "@/components/ReconstitutionCalc";
-import { requireModule } from "@/lib/modules";
+import { requireModule } from "@/lib/modules-server";
 
 export const dynamic = "force-dynamic";
 

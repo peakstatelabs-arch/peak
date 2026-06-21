@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { CardSkeleton } from "@/components/Skeleton";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { requireModule } from "@/lib/modules";
+import { requireModule } from "@/lib/modules-server";
 import { backfillStreakMilestones, challengeForWeek, type Challenge } from "@/lib/community";
 import { weekKey } from "@/lib/utils";
 import { CommunityClient } from "./Client";

@@ -1,9 +1,5 @@
-// Optional modules: features hidden from the nav by default to keep the
-// first-time experience focused on the one job (log doses, track progress).
-// Clients can opt into any of these from Profile → More features.
-
-import { redirect } from "next/navigation";
-import { createClient } from "./supabase/server";
+// Client-safe module registry. Pure constants + types — no server imports.
+// The server-side gate lives in `./modules-server.ts`.
 
 export type ModuleSlug = "workouts" | "nutrition" | "community" | "dosing-guide";
 
@@ -46,23 +42,4 @@ export const MODULES: ModuleDef[] = [
 
 export function isModuleEnabled(enabled: string[] | null | undefined, slug: ModuleSlug): boolean {
   return Array.isArray(enabled) && enabled.includes(slug);
-}
-
-/**
- * Server-side gate. Call at the top of a module's page server component.
- * If the signed-in user hasn't enabled the module, bounce them to /profile
- * where they can flip it on.
- */
-export async function requireModule(slug: ModuleSlug): Promise<void> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("enabled_modules")
-    .eq("id", user.id)
-    .single();
-  if (!isModuleEnabled(profile?.enabled_modules, slug)) {
-    redirect(`/profile?enable=${slug}`);
-  }
 }
