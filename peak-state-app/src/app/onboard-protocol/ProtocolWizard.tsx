@@ -320,7 +320,7 @@ export function ProtocolWizard({
           >
             <h3 className="font-display text-lg font-semibold">POWER CUT™ Stack</h3>
             <p className="text-sm text-fg-muted mt-1">
-              Retatrutide + CJC/Ipa + BPC/TB
+              Our signature stack of Retatrutide, CJC/Ipa, and BPC/TB.
             </p>
             <div className="mt-3 text-xs text-accent font-medium">Configure →</div>
           </button>
@@ -332,7 +332,7 @@ export function ProtocolWizard({
           >
             <h3 className="font-display text-lg font-semibold">Single Vials</h3>
             <p className="text-sm text-fg-muted mt-1">
-              Retatrutide · CJC/Ipa · BPC/TB · GHK-Cu
+              Pick one or more individual peptides — Retatrutide, CJC/Ipa, BPC/TB, or GHK-Cu.
             </p>
             <div className="mt-3 text-xs text-accent font-medium">Configure →</div>
           </button>
