@@ -75,7 +75,7 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         )}
       </nav>
       <div className="p-3 border-t border-border space-y-2">
-        <ThemeSegmented />
+        <ThemeSegmented compact />
         <SignOutButton />
       </div>
     </aside>

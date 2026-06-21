@@ -8,7 +8,7 @@ const OPTIONS: { mode: Mode; label: string; icon: React.ReactNode }[] = [
   { mode: "system", label: "System", icon: <AutoIcon /> },
 ];
 
-export function ThemeSegmented() {
+export function ThemeSegmented({ compact = false }: { compact?: boolean }) {
   const { mode, setMode } = useTheme();
   return (
     <div
@@ -24,6 +24,8 @@ export function ThemeSegmented() {
             type="button"
             role="radio"
             aria-checked={active}
+            aria-label={opt.label}
+            title={opt.label}
             onClick={() => setMode(opt.mode)}
             className={
               "flex-1 inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-colors " +
@@ -33,7 +35,7 @@ export function ThemeSegmented() {
             }
           >
             <span className="h-4 w-4">{opt.icon}</span>
-            {opt.label}
+            {!compact && opt.label}
           </button>
         );
       })}
