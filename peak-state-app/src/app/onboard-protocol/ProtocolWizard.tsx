@@ -9,7 +9,7 @@ import {
   generateSingleSchedule,
   type DoseRow,
 } from "@/lib/schedule";
-import { EnableRemindersButton } from "@/app/welcome/EnableRemindersButton";
+import { EnableRemindersButton } from "@/components/EnableRemindersButton";
 
 type Path = "choose" | "power-cut" | "singles";
 type Track = "foundation" | "performance";

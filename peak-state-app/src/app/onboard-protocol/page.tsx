@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { Logo } from "@/components/Logo";
+import { InstallPWABanner } from "@/components/InstallPWABanner";
 import { createClient } from "@/lib/supabase/server";
 import { TERMS_VERSION } from "@/lib/legal";
 import { ProtocolWizard } from "./ProtocolWizard";
@@ -34,8 +35,9 @@ export default async function OnboardProtocolPage() {
   if ((count ?? 0) > 0) redirect("/dashboard");
 
   return (
-    <main className="min-h-screen bg-bg px-4 py-8 md:py-12">
-      <div className="max-w-2xl mx-auto">
+    <main className="min-h-screen bg-bg">
+      <InstallPWABanner />
+      <div className="max-w-2xl mx-auto px-4 py-8 md:py-12">
         <div className="flex flex-col items-center mb-8">
           <Logo size={40} />
           <h1 className="mt-3 font-display text-xl font-semibold tracking-tight">

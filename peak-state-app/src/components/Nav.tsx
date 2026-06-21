@@ -115,7 +115,6 @@ const PAGE_TITLES: Record<string, string> = {
   "/community": "Community",
   "/profile": "Profile",
   "/check-in": "Check-in",
-  "/welcome": "Welcome",
 };
 
 function titleForPath(pathname: string | null): string | null {
@@ -132,7 +131,7 @@ function titleForPath(pathname: string | null): string | null {
 
 export function MobileTopBar({ isAdmin: _isAdmin, streak }: { isAdmin: boolean; streak: number }) {
   const pathname = usePathname();
-  const isHome = pathname === "/dashboard" || pathname === "/" || pathname === "/welcome";
+  const isHome = pathname === "/dashboard" || pathname === "/";
   const title = titleForPath(pathname);
 
   return (

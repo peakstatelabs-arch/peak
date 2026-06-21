@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Sidebar, MobileTopBar, BottomTabBar } from "@/components/Nav";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
+import { InstallPWABanner } from "@/components/InstallPWABanner";
 import { OfflineBoundary } from "@/components/OfflineBoundary";
 import { TERMS_VERSION } from "@/lib/legal";
 
@@ -79,6 +80,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <Sidebar isAdmin={isAdmin} enabledModules={enabledModules} />
       <div className="flex-1 flex flex-col min-w-0">
         <MobileTopBar isAdmin={isAdmin} streak={streak} />
+        <InstallPWABanner />
         {!profile?.disclaimer_dismissed && <DisclaimerBanner />}
         <main className="flex-1 px-4 lg:px-8 py-6 lg:py-8 pb-28 lg:pb-8 max-w-6xl w-full mx-auto">
           {children}
