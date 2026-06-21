@@ -180,7 +180,6 @@ export function CheckInForm({
             <input
               type="file"
               accept={ACCEPT}
-              capture="environment"
               className="hidden"
               onChange={onPhotoChange}
             />
