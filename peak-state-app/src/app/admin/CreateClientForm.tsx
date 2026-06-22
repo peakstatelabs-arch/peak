@@ -34,7 +34,15 @@ export function CreateClientForm() {
       setMsg({ type: "err", text: json.error ?? "Failed to create client." });
       return;
     }
-    setMsg({ type: "ok", text: `Created ${email}. Share the temporary password securely.` });
+    let text: string;
+    if (json.emailSent) {
+      text = `Created ${email} and emailed the login details.`;
+    } else if (json.emailError) {
+      text = `Created ${email}, but the invite email failed (${json.emailError}). Share the temporary password manually.`;
+    } else {
+      text = `Created ${email}. Email isn't configured yet — share the temporary password manually.`;
+    }
+    setMsg({ type: "ok", text });
     setEmail(""); setFirstName(""); setLastName(""); setTempPassword("");
     router.refresh();
   }

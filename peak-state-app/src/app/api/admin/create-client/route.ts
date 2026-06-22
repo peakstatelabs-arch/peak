@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
+import { sendClientInviteEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -30,5 +31,25 @@ export async function POST(request: Request) {
     disclaimer_dismissed: false,
   });
 
-  return NextResponse.json({ ok: true, userId: data.user!.id });
+  // Best-effort invite email. Failure here shouldn't unwind the
+  // account creation — the admin can still share credentials by hand.
+  let emailSent = false;
+  let emailError: string | null = null;
+  try {
+    const result = await sendClientInviteEmail({
+      to: email,
+      firstName: firstName || null,
+      temporaryPassword: password,
+    });
+    emailSent = result.sent;
+  } catch (e) {
+    emailError = e instanceof Error ? e.message : "Send failed.";
+  }
+
+  return NextResponse.json({
+    ok: true,
+    userId: data.user!.id,
+    emailSent,
+    emailError,
+  });
 }
