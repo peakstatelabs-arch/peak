@@ -616,11 +616,6 @@ export default function Home() {
                     Start With A Single Vial
                   </h2>
 
-                  {/* Ship-now hook */}
-                  <p className="mt-4 text-lg sm:text-xl font-bold text-[var(--accent)]">
-                    Skip the wait — most singles ship within 24 hours.
-                  </p>
-
                   {/* Subheadline */}
                   <p className="mt-5 text-base sm:text-lg text-white/80 max-w-2xl mx-auto">
                     Dip your toe in with a single peptide. Same lab-tested 99%+ purity. Same protocol guidance. Zero commitment to the full 10-week system.
@@ -629,46 +624,25 @@ export default function Home() {
                   {/* Product chips */}
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                     {[
-                      { name: "Retatrutide", inStock: true },
-                      { name: "CJC-1295 + Ipamorelin", inStock: true },
-                      { name: "BPC-157 + TB-500", inStock: false, shipsBy: "6/22" },
-                      { name: "GHK-Cu", inStock: true },
-                    ].map((item) => (
+                      "Retatrutide",
+                      "CJC-1295 + Ipamorelin",
+                      "BPC-157 + TB-500",
+                      "GHK-Cu",
+                    ].map((name) => (
                       <span
-                        key={item.name}
+                        key={name}
                         className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm font-semibold"
                       >
-                        {item.inStock ? (
-                          <svg
-                            className="w-4 h-4 text-emerald-400 flex-shrink-0"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={3}
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                          </svg>
-                        ) : (
-                          <svg
-                            className="w-4 h-4 text-[var(--accent)] flex-shrink-0"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        )}
-                        {item.name}
-                        <span
-                          className={
-                            item.inStock
-                              ? "ml-1 rounded-full bg-emerald-400/20 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-emerald-300"
-                              : "ml-1 rounded-full bg-[var(--accent)]/25 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[var(--accent)]"
-                          }
+                        <svg
+                          className="w-4 h-4 text-[var(--accent)] flex-shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={3}
                         >
-                          {item.inStock ? "In Stock" : `Ships ${item.shipsBy}`}
-                        </span>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        {name}
                       </span>
                     ))}
                   </div>
