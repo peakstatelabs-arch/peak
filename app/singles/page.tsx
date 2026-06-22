@@ -66,7 +66,8 @@ const products: Product[] = [
     stockStep: 2,
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 4, 30),
-    preorder: false,
+    preorder: true,
+    shipsBy: "June 8",
   },
   {
     id: "cjc-ipamorelin",
@@ -82,7 +83,8 @@ const products: Product[] = [
     stockStep: 2,
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 4, 30),
-    preorder: false,
+    preorder: true,
+    shipsBy: "June 8",
   },
   {
     id: "bpc-tb500",
@@ -99,7 +101,7 @@ const products: Product[] = [
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 4, 30),
     preorder: true,
-    shipsBy: "6/22",
+    shipsBy: "June 8",
   },
   {
     id: "ghk-cu",
@@ -115,7 +117,8 @@ const products: Product[] = [
     stockStep: 2,
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 4, 30),
-    preorder: false,
+    preorder: true,
+    shipsBy: "June 8",
   },
 ];
 
@@ -252,9 +255,7 @@ export default function SinglesCatalog() {
                           <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
                           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--accent-dark)]" />
                         </span>
-                        <p className="text-sm font-bold text-[var(--accent-dark)]">
-                          Pre-Order{" "}
-                          <span className="text-[var(--accent-dark)]/50">•</span>{" "}
+                        <p className="text-sm font-bold text-[var(--accent-dark)] whitespace-nowrap">
                           Only{" "}
                           <span className="font-extrabold">
                             {currentStock(product.startStock, {
@@ -264,39 +265,20 @@ export default function SinglesCatalog() {
                             })}
                           </span>{" "}
                           vials remaining
-                          {product.shipsBy ? (
-                            <>
-                              {" "}
-                              <span className="text-[var(--accent-dark)]/50">
-                                •
-                              </span>{" "}
-                              Ships{" "}
-                              <span className="font-extrabold">
-                                {product.shipsBy}
-                              </span>
-                            </>
-                          ) : null}
                         </p>
                       </div>
                     ) : (
-                      <div className="mt-5 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2.5">
+                      <div className="mt-5 flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-3 py-2.5">
                         <span className="relative flex h-2.5 w-2.5 shrink-0">
-                          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                          <span className="absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 animate-ping" />
+                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
                         </span>
-                        <p className="text-sm font-bold text-emerald-700">
-                          In Stock{" "}
-                          <span className="text-emerald-700/50">•</span> Only{" "}
+                        <p className="text-sm font-bold text-red-700">
+                          Only{" "}
                           <span className="font-extrabold">
-                            {currentStock(product.startStock, {
-                              step: product.stockStep,
-                              anchorMs: product.stockAnchorMs,
-                              minimum: product.stockMinimum,
-                            })}
+                            {currentStock(product.startStock)}
                           </span>{" "}
-                          left{" "}
-                          <span className="text-emerald-700/50">•</span> Ships
-                          within 24 hrs
+                          vials in stock
                         </p>
                       </div>
                     )}
