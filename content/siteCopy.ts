@@ -71,9 +71,9 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "JUNE BATCH LIVE: Guaranteed FREE same day shipping with orders placed by 3pm EDT.",
+      "POWER CUT™ ACCESS OPEN: Guaranteed FREE same day shipping with orders placed by 3pm EDT.",
     secureNoteAfterCutoff:
-      "JUNE BATCH LIVE: You missed today’s same day shipping window. Secure your stack now and move to the front of the line for tomorrow’s free fulfillment cycle.",
+      "POWER CUT™ ACCESS OPEN: You missed today’s same day shipping window. Secure your stack now and move to the front of the line for tomorrow’s free fulfillment cycle.",
     timerLabel: "Time remaining for same day shipping:",
     timerLabelAfterCutoff: "Time remaining for free next-day shipping window:",
     researchDisclaimer:
