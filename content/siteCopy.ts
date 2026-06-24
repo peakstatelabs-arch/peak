@@ -161,6 +161,9 @@ export const siteCopy = {
   pricing: {
     headline: "Choose Your Stack",
     subheadline: "Free Shipping On All Orders",
+    // Pre-order ship date shown on each stack pricing card. Set to "" (empty)
+    // to hide the pre-order line when stacks are shipping immediately again.
+    shipsBy: "7/7",
     tiers: [
       {
         id: "single",

@@ -16,6 +16,8 @@ interface PricingCardProps {
   stripeUrl: string;
   preorderNote: string;
   refundNote: string;
+  /** When set, renders a "Pre-order · Ships {shipsBy}" line under the CTA. */
+  shipsBy?: string;
   popular?: boolean;
 }
 
@@ -35,6 +37,7 @@ export function PricingCard({
   stripeUrl,
   preorderNote,
   refundNote,
+  shipsBy,
   popular,
 }: PricingCardProps) {
   return (
@@ -136,6 +139,16 @@ export function PricingCard({
           >
             {ctaLabel}
           </TrackedLink>
+
+          {shipsBy && (
+            <p className="mt-3 flex items-center justify-center gap-1.5 text-sm font-bold text-[var(--accent-dark)]">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent-dark)]" />
+              </span>
+              Pre-order · Ships {shipsBy}
+            </p>
+          )}
         </div>
       </div>
     </div>
