@@ -16,7 +16,7 @@ export const siteCopy = {
     lineTwo: "Only {stacks} {noun} Left",
     shippingText: "Ships 7/7",
     stacks: {
-      initial: 24,
+      initial: 15,
       minimum: 1,
       // Eastern calendar date when the count equals `initial` through 7:59 PM ET.
       // Drops by 1 at every 8 PM ET, then cycles back to `initial` the day
