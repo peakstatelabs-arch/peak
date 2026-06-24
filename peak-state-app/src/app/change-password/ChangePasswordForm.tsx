@@ -2,11 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 export function ChangePasswordForm({ firstLogin = true }: { firstLogin?: boolean }) {
   const router = useRouter();
-  const supabase = createClient();
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,26 +24,22 @@ export function ChangePasswordForm({ firstLogin = true }: { firstLogin?: boolean
       return;
     }
     setLoading(true);
-    const { error: pwError } = await supabase.auth.updateUser({ password: pw });
-    if (pwError) {
-      setError("Couldn't update your password. Please try again.");
+    const res = await fetch("/portal/api/auth/complete-password-change", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ password: pw }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setError(json.error ?? "Couldn't update your password. Please try again.");
       setLoading(false);
       return;
     }
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
-        .from("profiles")
-        .update({ must_change_password: false })
-        .eq("id", user.id);
-    }
     setSuccess("Password updated.");
-    setTimeout(() => {
-      // Gates in (app)/layout walk first-time users through terms → protocol
-      // wizard automatically; non-first-login just goes back to profile.
-      router.push(firstLogin ? "/dashboard" : "/profile");
-      router.refresh();
-    }, 600);
+    // Gates in (app)/layout walk first-time users through terms → protocol
+    // wizard automatically; non-first-login just goes back to profile.
+    router.push(firstLogin ? "/dashboard" : "/profile");
+    router.refresh();
   }
 
   return (
