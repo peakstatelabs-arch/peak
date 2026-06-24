@@ -149,6 +149,25 @@ export function PricingCard({
               Pre-order · Ships {shipsBy}
             </p>
           )}
+
+          {refundNote && (
+            <p className="mt-2 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">
+              <svg
+                className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[var(--primary)]/45"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              {refundNote}
+            </p>
+          )}
         </div>
       </div>
     </div>
