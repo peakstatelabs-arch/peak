@@ -585,7 +585,11 @@ export default function Home() {
 
             <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {siteCopy.pricing.tiers.map((tier) => (
-                <PricingCard key={tier.id} {...tier} />
+                <PricingCard
+                  key={tier.id}
+                  {...tier}
+                  shipsBy={siteCopy.pricing.shipsBy}
+                />
               ))}
             </div>
           </Container>

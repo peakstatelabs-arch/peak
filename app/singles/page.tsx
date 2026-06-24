@@ -7,7 +7,7 @@ import { CartScripts } from "./CartScripts";
 export const metadata: Metadata = {
   title: `Singles Catalog — ${siteCopy.brand.name}`,
   description:
-    "Individual research peptides from Peak State Labs. Retatrutide, CJC-1295 + Ipamorelin, and BPC-157 + TB-500.",
+    "Individual research peptides from Peak State Labs — Retatrutide, CJC-1295 + Ipamorelin, BPC-157 + TB-500, and GHK-Cu. Lab-tested 99%+ purity with single-vial options and protocol guidance.",
 };
 
 export const revalidate = 3600;
