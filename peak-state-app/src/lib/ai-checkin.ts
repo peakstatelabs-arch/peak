@@ -41,7 +41,7 @@ function buildPrompt(ctx: CheckInContext): string {
   const lines: string[] = [];
   if (ctx.firstName) lines.push(`Client: ${ctx.firstName}`);
   if (ctx.protocolName) lines.push(`On: ${ctx.protocolName}${ctx.protocolWeek ? ` (week ${ctx.protocolWeek})` : ""}`);
-  if (ctx.programSlug) lines.push(`Training program: ${ctx.programSlug}`);
+  if (ctx.programSlug) lines.push(`Workout program: ${ctx.programSlug}`);
   if (ctx.goal) lines.push(`Goal: ${ctx.goal}`);
   if (ctx.metabolicType) lines.push(`Metabolic type: ${ctx.metabolicType}`);
   if (ctx.doseAdherencePct !== null) lines.push(`Dose adherence (7d): ${ctx.doseAdherencePct}%${ctx.missedDoses > 0 ? ` · ${ctx.missedDoses} missed` : ""}`);
@@ -63,6 +63,7 @@ Write 4 short check-in questions for this client this week. Rules:
 - Optional one-line "context" under a question to anchor it in their data (e.g. "Down 1.2 lb this week").
 - No medical advice. No mentions of off-label use. Conversational, supportive tone.
 - Keep each question text under 90 characters.
+- Always say "workouts" instead of "training" — it reads more relatable to our clients.
 
 Return ONLY a JSON object exactly in this shape:
 {

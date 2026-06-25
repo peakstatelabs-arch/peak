@@ -270,7 +270,7 @@ function QuestionCard({
           {detailsOpen && (
             <textarea
               className="input mt-2 min-h-[80px] resize-y"
-              placeholder="Anything else worth flagging…"
+              placeholder="What's on your mind?"
               value={answer.text ?? ""}
               onChange={(e) => onText(e.target.value)}
               maxLength={500}
