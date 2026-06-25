@@ -1,22 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 export function ChangePasswordForm({ firstLogin = true }: { firstLogin?: boolean }) {
-  const router = useRouter();
-  const supabase = createClient();
   const [pw, setPw] = useState("");
   const [pw2, setPw2] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setSuccess(null);
     if (pw.length < 10) {
       setError("Password must be at least 10 characters.");
       return;
@@ -27,35 +21,43 @@ export function ChangePasswordForm({ firstLogin = true }: { firstLogin?: boolean
     }
     setLoading(true);
 
-    // 1) Update the password client-side. Doing it from the user's own
-    //    session keeps that session alive — switching to the admin client
-    //    invalidates all sessions and bounces a brand-new client back to
-    //    /login, which feels broken mid-onboarding.
-    const { error: pwError } = await supabase.auth.updateUser({ password: pw });
-    if (pwError) {
-      setError("Couldn't update your password. Please try again.");
+    let res: Response;
+    try {
+      res = await fetch("/portal/api/auth/complete-password-change", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password: pw }),
+      });
+    } catch (e) {
+      setError(
+        "Network error. Check your connection and try again. " +
+          (e instanceof Error ? e.message : "")
+      );
       setLoading(false);
       return;
     }
 
-    // 2) Flip must_change_password server-side (admin client) so RLS
-    //    can't silently drop the write and bounce us into a loop.
-    const res = await fetch("/portal/api/auth/complete-password-change", {
-      method: "POST",
-    });
+    const json = await res.json().catch(() => ({} as Record<string, unknown>));
     if (!res.ok) {
-      const json = await res.json().catch(() => ({}));
-      setError(json.error ?? "Couldn't finalize. Please refresh and try again.");
+      setError(
+        typeof json.error === "string"
+          ? json.error
+          : "Couldn't update your password. Please try again."
+      );
       setLoading(false);
       return;
     }
 
-    setSuccess("Password updated.");
-    // Gates in (app)/layout walk first-time users straight through
-    // terms → protocol wizard. No re-login needed because step 1 kept
-    // the session.
-    router.push(firstLogin ? "/dashboard" : "/profile");
-    router.refresh();
+    // Hard reload — bypasses any Next.js client router cache or RSC cache
+    // that might still see the old must_change_password flag, which was
+    // causing the silent password-change loop on iPhone Safari.
+    const next =
+      json.needsReLogin
+        ? "/portal/login?changed=1"
+        : firstLogin
+        ? "/portal/dashboard"
+        : "/portal/profile";
+    window.location.assign(next);
   }
 
   return (
@@ -86,13 +88,8 @@ export function ChangePasswordForm({ firstLogin = true }: { firstLogin?: boolean
         />
       </div>
       {error && (
-        <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">
+        <div className="rounded-lg border border-danger/40 bg-danger/10 px-3 py-3 text-sm text-danger font-medium">
           {error}
-        </div>
-      )}
-      {success && (
-        <div className="rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-sm text-success">
-          {success}
         </div>
       )}
       <button type="submit" disabled={loading} className="btn-primary w-full">
