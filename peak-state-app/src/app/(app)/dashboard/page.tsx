@@ -45,13 +45,12 @@ async function TodayHero() {
   const { data: { user } } = await supabase.auth.getUser();
   const today = todayISO();
 
-  const [{ data: doses }, { data: protocols }] = await Promise.all([
+  const [{ data: dosesRaw }, { data: protocols }] = await Promise.all([
     supabase
       .from("peptide_doses")
       .select("id, peptide_name, dose_mg, time_of_day, taken, scheduled_for")
       .eq("user_id", user!.id)
-      .eq("scheduled_for", today)
-      .order("time_of_day"),
+      .eq("scheduled_for", today),
     supabase
       .from("peptide_protocols")
       .select("id")
@@ -59,6 +58,17 @@ async function TodayHero() {
       .eq("active", true)
       .limit(1),
   ]);
+
+  // Display order: untaken first (so the next dose is always at the top),
+  // then morning before evening, then alphabetical. Taken doses slide to
+  // the bottom but stay visible so the user can undo a mis-tap.
+  const timeRank = (t: string | null) => (t === "morning" ? 0 : 1);
+  const doses = [...(dosesRaw ?? [])].sort((a, b) => {
+    if (a.taken !== b.taken) return a.taken ? 1 : -1;
+    const tr = timeRank(a.time_of_day) - timeRank(b.time_of_day);
+    if (tr !== 0) return tr;
+    return a.peptide_name.localeCompare(b.peptide_name);
+  });
 
   // Admins can land here without a protocol (the wizard gate skips them).
   if (!protocols || protocols.length === 0) {
