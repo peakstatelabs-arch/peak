@@ -139,63 +139,75 @@ export function DoseCalendar({
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wide text-fg-subtle mb-1">
-        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-          <div key={d} className="text-center py-1">{d}</div>
-        ))}
+      {/* Desktop: month grid */}
+      <div className="hidden lg:block">
+        <div className="grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wide text-fg-subtle mb-1">
+          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+            <div key={d} className="text-center py-1">{d}</div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1">
+          {grid.map((cell, i) => {
+            if (!cell) return <div key={i} className="min-h-[72px]" />;
+            const iso = cell.toISOString().slice(0, 10);
+            const day = byDay.get(iso) ?? [];
+            const morning = day.filter((d) => d.time_of_day === "morning");
+            const evening = day.filter((d) => d.time_of_day !== "morning");
+            const isToday = iso === todayISO();
+            const isSelected = iso === selected;
+            const inMonth = cell.getMonth() === cursor.getMonth();
+            return (
+              <button
+                key={i}
+                onClick={() => setSelected(iso)}
+                className={cn(
+                  "min-h-[72px] sm:min-h-[100px] rounded-md border text-xs flex flex-col items-stretch justify-start p-1 transition text-left overflow-hidden",
+                  isSelected
+                    ? "border-accent bg-accent/10"
+                    : isToday
+                    ? "border-accent/40 bg-bg-elev"
+                    : "border-border bg-bg-elev hover:border-accent/30",
+                  !inMonth && "opacity-40"
+                )}
+              >
+                <span className={cn("font-medium text-[11px] leading-none mb-1 px-0.5", isToday && "text-accent")}>
+                  {cell.getDate()}
+                </span>
+
+                {morning.length > 0 && (
+                  <DaySection
+                    label="AM"
+                    time={compactTime(profile.morning_time)}
+                    doses={morning}
+                    tone="warm"
+                  />
+                )}
+                {morning.length > 0 && evening.length > 0 && (
+                  <div className="border-t border-border my-0.5" />
+                )}
+                {evening.length > 0 && (
+                  <DaySection
+                    label="PM"
+                    time={compactTime(profile.evening_time)}
+                    doses={evening}
+                    tone="cool"
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
-        {grid.map((cell, i) => {
-          if (!cell) return <div key={i} className="min-h-[72px]" />;
-          const iso = cell.toISOString().slice(0, 10);
-          const day = byDay.get(iso) ?? [];
-          const morning = day.filter((d) => d.time_of_day === "morning");
-          const evening = day.filter((d) => d.time_of_day !== "morning");
-          const isToday = iso === todayISO();
-          const isSelected = iso === selected;
-          const inMonth = cell.getMonth() === cursor.getMonth();
-          return (
-            <button
-              key={i}
-              onClick={() => setSelected(iso)}
-              className={cn(
-                "min-h-[72px] sm:min-h-[100px] rounded-md border text-xs flex flex-col items-stretch justify-start p-1 transition text-left overflow-hidden",
-                isSelected
-                  ? "border-accent bg-accent/10"
-                  : isToday
-                  ? "border-accent/40 bg-bg-elev"
-                  : "border-border bg-bg-elev hover:border-accent/30",
-                !inMonth && "opacity-40"
-              )}
-            >
-              <span className={cn("font-medium text-[11px] leading-none mb-1 px-0.5", isToday && "text-accent")}>
-                {cell.getDate()}
-              </span>
-
-              {morning.length > 0 && (
-                <DaySection
-                  label="AM"
-                  time={compactTime(profile.morning_time)}
-                  doses={morning}
-                  tone="warm"
-                />
-              )}
-              {morning.length > 0 && evening.length > 0 && (
-                <div className="border-t border-border my-0.5" />
-              )}
-              {evening.length > 0 && (
-                <DaySection
-                  label="PM"
-                  time={compactTime(profile.evening_time)}
-                  doses={evening}
-                  tone="cool"
-                />
-              )}
-            </button>
-          );
-        })}
-      </div>
+      {/* Mobile: vertical list scoped to the visible month, days with doses only */}
+      <MobileDayList
+        cursor={cursor}
+        byDay={byDay}
+        profile={profile}
+        selected={selected}
+        onSelect={setSelected}
+      />
 
       <Legend />
 
@@ -365,6 +377,140 @@ function Legend() {
           {name}
         </div>
       ))}
+    </div>
+  );
+}
+
+function MobileDayList({
+  cursor,
+  byDay,
+  profile,
+  selected,
+  onSelect,
+}: {
+  cursor: Date;
+  byDay: Map<string, Dose[]>;
+  profile: ProfilePrefs;
+  selected: string | null;
+  onSelect: (iso: string) => void;
+}) {
+  const today = todayISO();
+  // Pull all days IN the cursor's month that actually have doses.
+  const monthDays: { iso: string; date: Date; doses: Dose[] }[] = [];
+  const last = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
+  for (let d = 1; d <= last.getDate(); d++) {
+    const date = new Date(cursor.getFullYear(), cursor.getMonth(), d);
+    const iso = date.toISOString().slice(0, 10);
+    const doses = byDay.get(iso);
+    if (doses && doses.length > 0) {
+      monthDays.push({ iso, date, doses });
+    }
+  }
+
+  if (monthDays.length === 0) {
+    return (
+      <div className="lg:hidden text-center py-8 text-sm text-fg-muted">
+        No doses scheduled this month.
+      </div>
+    );
+  }
+
+  return (
+    <ul className="lg:hidden space-y-2">
+      {monthDays.map(({ iso, date, doses }) => {
+        const morning = doses.filter((d) => d.time_of_day === "morning");
+        const evening = doses.filter((d) => d.time_of_day !== "morning");
+        const isToday = iso === today;
+        const isSelected = iso === selected;
+        const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+        const dayNum = date.getDate();
+        const allDone = doses.every((d) => d.taken);
+        return (
+          <li key={iso}>
+            <button
+              onClick={() => onSelect(iso)}
+              className={cn(
+                "w-full flex items-stretch gap-3 rounded-lg border p-3 text-left transition",
+                isSelected
+                  ? "border-accent bg-accent/10"
+                  : isToday
+                  ? "border-accent/40 bg-bg-elev"
+                  : "border-border bg-bg-elev hover:border-accent/30"
+              )}
+            >
+              <div className="flex flex-col items-center justify-center min-w-[42px]">
+                <span className={cn("text-[10px] uppercase tracking-wider", isToday ? "text-accent" : "text-fg-subtle")}>
+                  {isToday ? "Today" : weekday}
+                </span>
+                <span className={cn("font-display text-xl font-semibold leading-none mt-0.5", isToday && "text-accent")}>
+                  {dayNum}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0 space-y-1.5">
+                {morning.length > 0 && (
+                  <MobileDayRow
+                    label="AM"
+                    time={compactTime(profile.morning_time)}
+                    doses={morning}
+                    tone="warm"
+                  />
+                )}
+                {evening.length > 0 && (
+                  <MobileDayRow
+                    label="PM"
+                    time={compactTime(profile.evening_time)}
+                    doses={evening}
+                    tone="cool"
+                  />
+                )}
+              </div>
+              {allDone && (
+                <span className="self-center text-xs text-accent font-semibold whitespace-nowrap">✓</span>
+              )}
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function MobileDayRow({
+  label,
+  time,
+  doses,
+  tone,
+}: {
+  label: "AM" | "PM";
+  time: string;
+  doses: Dose[];
+  tone: "warm" | "cool";
+}) {
+  const labelColor = tone === "warm" ? "text-amber-300" : "text-sky-300";
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex items-baseline gap-1 shrink-0">
+        <span className={cn("text-[10px] font-bold tracking-wider", labelColor)}>{label}</span>
+        <span className="text-[10px] text-fg-subtle">{time}</span>
+      </div>
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {doses.map((d) => (
+          <span
+            key={d.id}
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium border",
+              d.taken
+                ? "border-border bg-bg-card text-fg-subtle line-through"
+                : "border-border bg-bg-card"
+            )}
+          >
+            <span className={cn("h-1.5 w-1.5 rounded-full", PEPTIDE_COLOR[d.peptide_name] ?? "bg-fg-muted")} />
+            <span className={cn(PEPTIDE_TEXT[d.peptide_name] ?? "text-fg-muted", d.taken && "text-fg-subtle")}>
+              {shortLabel(d.peptide_name)}
+            </span>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
