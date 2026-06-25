@@ -10,6 +10,7 @@ import {
   type DoseRow,
 } from "@/lib/schedule";
 import { EnableRemindersButton } from "@/components/EnableRemindersButton";
+import { DatePicker } from "@/components/DatePicker";
 
 type Path = "choose" | "power-cut" | "singles";
 type Track = "foundation" | "performance";
@@ -480,14 +481,14 @@ export function ProtocolWizard({
           {/* Start date */}
           <div>
             <label className="label">Start date</label>
-            <input
-              type="date"
-              className="input"
+            <DatePicker
               value={powerCutStart}
-              onChange={(e) => setPowerCutStart(e.target.value)}
-              min={todayISO()}
+              onChange={setPowerCutStart}
+              minDate={todayISO()}
             />
-            <p className="text-xs text-fg-subtle mt-1">Defaults to next Monday so doses land cleanly on weekdays.</p>
+            <p className="text-xs text-fg-subtle mt-1">
+              Defaults to next Monday, but pick any day — your schedule shifts to start from there.
+            </p>
           </div>
 
           {weightLoss !== null && weightLoss > 0 && (
@@ -596,13 +597,14 @@ export function ProtocolWizard({
 
         <div>
           <label className="label">Start date</label>
-          <input
-            type="date"
-            className="input"
+          <DatePicker
             value={singlesStart}
-            onChange={(e) => setSinglesStart(e.target.value)}
-            min={todayISO()}
+            onChange={setSinglesStart}
+            minDate={todayISO()}
           />
+          <p className="text-xs text-fg-subtle mt-1">
+            Pick any day — weekly doses repeat on the same weekday from there.
+          </p>
         </div>
 
         {error && (

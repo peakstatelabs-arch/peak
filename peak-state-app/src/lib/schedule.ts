@@ -13,21 +13,16 @@ export type PowerCutChoice = "foundation" | "performance";
 const DAY = 86400000;
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 
-/** Roll a date to next occurrence of given weekday (1=Mon … 7=Sun). */
-function rollTo(d: Date, weekday: number): Date {
-  const out = new Date(d);
-  const cur = out.getDay() === 0 ? 7 : out.getDay();
-  const diff = (weekday - cur + 7) % 7;
-  out.setDate(out.getDate() + diff);
-  return out;
-}
-
 /**
  * Generate the full dose schedule for a POWER CUT protocol.
- *  - Reta: weekly Monday morning per `protocol.reta.schedule`
- *  - CJC: Mon–Fri evening per `protocol.cjc.schedule` (weekly dose, 5x/wk)
- *  - BPC: Foundation = Mon+Thu, Performance = Mon+Wed+Fri, evening
- *         BPC stays ON when CJC is ON (mirrors weeks 1-10, 13-22, 25-34)
+ *
+ * All three peptides anchor on whatever weekday `startDate` falls on
+ * (was previously forced to Monday, which discarded the user's pick).
+ *  - Reta: weekly on start day-of-week, morning
+ *  - CJC: 5 days on / 2 off counted from start day, evening
+ *  - BPC: Foundation = start day + start+3; Performance = start day +
+ *         start+2 + start+4. Evenly spaced, shifted with start day.
+ *         BPC tracks CJC ON weeks (weeks 1-10, 13-22, 25-34).
  */
 export function generatePowerCutSchedule(opts: {
   protocol: StackProtocol;
@@ -36,14 +31,13 @@ export function generatePowerCutSchedule(opts: {
 }): DoseRow[] {
   const { protocol, bpc, startDate } = opts;
   const rows: DoseRow[] = [];
-  // Anchor on the Monday of the start week (or the supplied date if it's a Monday).
-  const week1Monday = rollTo(startDate, 1);
+  const week1Start = new Date(startDate);
 
   for (let w = 0; w < protocol.totalWeeks; w++) {
     const weekNum = w + 1;
-    const monday = new Date(week1Monday.getTime() + w * 7 * DAY);
+    const weekStart = new Date(week1Start.getTime() + w * 7 * DAY);
 
-    // RETA — Monday morning
+    // RETA — same weekday as start, morning
     const retaDoseStr = protocol.reta.schedule[w]?.dose;
     if (retaDoseStr && !protocol.reta.schedule[w].isOff) {
       const mg = parseMg(retaDoseStr);
@@ -51,20 +45,20 @@ export function generatePowerCutSchedule(opts: {
         rows.push({
           peptide_name: "Retatrutide",
           dose_mg: mg,
-          scheduled_for: iso(monday),
+          scheduled_for: iso(weekStart),
           time_of_day: "morning",
           notes: `Week ${weekNum} · POWER CUT`,
         });
       }
     }
 
-    // CJC — Mon–Fri evening
+    // CJC — 5 consecutive days from start day, evening
     const cjcEntry = protocol.cjc.schedule[w];
     if (cjcEntry && !cjcEntry.isOff) {
       const mg = parseMg(cjcEntry.dose);
       if (mg > 0) {
         for (let d = 0; d < 5; d++) {
-          const day = new Date(monday.getTime() + d * DAY);
+          const day = new Date(weekStart.getTime() + d * DAY);
           rows.push({
             peptide_name: "CJC-1295 + Ipamorelin",
             dose_mg: mg,
@@ -78,10 +72,10 @@ export function generatePowerCutSchedule(opts: {
 
     // BPC — pairs with CJC ON weeks
     if (cjcEntry && !cjcEntry.isOff) {
-      const days = bpc === "foundation" ? [0, 3] : [0, 2, 4]; // Mon+Thu OR Mon+Wed+Fri
+      const days = bpc === "foundation" ? [0, 3] : [0, 2, 4];
       const dosePerInj = bpc === "foundation" ? 2.0 : 1.3;
       for (const d of days) {
-        const day = new Date(monday.getTime() + d * DAY);
+        const day = new Date(weekStart.getTime() + d * DAY);
         rows.push({
           peptide_name: "BPC-157 + TB-500",
           dose_mg: dosePerInj,
@@ -125,27 +119,34 @@ export function generateSingleSchedule(opts: {
       rows.push(makeRow(peptide_name, dose_mg, new Date(t), time_of_day));
     }
   } else if (frequency === "weekly") {
-    const anchor = rollTo(start, ((start.getDay() === 0 ? 7 : start.getDay()) as number));
-    for (let t = anchor.getTime(); t <= end.getTime(); t += 7 * DAY) {
+    for (let t = start.getTime(); t <= end.getTime(); t += 7 * DAY) {
       rows.push(makeRow(peptide_name, dose_mg, new Date(t), time_of_day));
     }
   } else if (frequency === "five-on-two-off") {
-    // Mon–Fri
-    const week1Mon = rollTo(start, 1);
+    // 5 consecutive days from start, then 2 off — repeated weekly.
     for (let w = 0; w < weeks; w++) {
-      const monday = new Date(week1Mon.getTime() + w * 7 * DAY);
+      const weekStart = new Date(start.getTime() + w * 7 * DAY);
       for (let d = 0; d < 5; d++) {
-        rows.push(makeRow(peptide_name, dose_mg, new Date(monday.getTime() + d * DAY), time_of_day));
+        rows.push(makeRow(peptide_name, dose_mg, new Date(weekStart.getTime() + d * DAY), time_of_day));
       }
     }
   } else if (frequency === "twice-weekly" || frequency === "thrice-weekly") {
-    const days = opts.weekdays ?? (frequency === "twice-weekly" ? [1, 4] : [1, 3, 5]);
-    const week1Mon = rollTo(start, 1);
+    // Evenly spaced around the start day. 2×/wk → start, start+3.
+    // 3×/wk → start, start+2, start+4. `weekdays` (1=Mon..7=Sun) still
+    // works as an explicit override for callers that want fixed days.
+    const offsets =
+      opts.weekdays && opts.weekdays.length > 0
+        ? opts.weekdays.map((wd) => {
+            const startWd = start.getDay() === 0 ? 7 : start.getDay();
+            return ((wd - startWd) + 7) % 7;
+          })
+        : frequency === "twice-weekly"
+        ? [0, 3]
+        : [0, 2, 4];
     for (let w = 0; w < weeks; w++) {
-      const monday = new Date(week1Mon.getTime() + w * 7 * DAY);
-      for (const wd of days) {
-        const offset = wd - 1; // Mon=0
-        rows.push(makeRow(peptide_name, dose_mg, new Date(monday.getTime() + offset * DAY), time_of_day));
+      const weekStart = new Date(start.getTime() + w * 7 * DAY);
+      for (const off of offsets) {
+        rows.push(makeRow(peptide_name, dose_mg, new Date(weekStart.getTime() + off * DAY), time_of_day));
       }
     }
   }
