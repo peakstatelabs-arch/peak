@@ -1,12 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 export function AcceptForm({ version }: { version: string }) {
-  const router = useRouter();
-  const supabase = createClient();
   const [checked, setChecked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,25 +13,36 @@ export function AcceptForm({ version }: { version: string }) {
     setBusy(true);
     setError(null);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { setError("Not signed in."); setBusy(false); return; }
-
-    const { error: upErr } = await supabase
-      .from("profiles")
-      .update({
-        terms_accepted_at: new Date().toISOString(),
-        terms_version: version,
-      })
-      .eq("id", user.id);
-
-    if (upErr) {
-      setError("Couldn't save. Try again.");
+    let res: Response;
+    try {
+      res = await fetch("/portal/api/auth/accept-terms", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ version }),
+      });
+    } catch (e) {
+      setError(
+        "Network error. Check your connection and try again. " +
+          (e instanceof Error ? e.message : "")
+      );
       setBusy(false);
       return;
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    const json = await res.json().catch(() => ({} as Record<string, unknown>));
+    if (!res.ok) {
+      setError(
+        typeof json.error === "string"
+          ? json.error
+          : "Couldn't save terms acceptance. Please try again."
+      );
+      setBusy(false);
+      return;
+    }
+
+    // Hard reload so any cached RSC layout decision is busted — same
+    // approach as the password-change form for the same reason.
+    window.location.assign("/portal/dashboard");
   }
 
   return (
@@ -53,7 +60,7 @@ export function AcceptForm({ version }: { version: string }) {
         </span>
       </label>
       {error && (
-        <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">
+        <div className="rounded-lg border border-danger/40 bg-danger/10 px-3 py-3 text-sm text-danger font-medium">
           {error}
         </div>
       )}

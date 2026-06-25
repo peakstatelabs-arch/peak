@@ -53,8 +53,20 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     .eq("id", user.id)
     .single();
 
-  if (profile?.must_change_password) redirect("/change-password");
+  console.log("(app)/layout: gate check", {
+    userId: user.id,
+    must_change_password: profile?.must_change_password,
+    terms_accepted_at: profile?.terms_accepted_at,
+    terms_version: profile?.terms_version,
+    expected_terms_version: TERMS_VERSION,
+  });
+
+  if (profile?.must_change_password) {
+    console.log("(app)/layout: → /change-password (flag is true)");
+    redirect("/change-password");
+  }
   if (!profile?.terms_accepted_at || profile.terms_version !== TERMS_VERSION) {
+    console.log("(app)/layout: → /accept-terms");
     redirect("/accept-terms");
   }
 
