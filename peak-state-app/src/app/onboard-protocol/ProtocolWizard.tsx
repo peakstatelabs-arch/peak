@@ -11,6 +11,7 @@ import {
 } from "@/lib/schedule";
 import { EnableRemindersButton } from "@/components/EnableRemindersButton";
 import { DatePicker } from "@/components/DatePicker";
+import { DosePicker } from "@/components/DosePicker";
 
 type Path = "choose" | "power-cut" | "singles";
 type Track = "foundation" | "performance";
@@ -29,6 +30,31 @@ function nextMondayISO(): string {
 function todayISO(): string {
   return new Date().toISOString().slice(0, 10);
 }
+
+type StartMode = "fresh" | "already-started";
+
+const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+// 1=Mon … 7=Sun
+
+/**
+ * Return the ISO date string for the most recent occurrence of the given
+ * weekday on or before today. If today IS that weekday, returns today.
+ * Used for "already started" mode: this is treated as the start of the
+ * client's current week.
+ */
+function mostRecentWeekdayISO(weekday: number): string {
+  const d = new Date();
+  const today = d.getDay() === 0 ? 7 : d.getDay();
+  const diff = (today - weekday + 7) % 7;
+  d.setDate(d.getDate() - diff);
+  return d.toISOString().slice(0, 10);
+}
+
+const RETA_DOSE_OPTIONS: number[] = (() => {
+  const out: number[] = [];
+  for (let v = 0.25; v <= 6 + 1e-9; v += 0.25) out.push(Math.round(v * 100) / 100);
+  return out;
+})();
 
 const TRACK_META: Record<Track, { label: string; frequency: string; blurb: string }> = {
   foundation: {
@@ -121,11 +147,18 @@ export function ProtocolWizard({
   const [currentBF, setCurrentBF] = useState<string>("");
   const [goalBF, setGoalBF] = useState<string>("");
   const [powerCutStart, setPowerCutStart] = useState(nextMondayISO());
+  const [powerCutMode, setPowerCutMode] = useState<StartMode>("fresh");
+  const [pcCurrentWeek, setPcCurrentWeek] = useState<number>(2);
+  const [pcRetaDay, setPcRetaDay] = useState<number>(1); // Mon default
+  const [pcCurrentRetaDose, setPcCurrentRetaDose] = useState<number>(2);
 
   // Singles inputs
   const [selectedSingles, setSelectedSingles] = useState<Set<SingleSlug>>(new Set());
   const [bpcVariant, setBpcVariant] = useState<Track>("foundation");
   const [singlesStart, setSinglesStart] = useState(todayISO());
+  const [singlesRetaMode, setSinglesRetaMode] = useState<StartMode>("fresh");
+  const [singlesRetaDay, setSinglesRetaDay] = useState<number>(1);
+  const [singlesCurrentRetaDose, setSinglesCurrentRetaDose] = useState<number>(2);
 
   function toggleSingle(slug: SingleSlug) {
     setSelectedSingles((s) => {
@@ -180,7 +213,19 @@ export function ProtocolWizard({
 
       const protocolType = `power_cut_${track}`;
       const name = `POWER CUT™ — ${track === "foundation" ? "Foundation" : "Performance"} (${stacks} stack${stacks > 1 ? "s" : ""})`;
-      const endDate = new Date(new Date(powerCutStart + "T00:00:00").getTime() + protocol.totalWeeks * 7 * DAY_MS)
+
+      // "Already started" back-dates the protocol so today falls inside
+      // the client's stated current week.
+      let effectiveStartDate = powerCutStart;
+      if (powerCutMode === "already-started") {
+        const thisWeekRetaDate = new Date(mostRecentWeekdayISO(pcRetaDay) + "T00:00:00");
+        const week1Start = new Date(
+          thisWeekRetaDate.getTime() - (pcCurrentWeek - 1) * 7 * DAY_MS
+        );
+        effectiveStartDate = week1Start.toISOString().slice(0, 10);
+      }
+
+      const endDate = new Date(new Date(effectiveStartDate + "T00:00:00").getTime() + protocol.totalWeeks * 7 * DAY_MS)
         .toISOString().slice(0, 10);
 
       const peptideNames = ["Retatrutide", "CJC-1295 + Ipamorelin", "BPC-157 + TB-500"];
@@ -191,7 +236,7 @@ export function ProtocolWizard({
         dose_mg: 0,
         frequency: peptide_name === "Retatrutide" ? "weekly" : peptide_name === "CJC-1295 + Ipamorelin" ? "five-on-two-off" : track === "foundation" ? "twice-weekly" : "thrice-weekly",
         time_of_day: peptide_name === "Retatrutide" ? "morning" : "evening",
-        start_date: powerCutStart,
+        start_date: effectiveStartDate,
         end_date: endDate,
         active: true,
         protocol_type: protocolType,
@@ -202,11 +247,25 @@ export function ProtocolWizard({
       if (pErr) { setError("Couldn't save protocol: " + pErr.message); setBusy(false); return; }
 
       // Generate doses
-      const rows = generatePowerCutSchedule({
+      let rows = generatePowerCutSchedule({
         protocol,
         bpc: track,
-        startDate: new Date(powerCutStart + "T00:00:00"),
+        startDate: new Date(effectiveStartDate + "T00:00:00"),
       });
+
+      if (powerCutMode === "already-started") {
+        const todayKey = todayISO();
+        // Drop everything before today — the calendar starts today.
+        rows = rows.filter((r) => r.scheduled_for >= todayKey);
+        // Override Reta to the client's current dose (titration is dropped
+        // when they tell us they're already at a custom dose).
+        rows = rows.map((r) =>
+          r.peptide_name === "Retatrutide"
+            ? { ...r, dose_mg: pcCurrentRetaDose }
+            : r
+        );
+      }
+
       const dErr = await insertDoses(supabase, user.id, rows);
       if (dErr) { setError(dErr); setBusy(false); return; }
 
@@ -236,7 +295,15 @@ export function ProtocolWizard({
         .update({ timezone: tz, morning_time: morningTime, evening_time: eveningTime })
         .eq("id", user.id);
 
-      const startDateObj = new Date(singlesStart + "T00:00:00");
+      // If Reta is selected AND user says they're already started, the
+      // most-recent-occurrence of their Reta day-of-week anchors the
+      // schedule; otherwise we use the explicit start date the user picked.
+      const retaAlreadyStarted =
+        selectedSingles.has("reta") && singlesRetaMode === "already-started";
+      const effectiveStart = retaAlreadyStarted
+        ? mostRecentWeekdayISO(singlesRetaDay)
+        : singlesStart;
+      const startDateObj = new Date(effectiveStart + "T00:00:00");
       const endDate = new Date(startDateObj.getTime() + 12 * 7 * DAY_MS).toISOString().slice(0, 10);
 
       // Build protocol + dose inserts for every selected vial
@@ -250,14 +317,18 @@ export function ProtocolWizard({
             ? "thrice-weekly"
             : cfg.frequency;
 
+        // Reta dose can be overridden in "already started" mode.
+        const doseMg =
+          slug === "reta" && retaAlreadyStarted ? singlesCurrentRetaDose : cfg.dose_mg;
+
         protocolInserts.push({
           user_id: user.id,
           name: cfg.label,
           peptide_name: cfg.peptide_name,
-          dose_mg: cfg.dose_mg,
+          dose_mg: doseMg,
           frequency: freq,
           time_of_day: cfg.time_of_day,
-          start_date: singlesStart,
+          start_date: effectiveStart,
           end_date: endDate,
           active: true,
           protocol_type: `single_${slug}`,
@@ -267,7 +338,7 @@ export function ProtocolWizard({
 
         const rows = generateSingleSchedule({
           peptide_name: cfg.peptide_name,
-          dose_mg: cfg.dose_mg,
+          dose_mg: doseMg,
           frequency: freq,
           time_of_day: cfg.time_of_day,
           startDate: startDateObj,
@@ -276,10 +347,16 @@ export function ProtocolWizard({
         doseRows.push(...rows);
       }
 
+      // In "already started" mode the back-dated anchor produces past
+      // doses; prune them so the calendar starts clean from today.
+      const finalDoseRows = retaAlreadyStarted
+        ? doseRows.filter((r) => r.scheduled_for >= todayISO())
+        : doseRows;
+
       const { error: pErr } = await supabase.from("peptide_protocols").insert(protocolInserts);
       if (pErr) { setError("Couldn't save protocols: " + pErr.message); setBusy(false); return; }
 
-      const dErr = await insertDoses(supabase, user.id, doseRows);
+      const dErr = await insertDoses(supabase, user.id, finalDoseRows);
       if (dErr) { setError(dErr); setBusy(false); return; }
 
       setSaved(true);
@@ -478,18 +555,104 @@ export function ProtocolWizard({
             </div>
           </div>
 
-          {/* Start date */}
+          {/* Fresh vs already-started */}
           <div>
-            <label className="label">Start date</label>
-            <DatePicker
-              value={powerCutStart}
-              onChange={setPowerCutStart}
-              minDate={todayISO()}
-            />
-            <p className="text-xs text-fg-subtle mt-1">
-              Defaults to next Monday, but pick any day — your schedule shifts to start from there.
-            </p>
+            <label className="label">Where are you starting from?</label>
+            <div className="grid sm:grid-cols-2 gap-2">
+              {([
+                { v: "fresh", t: "Starting fresh", s: "Week 1, day 1" },
+                { v: "already-started", t: "Already started", s: "Pick up where I am" },
+              ] as const).map((m) => (
+                <button
+                  key={m.v}
+                  type="button"
+                  onClick={() => setPowerCutMode(m.v)}
+                  className={
+                    "rounded-lg border px-3 py-3 text-left text-sm " +
+                    (powerCutMode === m.v
+                      ? "border-accent bg-accent/10 text-fg"
+                      : "border-border bg-bg-elev text-fg-muted hover:text-fg")
+                  }
+                >
+                  <div className="font-medium">{m.t}</div>
+                  <div className="text-xs text-fg-subtle mt-0.5">{m.s}</div>
+                </button>
+              ))}
+            </div>
           </div>
+
+          {powerCutMode === "fresh" ? (
+            <div>
+              <label className="label">Start date</label>
+              <DatePicker
+                value={powerCutStart}
+                onChange={setPowerCutStart}
+                minDate={todayISO()}
+              />
+              <p className="text-xs text-fg-subtle mt-1">
+                Defaults to next Monday, but pick any day — your schedule shifts to start from there.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <label className="label">What week are you on?</label>
+                <select
+                  value={pcCurrentWeek}
+                  onChange={(e) => setPcCurrentWeek(Number(e.target.value))}
+                  className="input"
+                >
+                  {Array.from({ length: (getStackProtocol(stacks)?.totalWeeks ?? 24) - 1 }, (_, i) => i + 2).map((n) => (
+                    <option key={n} value={n}>Week {n}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-fg-subtle mt-1">
+                  We'll back-date the schedule so today falls inside this week.
+                </p>
+              </div>
+
+              <div>
+                <label className="label">Your current Retatrutide dose</label>
+                <DosePicker
+                  value={pcCurrentRetaDose}
+                  options={RETA_DOSE_OPTIONS}
+                  onChange={setPcCurrentRetaDose}
+                />
+                <p className="text-xs text-fg-subtle mt-1">
+                  All future Reta doses will start at this. You can fine-tune any week from the
+                  Reta schedule editor later.
+                </p>
+              </div>
+
+              <div>
+                <label className="label">What day of the week do you take Reta?</label>
+                <div className="grid grid-cols-7 gap-1">
+                  {WEEKDAY_LABELS.map((label, i) => {
+                    const day = i + 1;
+                    const active = pcRetaDay === day;
+                    return (
+                      <button
+                        key={label}
+                        type="button"
+                        onClick={() => setPcRetaDay(day)}
+                        className={
+                          "rounded-md py-2 text-xs font-medium " +
+                          (active
+                            ? "bg-accent text-accent-fg"
+                            : "bg-bg-elev text-fg-muted hover:text-fg")
+                        }
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-xs text-fg-subtle mt-1">
+                  CJC's 5-day cycle and BPC's days will anchor to this day too.
+                </p>
+              </div>
+            </div>
+          )}
 
           {weightLoss !== null && weightLoss > 0 && (
             <div className="rounded-lg border border-accent/30 bg-accent/5 p-3 text-sm">
@@ -595,17 +758,83 @@ export function ProtocolWizard({
           </div>
         )}
 
-        <div>
-          <label className="label">Start date</label>
-          <DatePicker
-            value={singlesStart}
-            onChange={setSinglesStart}
-            minDate={todayISO()}
-          />
-          <p className="text-xs text-fg-subtle mt-1">
-            Pick any day — weekly doses repeat on the same weekday from there.
-          </p>
-        </div>
+        {selectedSingles.has("reta") && (
+          <div className="rounded-lg border border-border bg-bg-elev/40 p-4 space-y-3">
+            <label className="label">Where are you starting from on Reta?</label>
+            <div className="grid sm:grid-cols-2 gap-2">
+              {([
+                { v: "fresh", t: "Starting fresh", s: "First Reta dose at our preset" },
+                { v: "already-started", t: "Already started", s: "Pick up at my current dose" },
+              ] as const).map((m) => (
+                <button
+                  key={m.v}
+                  type="button"
+                  onClick={() => setSinglesRetaMode(m.v)}
+                  className={
+                    "rounded-lg border px-3 py-3 text-left text-sm " +
+                    (singlesRetaMode === m.v
+                      ? "border-accent bg-accent/10 text-fg"
+                      : "border-border bg-bg-card text-fg-muted hover:text-fg")
+                  }
+                >
+                  <div className="font-medium">{m.t}</div>
+                  <div className="text-xs text-fg-subtle mt-0.5">{m.s}</div>
+                </button>
+              ))}
+            </div>
+
+            {singlesRetaMode === "already-started" && (
+              <div className="space-y-3 pt-2">
+                <div>
+                  <label className="label">Your current Reta dose</label>
+                  <DosePicker
+                    value={singlesCurrentRetaDose}
+                    options={RETA_DOSE_OPTIONS}
+                    onChange={setSinglesCurrentRetaDose}
+                  />
+                </div>
+                <div>
+                  <label className="label">What day of the week do you take Reta?</label>
+                  <div className="grid grid-cols-7 gap-1">
+                    {WEEKDAY_LABELS.map((label, i) => {
+                      const day = i + 1;
+                      const active = singlesRetaDay === day;
+                      return (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => setSinglesRetaDay(day)}
+                          className={
+                            "rounded-md py-2 text-xs font-medium " +
+                            (active
+                              ? "bg-accent text-accent-fg"
+                              : "bg-bg-card text-fg-muted hover:text-fg")
+                          }
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!(selectedSingles.has("reta") && singlesRetaMode === "already-started") && (
+          <div>
+            <label className="label">Start date</label>
+            <DatePicker
+              value={singlesStart}
+              onChange={setSinglesStart}
+              minDate={todayISO()}
+            />
+            <p className="text-xs text-fg-subtle mt-1">
+              Pick any day — weekly doses repeat on the same weekday from there.
+            </p>
+          </div>
+        )}
 
         {error && (
           <div className="rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">
