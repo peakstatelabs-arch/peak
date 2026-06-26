@@ -52,17 +52,11 @@ export function InstallPWABanner() {
         <button
           onClick={dismiss}
           aria-label="Dismiss install prompt"
-          className="shrink-0 h-7 w-7 lg:hidden rounded-md text-fg-muted hover:text-fg hover:bg-bg-elev flex items-center justify-center"
+          className="shrink-0 h-8 w-8 rounded-md text-fg-muted hover:text-fg hover:bg-bg-elev flex items-center justify-center"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 6 6 18M6 6l12 12" />
           </svg>
-        </button>
-        <button
-          onClick={dismiss}
-          className="hidden lg:inline-flex btn-secondary text-xs px-3 py-1.5 whitespace-nowrap"
-        >
-          Dismiss
         </button>
       </div>
     </div>
