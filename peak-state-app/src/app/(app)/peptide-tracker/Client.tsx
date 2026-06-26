@@ -9,6 +9,7 @@ import { SinglePeptideWizard } from "./SinglePeptideWizard";
 import { DoseCalendar } from "./DoseCalendar";
 import { TodayDoses } from "./TodayDoses";
 import { NotificationSetup } from "./NotificationSetup";
+import { RetaDoseCard } from "./RetaDoseCard";
 
 type Protocol = {
   id: string;
@@ -126,6 +127,8 @@ export function PeptideTrackerClient({
           </ul>
         )}
       </section>
+
+      <RetaDoseCard protocols={protocols} doses={doses} onChanged={refresh} />
 
       <DoseCalendar doses={doses} onChanged={refresh} profile={profile} />
 
