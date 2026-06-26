@@ -1,9 +1,34 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ThemeSegmented } from "@/components/ThemeSegmented";
+
+// Custom window event the ModuleToggles fires on every toggle so the nav
+// (Sidebar + BottomTabBar) can update optimistically without waiting for
+// the server round-trip + layout re-render.
+const MODULES_EVENT = "peakstate:modules-changed";
+
+function useLiveEnabledModules(initial: string[]): string[] {
+  const [list, setList] = useState<string[]>(initial);
+  useEffect(() => setList(initial), [initial.join(",")]); // sync if SSR props change
+  useEffect(() => {
+    function onChange(e: Event) {
+      const next = (e as CustomEvent<string[]>).detail;
+      if (Array.isArray(next)) setList(next);
+    }
+    window.addEventListener(MODULES_EVENT, onChange);
+    return () => window.removeEventListener(MODULES_EVENT, onChange);
+  }, []);
+  return list;
+}
+
+export function dispatchModulesChanged(next: string[]) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(MODULES_EVENT, { detail: next }));
+}
 
 export type NavItem = {
   href: string;
@@ -27,6 +52,7 @@ export const NAV_ITEMS: NavItem[] = [
 const MOBILE_HREFS = new Set([
   "/dashboard",
   "/peptide-tracker",
+  "/dosing-guide",
   "/body-tracker",
   "/workouts",
   "/nutrition",
@@ -44,12 +70,13 @@ function visibleMobileItems(enabledModules: string[]): NavItem[] {
 
 export function Sidebar({
   isAdmin,
-  enabledModules = [],
+  enabledModules: enabledModulesProp = [],
 }: {
   isAdmin: boolean;
   enabledModules?: string[];
 }) {
   const pathname = usePathname();
+  const enabledModules = useLiveEnabledModules(enabledModulesProp);
   const items = visibleItems(enabledModules);
   return (
     <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-border bg-bg-elev/40 h-screen sticky top-0">
@@ -190,12 +217,13 @@ const ADMIN_TAB: NavItem = {
 
 export function BottomTabBar({
   isAdmin = false,
-  enabledModules = [],
+  enabledModules: enabledModulesProp = [],
 }: {
   isAdmin?: boolean;
   enabledModules?: string[];
 }) {
   const pathname = usePathname();
+  const enabledModules = useLiveEnabledModules(enabledModulesProp);
   const base = visibleMobileItems(enabledModules);
   const items = isAdmin ? [...base, ADMIN_TAB] : base;
   const cols = items.length;

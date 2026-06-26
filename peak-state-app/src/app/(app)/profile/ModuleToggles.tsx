@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { MODULES, type ModuleSlug } from "@/lib/modules";
+import { dispatchModulesChanged } from "@/components/Nav";
 
 export function ModuleToggles({ initial }: { initial: string[] }) {
   const router = useRouter();
@@ -21,6 +22,11 @@ export function ModuleToggles({ initial }: { initial: string[] }) {
     setEnabled(next);
     setPending((p) => new Set(p).add(slug));
 
+    // Optimistic: tell the Sidebar/BottomTabBar to update IMMEDIATELY without
+    // waiting on the server round-trip + layout re-render. router.refresh()
+    // below still happens so the next request reads the new server state.
+    dispatchModulesChanged(Array.from(next));
+
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     await supabase
@@ -34,7 +40,6 @@ export function ModuleToggles({ initial }: { initial: string[] }) {
       return c;
     });
 
-    // Refresh the layout so the nav (sidebar + bottom bar) updates immediately.
     router.refresh();
   }
 
