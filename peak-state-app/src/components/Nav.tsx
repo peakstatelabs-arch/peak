@@ -11,9 +11,17 @@ import { ThemeSegmented } from "@/components/ThemeSegmented";
 // the server round-trip + layout re-render.
 const MODULES_EVENT = "peakstate:modules-changed";
 
+/**
+ * Initialize from the SSR prop on first mount, then the window event is
+ * the sole source of truth. We DELIBERATELY don't re-sync from `initial`
+ * on prop changes — the layout's RSC re-render after router.refresh()
+ * was overwriting fresh optimistic updates with whichever value the
+ * server happened to return (race condition between Supabase write and
+ * the layout's profile re-fetch). Trusting the event end-to-end makes
+ * the nav consistent with whatever the user just tapped, every time.
+ */
 function useLiveEnabledModules(initial: string[]): string[] {
   const [list, setList] = useState<string[]>(initial);
-  useEffect(() => setList(initial), [initial.join(",")]); // sync if SSR props change
   useEffect(() => {
     function onChange(e: Event) {
       const next = (e as CustomEvent<string[]>).detail;
