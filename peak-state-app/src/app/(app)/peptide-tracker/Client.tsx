@@ -130,7 +130,7 @@ export function PeptideTrackerClient({
 
       <DoseCalendar doses={doses} onChanged={refresh} profile={profile} />
 
-      <RetaDoseCard protocols={protocols} doses={doses} onChanged={refresh} />
+      <RetaDoseCard protocols={protocols} />
 
       <NotificationSetup profile={profile} onSaved={refresh} doses={doses} />
     </div>
