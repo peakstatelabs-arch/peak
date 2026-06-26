@@ -13,8 +13,21 @@ export type RetaDoseRow = {
 };
 
 const MIN_MG = 0.25;
-const MAX_MG = 8;
+const MAX_MG = 6;
 const STEP_MG = 0.25;
+
+const DOSE_OPTIONS: number[] = (() => {
+  const out: number[] = [];
+  for (let v = MIN_MG; v <= MAX_MG + 1e-9; v += STEP_MG) {
+    out.push(Math.round(v * 100) / 100);
+  }
+  return out;
+})();
+
+function formatMg(n: number): string {
+  // Strip trailing zeros: 2 → "2", 2.5 → "2.5", 2.25 → "2.25"
+  return Number(n.toFixed(2)).toString();
+}
 
 function formatDate(iso: string): string {
   return new Date(iso + "T00:00:00").toLocaleDateString("en-US", {
@@ -121,6 +134,12 @@ export function RetaScheduleEditor({ rows }: { rows: RetaDoseRow[] }) {
               const week = weekOf(r.scheduled_for);
               const raw = edits[r.id] ?? String(r.dose_mg);
               const changed = edits[r.id] !== undefined && Number(raw) !== r.dose_mg;
+              // If the current value is non-standard (e.g. a prior custom
+              // edit), include it as a preserved option so it still renders.
+              const currentNum = Number(raw);
+              const options = DOSE_OPTIONS.includes(currentNum)
+                ? DOSE_OPTIONS
+                : [...DOSE_OPTIONS, currentNum].sort((a, b) => a - b);
               return (
                 <li key={r.id} className="py-3 flex items-center gap-3">
                   <div className="min-w-0 flex-1">
@@ -130,19 +149,25 @@ export function RetaScheduleEditor({ rows }: { rows: RetaDoseRow[] }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      min={MIN_MG}
-                      max={MAX_MG}
-                      step={STEP_MG}
+                    <select
                       value={raw}
                       onChange={(e) => setEdit(r.id, e.target.value)}
                       className={
-                        "input w-20 text-right " +
+                        "input w-24 text-right pr-7 appearance-none bg-no-repeat " +
                         (changed ? "border-accent" : "")
                       }
-                    />
+                      style={{
+                        backgroundImage:
+                          "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>\")",
+                        backgroundPosition: "right 8px center",
+                      }}
+                    >
+                      {options.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {formatMg(opt)}
+                        </option>
+                      ))}
+                    </select>
                     <span className="text-xs text-fg-subtle">mg</span>
                   </div>
                 </li>
