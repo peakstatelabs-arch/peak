@@ -28,7 +28,13 @@ export async function sendClientInviteEmail(opts: {
   if (!resend) return { sent: false, reason: "not_configured" };
 
   const greeting = opts.firstName ? `Hey ${opts.firstName},` : "Hey,";
-  const loginUrl = `${PORTAL_URL}/login`;
+  // The Next.js app is mounted under /portal (basePath). PORTAL_URL is the
+  // bare origin; append the basePath + route so the link doesn't 404 if a
+  // future env var is set to just the origin.
+  const trimmed = PORTAL_URL.replace(/\/+$/, "");
+  const loginUrl = /\/portal(\/|$)/.test(trimmed)
+    ? `${trimmed}/login`
+    : `${trimmed}/portal/login`;
   const subject = "Your Peak State Labs portal is ready";
 
   const text = `${greeting}
