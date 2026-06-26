@@ -124,6 +124,39 @@ export function generateCjcStackSchedule(opts: {
   return rows;
 }
 
+/**
+ * Single-vial CJC schedule: 10-week titration (no ON/OFF cycling).
+ *   Weeks 1-4: 0.30 mg per injection
+ *   Weeks 5-6: 0.40 mg per injection
+ *   Weeks 7-10: 0.50 mg per injection
+ * Each week is 5 consecutive days from startDate (Mon-Fri pattern, but
+ * shifted to whatever weekday startDate falls on). Used when CJC is run
+ * as a standalone single vial; POWER CUT uses generatePowerCutSchedule's
+ * own CJC arm with cycling.
+ */
+const SINGLE_CJC_WEEKLY_MG = [0.3, 0.3, 0.3, 0.3, 0.4, 0.4, 0.5, 0.5, 0.5, 0.5];
+
+export function generateSingleCjcSchedule(opts: { startDate: Date }): DoseRow[] {
+  const rows: DoseRow[] = [];
+  const week1Start = new Date(opts.startDate);
+  for (let w = 0; w < SINGLE_CJC_WEEKLY_MG.length; w++) {
+    const weekNum = w + 1;
+    const mg = SINGLE_CJC_WEEKLY_MG[w];
+    const weekStart = new Date(week1Start.getTime() + w * 7 * DAY);
+    for (let d = 0; d < 5; d++) {
+      const day = new Date(weekStart.getTime() + d * DAY);
+      rows.push({
+        peptide_name: "CJC-1295 + Ipamorelin",
+        dose_mg: mg,
+        scheduled_for: iso(day),
+        time_of_day: "evening",
+        notes: `Week ${weekNum} · fasted (90 min after meal, before next meal)`,
+      });
+    }
+  }
+  return rows;
+}
+
 /** Generate a simple single-peptide schedule. */
 export function generateSingleSchedule(opts: {
   peptide_name: string;

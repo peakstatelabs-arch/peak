@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getStackProtocol } from "@/lib/protocols";
 import {
   generatePowerCutSchedule,
-  generateCjcStackSchedule,
+  generateSingleCjcSchedule,
   generateSingleSchedule,
   type DoseRow,
 } from "@/lib/schedule";
@@ -163,8 +163,7 @@ export function ProtocolWizard({
   const [singlesRetaMode, setSinglesRetaMode] = useState<StartMode>("fresh");
   const [singlesRetaDay, setSinglesRetaDay] = useState<number>(1);
   const [singlesCurrentRetaDose, setSinglesCurrentRetaDose] = useState<number>(2);
-  // Single CJC inputs (titration + cycling, mirrors POWER CUT's CJC arm)
-  const [singlesCjcStacks, setSinglesCjcStacks] = useState<number>(1);
+  // Single CJC inputs (fixed 10-week titration, no stack count)
   const [singlesCjcMode, setSinglesCjcMode] = useState<StartMode>("fresh");
   const [singlesCjcWeek, setSinglesCjcWeek] = useState<number>(2);
   const [singlesCjcDose, setSinglesCjcDose] = useState<number>(0.3);
@@ -321,12 +320,9 @@ export function ProtocolWizard({
         : singlesStart;
       const startDateObj = new Date(effectiveStart + "T00:00:00");
 
-      // CJC drives the protocol length when it's selected (because it has
-      // titration cycles tied to stack count). Otherwise default to 12 weeks.
-      const cjcStackProtocol = selectedSingles.has("cjc")
-        ? getStackProtocol(singlesCjcStacks)
-        : null;
-      const protocolWeeks = cjcStackProtocol?.totalWeeks ?? 12;
+      // 12 weeks is the default for Reta/BPC/GHK; single CJC is a fixed
+      // 10-week titration handled below.
+      const protocolWeeks = 12;
       const endDate = new Date(startDateObj.getTime() + protocolWeeks * 7 * DAY_MS)
         .toISOString().slice(0, 10);
 
@@ -359,22 +355,19 @@ export function ProtocolWizard({
           end_date: endDate,
           active: true,
           protocol_type: `single_${slug}`,
-          stacks: slug === "cjc" ? singlesCjcStacks : null,
+          stacks: null,
           bpc_track: slug === "bpc" ? bpcVariant : null,
         });
 
-        if (slug === "cjc" && cjcStackProtocol) {
-          // CJC always uses the POWER CUT titration + cycling schedule.
+        if (slug === "cjc") {
+          // Single CJC always uses the 10-week titration (no cycling).
           const cjcStartObj = cjcAlreadyStarted
             ? new Date(
                 new Date(mostRecentWeekdayISO(singlesCjcDay) + "T00:00:00").getTime() -
                   (singlesCjcWeek - 1) * 7 * DAY_MS
               )
             : startDateObj;
-          let cjcRows = generateCjcStackSchedule({
-            protocol: cjcStackProtocol,
-            startDate: cjcStartObj,
-          });
+          let cjcRows = generateSingleCjcSchedule({ startDate: cjcStartObj });
           if (cjcAlreadyStarted) {
             // Override every CJC dose to the user's current dose. Locks
             // them at their stated value going forward — matches the Reta
@@ -876,37 +869,10 @@ export function ProtocolWizard({
         {selectedSingles.has("cjc") && (
           <div className="rounded-lg border border-border bg-bg-elev/40 p-4 space-y-3">
             <div>
-              <label className="label">CJC protocol length</label>
-              <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setSinglesCjcStacks(n)}
-                    className={
-                      "rounded-lg border px-3 py-2 text-sm " +
-                      (singlesCjcStacks === n
-                        ? "border-accent bg-accent/10 text-fg font-medium"
-                        : "border-border bg-bg-card text-fg-muted hover:text-fg")
-                    }
-                  >
-                    {n} stack{n > 1 ? "s" : ""}
-                    <span className="block text-[10px] text-fg-subtle mt-0.5">
-                      {n * 12} wk
-                    </span>
-                  </button>
-                ))}
-              </div>
-              <p className="text-xs text-fg-subtle mt-1">
-                Uses the POWER CUT CJC titration + ON/OFF cycles.
-              </p>
-            </div>
-
-            <div>
               <label className="label">Where are you starting from on CJC?</label>
               <div className="grid sm:grid-cols-2 gap-2">
                 {([
-                  { v: "fresh", t: "Starting fresh", s: "Begin at the protocol's week 1" },
+                  { v: "fresh", t: "Starting fresh", s: "10-week titration from week 1" },
                   { v: "already-started", t: "Already started", s: "Pick up at my current dose" },
                 ] as const).map((m) => (
                   <button
@@ -936,7 +902,7 @@ export function ProtocolWizard({
                     onChange={(e) => setSinglesCjcWeek(Number(e.target.value))}
                     className="input"
                   >
-                    {Array.from({ length: singlesCjcStacks * 12 - 1 }, (_, i) => i + 2).map((n) => (
+                    {Array.from({ length: 9 }, (_, i) => i + 2).map((n) => (
                       <option key={n} value={n}>Week {n}</option>
                     ))}
                   </select>
