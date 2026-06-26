@@ -58,12 +58,13 @@ export function DosePicker({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="input w-24 pr-7 text-right cursor-pointer relative"
+        className="input w-28 text-right cursor-pointer relative"
+        style={{ paddingRight: "2rem" }}
       >
         {formatMg(value)}
         <svg
           viewBox="0 0 24 24"
-          className="h-3.5 w-3.5 text-fg-muted absolute right-2 top-1/2 -translate-y-1/2"
+          className="h-4 w-4 text-fg-muted absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
