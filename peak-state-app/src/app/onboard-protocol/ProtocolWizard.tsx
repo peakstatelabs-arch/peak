@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getStackProtocol } from "@/lib/protocols";
 import {
   generatePowerCutSchedule,
+  generateCjcStackSchedule,
   generateSingleSchedule,
   type DoseRow,
 } from "@/lib/schedule";
@@ -55,6 +56,9 @@ const RETA_DOSE_OPTIONS: number[] = (() => {
   for (let v = 0.25; v <= 6 + 1e-9; v += 0.25) out.push(Math.round(v * 100) / 100);
   return out;
 })();
+
+// Discrete values that appear in the POWER CUT CJC titration schedule.
+const CJC_DOSE_OPTIONS: number[] = [0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.75];
 
 const TRACK_META: Record<Track, { label: string; frequency: string; blurb: string }> = {
   foundation: {
@@ -159,6 +163,12 @@ export function ProtocolWizard({
   const [singlesRetaMode, setSinglesRetaMode] = useState<StartMode>("fresh");
   const [singlesRetaDay, setSinglesRetaDay] = useState<number>(1);
   const [singlesCurrentRetaDose, setSinglesCurrentRetaDose] = useState<number>(2);
+  // Single CJC inputs (titration + cycling, mirrors POWER CUT's CJC arm)
+  const [singlesCjcStacks, setSinglesCjcStacks] = useState<number>(1);
+  const [singlesCjcMode, setSinglesCjcMode] = useState<StartMode>("fresh");
+  const [singlesCjcWeek, setSinglesCjcWeek] = useState<number>(2);
+  const [singlesCjcDose, setSinglesCjcDose] = useState<number>(0.3);
+  const [singlesCjcDay, setSinglesCjcDay] = useState<number>(1);
 
   function toggleSingle(slug: SingleSlug) {
     setSelectedSingles((s) => {
@@ -295,16 +305,30 @@ export function ProtocolWizard({
         .update({ timezone: tz, morning_time: morningTime, evening_time: eveningTime })
         .eq("id", user.id);
 
-      // If Reta is selected AND user says they're already started, the
-      // most-recent-occurrence of their Reta day-of-week anchors the
-      // schedule; otherwise we use the explicit start date the user picked.
       const retaAlreadyStarted =
         selectedSingles.has("reta") && singlesRetaMode === "already-started";
+      const cjcAlreadyStarted =
+        selectedSingles.has("cjc") && singlesCjcMode === "already-started";
+
+      // Pick the global anchor for the schedule. Priority:
+      //   1. If Reta is already-started → Reta day anchors everything.
+      //   2. Else if CJC is already-started → CJC day anchors everything.
+      //   3. Else use the explicit start date the user picked.
       const effectiveStart = retaAlreadyStarted
         ? mostRecentWeekdayISO(singlesRetaDay)
+        : cjcAlreadyStarted
+        ? mostRecentWeekdayISO(singlesCjcDay)
         : singlesStart;
       const startDateObj = new Date(effectiveStart + "T00:00:00");
-      const endDate = new Date(startDateObj.getTime() + 12 * 7 * DAY_MS).toISOString().slice(0, 10);
+
+      // CJC drives the protocol length when it's selected (because it has
+      // titration cycles tied to stack count). Otherwise default to 12 weeks.
+      const cjcStackProtocol = selectedSingles.has("cjc")
+        ? getStackProtocol(singlesCjcStacks)
+        : null;
+      const protocolWeeks = cjcStackProtocol?.totalWeeks ?? 12;
+      const endDate = new Date(startDateObj.getTime() + protocolWeeks * 7 * DAY_MS)
+        .toISOString().slice(0, 10);
 
       // Build protocol + dose inserts for every selected vial
       const protocolInserts: Record<string, unknown>[] = [];
@@ -317,9 +341,12 @@ export function ProtocolWizard({
             ? "thrice-weekly"
             : cfg.frequency;
 
-        // Reta dose can be overridden in "already started" mode.
         const doseMg =
-          slug === "reta" && retaAlreadyStarted ? singlesCurrentRetaDose : cfg.dose_mg;
+          slug === "reta" && retaAlreadyStarted
+            ? singlesCurrentRetaDose
+            : slug === "cjc" && cjcAlreadyStarted
+            ? singlesCjcDose
+            : cfg.dose_mg;
 
         protocolInserts.push({
           user_id: user.id,
@@ -332,26 +359,48 @@ export function ProtocolWizard({
           end_date: endDate,
           active: true,
           protocol_type: `single_${slug}`,
-          stacks: null,
+          stacks: slug === "cjc" ? singlesCjcStacks : null,
           bpc_track: slug === "bpc" ? bpcVariant : null,
         });
 
-        const rows = generateSingleSchedule({
-          peptide_name: cfg.peptide_name,
-          dose_mg: doseMg,
-          frequency: freq,
-          time_of_day: cfg.time_of_day,
-          startDate: startDateObj,
-          weeks: 12,
-        });
-        doseRows.push(...rows);
+        if (slug === "cjc" && cjcStackProtocol) {
+          // CJC always uses the POWER CUT titration + cycling schedule.
+          const cjcStartObj = cjcAlreadyStarted
+            ? new Date(
+                new Date(mostRecentWeekdayISO(singlesCjcDay) + "T00:00:00").getTime() -
+                  (singlesCjcWeek - 1) * 7 * DAY_MS
+              )
+            : startDateObj;
+          let cjcRows = generateCjcStackSchedule({
+            protocol: cjcStackProtocol,
+            startDate: cjcStartObj,
+          });
+          if (cjcAlreadyStarted) {
+            // Override every CJC dose to the user's current dose. Locks
+            // them at their stated value going forward — matches the Reta
+            // "already started" override behavior.
+            cjcRows = cjcRows.map((r) => ({ ...r, dose_mg: singlesCjcDose }));
+          }
+          doseRows.push(...cjcRows);
+        } else {
+          const rows = generateSingleSchedule({
+            peptide_name: cfg.peptide_name,
+            dose_mg: doseMg,
+            frequency: freq,
+            time_of_day: cfg.time_of_day,
+            startDate: startDateObj,
+            weeks: protocolWeeks,
+          });
+          doseRows.push(...rows);
+        }
       }
 
-      // In "already started" mode the back-dated anchor produces past
-      // doses; prune them so the calendar starts clean from today.
-      const finalDoseRows = retaAlreadyStarted
-        ? doseRows.filter((r) => r.scheduled_for >= todayISO())
-        : doseRows;
+      // Any "already started" toggle back-dates the anchor and produces
+      // past doses. Prune them so the calendar starts clean from today.
+      const finalDoseRows =
+        retaAlreadyStarted || cjcAlreadyStarted
+          ? doseRows.filter((r) => r.scheduled_for >= todayISO())
+          : doseRows;
 
       const { error: pErr } = await supabase.from("peptide_protocols").insert(protocolInserts);
       if (pErr) { setError("Couldn't save protocols: " + pErr.message); setBusy(false); return; }
@@ -617,6 +666,7 @@ export function ProtocolWizard({
                   value={pcCurrentRetaDose}
                   options={RETA_DOSE_OPTIONS}
                   onChange={setPcCurrentRetaDose}
+                  align="left"
                 />
                 <p className="text-xs text-fg-subtle mt-1">
                   All future Reta doses will start at this. You can fine-tune any week from the
@@ -791,6 +841,7 @@ export function ProtocolWizard({
                     value={singlesCurrentRetaDose}
                     options={RETA_DOSE_OPTIONS}
                     onChange={setSinglesCurrentRetaDose}
+                    align="left"
                   />
                 </div>
                 <div>
@@ -822,7 +873,119 @@ export function ProtocolWizard({
           </div>
         )}
 
-        {!(selectedSingles.has("reta") && singlesRetaMode === "already-started") && (
+        {selectedSingles.has("cjc") && (
+          <div className="rounded-lg border border-border bg-bg-elev/40 p-4 space-y-3">
+            <div>
+              <label className="label">CJC protocol length</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 3].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setSinglesCjcStacks(n)}
+                    className={
+                      "rounded-lg border px-3 py-2 text-sm " +
+                      (singlesCjcStacks === n
+                        ? "border-accent bg-accent/10 text-fg font-medium"
+                        : "border-border bg-bg-card text-fg-muted hover:text-fg")
+                    }
+                  >
+                    {n} stack{n > 1 ? "s" : ""}
+                    <span className="block text-[10px] text-fg-subtle mt-0.5">
+                      {n * 12} wk
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-fg-subtle mt-1">
+                Uses the POWER CUT CJC titration + ON/OFF cycles.
+              </p>
+            </div>
+
+            <div>
+              <label className="label">Where are you starting from on CJC?</label>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {([
+                  { v: "fresh", t: "Starting fresh", s: "Begin at the protocol's week 1" },
+                  { v: "already-started", t: "Already started", s: "Pick up at my current dose" },
+                ] as const).map((m) => (
+                  <button
+                    key={m.v}
+                    type="button"
+                    onClick={() => setSinglesCjcMode(m.v)}
+                    className={
+                      "rounded-lg border px-3 py-3 text-left text-sm " +
+                      (singlesCjcMode === m.v
+                        ? "border-accent bg-accent/10 text-fg"
+                        : "border-border bg-bg-card text-fg-muted hover:text-fg")
+                    }
+                  >
+                    <div className="font-medium">{m.t}</div>
+                    <div className="text-xs text-fg-subtle mt-0.5">{m.s}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {singlesCjcMode === "already-started" && (
+              <div className="space-y-3 pt-2">
+                <div>
+                  <label className="label">What week are you on?</label>
+                  <select
+                    value={singlesCjcWeek}
+                    onChange={(e) => setSinglesCjcWeek(Number(e.target.value))}
+                    className="input"
+                  >
+                    {Array.from({ length: singlesCjcStacks * 12 - 1 }, (_, i) => i + 2).map((n) => (
+                      <option key={n} value={n}>Week {n}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="label">Your current CJC dose (per injection)</label>
+                  <DosePicker
+                    value={singlesCjcDose}
+                    options={CJC_DOSE_OPTIONS}
+                    onChange={setSinglesCjcDose}
+                    align="left"
+                  />
+                </div>
+
+                <div>
+                  <label className="label">What day do you start CJC each week?</label>
+                  <div className="grid grid-cols-7 gap-1">
+                    {WEEKDAY_LABELS.map((label, i) => {
+                      const day = i + 1;
+                      const active = singlesCjcDay === day;
+                      return (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => setSinglesCjcDay(day)}
+                          className={
+                            "rounded-md py-2 text-xs font-medium " +
+                            (active
+                              ? "bg-accent text-accent-fg"
+                              : "bg-bg-card text-fg-muted hover:text-fg")
+                          }
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-fg-subtle mt-1">
+                    CJC runs 5 days from this day each week (Mon-Fri pattern, but shifted).
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!(selectedSingles.has("reta") && singlesRetaMode === "already-started") &&
+         !(selectedSingles.has("cjc") && singlesCjcMode === "already-started") && (
           <div>
             <label className="label">Start date</label>
             <DatePicker

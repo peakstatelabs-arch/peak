@@ -89,6 +89,41 @@ export function generatePowerCutSchedule(opts: {
   return rows;
 }
 
+/**
+ * Generate JUST the CJC slice of a POWER CUT stack protocol — useful when
+ * the user is doing CJC as a single vial but wants the per-week titration
+ * + ON/OFF cycles from POWER CUT. Mirrors generatePowerCutSchedule's CJC
+ * arm (5 days on / 2 off, evening, anchored to startDate's weekday).
+ */
+export function generateCjcStackSchedule(opts: {
+  protocol: StackProtocol;
+  startDate: Date;
+}): DoseRow[] {
+  const { protocol, startDate } = opts;
+  const rows: DoseRow[] = [];
+  const week1Start = new Date(startDate);
+
+  for (let w = 0; w < protocol.totalWeeks; w++) {
+    const weekNum = w + 1;
+    const weekStart = new Date(week1Start.getTime() + w * 7 * DAY);
+    const cjcEntry = protocol.cjc.schedule[w];
+    if (!cjcEntry || cjcEntry.isOff) continue;
+    const mg = parseMg(cjcEntry.dose);
+    if (mg <= 0) continue;
+    for (let d = 0; d < 5; d++) {
+      const day = new Date(weekStart.getTime() + d * DAY);
+      rows.push({
+        peptide_name: "CJC-1295 + Ipamorelin",
+        dose_mg: mg,
+        scheduled_for: iso(day),
+        time_of_day: "evening",
+        notes: `Week ${weekNum} · fasted (90 min after meal, before next meal)`,
+      });
+    }
+  }
+  return rows;
+}
+
 /** Generate a simple single-peptide schedule. */
 export function generateSingleSchedule(opts: {
   peptide_name: string;

@@ -8,6 +8,16 @@ type Props = {
   onChange: (next: number) => void;
   unit?: string;
   className?: string;
+  /**
+   * Which side of the trigger the popover anchors to.
+   * "right" (default): popover's right edge aligns to the trigger's right edge
+   *   — popover extends LEFT from there. Good when the trigger sits near the
+   *   right edge of its container (like the Reta schedule editor's rows).
+   * "left": popover's left edge aligns to the trigger's left edge — popover
+   *   extends RIGHT. Good when the trigger sits near the left edge of a form
+   *   (like the onboarding wizard's dose inputs).
+   */
+  align?: "left" | "right";
 };
 
 function formatMg(n: number): string {
@@ -20,6 +30,7 @@ export function DosePicker({
   onChange,
   unit = "mg",
   className,
+  align = "right",
 }: Props) {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -77,7 +88,12 @@ export function DosePicker({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-2 right-0 w-32 rounded-xl border border-border bg-bg-card shadow-2xl overflow-hidden">
+        <div
+          className={
+            "absolute z-50 mt-2 w-32 rounded-xl border border-border bg-bg-card shadow-2xl overflow-hidden " +
+            (align === "left" ? "left-0" : "right-0")
+          }
+        >
           <ul
             ref={listRef}
             className="max-h-64 overflow-y-auto py-1 overscroll-contain"
