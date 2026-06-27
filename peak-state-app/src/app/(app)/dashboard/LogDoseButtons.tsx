@@ -9,17 +9,35 @@ type Dose = { id: string; taken: boolean; label: string };
 export function LogDoseButtons({ doses }: { doses: Dose[] }) {
   const router = useRouter();
   const supabase = createClient();
-  const [busy, setBusy] = useState<string | null>(null);
+  // Optimistically-marked IDs. Hide them from the pending list instantly
+  // so the button disappears the moment the user taps, even before the
+  // DB write + router.refresh round-trip completes. Prevents the
+  // "tap twice because nothing happened" perception on mobile.
+  const [justMarked, setJustMarked] = useState<Set<string>>(new Set());
 
-  const pending = doses.filter((d) => !d.taken);
+  const pending = doses.filter((d) => !d.taken && !justMarked.has(d.id));
 
   async function markTaken(id: string) {
-    setBusy(id);
-    await supabase
+    // Optimistic update FIRST.
+    setJustMarked((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    // Then the actual write + refresh.
+    const { error } = await supabase
       .from("peptide_doses")
       .update({ taken: true, taken_at: new Date().toISOString() })
       .eq("id", id);
-    setBusy(null);
+    if (error) {
+      // Roll back so they can retry.
+      setJustMarked((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      return;
+    }
     router.refresh();
   }
 
@@ -31,28 +49,15 @@ export function LogDoseButtons({ doses }: { doses: Dose[] }) {
     );
   }
 
-  if (pending.length === 1) {
-    return (
-      <button
-        onClick={() => markTaken(pending[0].id)}
-        disabled={busy !== null}
-        className="btn-primary w-full text-base py-4"
-      >
-        {busy ? "Logging…" : "✓ Mark as taken"}
-      </button>
-    );
-  }
-
   return (
     <div className="space-y-2">
       {pending.map((d) => (
         <button
           key={d.id}
           onClick={() => markTaken(d.id)}
-          disabled={busy !== null}
           className="btn-primary w-full"
         >
-          {busy === d.id ? "Logging…" : `✓ Mark ${d.label} taken`}
+          ✓ Mark {d.label} taken
         </button>
       ))}
     </div>
