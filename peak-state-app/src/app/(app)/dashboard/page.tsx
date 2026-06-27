@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/PageHeader";
 import { CardSkeleton } from "@/components/Skeleton";
 import { todayISO } from "@/lib/utils";
-import { LogDoseButtons } from "./LogDoseButtons";
+import { TodayDoseCard } from "./TodayDoseCard";
 
 export const metadata = { title: "Today — Peak State Labs" };
 export const dynamic = "force-dynamic";
@@ -84,38 +84,7 @@ async function TodayHero() {
 
   // Has a protocol — today's doses (or next)
   if (doses && doses.length > 0) {
-    const allDone = doses.every((d) => d.taken);
-    return (
-      <section className="card">
-        <div className="text-xs uppercase tracking-wide text-fg-subtle mb-1">
-          {allDone ? "All done today" : "Today"}
-        </div>
-        <h2 className="font-display text-xl font-semibold">
-          {allDone
-            ? "Nicely done."
-            : doses.length === 1
-            ? `${doses[0].peptide_name} · ${doses[0].dose_mg} mg`
-            : `${doses.length} doses scheduled`}
-        </h2>
-        <ul className="mt-4 space-y-2">
-          {doses.map((d) => (
-            <li key={d.id} className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className={"font-medium " + (d.taken ? "line-through text-fg-subtle" : "")}>
-                  {d.peptide_name} · {d.dose_mg} mg
-                </div>
-                <div className="text-xs text-fg-subtle">
-                  {d.time_of_day === "morning" ? "Morning" : d.time_of_day === "evening" ? "Evening" : (d.time_of_day ?? "")}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <div className="mt-5">
-          <LogDoseButtons doses={doses.map((d) => ({ id: d.id, taken: d.taken, label: d.peptide_name }))} />
-        </div>
-      </section>
-    );
+    return <TodayDoseCard doses={doses} />;
   }
 
   // Has a protocol, nothing today — show next
