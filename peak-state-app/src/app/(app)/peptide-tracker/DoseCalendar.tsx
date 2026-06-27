@@ -131,8 +131,11 @@ export function DoseCalendar({
   return (
     <section className="card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold">Calendar</h2>
-        <div className="flex items-center gap-2">
+        <div>
+          <h2 className="font-semibold">Calendar</h2>
+          <p className="text-xs text-fg-subtle mt-0.5 lg:hidden">Next 7 days</p>
+        </div>
+        <div className="hidden lg:flex items-center gap-2">
           <button onClick={prevMonth} className="btn-ghost text-sm px-2 py-1" aria-label="Previous month">←</button>
           <span className="text-sm font-medium w-32 text-center">{monthLabel}</span>
           <button onClick={nextMonth} className="btn-ghost text-sm px-2 py-1" aria-label="Next month">→</button>
@@ -200,9 +203,8 @@ export function DoseCalendar({
         </div>
       </div>
 
-      {/* Mobile: vertical list scoped to the visible month, days with doses only */}
+      {/* Mobile: vertical 7-day strip starting from today (rest days included) */}
       <MobileDayList
-        cursor={cursor}
         byDay={byDay}
         profile={profile}
         selected={selected}
@@ -382,49 +384,39 @@ function Legend() {
 }
 
 function MobileDayList({
-  cursor,
   byDay,
   profile,
   selected,
   onSelect,
 }: {
-  cursor: Date;
   byDay: Map<string, Dose[]>;
   profile: ProfilePrefs;
   selected: string | null;
   onSelect: (iso: string) => void;
 }) {
+  // Today + next 6 days = 7-day forward strip. Mobile users almost never
+  // need to scroll past this week — the full calendar still exists on
+  // desktop for week-by-week planning.
   const today = todayISO();
-  // Pull all days IN the cursor's month that actually have doses.
-  const monthDays: { iso: string; date: Date; doses: Dose[] }[] = [];
-  const last = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0);
-  for (let d = 1; d <= last.getDate(); d++) {
-    const date = new Date(cursor.getFullYear(), cursor.getMonth(), d);
+  const start = new Date(today + "T00:00:00");
+  const days: { iso: string; date: Date; doses: Dose[] }[] = [];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
     const iso = date.toISOString().slice(0, 10);
-    const doses = byDay.get(iso);
-    if (doses && doses.length > 0) {
-      monthDays.push({ iso, date, doses });
-    }
-  }
-
-  if (monthDays.length === 0) {
-    return (
-      <div className="lg:hidden text-center py-8 text-sm text-fg-muted">
-        No doses scheduled this month.
-      </div>
-    );
+    days.push({ iso, date, doses: byDay.get(iso) ?? [] });
   }
 
   return (
     <ul className="lg:hidden space-y-2">
-      {monthDays.map(({ iso, date, doses }) => {
+      {days.map(({ iso, date, doses }) => {
         const morning = doses.filter((d) => d.time_of_day === "morning");
         const evening = doses.filter((d) => d.time_of_day !== "morning");
         const isToday = iso === today;
         const isSelected = iso === selected;
         const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
         const dayNum = date.getDate();
-        const allDone = doses.every((d) => d.taken);
+        const isRest = doses.length === 0;
+        const allDone = !isRest && doses.every((d) => d.taken);
         return (
           <li key={iso}>
             <button
@@ -435,7 +427,8 @@ function MobileDayList({
                   ? "border-accent bg-accent/10"
                   : isToday
                   ? "border-accent/40 bg-bg-elev"
-                  : "border-border bg-bg-elev hover:border-accent/30"
+                  : "border-border bg-bg-elev hover:border-accent/30",
+                isRest && !isSelected && "opacity-70"
               )}
             >
               <div className="flex flex-col items-center justify-center min-w-[42px]">
@@ -447,21 +440,27 @@ function MobileDayList({
                 </span>
               </div>
               <div className="flex-1 min-w-0 space-y-1.5">
-                {morning.length > 0 && (
-                  <MobileDayRow
-                    label="AM"
-                    time={compactTime(profile.morning_time)}
-                    doses={morning}
-                    tone="warm"
-                  />
-                )}
-                {evening.length > 0 && (
-                  <MobileDayRow
-                    label="PM"
-                    time={compactTime(profile.evening_time)}
-                    doses={evening}
-                    tone="cool"
-                  />
+                {isRest ? (
+                  <div className="text-sm text-fg-subtle py-1">Rest day</div>
+                ) : (
+                  <>
+                    {morning.length > 0 && (
+                      <MobileDayRow
+                        label="AM"
+                        time={compactTime(profile.morning_time)}
+                        doses={morning}
+                        tone="warm"
+                      />
+                    )}
+                    {evening.length > 0 && (
+                      <MobileDayRow
+                        label="PM"
+                        time={compactTime(profile.evening_time)}
+                        doses={evening}
+                        tone="cool"
+                      />
+                    )}
+                  </>
                 )}
               </div>
               {allDone && (

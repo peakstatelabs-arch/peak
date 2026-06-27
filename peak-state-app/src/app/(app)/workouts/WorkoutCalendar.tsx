@@ -37,62 +37,75 @@ export function WorkoutCalendar({
   return (
     <section className="card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold">Calendar</h2>
-        <div className="flex items-center gap-2">
+        <div>
+          <h2 className="font-semibold">Calendar</h2>
+          <p className="text-xs text-fg-subtle mt-0.5 lg:hidden">Next 7 days</p>
+        </div>
+        <div className="hidden lg:flex items-center gap-2">
           <button onClick={() => shift(cursor, setCursor, -1)} className="btn-ghost text-sm px-2 py-1">←</button>
           <span className="text-sm font-medium w-32 text-center">{monthLabel}</span>
           <button onClick={() => shift(cursor, setCursor, 1)} className="btn-ghost text-sm px-2 py-1">→</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wide text-fg-subtle mb-1">
-        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-          <div key={d} className="text-center py-1">{d}</div>
-        ))}
+      {/* Desktop: month grid */}
+      <div className="hidden lg:block">
+        <div className="grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wide text-fg-subtle mb-1">
+          {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+            <div key={d} className="text-center py-1">{d}</div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1">
+          {grid.map((cell, i) => {
+            if (!cell) return <div key={i} className="min-h-[60px]" />;
+            const iso = isoDate(cell);
+            const day = byDay.get(iso) ?? [];
+            const isToday = iso === isoDate(new Date());
+            const isSelected = iso === selected;
+            const inMonth = cell.getMonth() === cursor.getMonth();
+            const hasWorkout = day.length > 0;
+            const allDone = hasWorkout && day.every((s) => s.completed);
+            return (
+              <button
+                key={i}
+                onClick={() => setSelected(iso)}
+                className={cn(
+                  "min-h-[60px] sm:min-h-[78px] rounded-md border text-xs flex flex-col items-stretch p-1 transition text-left overflow-hidden",
+                  isSelected ? "border-accent bg-accent/10" : isToday ? "border-accent/40 bg-bg-elev" : "border-border bg-bg-elev hover:border-accent/30",
+                  !inMonth && "opacity-40"
+                )}
+              >
+                <span className={cn("font-medium text-[11px] leading-none mb-1 px-0.5", isToday && "text-accent")}>
+                  {cell.getDate()}
+                </span>
+                {hasWorkout && (
+                  <div className="flex flex-col gap-0.5">
+                    {day.slice(0, 2).map((s) => (
+                      <span
+                        key={s.id}
+                        className={cn(
+                          "text-[9px] sm:text-[10px] leading-tight font-semibold truncate px-0.5 rounded",
+                          allDone || s.completed ? "text-accent line-through opacity-70" : "text-fg"
+                        )}
+                      >
+                        {s.day_label ?? s.name}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1">
-        {grid.map((cell, i) => {
-          if (!cell) return <div key={i} className="min-h-[60px]" />;
-          const iso = isoDate(cell);
-          const day = byDay.get(iso) ?? [];
-          const isToday = iso === isoDate(new Date());
-          const isSelected = iso === selected;
-          const inMonth = cell.getMonth() === cursor.getMonth();
-          const hasWorkout = day.length > 0;
-          const allDone = hasWorkout && day.every((s) => s.completed);
-          return (
-            <button
-              key={i}
-              onClick={() => setSelected(iso)}
-              className={cn(
-                "min-h-[60px] sm:min-h-[78px] rounded-md border text-xs flex flex-col items-stretch p-1 transition text-left overflow-hidden",
-                isSelected ? "border-accent bg-accent/10" : isToday ? "border-accent/40 bg-bg-elev" : "border-border bg-bg-elev hover:border-accent/30",
-                !inMonth && "opacity-40"
-              )}
-            >
-              <span className={cn("font-medium text-[11px] leading-none mb-1 px-0.5", isToday && "text-accent")}>
-                {cell.getDate()}
-              </span>
-              {hasWorkout && (
-                <div className="flex flex-col gap-0.5">
-                  {day.slice(0, 2).map((s) => (
-                    <span
-                      key={s.id}
-                      className={cn(
-                        "text-[9px] sm:text-[10px] leading-tight font-semibold truncate px-0.5 rounded",
-                        allDone || s.completed ? "text-accent line-through opacity-70" : "text-fg"
-                      )}
-                    >
-                      {s.day_label ?? s.name}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </button>
-          );
-        })}
-      </div>
+      {/* Mobile: vertical 7-day strip starting from today (rest days included) */}
+      <MobileWorkoutList
+        byDay={byDay}
+        selected={selected}
+        onSelect={setSelected}
+      />
 
       {selected && (
         <div className="mt-5 border-t border-border pt-4">
@@ -132,6 +145,87 @@ export function WorkoutCalendar({
         </div>
       )}
     </section>
+  );
+}
+
+function MobileWorkoutList({
+  byDay,
+  selected,
+  onSelect,
+}: {
+  byDay: Map<string, Session[]>;
+  selected: string | null;
+  onSelect: (iso: string) => void;
+}) {
+  const today = isoDate(new Date());
+  const start = new Date(today + "T00:00:00");
+  const days: { iso: string; date: Date; sessions: Session[] }[] = [];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    const iso = isoDate(date);
+    days.push({ iso, date, sessions: byDay.get(iso) ?? [] });
+  }
+
+  return (
+    <ul className="lg:hidden space-y-2">
+      {days.map(({ iso, date, sessions }) => {
+        const isToday = iso === today;
+        const isSelected = iso === selected;
+        const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+        const dayNum = date.getDate();
+        const isRest = sessions.length === 0;
+        const allDone = !isRest && sessions.every((s) => s.completed);
+        return (
+          <li key={iso}>
+            <button
+              onClick={() => onSelect(iso)}
+              className={cn(
+                "w-full flex items-stretch gap-3 rounded-lg border p-3 text-left transition",
+                isSelected
+                  ? "border-accent bg-accent/10"
+                  : isToday
+                  ? "border-accent/40 bg-bg-elev"
+                  : "border-border bg-bg-elev hover:border-accent/30",
+                isRest && !isSelected && "opacity-70"
+              )}
+            >
+              <div className="flex flex-col items-center justify-center min-w-[42px]">
+                <span className={cn("text-[10px] uppercase tracking-wider", isToday ? "text-accent" : "text-fg-subtle")}>
+                  {isToday ? "Today" : weekday}
+                </span>
+                <span className={cn("font-display text-xl font-semibold leading-none mt-0.5", isToday && "text-accent")}>
+                  {dayNum}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0 space-y-1">
+                {isRest ? (
+                  <div className="text-sm text-fg-subtle py-1">Rest day</div>
+                ) : (
+                  sessions.map((s) => (
+                    <div key={s.id} className="min-w-0">
+                      <div
+                        className={cn(
+                          "text-sm font-medium truncate",
+                          s.completed ? "text-accent line-through opacity-70" : "text-fg"
+                        )}
+                      >
+                        {s.day_label ?? s.name}
+                      </div>
+                      {s.focus && (
+                        <div className="text-xs text-fg-subtle truncate">{s.focus}</div>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+              {allDone && (
+                <span className="self-center text-xs text-accent font-semibold whitespace-nowrap">✓</span>
+              )}
+            </button>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
