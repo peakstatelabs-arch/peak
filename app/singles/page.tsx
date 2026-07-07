@@ -12,6 +12,21 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600;
 
+// Payment processor outage on all single-vial checkouts. When true, the
+// PayPal add-to-cart / view-cart buttons are hidden and swapped for an
+// email-to-reserve CTA, and a top-of-page notice explains what's going on.
+// Flip to false once the payment processor is back online.
+const CHECKOUT_PAUSED = true;
+const CHECKOUT_PAUSED_EMAIL = "peakstatelabs@gmail.com";
+
+function reserveMailtoHref(name: string, dose: string): string {
+  const subject = `Reserve ${name} ${dose}`;
+  const body =
+    `Hi Peak State Labs — I'd like to reserve a vial of ${name} ${dose}. ` +
+    `Please let me know when checkout is back online so I can complete my order.\n\nThanks!`;
+  return `mailto:${CHECKOUT_PAUSED_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 const STOCK_EPOCH_MS = Date.UTC(2026, 4, 1);
 
 function currentStock(
@@ -183,12 +198,52 @@ export default function SinglesCatalog() {
             >
               ← Back to POWER CUT™
             </a>
-            <div className="paypal-cart-slot">
-              <paypal-cart-button data-id="pp-view-cart-header"></paypal-cart-button>
-            </div>
+            {!CHECKOUT_PAUSED && (
+              <div className="paypal-cart-slot">
+                <paypal-cart-button data-id="pp-view-cart-header"></paypal-cart-button>
+              </div>
+            )}
           </div>
         </Container>
       </header>
+
+      {CHECKOUT_PAUSED && (
+        <div className="bg-amber-50 border-b border-amber-200 text-amber-900">
+          <Container className="py-3 sm:py-3.5">
+            <div className="flex items-start gap-3">
+              <svg
+                className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+                />
+              </svg>
+              <p className="text-sm sm:text-[15px] leading-relaxed">
+                <span className="font-bold">
+                  Heads up — single-vial checkout is temporarily paused
+                  while we resolve an issue with our payment processor.
+                </span>{" "}
+                We expect it back online later today. To reserve a vial in
+                the meantime, email us at{" "}
+                <a
+                  href={`mailto:${CHECKOUT_PAUSED_EMAIL}`}
+                  className="font-bold underline decoration-amber-500/60 underline-offset-2 hover:decoration-amber-700"
+                >
+                  {CHECKOUT_PAUSED_EMAIL}
+                </a>{" "}
+                and we'll hold one for you.
+              </p>
+            </div>
+          </Container>
+        </div>
+      )}
 
       <main>
         {/* Hero */}
@@ -311,7 +366,28 @@ export default function SinglesCatalog() {
                           </p>
                         </div>
                       </div>
-                      {product.cartId ? (
+                      {CHECKOUT_PAUSED ? (
+                        <a
+                          href={reserveMailtoHref(product.name, product.dose)}
+                          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-semibold py-3.5 px-6 hover:bg-[var(--primary)]/90 transition-colors"
+                        >
+                          <svg
+                            className="w-5 h-5 flex-shrink-0"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            aria-hidden="true"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+                            />
+                          </svg>
+                          Email Us To Reserve
+                        </a>
+                      ) : product.cartId ? (
                         <div className="paypal-add-to-cart-host">
                           <paypal-add-to-cart-button
                             data-id={product.cartId}
@@ -374,9 +450,11 @@ export default function SinglesCatalog() {
             </div>
 
             <div className="mt-10 flex flex-col items-center gap-4">
-              <div className="paypal-cart-slot paypal-cart-slot-inline">
-                <paypal-cart-button data-id="pp-view-cart-floating"></paypal-cart-button>
-              </div>
+              {!CHECKOUT_PAUSED && (
+                <div className="paypal-cart-slot paypal-cart-slot-inline">
+                  <paypal-cart-button data-id="pp-view-cart-floating"></paypal-cart-button>
+                </div>
+              )}
               <p className="text-center text-sm text-[var(--primary)]/50">
                 For laboratory research only. Not for human consumption.
               </p>
