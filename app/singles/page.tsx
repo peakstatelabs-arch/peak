@@ -112,7 +112,11 @@ const products: Product[] = [
     startStock: 9,
     stockStep: 2,
     stockMinimum: 3,
-    stockAnchorMs: Date.UTC(2026, 6, 2),
+    // Anchored 2 days ahead of Reta/CJC so BPC's cycle is phase-shifted
+    // out of alignment with CJC — otherwise both products land on the
+    // same value (e.g. both showing 7) on ~half of days, since BPC's
+    // {9,7,5,3} value set is a subset of CJC's {17..3}.
+    stockAnchorMs: Date.UTC(2026, 6, 4),
     preorder: false,
   },
   {
