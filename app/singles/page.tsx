@@ -17,7 +17,7 @@ export const revalidate = 3600;
 // email-to-reserve CTA, and a top-of-page notice explains what's going on.
 // Flip to false once the payment processor is back online.
 const CHECKOUT_PAUSED = true;
-const CHECKOUT_PAUSED_EMAIL = "peakstatelabs@gmail.com";
+const CHECKOUT_PAUSED_EMAIL = "drew@peakstate.shop";
 
 function reserveMailtoHref(name: string, dose: string): string {
   const subject = `Reserve ${name} ${dose}`;
