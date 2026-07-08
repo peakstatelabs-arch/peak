@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       shipping_address_collection: { allowed_countries: ["US"] },
       phone_number_collection: { enabled: true },
       billing_address_collection: "auto",
-      success_url: `${origin}/thankyou?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/singles/thankyou?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/singles?checkout=cancelled`,
       automatic_tax: { enabled: false },
     });
