@@ -91,12 +91,11 @@ export default function Page() {
       <header className="site-header">
         <div className="container site-header__inner">
           <a href="#top" className="brand">
-            <img src="/logo.png" alt="Peak State Labs logo" />
-            <span>Peak State Labs</span>
+            <img src="/logo.png" alt="Peak State Skincare logo" />
+            <span>Peak State Skincare</span>
           </a>
           <nav className="header-nav">
             <a href="#products">Shop</a>
-            <a href="#faq">FAQ</a>
           </nav>
         </div>
       </header>
@@ -155,8 +154,8 @@ export default function Page() {
       <footer className="site-footer">
         <div className="container site-footer__inner">
           <div className="site-footer__brand">
-            <img src="/logo.png" alt="Peak State Labs logo" />
-            <span>Peak State Labs</span>
+            <img src="/logo.png" alt="Peak State Skincare logo" />
+            <span>Peak State Skincare</span>
           </div>
           <div className="site-footer__legal">
             <p>
@@ -166,8 +165,8 @@ export default function Page() {
               person to person.
             </p>
             <p>
-              &copy; {new Date().getFullYear()} Peak State Labs. All rights
-              reserved.
+              &copy; {new Date().getFullYear()} Peak State Skincare. All
+              rights reserved.
             </p>
           </div>
         </div>

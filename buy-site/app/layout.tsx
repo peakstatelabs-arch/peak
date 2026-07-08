@@ -8,9 +8,9 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Peak State Labs — Skincare",
+  title: "Peak State Skincare",
   description:
-    "The Engine, The Architect, The Shield, and The Restorer — Peak State Labs' skincare line for rejuvenation, scar healing, acne protection, and hair, nail, and collagen support.",
+    "The Engine, The Architect, The Shield, and The Restorer — Peak State Skincare's line for rejuvenation, scar healing, acne protection, and hair, nail, and collagen support.",
   icons: {
     icon: "/logo.png",
     apple: "/logo.png",
