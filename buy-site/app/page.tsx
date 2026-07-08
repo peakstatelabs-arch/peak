@@ -1,3 +1,6 @@
+import { SiteHeader } from "@/app/components/SiteHeader";
+import { SiteFooter } from "@/app/components/SiteFooter";
+
 type Product = {
   id: string;
   name: string;
@@ -44,17 +47,7 @@ const products: Product[] = [
 export default function Page() {
   return (
     <div>
-      <header className="site-header">
-        <div className="container site-header__inner">
-          <a href="#top" className="brand">
-            <img src="/logo.png" alt="Peak State Skincare logo" />
-            <span>Peak State Skincare</span>
-          </a>
-          <nav className="header-nav">
-            <a href="#products">Shop</a>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main id="top">
         <section className="hero">
@@ -106,26 +99,7 @@ export default function Page() {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="container site-footer__inner">
-          <div className="site-footer__brand">
-            <img src="/logo.png" alt="Peak State Skincare logo" />
-            <span>Peak State Skincare</span>
-          </div>
-          <div className="site-footer__legal">
-            <p>
-              These statements have not been evaluated by the Food and Drug
-              Administration. These products are not intended to diagnose,
-              treat, cure, or prevent any disease. Results may vary from
-              person to person.
-            </p>
-            <p>
-              &copy; {new Date().getFullYear()} Peak State Skincare. All
-              rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
