@@ -255,32 +255,9 @@ a {
   transform: translateY(-2px);
 }
 
-.product-card__image {
-  position: relative;
-  aspect-ratio: 1 / 1;
-  border-radius: 1.25rem;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: linear-gradient(
-    135deg,
-    var(--muted) 0%,
-    var(--muted-dark) 55%,
-    var(--accent-light) 100%
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.product-card__image svg {
-  width: 3.25rem;
-  height: 3.25rem;
-  color: rgba(21, 80, 144, 0.35);
-}
-
 .product-card__tag {
   align-self: flex-start;
-  margin-top: 1.25rem;
+  margin-top: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
