@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PolicyPage } from "@/app/components/PolicyPage";
 
 export const metadata: Metadata = {
@@ -48,8 +49,8 @@ export default function TermsPage() {
       <h2>Shipping &amp; Returns</h2>
       <p>
         Orders are subject to our{" "}
-        <a href="/shipping">Shipping Policy</a> and{" "}
-        <a href="/returns">Return Policy</a>.
+        <Link href="/shipping">Shipping Policy</Link> and{" "}
+        <Link href="/returns">Return Policy</Link>.
       </p>
 
       <h2>Intellectual Property</h2>

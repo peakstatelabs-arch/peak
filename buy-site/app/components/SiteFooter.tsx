@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const CONTACT_EMAIL = "paigespierce@gmail.com";
 
 export function SiteFooter() {
@@ -10,10 +12,10 @@ export function SiteFooter() {
         </div>
 
         <nav className="site-footer__nav">
-          <a href="/shipping">Shipping Policy</a>
-          <a href="/returns">Return Policy</a>
-          <a href="/terms">Terms of Service</a>
-          <a href="/privacy">Privacy Policy</a>
+          <Link href="/shipping">Shipping Policy</Link>
+          <Link href="/returns">Return Policy</Link>
+          <Link href="/terms">Terms of Service</Link>
+          <Link href="/privacy">Privacy Policy</Link>
           <a href={`mailto:${CONTACT_EMAIL}`}>Contact</a>
         </nav>
 
