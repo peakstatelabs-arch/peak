@@ -280,10 +280,6 @@ export default async function SinglesThankYouPage({
                     body: "Your vials are pulled, packed, and dispatched with tracking. You'll receive a shipping notification the moment they leave the lab.",
                   },
                   {
-                    title: "Batch Documentation Follows.",
-                    body: "Every Peak State Labs vial ships with lab documentation showing 99%+ purity. Read it. Verify it. Trust the data — not the marketing.",
-                  },
-                  {
                     title: "Run the Protocol With Precision.",
                     body: "The compound is one variable. Dose, timing, and sequence are the others. Treat them with the same rigor as the vial itself.",
                   },
