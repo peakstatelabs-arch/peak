@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
-import { CartScripts } from "./CartScripts";
+import { CartProvider } from "./cart/CartContext";
+import { CartDrawer } from "./cart/CartDrawer";
+import { ViewCartButton } from "./cart/ViewCartButton";
+import { AddToCartButton } from "./cart/AddToCartButton";
+import { SINGLES_PRICE_IDS, type SinglesProductSlug } from "./cart/priceCatalog";
 
 export const metadata: Metadata = {
   title: `Singles Catalog — ${siteCopy.brand.name}`,
@@ -11,21 +15,6 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 3600;
-
-// Payment processor outage on all single-vial checkouts. When true, the
-// PayPal add-to-cart / view-cart buttons are hidden and swapped for an
-// email-to-reserve CTA, and a top-of-page notice explains what's going on.
-// Flip to false once the payment processor is back online.
-const CHECKOUT_PAUSED = true;
-const CHECKOUT_PAUSED_EMAIL = "drew@peakstate.shop";
-
-function reserveMailtoHref(name: string, dose: string): string {
-  const subject = `Reserve ${name} ${dose}`;
-  const body =
-    `Hi Peak State Labs — I'd like to reserve a vial of ${name} ${dose}. ` +
-    `Please let me know when checkout is back online so I can complete my order.\n\nThanks!`;
-  return `mailto:${CHECKOUT_PAUSED_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
 
 const STOCK_EPOCH_MS = Date.UTC(2026, 4, 1);
 
@@ -45,24 +34,20 @@ function currentStock(
 }
 
 type Product = {
-  id: string;
+  id: SinglesProductSlug;
   name: string;
   subtitle: string;
   dose: string;
   price: string;
+  /** Unit price in cents, mirrors the Stripe Price. Used for cart subtotal display only. */
+  priceCents: number;
   description: string;
   image?: string;
-  cartId: string;
   startStock: number;
-  /** Per-tick drop. Defaults to 1. */
   stockStep?: number;
-  /** UTC midnight anchor for the stock cycle. Defaults to STOCK_EPOCH_MS. */
   stockAnchorMs?: number;
-  /** Floor of the cycle. The count walks down to this and then resets to startStock. Defaults to 1. */
   stockMinimum?: number;
-  /** When true, render a Pre-Order badge instead of the in-stock counter and a placeholder button until a cartId is wired up. */
   preorder?: boolean;
-  /** Human-readable ship date shown on the pre-order badge. */
   shipsBy?: string;
 };
 
@@ -73,10 +58,10 @@ const products: Product[] = [
     subtitle: "The Engine",
     dose: "20mg",
     price: "$215",
+    priceCents: 21500,
     description:
       "GLP-1 / GIP / Glucagon triple agonist. Reduces food noise, raises metabolic output, and stimulates stored fat oxidation.",
     image: "/reta-product.png",
-    cartId: "3GQWA553XEXNU",
     startStock: 13,
     stockStep: 3,
     stockMinimum: 3,
@@ -89,10 +74,10 @@ const products: Product[] = [
     subtitle: "The Architect",
     dose: "10mg blend",
     price: "$105",
+    priceCents: 10500,
     description:
       "Growth hormone pulse amplification. Builds lean muscle, improves sleep depth, and supports recovery during deficit.",
     image: "/cjc-ipa-product.png",
-    cartId: "SPCE9E3H3VVX2",
     startStock: 17,
     stockStep: 2,
     stockMinimum: 3,
@@ -105,17 +90,15 @@ const products: Product[] = [
     subtitle: "The Shield",
     dose: "20mg blend",
     price: "$145",
+    priceCents: 14500,
     description:
       "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, supports tendon integrity.",
     image: "/bpc-tb-product.png",
-    cartId: "B62P3JVPTD6CA",
     startStock: 9,
     stockStep: 2,
     stockMinimum: 3,
     // Anchored 2 days ahead of Reta/CJC so BPC's cycle is phase-shifted
-    // out of alignment with CJC — otherwise both products land on the
-    // same value (e.g. both showing 7) on ~half of days, since BPC's
-    // {9,7,5,3} value set is a subset of CJC's {17..3}.
+    // out of alignment with CJC.
     stockAnchorMs: Date.UTC(2026, 6, 4),
     preorder: false,
   },
@@ -125,10 +108,10 @@ const products: Product[] = [
     subtitle: "The Restorer",
     dose: "50mg",
     price: "$85",
+    priceCents: 8500,
     description:
       "Copper peptide signaling support. Helps with skin quality, tissue restoration, and hair vitality. Designed to support visible regeneration and biological renewal.",
     image: "/GHKCU.png",
-    cartId: "MRUXNK54XGUQ6",
     startStock: 17,
     stockStep: 2,
     stockMinimum: 3,
@@ -183,379 +166,303 @@ function PlaceholderImage({ label }: { label: string }) {
 
 export default function SinglesCatalog() {
   return (
-    <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
-        <Container className="flex h-16 items-center justify-between">
-          <a href="/" className="flex items-center gap-2 font-bold text-lg">
-            <img
-              src="/logo.png"
-              alt="Peak State Labs Logo"
-              className="h-7 w-7 rounded-lg"
-            />
-            <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-          </a>
-          <div className="flex items-center gap-4 sm:gap-6">
-            <a
-              href="/"
-              className="text-sm font-medium text-[var(--primary)]/70 hover:text-[var(--primary)] transition-colors"
-            >
-              ← Back to POWER CUT™
+    <CartProvider>
+      <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
+        {/* Header */}
+        <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
+          <Container className="flex h-16 items-center justify-between">
+            <a href="/" className="flex items-center gap-2 font-bold text-lg">
+              <img
+                src="/logo.png"
+                alt="Peak State Labs Logo"
+                className="h-7 w-7 rounded-lg"
+              />
+              <span className="hidden sm:inline">{siteCopy.brand.name}</span>
             </a>
-            {!CHECKOUT_PAUSED && (
-              <div className="paypal-cart-slot">
-                <paypal-cart-button data-id="pp-view-cart-header"></paypal-cart-button>
-              </div>
-            )}
-          </div>
-        </Container>
-      </header>
-
-      {CHECKOUT_PAUSED && (
-        <div className="bg-amber-50 border-b border-amber-200 text-amber-900">
-          <Container className="py-3 sm:py-3.5">
-            <div className="flex items-start gap-3">
-              <svg
-                className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
-                />
-              </svg>
-              <p className="text-sm sm:text-[15px] leading-relaxed">
-                <span className="font-bold">
-                  Heads up — single-vial checkout is temporarily paused
-                  while we resolve an issue with our payment processor.
-                </span>{" "}
-                We expect it back online later today. To reserve a vial in
-                the meantime, email us at{" "}
-                <a
-                  href={`mailto:${CHECKOUT_PAUSED_EMAIL}`}
-                  className="font-bold underline decoration-amber-500/60 underline-offset-2 hover:decoration-amber-700"
-                >
-                  {CHECKOUT_PAUSED_EMAIL}
-                </a>{" "}
-                and we'll hold one for you.
-              </p>
-            </div>
-          </Container>
-        </div>
-      )}
-
-      <main>
-        {/* Hero */}
-        <Section className="relative overflow-hidden gradient-hero">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
-            <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
-          </div>
-
-          <Container className="relative">
-            <div className="max-w-3xl mx-auto text-center">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-sm font-bold tracking-wider text-[var(--accent-dark)] animate-fade-in">
-                <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-                <span>SINGLES CATALOG</span>
-              </div>
-
-              <h1 className="mt-8 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-up">
-                Individual Research Compounds
-              </h1>
-
-              <p className="mt-6 text-lg sm:text-xl text-[var(--primary)]/70 animate-fade-in-up stagger-1">
-                The same lab-tested peptides found inside the POWER CUT
-                <span className="text-[0.6em] align-super">™</span> system —
-                available as standalone vials for research use.
-              </p>
-            </div>
-          </Container>
-        </Section>
-
-        {/* Product Grid */}
-        <Section className="bg-white">
-          <Container>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {products.map((product) => (
-                <div
-                  key={product.id}
-                  className="group flex flex-col rounded-3xl border border-[var(--border)] bg-[var(--muted)] p-5 sm:p-6 card-hover"
-                >
-                  <ProductImage product={product} />
-
-                  <div className="mt-5 flex-1 flex flex-col">
-                    <span className="self-start inline-flex items-center gap-2 rounded-full bg-[var(--primary)] px-4 py-1.5 text-sm font-extrabold uppercase tracking-widest text-[var(--accent)] shadow-sm">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                      {product.subtitle}
-                    </span>
-                    <h2 className="mt-3 text-2xl font-bold text-[var(--primary)] tracking-tight">
-                      {product.name}
-                    </h2>
-                    <p className="mt-1 text-sm font-semibold text-[var(--primary)]/70">
-                      {product.dose}
-                    </p>
-
-                    <p className="mt-4 text-[var(--primary)]/70 text-sm leading-relaxed">
-                      {product.description}
-                    </p>
-
-                    {product.preorder ? (
-                      <div className="mt-5 flex items-center gap-2 rounded-xl bg-[var(--accent)]/15 border border-[var(--accent)]/40 px-3 py-2.5">
-                        <span className="relative flex h-2.5 w-2.5 shrink-0">
-                          <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
-                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--accent-dark)]" />
-                        </span>
-                        <p className="text-sm font-bold text-[var(--accent-dark)]">
-                          Pre-Order{" "}
-                          <span className="text-[var(--accent-dark)]/50">•</span>{" "}
-                          Only{" "}
-                          <span className="font-extrabold">
-                            {currentStock(product.startStock, {
-                              step: product.stockStep,
-                              anchorMs: product.stockAnchorMs,
-                              minimum: product.stockMinimum,
-                            })}
-                          </span>{" "}
-                          vials remaining
-                          {product.shipsBy ? (
-                            <>
-                              {" "}
-                              <span className="text-[var(--accent-dark)]/50">
-                                •
-                              </span>{" "}
-                              Ships{" "}
-                              <span className="font-extrabold">
-                                {product.shipsBy}
-                              </span>
-                            </>
-                          ) : null}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="mt-5 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2.5">
-                        <span className="relative flex h-2.5 w-2.5 shrink-0">
-                          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                        </span>
-                        <p className="text-sm font-bold text-emerald-700">
-                          In Stock{" "}
-                          <span className="text-emerald-700/50">•</span> Only{" "}
-                          <span className="font-extrabold">
-                            {currentStock(product.startStock, {
-                              step: product.stockStep,
-                              anchorMs: product.stockAnchorMs,
-                              minimum: product.stockMinimum,
-                            })}
-                          </span>{" "}
-                          left{" "}
-                          <span className="text-emerald-700/50">•</span> Ships
-                          within 24 hrs
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="mt-5 pt-5 border-t border-[var(--border)]">
-                      <div className="flex items-end justify-between gap-4 mb-4">
-                        <div>
-                          <p className="text-xs font-medium uppercase tracking-wider text-[var(--primary)]/50">
-                            Price
-                          </p>
-                          <p className="text-3xl font-bold text-[var(--primary)]">
-                            {product.price}
-                          </p>
-                        </div>
-                      </div>
-                      {CHECKOUT_PAUSED ? (
-                        <a
-                          href={reserveMailtoHref(product.name, product.dose)}
-                          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-semibold py-3.5 px-6 hover:bg-[var(--primary)]/90 transition-colors"
-                        >
-                          <svg
-                            className="w-5 h-5 flex-shrink-0"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            aria-hidden="true"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
-                            />
-                          </svg>
-                          Email Us To Reserve
-                        </a>
-                      ) : product.cartId ? (
-                        <div className="paypal-add-to-cart-host">
-                          <paypal-add-to-cart-button
-                            data-id={product.cartId}
-                          ></paypal-add-to-cart-button>
-                        </div>
-                      ) : (
-                        // Placeholder rendered until the PayPal cart ID is wired up.
-                        // Swap the parent ternary by setting `cartId` on the product
-                        // and the existing PayPal flow takes over automatically.
-                        <button
-                          type="button"
-                          disabled
-                          aria-disabled="true"
-                          className="w-full inline-flex items-center justify-center rounded-xl bg-[var(--primary)]/90 text-white text-base font-semibold py-3.5 px-6 cursor-not-allowed opacity-90"
-                        >
-                          Pre-Order — Coming Soon
-                        </button>
-                      )}
-
-                      {product.preorder ? (
-                        <p className="mt-3 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">
-                          <svg
-                            className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[var(--primary)]/45"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          Orders are guaranteed. Cancel anytime before shipment
-                          for a full refund.
-                        </p>
-                      ) : (
-                        <p className="mt-3 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">
-                          <svg
-                            className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[var(--primary)]/45"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          Lab-tested 99%+ purity. Batch documentation included.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-10 flex flex-col items-center gap-4">
-              {!CHECKOUT_PAUSED && (
-                <div className="paypal-cart-slot paypal-cart-slot-inline">
-                  <paypal-cart-button data-id="pp-view-cart-floating"></paypal-cart-button>
-                </div>
-              )}
-              <p className="text-center text-sm text-[var(--primary)]/50">
-                For laboratory research only. Not for human consumption.
-              </p>
-            </div>
-          </Container>
-        </Section>
-
-        {/* System CTA */}
-        <Section className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] text-white">
-          <Container>
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                Most people don&rsquo;t run this alone.
-              </h2>
-
-              <div className="mt-8 space-y-4 text-lg text-white/80">
-                <p>
-                  This compound is typically used as part of a structured
-                  system.
-                </p>
-                <p>On its own, it plays a role.</p>
-                <p>
-                  When combined correctly, things shift faster — and more
-                  predictably.
-                </p>
-              </div>
-
-              <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-white/10 backdrop-blur border border-white/10">
-                <p className="text-white/90 text-lg leading-relaxed">
-                  The full{" "}
-                  <span className="font-bold text-[var(--accent)]">
-                    POWER CUT
-                    <span className="text-[0.6em] align-super">™</span>
-                  </span>{" "}
-                  system includes this plus the complementary components,
-                  already structured together.
-                </p>
-              </div>
-
+            <div className="flex items-center gap-4 sm:gap-6">
               <a
                 href="/"
-                className="btn-accent inline-flex h-auto sm:h-20 items-center justify-center gap-2 sm:gap-3 rounded-2xl px-5 sm:px-14 py-4 sm:py-0 text-sm sm:text-2xl font-extrabold uppercase tracking-normal sm:tracking-wide leading-tight mt-10 shadow-2xl ring-4 ring-[var(--accent)]/30 animate-pulse-slow text-center max-w-full"
+                className="text-sm font-medium text-[var(--primary)]/70 hover:text-[var(--primary)] transition-colors"
               >
-                View Full System
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-4 h-4 sm:w-6 sm:h-6 shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={3}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
+                ← Back to POWER CUT™
               </a>
+              <ViewCartButton variant="header" />
             </div>
           </Container>
-        </Section>
-      </main>
+        </header>
 
-      {/* Footer */}
-      <footer className="bg-[var(--primary)] text-white">
-        <Container className="py-12">
-          <div className="text-center pb-8 border-b border-white/10">
-            <p className="text-sm text-white/60">
-              {siteCopy.footer.productDisclaimer}
-            </p>
-          </div>
-          <div className="py-8 border-b border-white/10">
-            <div className="flex items-center justify-center">
-              <a href="/" className="flex items-center gap-2 font-bold text-lg">
-                <img
-                  src="/logo.png"
-                  alt="Peak State Labs Logo"
-                  className="h-7 w-7 rounded-lg"
-                />
-                <span>{siteCopy.brand.name}</span>
-              </a>
+        <main>
+          {/* Hero */}
+          <Section className="relative overflow-hidden gradient-hero">
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+              <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
             </div>
-          </div>
-          <div className="pt-8">
-            <p className="text-xs text-white/50 leading-relaxed max-w-4xl mx-auto text-center">
-              {siteCopy.footer.disclaimer}
-            </p>
-            <p className="text-xs text-white/40 text-center mt-6">
-              &copy; {new Date().getFullYear()} {siteCopy.footer.copyrightName}.
-              All rights reserved.
-            </p>
-          </div>
-        </Container>
-      </footer>
 
-      <CartScripts />
-    </div>
+            <Container className="relative">
+              <div className="max-w-3xl mx-auto text-center">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-sm font-bold tracking-wider text-[var(--accent-dark)] animate-fade-in">
+                  <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
+                  <span>SINGLES CATALOG</span>
+                </div>
+
+                <h1 className="mt-8 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight animate-fade-in-up">
+                  Individual Research Compounds
+                </h1>
+
+                <p className="mt-6 text-lg sm:text-xl text-[var(--primary)]/70 animate-fade-in-up stagger-1">
+                  The same lab-tested peptides found inside the POWER CUT
+                  <span className="text-[0.6em] align-super">™</span> system —
+                  available as standalone vials for research use.
+                </p>
+              </div>
+            </Container>
+          </Section>
+
+          {/* Product Grid */}
+          <Section className="bg-white">
+            <Container>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                {products.map((product) => (
+                  <div
+                    key={product.id}
+                    className="group flex flex-col rounded-3xl border border-[var(--border)] bg-[var(--muted)] p-5 sm:p-6 card-hover"
+                  >
+                    <ProductImage product={product} />
+
+                    <div className="mt-5 flex-1 flex flex-col">
+                      <span className="self-start inline-flex items-center gap-2 rounded-full bg-[var(--primary)] px-4 py-1.5 text-sm font-extrabold uppercase tracking-widest text-[var(--accent)] shadow-sm">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                        {product.subtitle}
+                      </span>
+                      <h2 className="mt-3 text-2xl font-bold text-[var(--primary)] tracking-tight">
+                        {product.name}
+                      </h2>
+                      <p className="mt-1 text-sm font-semibold text-[var(--primary)]/70">
+                        {product.dose}
+                      </p>
+
+                      <p className="mt-4 text-[var(--primary)]/70 text-sm leading-relaxed">
+                        {product.description}
+                      </p>
+
+                      {product.preorder ? (
+                        <div className="mt-5 flex items-center gap-2 rounded-xl bg-[var(--accent)]/15 border border-[var(--accent)]/40 px-3 py-2.5">
+                          <span className="relative flex h-2.5 w-2.5 shrink-0">
+                            <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
+                            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--accent-dark)]" />
+                          </span>
+                          <p className="text-sm font-bold text-[var(--accent-dark)]">
+                            Pre-Order{" "}
+                            <span className="text-[var(--accent-dark)]/50">•</span>{" "}
+                            Only{" "}
+                            <span className="font-extrabold">
+                              {currentStock(product.startStock, {
+                                step: product.stockStep,
+                                anchorMs: product.stockAnchorMs,
+                                minimum: product.stockMinimum,
+                              })}
+                            </span>{" "}
+                            vials remaining
+                            {product.shipsBy ? (
+                              <>
+                                {" "}
+                                <span className="text-[var(--accent-dark)]/50">
+                                  •
+                                </span>{" "}
+                                Ships{" "}
+                                <span className="font-extrabold">
+                                  {product.shipsBy}
+                                </span>
+                              </>
+                            ) : null}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="mt-5 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2.5">
+                          <span className="relative flex h-2.5 w-2.5 shrink-0">
+                            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                          </span>
+                          <p className="text-sm font-bold text-emerald-700">
+                            In Stock{" "}
+                            <span className="text-emerald-700/50">•</span> Only{" "}
+                            <span className="font-extrabold">
+                              {currentStock(product.startStock, {
+                                step: product.stockStep,
+                                anchorMs: product.stockAnchorMs,
+                                minimum: product.stockMinimum,
+                              })}
+                            </span>{" "}
+                            left{" "}
+                            <span className="text-emerald-700/50">•</span> Ships
+                            within 24 hrs
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="mt-5 pt-5 border-t border-[var(--border)]">
+                        <div className="flex items-end justify-between gap-4 mb-4">
+                          <div>
+                            <p className="text-xs font-medium uppercase tracking-wider text-[var(--primary)]/50">
+                              Price
+                            </p>
+                            <p className="text-3xl font-bold text-[var(--primary)]">
+                              {product.price}
+                            </p>
+                          </div>
+                        </div>
+                        <AddToCartButton
+                          slug={product.id}
+                          priceId={SINGLES_PRICE_IDS[product.id]}
+                          name={product.name}
+                          dose={product.dose}
+                          unitPriceCents={product.priceCents}
+                          image={product.image}
+                        />
+
+                        {product.preorder ? (
+                          <p className="mt-3 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">
+                            <svg
+                              className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[var(--primary)]/45"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                            Orders are guaranteed. Cancel anytime before shipment
+                            for a full refund.
+                          </p>
+                        ) : (
+                          <p className="mt-3 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">
+                            <svg
+                              className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[var(--primary)]/45"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                            Lab-tested 99%+ purity. Batch documentation included.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-10 flex flex-col items-center gap-4">
+                <ViewCartButton variant="inline" />
+                <p className="text-center text-sm text-[var(--primary)]/50">
+                  For laboratory research only. Not for human consumption.
+                </p>
+              </div>
+            </Container>
+          </Section>
+
+          {/* System CTA */}
+          <Section className="bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] text-white">
+            <Container>
+              <div className="max-w-3xl mx-auto text-center">
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                  Most people don&rsquo;t run this alone.
+                </h2>
+
+                <div className="mt-8 space-y-4 text-lg text-white/80">
+                  <p>
+                    This compound is typically used as part of a structured
+                    system.
+                  </p>
+                  <p>On its own, it plays a role.</p>
+                  <p>
+                    When combined correctly, things shift faster — and more
+                    predictably.
+                  </p>
+                </div>
+
+                <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-white/10 backdrop-blur border border-white/10">
+                  <p className="text-white/90 text-lg leading-relaxed">
+                    The full{" "}
+                    <span className="font-bold text-[var(--accent)]">
+                      POWER CUT
+                      <span className="text-[0.6em] align-super">™</span>
+                    </span>{" "}
+                    system includes this plus the complementary components,
+                    already structured together.
+                  </p>
+                </div>
+
+                <a
+                  href="/"
+                  className="btn-accent inline-flex h-auto sm:h-20 items-center justify-center gap-2 sm:gap-3 rounded-2xl px-5 sm:px-14 py-4 sm:py-0 text-sm sm:text-2xl font-extrabold uppercase tracking-normal sm:tracking-wide leading-tight mt-10 shadow-2xl ring-4 ring-[var(--accent)]/30 animate-pulse-slow text-center max-w-full"
+                >
+                  View Full System
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4 sm:w-6 sm:h-6 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </a>
+              </div>
+            </Container>
+          </Section>
+        </main>
+
+        {/* Footer */}
+        <footer className="bg-[var(--primary)] text-white">
+          <Container className="py-12">
+            <div className="text-center pb-8 border-b border-white/10">
+              <p className="text-sm text-white/60">
+                {siteCopy.footer.productDisclaimer}
+              </p>
+            </div>
+            <div className="py-8 border-b border-white/10">
+              <div className="flex items-center justify-center">
+                <a href="/" className="flex items-center gap-2 font-bold text-lg">
+                  <img
+                    src="/logo.png"
+                    alt="Peak State Labs Logo"
+                    className="h-7 w-7 rounded-lg"
+                  />
+                  <span>{siteCopy.brand.name}</span>
+                </a>
+              </div>
+            </div>
+            <div className="pt-8">
+              <p className="text-xs text-white/50 leading-relaxed max-w-4xl mx-auto text-center">
+                {siteCopy.footer.disclaimer}
+              </p>
+              <p className="text-xs text-white/40 text-center mt-6">
+                &copy; {new Date().getFullYear()} {siteCopy.footer.copyrightName}.
+                All rights reserved.
+              </p>
+            </div>
+          </Container>
+        </footer>
+
+        <CartDrawer />
+      </div>
+    </CartProvider>
   );
 }
