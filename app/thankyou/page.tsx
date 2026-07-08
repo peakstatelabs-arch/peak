@@ -259,14 +259,14 @@ export default function ThankYouPage() {
                   Call: 313-595-9239
                 </a>
                 <a
-                  href="mailto:peakstatelabs@gmail.com"
+                  href="mailto:drew@peakstate.shop"
                   className="inline-flex h-14 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-8 text-base sm:text-lg font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)] whitespace-nowrap"
                 >
                   Email Support
                 </a>
               </div>
               <p className="mt-6 text-sm text-[var(--primary)]/60">
-                peakstatelabs@gmail.com
+                drew@peakstate.shop
               </p>
             </div>
           </Container>
