@@ -74,7 +74,7 @@ export default async function PurityTestPage({
               <p className="mt-3 text-base sm:text-lg text-[var(--primary)]/70 max-w-2xl mx-auto leading-relaxed">
                 Third-party purity documentation for {test.name} {test.amount}.
                 {isMulti
-                  ? " Both pages are displayed below."
+                  ? " All pages are displayed below."
                   : " The full report is displayed below."}
               </p>
             </div>
@@ -83,7 +83,7 @@ export default async function PurityTestPage({
             <div
               className={
                 isMulti
-                  ? "grid md:grid-cols-2 gap-5 sm:gap-6"
+                  ? "max-w-3xl mx-auto space-y-5 sm:space-y-6"
                   : "max-w-3xl mx-auto"
               }
             >
