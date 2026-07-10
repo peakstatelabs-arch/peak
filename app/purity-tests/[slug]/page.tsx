@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Container } from "@/app/components/Container";
 import { siteCopy } from "@/content/siteCopy";
@@ -83,8 +84,8 @@ export default async function PurityTestPage({
             <div
               className={
                 isMulti
-                  ? "max-w-3xl mx-auto space-y-5 sm:space-y-6"
-                  : "max-w-3xl mx-auto"
+                  ? "max-w-xl mx-auto space-y-5 sm:space-y-6"
+                  : "max-w-xl mx-auto"
               }
             >
               {test.images.map((src, i) => (
@@ -96,9 +97,14 @@ export default async function PurityTestPage({
                   className="group block rounded-3xl bg-white border border-[var(--border)] shadow-sm overflow-hidden card-hover"
                 >
                   <div className="p-3 sm:p-4 bg-white">
-                    <img
+                    <Image
                       src={src}
                       alt={`${test.title}${isMulti ? ` — Page ${i + 1}` : ""}`}
+                      width={1080}
+                      height={1920}
+                      quality={95}
+                      priority={i === 0}
+                      sizes="(max-width: 640px) 100vw, 576px"
                       className="w-full h-auto rounded-xl"
                     />
                   </div>
