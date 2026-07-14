@@ -8,7 +8,7 @@ import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
 export const metadata: Metadata = {
   title: "Order Confirmed — Peak State Labs",
   description:
-    "Your Peak State Labs singles order is confirmed. Lab-tested peptides shipping to you within 24 hours.",
+    "Your Peak State Labs singles order is confirmed. Lab-tested peptides leaving the lab within 24 hours.",
 };
 
 export const dynamic = "force-dynamic";
@@ -152,7 +152,7 @@ export default async function SinglesThankYouPage({
 
               <p className="mt-6 text-lg sm:text-xl text-[var(--primary)]/70 animate-fade-in-up stagger-1">
                 You&rsquo;ve chosen precision over guesswork. Lab-tested,
-                99%+ purity compounds — shipping to you within 24 hours.
+                99%+ purity compounds — leaving the lab within 24 hours.
               </p>
 
               {order?.email && (
@@ -277,7 +277,7 @@ export default async function SinglesThankYouPage({
                 {[
                   {
                     title: "Your Compounds Ship Within 24 Hours.",
-                    body: "Your vials are pulled, packed, and dispatched with tracking. You'll receive a shipping notification the moment they leave the lab.",
+                    body: "Your vials are pulled, packed, and dispatched with tracking. You'll receive a shipping notification the moment they leave the lab. International orders add standard customs transit on top of that.",
                   },
                   {
                     title: "Run the Protocol With Precision.",
