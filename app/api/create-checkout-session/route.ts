@@ -69,7 +69,9 @@ export async function POST(req: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: lineItems,
-      shipping_address_collection: { allowed_countries: ["US"] },
+      shipping_address_collection: {
+        allowed_countries: ["US", "CA", "MX", "GB", "IE", "FR", "ES", "SE"],
+      },
       phone_number_collection: { enabled: true },
       billing_address_collection: "auto",
       success_url: `${origin}/singles/thankyou?session_id={CHECKOUT_SESSION_ID}`,
