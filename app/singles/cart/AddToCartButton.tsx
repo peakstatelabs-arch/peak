@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "./CartContext";
+import { readClientContact } from "@/app/lib/clientContact";
 
 type Props = {
   slug: string;
@@ -35,11 +36,19 @@ export function AddToCartButton(props: Props) {
     // Fire-and-forget analytics ping. Reuses the existing cart-event route
     // so PostHog / Zapier funnels keep working without a rewrite.
     try {
+      const { email, name, sessionId } = readClientContact();
       fetch("/api/cart-event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         keepalive: true,
         body: JSON.stringify({
+          event: "add_to_cart_click",
+          funnel: "singles",
+          email: email ?? null,
+          name: name ?? null,
+          user_id: email ?? null,
+          session_id: sessionId ?? null,
+          url: typeof window !== "undefined" ? window.location.href : null,
           product_slug: props.slug,
           price_id: props.priceId,
           product_name: props.name,

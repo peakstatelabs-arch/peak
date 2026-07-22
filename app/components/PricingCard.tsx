@@ -128,6 +128,7 @@ export function PricingCard({
             }`}
             event="add_to_cart_click"
             eventProperties={{
+              funnel: "powercut",
               product: "POWER CUT™ Stack",
               tier: name,
               tier_id: id,
