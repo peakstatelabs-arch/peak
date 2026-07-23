@@ -5,6 +5,7 @@ import { siteCopy } from "@/content/siteCopy";
 import { DisclaimerModal } from "@/app/components/DisclaimerModal";
 import { FloatingCTA } from "@/app/components/FloatingCTA";
 import { PostHogInit } from "@/app/components/PostHogInit";
+import { IdentityFromUrl } from "@/app/components/IdentityFromUrl";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -48,6 +49,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <PostHogInit />
+        <IdentityFromUrl />
         <DisclaimerModal />
         {children}
         <FloatingCTA />
