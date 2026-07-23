@@ -633,9 +633,9 @@ export default function Home() {
                   {/* Product chips */}
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                     {[
-                      { name: "Retatrutide", inStock: false, shipsBy: "7/24" },
-                      { name: "CJC-1295 + Ipamorelin", inStock: false, shipsBy: "7/24" },
-                      { name: "BPC-157 + TB-500", inStock: false, shipsBy: "7/24" },
+                      { name: "Retatrutide", inStock: false, shipsBy: "7/27" },
+                      { name: "CJC-1295 + Ipamorelin", inStock: false, shipsBy: "7/27" },
+                      { name: "BPC-157 + TB-500", inStock: false, shipsBy: "7/27" },
                       { name: "GHK-Cu", inStock: true },
                     ].map((item) => (
                       <span

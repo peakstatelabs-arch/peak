@@ -7,10 +7,10 @@ const EASTERN_DATE_FORMATTER = new Intl.DateTimeFormat("en-CA", {
   hourCycle: "h23",
 });
 
-// Pre-order window closes at midnight Eastern on 7/24/2026 — i.e. the moment
-// Thursday 7/23 ends and Friday 7/24 (the ship date) begins. July is EDT
+// Pre-order window closes at midnight Eastern on 7/27/2026 — i.e. the moment
+// Sunday 7/26 ends and Monday 7/27 (the ship date) begins. July is EDT
 // (UTC-4), so midnight ET = 04:00 UTC.
-const PREORDER_DEADLINE_MS = Date.UTC(2026, 6, 24, 4, 0, 0);
+const PREORDER_DEADLINE_MS = Date.UTC(2026, 6, 27, 4, 0, 0);
 
 export function getEasternShippingState(): {
   isAfterCutoff: boolean;
