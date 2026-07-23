@@ -67,7 +67,7 @@ const products: Product[] = [
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 6, 2),
     preorder: true,
-    shipsBy: "7/24",
+    shipsBy: "7/27",
   },
   {
     id: "cjc-ipamorelin",
@@ -84,7 +84,7 @@ const products: Product[] = [
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 6, 2),
     preorder: true,
-    shipsBy: "7/24",
+    shipsBy: "7/27",
   },
   {
     id: "bpc-tb500",
@@ -103,7 +103,7 @@ const products: Product[] = [
     // out of alignment with CJC.
     stockAnchorMs: Date.UTC(2026, 6, 4),
     preorder: true,
-    shipsBy: "7/24",
+    shipsBy: "7/27",
   },
   {
     id: "ghk-cu",

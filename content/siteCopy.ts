@@ -14,7 +14,7 @@ export const siteCopy = {
     // {stacks} is replaced by the live count computed in UrgencyBanner.
     // {noun} is replaced with "Stack" (count === 1) or "Stacks" (otherwise).
     lineTwo: "Only {stacks} {noun} Left",
-    shippingText: "Ships 7/24",
+    shippingText: "Ships 7/27",
     stacks: {
       initial: 12,
       minimum: 1,
@@ -71,9 +71,9 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 7/24. Reserve your kit now to lock in priority access to our next batch.",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 7/27. Reserve your kit now to lock in priority access to our next batch.",
     secureNoteAfterCutoff:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 7/24. Reserve your kit now to lock in priority access to our next batch.",
+      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 7/27. Reserve your kit now to lock in priority access to our next batch.",
     timerLabel: "Pre-order window closes in:",
     timerLabelAfterCutoff: "Pre-order window closes in:",
     researchDisclaimer:
@@ -163,7 +163,7 @@ export const siteCopy = {
     subheadline: "Free Shipping On All Orders",
     // Pre-order ship date shown on each stack pricing card. Set to "" (empty)
     // to hide the pre-order line when stacks are shipping immediately again.
-    shipsBy: "7/24",
+    shipsBy: "7/27",
     tiers: [
       {
         id: "single",
