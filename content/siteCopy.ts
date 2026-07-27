@@ -21,7 +21,7 @@ export const siteCopy = {
       // Eastern calendar date when the count equals `initial` through 7:59 PM ET.
       // Drops by 1 at every 8 PM ET, then cycles back to `initial` the day
       // after it touches `minimum` (cycle length = initial - minimum + 1 days).
-      anchorEasternDate: "2026-07-19",
+      anchorEasternDate: "2026-07-27",
     },
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
