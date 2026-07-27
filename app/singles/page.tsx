@@ -66,8 +66,7 @@ const products: Product[] = [
     stockStep: 3,
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 6, 2),
-    preorder: true,
-    shipsBy: "7/27",
+    preorder: false,
   },
   {
     id: "cjc-ipamorelin",
@@ -83,8 +82,7 @@ const products: Product[] = [
     stockStep: 2,
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 6, 2),
-    preorder: true,
-    shipsBy: "7/27",
+    preorder: false,
   },
   {
     id: "bpc-tb500",
@@ -102,8 +100,7 @@ const products: Product[] = [
     // Anchored 2 days ahead of Reta/CJC so BPC's cycle is phase-shifted
     // out of alignment with CJC.
     stockAnchorMs: Date.UTC(2026, 6, 4),
-    preorder: true,
-    shipsBy: "7/27",
+    preorder: false,
   },
   {
     id: "ghk-cu",
