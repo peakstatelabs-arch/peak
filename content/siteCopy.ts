@@ -3,20 +3,20 @@ export const siteCopy = {
     name: "Peak State Labs",
     trademark: "POWER CUT\u2122",
     tagline: "The 10-Week Biological Shortcut to Your Dream Physique",
-    primaryCtaLabel: "Lock In Pre-Order",
+    primaryCtaLabel: "Get Access Now",
     primaryCtaHref: "#pricing",
     secondaryCtaLabel: "See What's Included",
     secondaryCtaHref: "#contents",
   },
 
   urgencyBanner: {
-    lineOne: "PRE-ORDER LIVE",
+    lineOne: "POWER CUT™ ACCESS OPEN",
     // {stacks} is replaced by the live count computed in UrgencyBanner.
     // {noun} is replaced with "Stack" (count === 1) or "Stacks" (otherwise).
     lineTwo: "Only {stacks} {noun} Left",
-    shippingText: "Ships 7/27",
+    shippingText: "Ships within 24 Hours",
     stacks: {
-      initial: 12,
+      initial: 11,
       minimum: 1,
       // Eastern calendar date when the count equals `initial` through 7:59 PM ET.
       // Drops by 1 at every 8 PM ET, then cycles back to `initial` the day
@@ -71,11 +71,11 @@ export const siteCopy = {
       },
     ],
     secureNote:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 7/27. Reserve your kit now to lock in priority access to our next batch.",
+      "POWER CUT™ IN STOCK: Guaranteed FREE same day shipping with orders placed by 3pm EDT.",
     secureNoteAfterCutoff:
-      "SECURE YOUR PRE-ORDER: Guaranteed Shipping On 7/27. Reserve your kit now to lock in priority access to our next batch.",
-    timerLabel: "Pre-order window closes in:",
-    timerLabelAfterCutoff: "Pre-order window closes in:",
+      "POWER CUT™ IN STOCK: You missed today’s same day shipping window. Secure your stack now and move to the front of the line for tomorrow’s free fulfillment cycle.",
+    timerLabel: "Time remaining for same day shipping:",
+    timerLabelAfterCutoff: "Time remaining for free next-day shipping window:",
     researchDisclaimer:
       "Laboratory research only. No medical or human-use guidance provided.",
   },
@@ -163,7 +163,7 @@ export const siteCopy = {
     subheadline: "Free Shipping On All Orders",
     // Pre-order ship date shown on each stack pricing card. Set to "" (empty)
     // to hide the pre-order line when stacks are shipping immediately again.
-    shipsBy: "7/27",
+    shipsBy: "",
     tiers: [
       {
         id: "single",

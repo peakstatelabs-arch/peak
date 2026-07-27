@@ -9,7 +9,6 @@ interface CountdownTimerProps {
 }
 
 interface TimeLeft {
-  days: number;
   hours: number;
   minutes: number;
   seconds: number;
@@ -17,7 +16,6 @@ interface TimeLeft {
 
 export function CountdownTimer({ label, labelAfterCutoff }: CountdownTimerProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
@@ -30,8 +28,7 @@ export function CountdownTimer({ label, labelAfterCutoff }: CountdownTimerProps)
     const { secondsRemaining, isAfterCutoff } = getEasternShippingState();
     return {
       time: {
-        days: Math.floor(secondsRemaining / 86400),
-        hours: Math.floor((secondsRemaining % 86400) / 3600),
+        hours: Math.floor(secondsRemaining / 3600),
         minutes: Math.floor((secondsRemaining % 3600) / 60),
         seconds: Math.floor(secondsRemaining % 60),
       },
@@ -58,7 +55,6 @@ export function CountdownTimer({ label, labelAfterCutoff }: CountdownTimerProps)
 
   if (!mounted) {
     const placeholderUnits = [
-      { label: "Days" },
       { label: "Hours" },
       { label: "Minutes" },
       { label: "Seconds" },
@@ -89,7 +85,6 @@ export function CountdownTimer({ label, labelAfterCutoff }: CountdownTimerProps)
   }
 
   const timeUnits = [
-    { value: timeLeft.days, label: "Days" },
     { value: timeLeft.hours, label: "Hours" },
     { value: timeLeft.minutes, label: "Minutes" },
     { value: timeLeft.seconds, label: "Seconds" },
