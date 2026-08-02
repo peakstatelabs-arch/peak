@@ -5,7 +5,6 @@ import { Calculator } from "@/app/components/Calculator";
 import { FAQ } from "@/app/components/FAQ";
 import { PricingCard } from "@/app/components/PricingCard";
 import { BenefitsGrid } from "@/app/components/BenefitsGrid";
-import { EmailSubscription } from "@/app/components/EmailSubscription";
 import { UrgencyBanner } from "@/app/components/UrgencyBanner";
 import { TrackedLink } from "@/app/components/TrackedLink";
 import { ShippingNoteText } from "@/app/components/ShippingNoteText";
@@ -1156,18 +1155,6 @@ export default function Home() {
                 {siteCopy.brand.primaryCtaLabel}
               </a>
             </div>
-          </Container>
-        </Section>
-
-        {/* Email Subscription Section */}
-        <Section className="bg-white border-t border-[var(--border)]">
-          <Container>
-            <EmailSubscription
-              headline="Not Ready to Commit Yet?"
-              subheadline="Subscribe to get notified about future drops, exclusive offers, and answers to your questions. We're here to help."
-              buttonText="Keep Me Updated"
-              successMessage="You're on the list! We'll be in touch soon."
-            />
           </Container>
         </Section>
       </main>
