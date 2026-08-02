@@ -209,7 +209,7 @@ export const siteCopy = {
         ],
         estimatedValue: "$1,800",
         price: "$1,019",
-        perStackPrice: "Only $539 per stack",
+        perStackPrice: "Only $509 per stack",
         installment: "$254.75",
         savings: "$100",
         ctaLabel: "I’m In — Send It",
