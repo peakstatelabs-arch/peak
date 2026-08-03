@@ -31,6 +31,7 @@ export const siteCopy = {
     { label: "What's Included", href: "#contents" },
     { label: "Pricing", href: "#pricing" },
     { label: "FAQ", href: "#faq" },
+    { label: "Reviews", href: "/reviews" },
   ],
 
   hero: {
