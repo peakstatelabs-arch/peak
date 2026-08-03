@@ -74,24 +74,24 @@ function ReviewCard({
               fill="currentColor"
             />
           </svg>
-          10-Week Journey
+          Transformation
         </div>
       )}
 
       {hasPhotos && (
-        <div className="mb-4 grid grid-cols-2 gap-2">
+        <div className="mb-4 flex flex-col gap-2">
           {review.photos!.map((src, i) => (
             <button
               key={src}
               type="button"
               onClick={() => onOpen(src)}
-              className="group relative overflow-hidden rounded-xl border border-[var(--border)]"
+              className="group block overflow-hidden rounded-xl border border-[var(--border)]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={src}
                 alt={`${review.name} transformation photo ${i + 1}`}
-                className="aspect-[3/4] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="h-auto w-full transition-transform duration-300 group-hover:scale-[1.02]"
                 loading="lazy"
               />
             </button>
@@ -121,14 +121,20 @@ function ReviewCard({
         </div>
       </div>
 
-      <blockquote
-        className={cn(
-          "mt-4 text-[var(--primary)]/85 leading-relaxed",
-          review.featured ? "text-base" : "text-[15px]",
-        )}
-      >
-        {review.quote}
-      </blockquote>
+      {review.quote ? (
+        <blockquote
+          className={cn(
+            "mt-4 leading-relaxed text-[var(--primary)]/85",
+            review.featured ? "text-base" : "text-[15px]",
+          )}
+        >
+          {review.quote}
+        </blockquote>
+      ) : review.caption ? (
+        <p className="mt-4 text-sm font-medium italic text-[var(--primary)]/70">
+          {review.caption}
+        </p>
+      ) : null}
 
       {review.stats && review.stats.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-1.5">

@@ -24,8 +24,10 @@ export interface Review {
   source: ReviewSource;
   /** Optional timeframe chip, e.g. "Week 6" or "10-week cycle". */
   timeframe?: string;
-  /** The (lightly cleaned, faithful) testimonial text. */
-  quote: string;
+  /** The (lightly cleaned, faithful) testimonial text. Optional for photo-only cards. */
+  quote?: string;
+  /** Short neutral caption for photo-forward cards that have no quote. */
+  caption?: string;
   /** Short result chips pulled from the testimonial. */
   stats?: string[];
   categories: ReviewCategory[];
@@ -66,7 +68,8 @@ export const reviews: Review[] = [
       "AMAZED. I am completely floored by my results on Power Cut. I finished my 10-week cycle and got a DEXA scan at the beginning and end — I lost about 20 lbs and my body fat dropped from 26% to a little less than 21%. My biggest takeaway is the importance of nutrition and fueling my body. But the most important detail to share is how incredible I feel in my body… it really amazes me.",
     stats: ["-20 lb (DEXA)", "26% → <21% BF"],
     categories: ["fat-loss", "mindset"],
-    photos: [],
+    screenshot: "/reviews/paige-amazed.png",
+    photos: ["/reviews/paige-before-after.jpg"],
   },
   {
     id: "erin-journey",
@@ -79,7 +82,8 @@ export const reviews: Review[] = [
       "My journey… 2 months ago my body fat was 18.8% — today it's 13.4%. I went from 128.5 lbs to 119 lbs, AND the best thing is my skeletal muscle mass is now increasing! I have always been in shape, but now I feel strong and confident AF!",
     stats: ["18.8% → 13.4% BF", "128.5 → 119 lb", "+muscle"],
     categories: ["fat-loss", "strength"],
-    photos: [],
+    screenshot: "/reviews/erin-journey.png",
+    photos: ["/reviews/erin-photo.jpg"],
   },
   {
     id: "erin-wow",
@@ -102,10 +106,35 @@ export const reviews: Review[] = [
     timeframe: "10-week program",
     featured: true,
     quote:
-      "Believe it can be a “new” YOU! For all of you starting this journey — start and don't give up. I set goals and made plans, but I kept seeing the scale gain 2 lbs, drop 3, gain 2 more. The weight fluctuated constantly. The scale lied but the mirror and my clothes did not! My body was changing — more muscle, less fat.",
+      "Believe it can be a “new” YOU! For all of you starting this journey — start and don't give up. I was excited until I'd step on the scale: I gained 2 lbs, dropped 3, gained 2 more. The weight fluctuated constantly. The scale lied but the mirror and my clothes did not! My body was changing — more muscle, less fat. In my 10 weeks: 19 lbs gone, 4.5% body fat gone, muscle up 4.2%. If you misstep, don't quit. Give yourself grace. Stay the course.",
     stats: ["-19 lb", "-4.5% BF", "+4.2% muscle"],
     categories: ["fat-loss", "strength", "mindset"],
-    photos: [],
+    screenshot: "/reviews/diane-newyou.png",
+  },
+  {
+    id: "transform-10wk",
+    name: "Verified client",
+    initial: "★",
+    source: "community",
+    timeframe: "10-week transformation",
+    featured: true,
+    caption: "A full 10-week POWER CUT™ before & after.",
+    categories: ["fat-loss", "strength"],
+    photos: ["/reviews/transform-10wk.jpg"],
+  },
+  {
+    id: "transform-3wk",
+    name: "Verified client",
+    initial: "★",
+    source: "community",
+    timeframe: "3-week transformation",
+    featured: true,
+    caption: "Front and side — just three weeks into POWER CUT™.",
+    categories: ["fat-loss", "strength"],
+    photos: [
+      "/reviews/transform-3wk-front.jpg",
+      "/reviews/transform-3wk-side.jpg",
+    ],
   },
 
   // ── Community check-ins & direct messages ──
