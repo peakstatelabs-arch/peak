@@ -1135,6 +1135,115 @@ export default function Home() {
           </Container>
         </Section>
 
+        {/* Reviews / Social Proof Section */}
+        <Section className="relative overflow-hidden bg-[var(--primary)] text-white">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-32 right-[-8%] h-80 w-80 rounded-full bg-[var(--accent)]/15 blur-3xl" />
+            <div className="absolute bottom-[-20%] left-[-8%] h-72 w-72 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+          </div>
+          <Container className="relative">
+            <div className="mx-auto max-w-2xl text-center">
+              <div
+                className="inline-flex items-center gap-1 text-[var(--accent)]"
+                aria-label="Rated 5 out of 5"
+              >
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <svg
+                    key={i}
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden
+                  >
+                    <path d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6L12 2Z" />
+                  </svg>
+                ))}
+              </div>
+              <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
+                Real Results From Real Members
+              </h2>
+              <p className="mt-5 text-lg text-white/75">
+                Unfiltered weekly check-ins from the POWER CUT&trade; community
+                &mdash; the fat loss, the quieter food noise, the better sleep,
+                and the mindset shift, in their own words.
+              </p>
+            </div>
+
+            <div className="mx-auto mt-12 grid max-w-5xl gap-5 sm:grid-cols-3">
+              {[
+                {
+                  quote:
+                    "So far I am down 19 lbs and about 5.5% bf. The results are blowing my mind!",
+                  stat: "-19 lb · -5.5% BF",
+                  name: "Paige P.",
+                  initial: "P",
+                },
+                {
+                  quote:
+                    "ZERO post-meal cravings for something sweet. The food noise was absent for much of the week.",
+                  stat: "Food noise gone",
+                  name: "Alana F.",
+                  initial: "A",
+                },
+                {
+                  quote:
+                    "I'm down 20.8 lbs and 4.8% body fat… and I'm not slowing down! I feel so good.",
+                  stat: "-20.8 lb · -4.8% BF",
+                  name: "Verified client",
+                  initial: "★",
+                },
+              ].map((r) => (
+                <figure
+                  key={r.name + r.stat}
+                  className="flex flex-col rounded-2xl bg-white p-6 text-left text-[var(--primary)] shadow-[0_10px_40px_rgba(0,0,0,0.15)]"
+                >
+                  <div className="flex items-center gap-0.5 text-[var(--accent-dark)]">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg
+                        key={i}
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden
+                      >
+                        <path d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6L12 2Z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <blockquote className="mt-3 flex-1 text-[15px] leading-relaxed text-[var(--primary)]/85">
+                    &ldquo;{r.quote}&rdquo;
+                  </blockquote>
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full gradient-primary text-xs font-bold text-white">
+                      {r.initial}
+                    </span>
+                    <figcaption className="text-sm font-bold">
+                      {r.name}
+                    </figcaption>
+                    <span className="ml-auto inline-flex items-center rounded-lg bg-[var(--accent)]/15 px-2 py-1 text-xs font-bold text-[var(--accent-dark)]">
+                      {r.stat}
+                    </span>
+                  </div>
+                </figure>
+              ))}
+            </div>
+
+            <div className="mt-12 text-center">
+              <a
+                href="/reviews"
+                className="btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold"
+              >
+                Read all the reviews &rarr;
+              </a>
+              <p className="mt-4 text-sm text-white/60">
+                30+ verified client check-ins
+              </p>
+            </div>
+          </Container>
+        </Section>
+
         {/* Final CTA Section */}
         <Section className="bg-gradient-to-br from-[var(--muted)] to-[var(--accent)]/10">
           <Container>
