@@ -11,6 +11,12 @@ export default async function RetaSchedulePage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("timezone")
+    .eq("id", user.id)
+    .single();
+
   const { data: doses } = await supabase
     .from("peptide_doses")
     .select("id, dose_mg, scheduled_for, taken, taken_at, notes")
@@ -52,7 +58,7 @@ export default async function RetaSchedulePage() {
           <p className="text-fg-muted">No Retatrutide doses scheduled.</p>
         </section>
       ) : (
-        <RetaScheduleEditor rows={rows} />
+        <RetaScheduleEditor rows={rows} timezone={profile?.timezone ?? null} />
       )}
     </div>
   );

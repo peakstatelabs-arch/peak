@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { DosePicker } from "@/components/DosePicker";
+import { todayInZone } from "@/lib/utils";
 
 export type RetaDoseRow = {
   id: string;
@@ -39,11 +40,13 @@ function formatDate(iso: string): string {
   });
 }
 
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-export function RetaScheduleEditor({ rows }: { rows: RetaDoseRow[] }) {
+export function RetaScheduleEditor({
+  rows,
+  timezone,
+}: {
+  rows: RetaDoseRow[];
+  timezone: string | null;
+}) {
   const router = useRouter();
   const supabase = createClient();
   const [edits, setEdits] = useState<Record<string, string>>({});
@@ -51,7 +54,9 @@ export function RetaScheduleEditor({ rows }: { rows: RetaDoseRow[] }) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const today = todayISO();
+  // "Today" in the user's saved timezone so past/upcoming split matches their
+  // wall clock, not UTC.
+  const today = todayInZone(timezone);
   const past = rows.filter((r) => r.taken || r.scheduled_for < today);
   const future = rows.filter((r) => !r.taken && r.scheduled_for >= today);
 
