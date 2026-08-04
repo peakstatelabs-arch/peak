@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 import { getProgram, GOAL_LABEL } from "@/lib/programs";
 import { totalVolume, bestE1RMByExercise, fmtVolume } from "@/lib/workout";
+import { useTimezone } from "@/components/TimezoneProvider";
+import { todayInZone, localDateISO } from "@/lib/utils";
 import type { Session, WorkoutSet } from "./WorkoutsClient";
 
 export function StatsDashboard({
@@ -14,16 +16,19 @@ export function StatsDashboard({
   sets: WorkoutSet[];
   activeProgram: string | null;
 }) {
+  const tz = useTimezone();
   const stats = useMemo(() => {
-    const now = new Date();
-    const weekAgoISO = new Date(now.getTime() - 7 * 86400000).toISOString();
-    const todayISO = now.toISOString().slice(0, 10);
+    // Anchor all week math to the user's local "today", not UTC, so the current
+    // week doesn't shift in the evening.
+    const todayISO = todayInZone(tz);
+    const base = new Date(todayISO + "T00:00:00");
+    const weekAgoISO = new Date(base.getTime() - 7 * 86400000).toISOString();
 
     const weekSets = sets.filter((s) => s.created_at >= weekAgoISO && s.completed);
     const weekVolume = totalVolume(weekSets);
 
     // sessions completed in last 7 days
-    const startWeek = new Date(now.getTime() - 7 * 86400000).toISOString().slice(0, 10);
+    const startWeek = localDateISO(new Date(base.getTime() - 7 * 86400000));
     const sessionsThisWeek = sessions.filter(
       (s) => s.completed && s.scheduled_for >= startWeek && s.scheduled_for <= todayISO
     ).length;
@@ -31,10 +36,10 @@ export function StatsDashboard({
     // weekly streak: consecutive prior weeks (incl. this) with >=1 completed session
     let streak = 0;
     for (let w = 0; w < 26; w++) {
-      const end = new Date(now.getTime() - w * 7 * 86400000);
+      const end = new Date(base.getTime() - w * 7 * 86400000);
       const start = new Date(end.getTime() - 7 * 86400000);
-      const startS = start.toISOString().slice(0, 10);
-      const endS = end.toISOString().slice(0, 10);
+      const startS = localDateISO(start);
+      const endS = localDateISO(end);
       const any = sessions.some((s) => s.completed && s.scheduled_for > startS && s.scheduled_for <= endS);
       if (any) streak++;
       else if (w > 0) break;
@@ -46,7 +51,7 @@ export function StatsDashboard({
     const topLift = [...bests.entries()].sort((a, b) => b[1] - a[1])[0] ?? null;
 
     return { weekVolume, sessionsThisWeek, streak, prs, topLift };
-  }, [sessions, sets]);
+  }, [sessions, sets, tz]);
 
   const program = activeProgram ? getProgram(activeProgram) : undefined;
 

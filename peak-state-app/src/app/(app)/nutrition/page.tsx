@@ -4,7 +4,9 @@ import { CardSkeleton } from "@/components/Skeleton";
 import { createClient } from "@/lib/supabase/server";
 import { requireModule } from "@/lib/modules-server";
 import { NutritionClient } from "./NutritionClient";
-import { DEFAULT_TARGETS, todayISO } from "@/lib/nutrition";
+import { DEFAULT_TARGETS } from "@/lib/nutrition";
+import { getUserTodayISO } from "@/lib/today";
+import { localDateISO } from "@/lib/utils";
 
 export const metadata = { title: "Nutrition — Peak State Labs" };
 export const dynamic = "force-dynamic";
@@ -26,8 +28,8 @@ async function Loader() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const today = todayISO();
-  const sevenAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+  const today = await getUserTodayISO(supabase, user.id);
+  const sevenAgo = localDateISO(new Date(new Date(today + "T00:00:00").getTime() - 7 * 86400000));
 
   const [{ data: todayMeals }, { data: weekMeals }, { data: profile }, { data: activePlan }, { data: activeProtocols }] = await Promise.all([
     supabase.from("meal_logs")

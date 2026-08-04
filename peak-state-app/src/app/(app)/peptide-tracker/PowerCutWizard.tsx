@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { STACK_PROTOCOLS, getStackProtocol, type StackProtocol } from "@/lib/protocols";
 import { generatePowerCutSchedule, type DoseRow } from "@/lib/schedule";
 import { requestNotificationPermission, notificationsSupported } from "@/lib/notifications";
+import { todayInZone, localDateISO } from "@/lib/utils";
 import type { ProfilePrefs } from "./Client";
 
 export function PowerCutWizard({
@@ -99,7 +100,7 @@ export function PowerCutWizard({
     // Clear ALL future unlogged doses for these peptides so starting a new
     // protocol gives a clean slate (doesn't only scope to the new window —
     // that left orphans from prior protocols hanging around).
-    const todayISO = new Date().toISOString().slice(0, 10);
+    const todayISO = todayInZone(profile.timezone);
     await supabase
       .from("peptide_doses")
       .delete()
@@ -351,7 +352,7 @@ function nextMondayISO(): string {
   const day = d.getDay() === 0 ? 7 : d.getDay();
   const diff = (8 - day) % 7; // next Monday (>= 1 day away if today is Mon)
   d.setDate(d.getDate() + (diff === 0 ? 7 : diff));
-  return d.toISOString().slice(0, 10);
+  return localDateISO(d);
 }
 
 function dayName(d: Date): string {

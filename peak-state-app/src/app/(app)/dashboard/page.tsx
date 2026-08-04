@@ -3,7 +3,8 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/PageHeader";
 import { CardSkeleton } from "@/components/Skeleton";
-import { todayISO } from "@/lib/utils";
+import { todayInZone, localDateISO } from "@/lib/utils";
+import { getUserTodayISO, getUserTimezone } from "@/lib/today";
 import { TodayDoseCard } from "./TodayDoseCard";
 
 export const metadata = { title: "Today — Peak State Labs" };
@@ -43,7 +44,7 @@ function StatSkeleton() {
 async function TodayHero() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const today = todayISO();
+  const today = await getUserTodayISO(supabase, user!.id);
 
   const [{ data: dosesRaw }, { data: protocols }] = await Promise.all([
     supabase
@@ -107,7 +108,7 @@ async function TodayHero() {
       {nextDay && (
         <div className="mt-4 rounded-lg border border-border bg-bg-elev/40 p-3">
           <div className="text-xs uppercase tracking-wide text-fg-subtle mb-2">
-            Next dose · {relativeDayLabel(nextDay)}
+            Next dose · {relativeDayLabel(nextDay, today)}
           </div>
           <ul className="space-y-1">
             {nextDoses.map((d) => (
@@ -125,10 +126,9 @@ async function TodayHero() {
   );
 }
 
-function relativeDayLabel(iso: string): string {
+function relativeDayLabel(iso: string, todayIso: string): string {
   const d = new Date(iso + "T00:00:00");
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = new Date(todayIso + "T00:00:00");
   const diff = Math.round((d.getTime() - today.getTime()) / 86400000);
   const rel = diff === 1 ? "tomorrow" : diff <= 0 ? "today" : `in ${diff} days`;
   const date = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -157,9 +157,10 @@ async function StreakStat() {
       if (d.taken) e.done += 1;
       byDay.set(d.scheduled_for, e);
     }
-    const cursor = new Date();
+    const tz = await getUserTimezone(supabase, user!.id);
+    const cursor = new Date(todayInZone(tz) + "T00:00:00");
     for (let i = 0; i < 60; i++) {
-      const key = cursor.toISOString().slice(0, 10);
+      const key = localDateISO(cursor);
       const day = byDay.get(key);
       if (day && day.total > 0 && day.done === day.total) streak += 1;
       else if (day) break;
@@ -173,13 +174,13 @@ async function StreakStat() {
 async function WeekStat() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const now = new Date();
-  const day = now.getDay() === 0 ? 7 : now.getDay();
-  const weekStart = new Date(now);
-  weekStart.setDate(now.getDate() - (day - 1));
-  weekStart.setHours(0, 0, 0, 0);
-  const today = todayISO();
-  const startIso = weekStart.toISOString().slice(0, 10);
+  const today = await getUserTodayISO(supabase, user!.id);
+  // Monday of the user's current week, anchored to their local "today".
+  const base = new Date(today + "T00:00:00");
+  const day = base.getDay() === 0 ? 7 : base.getDay();
+  const weekStart = new Date(base);
+  weekStart.setDate(base.getDate() - (day - 1));
+  const startIso = localDateISO(weekStart);
 
   const { data } = await supabase
     .from("peptide_doses")

@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTimezone } from "@/components/TimezoneProvider";
+import { todayInZone } from "@/lib/utils";
 import { ProtocolPicker, type PickerChoice } from "./ProtocolPicker";
 import { PowerCutWizard } from "./PowerCutWizard";
 import { SinglePeptideWizard } from "./SinglePeptideWizard";
@@ -205,6 +207,7 @@ function StackCard({ stack, onChanged }: { stack: Extract<ProtocolGroup, { kind:
   const [busy, setBusy] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
+  const tz = useTimezone();
   const ids = stack.protocols.map((p) => p.id);
 
   async function setActive(active: boolean) {
@@ -217,7 +220,7 @@ function StackCard({ stack, onChanged }: { stack: Extract<ProtocolGroup, { kind:
   async function remove() {
     if (!confirm(`Remove "${stack.name}" and all its scheduled doses?`)) return;
     setBusy(true);
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayInZone(tz);
     // Delete all future, untaken doses tied to any protocol in the stack.
     await supabase
       .from("peptide_doses")
@@ -296,6 +299,7 @@ function StackCard({ stack, onChanged }: { stack: Extract<ProtocolGroup, { kind:
 function ProtocolRow({ protocol, onChanged }: { protocol: Protocol; onChanged: () => void }) {
   const supabase = createClient();
   const [busy, setBusy] = useState(false);
+  const tz = useTimezone();
 
   async function setActive(active: boolean) {
     setBusy(true);
@@ -308,7 +312,7 @@ function ProtocolRow({ protocol, onChanged }: { protocol: Protocol; onChanged: (
     if (!confirm(`Remove "${protocol.name}" and its scheduled doses?`)) return;
     setBusy(true);
     // delete scheduled (untaken) future doses for this protocol
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayInZone(tz);
     await supabase
       .from("peptide_doses")
       .delete()
