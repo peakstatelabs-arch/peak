@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { cn } from "@/lib/utils";
+import { cn, todayInZone, localDateISO } from "@/lib/utils";
 import type { Dose, ProfilePrefs } from "./Client";
 
 const PEPTIDE_COLOR: Record<string, string> = {
@@ -101,7 +101,10 @@ export function DoseCalendar({
     d.setDate(1);
     return d;
   });
-  const [selected, setSelected] = useState<string | null>(todayISO());
+  // "Today" in the user's saved timezone (falls back to the device zone).
+  // Using UTC here rolled the highlighted day forward every evening.
+  const today = todayInZone(profile.timezone);
+  const [selected, setSelected] = useState<string | null>(() => today);
 
   const grid = useMemo(() => buildGrid(cursor), [cursor]);
   const byDay = useMemo(() => {
@@ -153,11 +156,11 @@ export function DoseCalendar({
         <div className="grid grid-cols-7 gap-1">
           {grid.map((cell, i) => {
             if (!cell) return <div key={i} className="min-h-[72px]" />;
-            const iso = cell.toISOString().slice(0, 10);
+            const iso = localDateISO(cell);
             const day = byDay.get(iso) ?? [];
             const morning = day.filter((d) => d.time_of_day === "morning");
             const evening = day.filter((d) => d.time_of_day !== "morning");
-            const isToday = iso === todayISO();
+            const isToday = iso === today;
             const isSelected = iso === selected;
             const inMonth = cell.getMonth() === cursor.getMonth();
             return (
@@ -397,12 +400,12 @@ function MobileDayList({
   // Today + next 6 days = 7-day forward strip. Mobile users almost never
   // need to scroll past this week — the full calendar still exists on
   // desktop for week-by-week planning.
-  const today = todayISO();
+  const today = todayInZone(profile.timezone);
   const start = new Date(today + "T00:00:00");
   const days: { iso: string; date: Date; doses: Dose[] }[] = [];
   for (let i = 0; i < 7; i++) {
     const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
-    const iso = date.toISOString().slice(0, 10);
+    const iso = localDateISO(date);
     days.push({ iso, date, doses: byDay.get(iso) ?? [] });
   }
 
@@ -535,8 +538,4 @@ function buildGrid(cursor: Date): (Date | null)[] {
     cells.push(new Date(last.getFullYear(), last.getMonth(), last.getDate() + 1));
   }
   return cells;
-}
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
 }
