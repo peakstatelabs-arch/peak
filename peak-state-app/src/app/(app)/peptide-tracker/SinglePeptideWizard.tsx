@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { generateSingleSchedule, type DoseRow } from "@/lib/schedule";
 import { requestNotificationPermission, notificationsSupported } from "@/lib/notifications";
+import { todayInZone } from "@/lib/utils";
 import type { ProfilePrefs } from "./Client";
 
 type Choice = "single-reta" | "single-cjc" | "single-bpc" | "single-ghk";
@@ -92,7 +93,7 @@ export function SinglePeptideWizard({
   const [frequency, setFrequency] = useState<Frequency>(config.defaultFrequency);
   const [time, setTime] = useState<"morning" | "evening">(config.defaultTime);
   const [weeks, setWeeks] = useState(12);
-  const [startDate, setStartDate] = useState(todayISO());
+  const [startDate, setStartDate] = useState(() => todayInZone(profile.timezone));
   const [morningTime, setMorningTime] = useState(profile.morning_time);
   const [eveningTime, setEveningTime] = useState(profile.evening_time);
   const [enableReminders, setEnableReminders] = useState(true);
@@ -158,7 +159,7 @@ export function SinglePeptideWizard({
 
     // Clear ALL future unlogged doses for this peptide so starting a new
     // protocol gives a clean slate (no orphans from prior tests).
-    const todayISO = new Date().toISOString().slice(0, 10);
+    const todayISO = todayInZone(profile.timezone);
     await supabase
       .from("peptide_doses")
       .delete()
@@ -327,8 +328,4 @@ function frequencyLabel(f: Frequency): string {
     case "five-on-two-off": return "Mon–Fri";
     case "weekly": return "weekly";
   }
-}
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
 }

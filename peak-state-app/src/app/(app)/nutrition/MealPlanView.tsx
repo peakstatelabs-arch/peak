@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { todayISO, type MacroTargets } from "@/lib/nutrition";
+import { type MacroTargets } from "@/lib/nutrition";
 import { cn } from "@/lib/utils";
+import { useTodayISO } from "@/components/TimezoneProvider";
 import type { Plan, PlanData, PlanMeal } from "./NutritionClient";
 
 export function MealPlanView({
@@ -22,6 +23,7 @@ export function MealPlanView({
   onChanged: () => void;
 }) {
   const supabase = createClient();
+  const today = useTodayISO();
   const [building, setBuilding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dayIdx, setDayIdx] = useState(0);
@@ -47,7 +49,7 @@ export function MealPlanView({
       await supabase.from("meal_plans").update({ active: false }).eq("user_id", user.id).eq("active", true);
       // Insert new
       await supabase.from("meal_plans").insert({
-        user_id: user.id, week_start: todayISO(), plan, active: true,
+        user_id: user.id, week_start: today, plan, active: true,
       });
       // Save prefs on profile
       await supabase.from("profiles").update({ dietary_prefs: prefs }).eq("id", user.id);
@@ -155,6 +157,7 @@ export function MealPlanView({
 function MealCard({ meal }: { meal: PlanMeal }) {
   const [open, setOpen] = useState(false);
   const supabase = createClient();
+  const today = useTodayISO();
   const [logging, setLogging] = useState(false);
   const [logged, setLogged] = useState(false);
 
@@ -164,7 +167,7 @@ function MealCard({ meal }: { meal: PlanMeal }) {
     if (!user) { setLogging(false); return; }
     await supabase.from("meal_logs").insert({
       user_id: user.id,
-      logged_for: todayISO(),
+      logged_for: today,
       meal_type: meal.type,
       description: meal.name,
       kcal: meal.kcal,

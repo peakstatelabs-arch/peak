@@ -2,8 +2,9 @@
 
 import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { mealTypeLabel, todayISO, type MealType } from "@/lib/nutrition";
+import { mealTypeLabel, type MealType } from "@/lib/nutrition";
 import { cn } from "@/lib/utils";
+import { useTodayISO } from "@/components/TimezoneProvider";
 
 type Mode = "ai-text" | "ai-photo" | "manual";
 
@@ -28,6 +29,7 @@ export function AddMealSheet({
   onSaved: () => void;
 }) {
   const supabase = createClient();
+  const today = useTodayISO();
   const [mode, setMode] = useState<Mode>("ai-text");
   const [description, setDescription] = useState("");
   const [estimate, setEstimate] = useState<Estimate | null>(null);
@@ -90,7 +92,7 @@ export function AddMealSheet({
     if (!user) { setError("Not signed in."); setSaving(false); return; }
     const { error: e } = await supabase.from("meal_logs").insert({
       user_id: user.id,
-      logged_for: todayISO(),
+      logged_for: today,
       meal_type: mealType,
       description: estimate.description || description,
       kcal: Math.round(estimate.kcal),
@@ -113,7 +115,7 @@ export function AddMealSheet({
     if (!user) { setError("Not signed in."); setSaving(false); return; }
     const { error: e } = await supabase.from("meal_logs").insert({
       user_id: user.id,
-      logged_for: todayISO(),
+      logged_for: today,
       meal_type: mealType,
       description: manual.description,
       kcal: Number(manual.kcal) || 0,

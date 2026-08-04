@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { sumMacros, MEAL_TYPES, mealTypeLabel, type MacroTargets, type MealLog, type MealType, todayISO } from "@/lib/nutrition";
-import { cn } from "@/lib/utils";
+import { sumMacros, MEAL_TYPES, mealTypeLabel, type MacroTargets, type MealLog, type MealType } from "@/lib/nutrition";
+import { cn, localDateISO } from "@/lib/utils";
+import { useTodayISO } from "@/components/TimezoneProvider";
 import { AddMealSheet } from "./AddMealSheet";
 
 export function TodayNutrition({
@@ -18,6 +19,7 @@ export function TodayNutrition({
   onChanged: () => void;
 }) {
   const supabase = createClient();
+  const today = useTodayISO();
   const [addingType, setAddingType] = useState<MealType | null>(null);
   const [removing, setRemoving] = useState<string | null>(null);
 
@@ -30,7 +32,7 @@ export function TodayNutrition({
     onChanged();
   }
 
-  const weekTotals = aggregateWeek(weekMeals);
+  const weekTotals = aggregateWeek(weekMeals, today);
 
   // group by meal type
   const grouped: Record<MealType, MealLog[]> = {
@@ -48,8 +50,8 @@ export function TodayNutrition({
       <section className="card">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="font-semibold">{new Date().toLocaleDateString("en-US", { weekday: "long" })}</h3>
-            <p className="text-xs text-fg-muted">{todayISO()}</p>
+            <h3 className="font-semibold">{new Date(today + "T00:00:00").toLocaleDateString("en-US", { weekday: "long" })}</h3>
+            <p className="text-xs text-fg-muted">{today}</p>
           </div>
           <div className="text-right">
             <div className="font-display text-2xl font-semibold">
@@ -185,16 +187,20 @@ function MacroRing({
 }
 
 const WEEKDAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-function aggregateWeek(rows: { logged_for: string; kcal: number; protein_g: number; carbs_g: number; fat_g: number }[]) {
+function aggregateWeek(
+  rows: { logged_for: string; kcal: number; protein_g: number; carbs_g: number; fat_g: number }[],
+  todayIso: string,
+) {
   const byDay = new Map<string, number>();
   for (const r of rows) {
     byDay.set(r.logged_for, (byDay.get(r.logged_for) ?? 0) + r.kcal);
   }
   const days: { day: string; label: string; kcal: number }[] = [];
   let compliantDays = 0;
+  const base = new Date(todayIso + "T00:00:00");
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(Date.now() - i * 86400000);
-    const iso = d.toISOString().slice(0, 10);
+    const d = new Date(base.getTime() - i * 86400000);
+    const iso = localDateISO(d);
     const kcal = byDay.get(iso) ?? 0;
     days.push({ day: iso, label: WEEKDAY[d.getDay()], kcal });
     if (kcal > 0) compliantDays += 1;

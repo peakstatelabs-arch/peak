@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useTodayISO } from "@/components/TimezoneProvider";
 import type { Dose } from "./Client";
 
 export function TodayDoses({ doses, onChanged }: { doses: Dose[]; onChanged: () => void }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = useTodayISO();
   const todays = doses.filter((d) => d.scheduled_for === today);
   const supabase = createClient();
   const [busy, setBusy] = useState<string | null>(null);

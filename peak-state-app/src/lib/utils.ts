@@ -14,19 +14,15 @@ export function formatDate(d: string | Date) {
   });
 }
 
-export function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-
 /**
  * "Today" as YYYY-MM-DD in a specific IANA timezone (e.g. the user's saved
- * `profiles.timezone`). Use this instead of `todayISO()` anywhere the value is
- * shown to the user or compared against a calendar date.
+ * `profiles.timezone`). Use this anywhere the value is shown to the user or
+ * compared against a calendar date.
  *
- * `todayISO()` / `new Date().toISOString().slice(0,10)` always resolve to UTC,
- * so for users west of UTC the date rolls to "tomorrow" in the evening (e.g. a
- * Central-time user after 7 PM sees the next day). Passing the user's timezone
- * — the same value the dose-reminder cron uses — keeps "today" correct.
+ * `new Date().toISOString().slice(0,10)` always resolves to UTC, so for users
+ * west of UTC the date rolls to "tomorrow" in the evening (e.g. a Central-time
+ * user after 7 PM sees the next day). Passing the user's timezone — the same
+ * value the dose-reminder cron uses — keeps "today" correct.
  *
  * When `timeZone` is omitted or empty it falls back to the runtime's local
  * zone, which in the browser is the device's zone.

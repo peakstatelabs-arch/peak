@@ -4,9 +4,15 @@ import { Sidebar, MobileTopBar, BottomTabBar } from "@/components/Nav";
 import { DisclaimerBanner } from "@/components/DisclaimerBanner";
 import { InstallPWABanner } from "@/components/InstallPWABanner";
 import { OfflineBoundary } from "@/components/OfflineBoundary";
+import { TimezoneProvider } from "@/components/TimezoneProvider";
+import { todayInZone, localDateISO } from "@/lib/utils";
 import { TERMS_VERSION } from "@/lib/legal";
 
-async function computeStreak(supabase: Awaited<ReturnType<typeof createClient>>, userId: string): Promise<number> {
+async function computeStreak(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  timezone: string | null,
+): Promise<number> {
   const since = new Date();
   since.setDate(since.getDate() - 60);
   const { data: doses } = await supabase
@@ -25,10 +31,12 @@ async function computeStreak(supabase: Awaited<ReturnType<typeof createClient>>,
     byDay.set(d.scheduled_for, e);
   }
 
+  // Walk backwards from the user's "today" (in their timezone, not UTC) so the
+  // streak doesn't drop or jump when UTC rolls over in the evening.
   let streak = 0;
-  const cursor = new Date();
+  const cursor = new Date(todayInZone(timezone) + "T00:00:00");
   for (let i = 0; i < 60; i++) {
-    const key = cursor.toISOString().slice(0, 10);
+    const key = localDateISO(cursor);
     const day = byDay.get(key);
     if (day && day.total > 0 && day.done === day.total) {
       streak += 1;
@@ -48,7 +56,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { data: profile } = await supabase
     .from("profiles")
     .select(
-      "must_change_password, disclaimer_dismissed, role, first_name, terms_accepted_at, terms_version, enabled_modules"
+      "must_change_password, disclaimer_dismissed, role, first_name, terms_accepted_at, terms_version, enabled_modules, timezone"
     )
     .eq("id", user.id)
     .single();
@@ -85,21 +93,24 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     if ((count ?? 0) === 0) redirect("/onboard-protocol");
   }
 
-  const streak = await computeStreak(supabase, user.id);
+  const timezone = (profile?.timezone as string | null) ?? null;
+  const streak = await computeStreak(supabase, user.id, timezone);
 
   return (
-    <div className="flex min-h-screen bg-bg">
-      <Sidebar isAdmin={isAdmin} enabledModules={enabledModules} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <MobileTopBar isAdmin={isAdmin} streak={streak} />
-        <InstallPWABanner />
-        {!profile?.disclaimer_dismissed && <DisclaimerBanner />}
-        <main className="flex-1 px-4 lg:px-8 py-6 lg:py-8 pb-28 lg:pb-8 max-w-6xl w-full mx-auto">
-          {children}
-        </main>
-        <BottomTabBar isAdmin={isAdmin} enabledModules={enabledModules} />
+    <TimezoneProvider timezone={timezone}>
+      <div className="flex min-h-screen bg-bg">
+        <Sidebar isAdmin={isAdmin} enabledModules={enabledModules} />
+        <div className="flex-1 flex flex-col min-w-0">
+          <MobileTopBar isAdmin={isAdmin} streak={streak} />
+          <InstallPWABanner />
+          {!profile?.disclaimer_dismissed && <DisclaimerBanner />}
+          <main className="flex-1 px-4 lg:px-8 py-6 lg:py-8 pb-28 lg:pb-8 max-w-6xl w-full mx-auto">
+            {children}
+          </main>
+          <BottomTabBar isAdmin={isAdmin} enabledModules={enabledModules} />
+        </div>
+        <OfflineBoundary />
       </div>
-      <OfflineBoundary />
-    </div>
+    </TimezoneProvider>
   );
 }

@@ -13,6 +13,7 @@ import {
 import { EnableRemindersButton } from "@/components/EnableRemindersButton";
 import { DatePicker } from "@/components/DatePicker";
 import { DosePicker } from "@/components/DosePicker";
+import { todayInZone, localDateISO } from "@/lib/utils";
 
 type Path = "choose" | "power-cut" | "singles";
 type Track = "foundation" | "performance";
@@ -25,11 +26,13 @@ function nextMondayISO(): string {
   const day = d.getDay() === 0 ? 7 : d.getDay();
   const offset = day === 1 ? 7 : 8 - day; // always *next* Monday, never today
   d.setDate(d.getDate() + offset);
-  return d.toISOString().slice(0, 10);
+  return localDateISO(d);
 }
 
+// Onboarding runs on the user's own device, so the device zone is the right
+// "today" here (this route is outside the app layout's TimezoneProvider).
 function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  return todayInZone();
 }
 
 type StartMode = "fresh" | "already-started";
@@ -48,7 +51,7 @@ function mostRecentWeekdayISO(weekday: number): string {
   const today = d.getDay() === 0 ? 7 : d.getDay();
   const diff = (today - weekday + 7) % 7;
   d.setDate(d.getDate() - diff);
-  return d.toISOString().slice(0, 10);
+  return localDateISO(d);
 }
 
 const RETA_DOSE_OPTIONS: number[] = (() => {

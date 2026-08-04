@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { todayISO } from "@/lib/utils";
+import { useTodayISO } from "@/components/TimezoneProvider";
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
 
 type Weight = { id: string; weight_lb: number; logged_for: string; notes: string | null };
@@ -24,6 +24,7 @@ export function BodyTrackerClient({
 }) {
   const router = useRouter();
   const supabase = createClient();
+  const today = useTodayISO();
   const [weight, setWeight] = useState("");
   const [goal, setGoal] = useState(goalWeight?.toString() ?? "");
   const [saving, setSaving] = useState(false);
@@ -39,7 +40,7 @@ export function BodyTrackerClient({
     const { error } = await supabase.from("body_weight_logs").upsert({
       user_id: user!.id,
       weight_lb: Number(weight),
-      logged_for: todayISO(),
+      logged_for: today,
     }, { onConflict: "user_id,logged_for" });
     setSaving(false);
     if (error) { setError("Couldn't save. Try again."); return; }
@@ -152,6 +153,7 @@ function BodyFatCard({
 }) {
   const router = useRouter();
   const supabase = createClient();
+  const today = useTodayISO();
   const [on, setOn] = useState(enabled);
   const [goal, setGoal] = useState(goalBf?.toString() ?? "");
   const [bf, setBf] = useState("");
@@ -188,7 +190,6 @@ function BodyFatCard({
     setErr(null);
     setMsg(null);
     const { data: { user } } = await supabase.auth.getUser();
-    const today = todayISO();
     // One BF entry per day — replace today's if it exists, otherwise insert.
     const { data: existing } = await supabase
       .from("body_measurements")

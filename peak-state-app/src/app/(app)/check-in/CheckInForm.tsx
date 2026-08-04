@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { todayISO } from "@/lib/utils";
+import { useTodayISO } from "@/components/TimezoneProvider";
 import type { CheckInQuestion } from "@/lib/ai-checkin";
 
 type Answer = { chip?: string; text?: string; number?: number };
@@ -21,6 +21,7 @@ export function CheckInForm({
 }) {
   const router = useRouter();
   const supabase = createClient();
+  const today = useTodayISO();
 
   const [answers, setAnswers] = useState<AnswersMap>({});
   const [showDetails, setShowDetails] = useState<Record<string, boolean>>({});
@@ -111,7 +112,7 @@ export function CheckInForm({
 
     if (weightLb !== null) {
       await supabase.from("body_weight_logs").upsert(
-        { user_id: user.id, weight_lb: weightLb, logged_for: todayISO() },
+        { user_id: user.id, weight_lb: weightLb, logged_for: today },
         { onConflict: "user_id,logged_for" }
       );
     }
@@ -120,7 +121,7 @@ export function CheckInForm({
       await supabase.from("progress_photos").insert({
         user_id: user.id,
         storage_path: photoPath,
-        logged_for: todayISO(),
+        logged_for: today,
       });
     }
 

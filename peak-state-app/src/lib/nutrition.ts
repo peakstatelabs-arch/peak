@@ -73,7 +73,3 @@ export type MealType = (typeof MEAL_TYPES)[number];
 export function mealTypeLabel(t: string): string {
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
-
-export function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
