@@ -16,12 +16,13 @@ export const siteCopy = {
     lineTwo: "Only {stacks} {noun} Left",
     shippingText: "Ships within 24 Hours",
     stacks: {
-      initial: 11,
-      minimum: 1,
+      initial: 8,
+      minimum: 3,
       // Eastern calendar date when the count equals `initial` through 7:59 PM ET.
       // Drops by 1 at every 8 PM ET, then cycles back to `initial` the day
       // after it touches `minimum` (cycle length = initial - minimum + 1 days).
-      anchorEasternDate: "2026-07-27",
+      // 8 → 7 → 6 → 5 → 4 → 3, then back to 8 (6-day cycle, never below 3).
+      anchorEasternDate: "2026-08-06",
     },
     disclaimer: "For laboratory research only. Not for human consumption.",
   },
