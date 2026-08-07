@@ -3,7 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePathname } from "next/navigation";
 
-const SUPPRESSED_PATHS = ["/thankyou", "/research-access", "/bridge"];
+const SUPPRESSED_PATHS = [
+  "/thankyou",
+  "/research-access",
+  "/bridge",
+  "/transitionguide",
+];
 
 const CAL_LINK = "peakstatelabs/power-cut-strategy-call";
 const CAL_NAMESPACE = "power-cut-strategy-call";
