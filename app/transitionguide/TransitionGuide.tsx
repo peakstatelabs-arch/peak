@@ -28,6 +28,10 @@ import {
 
 const STORAGE_PREFIX = "tg:";
 
+/** Coach booking link — surfaced in the "before you start" banner. */
+const BOOKING_URL =
+  "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2Cva7fi60gSjdzmmhFb2mS19ghB-v8veIPyIcaXpXgO_ENImibQzgDWE_BOjDyg1etumz7xksb";
+
 type Stage = {
   id: string;
   short: string;
@@ -153,6 +157,27 @@ function IconInfo({ className = "" }: { className?: string }) {
       <circle cx="12" cy="12" r="9" />
       <line x1="12" y1="11" x2="12" y2="16" />
       <line x1="12" y1="8" x2="12.01" y2="8" />
+    </svg>
+  );
+}
+
+function IconCalendar({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+      <path d="M9 16l2 2 4-4" />
     </svg>
   );
 }
@@ -849,6 +874,43 @@ function ProgressRail({
  * STAGE 0 — Start Here (hero + orientation)
  * ============================================================ */
 
+function CallBanner() {
+  return (
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] p-6 text-white shadow-xl sm:p-8">
+      <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--accent)]/20 blur-3xl" />
+      <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+        <div className="flex items-start gap-4">
+          <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[var(--accent)]/25 text-[var(--accent)]">
+            <IconCalendar className="h-6 w-6" />
+          </span>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--accent)]">
+              Before you start
+            </p>
+            <p className="mt-1.5 text-lg font-bold leading-snug sm:text-xl">
+              Book a call before you make any changes.
+            </p>
+            <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-white/80">
+              The transition isn&rsquo;t one-size-fits-all. A quick call makes
+              sure your switch is dialed in for <em>you</em> — so you protect
+              your results instead of guessing.
+            </p>
+          </div>
+        </div>
+        <a
+          href={BOOKING_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-base font-bold text-[var(--primary)] shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[var(--accent-light)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        >
+          <IconCalendar className="h-5 w-5" />
+          Book your transition call
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function StartStage() {
   const answers = [
     { q: "Where am I in the process?", a: "A roadmap that shows every stage at a glance." },
@@ -906,7 +968,9 @@ function StartStage() {
 
       <Container className="relative -mt-8">
         <div className="mx-auto max-w-4xl">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <CallBanner />
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {answers.map((item) => (
               <div
                 key={item.q}
