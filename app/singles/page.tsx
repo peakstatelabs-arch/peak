@@ -215,6 +215,30 @@ export default function SinglesCatalog() {
                   <span className="text-[0.6em] align-super">™</span> system —
                   available as standalone vials for research use.
                 </p>
+
+                {/* Included-with-every-order strip */}
+                <div className="mt-7 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3 animate-fade-in-up stagger-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
+                    Included with every order
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--primary)]/80">
+                    <svg className="w-4 h-4 text-[var(--accent-dark)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    1-on-1 coaching
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--primary)]/80">
+                    <svg className="w-4 h-4 text-[var(--accent-dark)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Custom dosing
+                  </span>
+                </div>
+
+                <p className="mt-4 text-sm text-[var(--primary)]/60 animate-fade-in-up stagger-2">
+                  Even a single vial comes with ongoing 1-on-1 coaching and
+                  custom dosing guidance — the same support as the full system.
+                </p>
               </div>
             </Container>
           </Section>
@@ -321,6 +345,23 @@ export default function SinglesCatalog() {
                           image={product.image}
                         />
 
+                        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs font-semibold text-[var(--accent-dark)]">
+                          <svg
+                            className="w-3.5 h-3.5 flex-shrink-0"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={3}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          1-on-1 coaching + custom dosing included
+                        </p>
+
                         {product.preorder ? (
                           <p className="mt-3 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">
                             <svg
@@ -382,17 +423,38 @@ export default function SinglesCatalog() {
 
                 <div className="mt-8 space-y-4 text-lg text-white/80">
                   <p>
-                    This compound is typically used as part of a structured
-                    system.
+                    Ordering a single vial doesn&rsquo;t mean going it alone.
                   </p>
-                  <p>On its own, it plays a role.</p>
                   <p>
-                    When combined correctly, things shift faster — and more
-                    predictably.
+                    Every order — even one vial — comes with ongoing 1-on-1
+                    coaching for your nutrition and training, plus custom dosing
+                    guidance dialed in for you with our calculator and a coach.
                   </p>
                 </div>
 
-                <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-white/10 backdrop-blur border border-white/10">
+                {/* Coaching + custom dosing included */}
+                <div className="mt-10 grid sm:grid-cols-2 gap-4 text-left">
+                  <div className="p-6 rounded-3xl bg-white/10 backdrop-blur border border-white/10">
+                    <h3 className="text-lg font-bold text-[var(--accent)]">
+                      Ongoing 1-on-1 Coaching
+                    </h3>
+                    <p className="mt-2 text-white/80 leading-relaxed">
+                      A real coach in your corner for nutrition and training —
+                      not a forum, not a bot.
+                    </p>
+                  </div>
+                  <div className="p-6 rounded-3xl bg-white/10 backdrop-blur border border-white/10">
+                    <h3 className="text-lg font-bold text-[var(--accent)]">
+                      Custom Dosing Guidance
+                    </h3>
+                    <p className="mt-2 text-white/80 leading-relaxed">
+                      Your dose tailored to you with our calculator and a coach
+                      to review it — never a generic chart.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 p-6 sm:p-8 rounded-3xl bg-white/10 backdrop-blur border border-white/10">
                   <p className="text-white/90 text-lg leading-relaxed">
                     The full{" "}
                     <span className="font-bold text-[var(--accent)]">

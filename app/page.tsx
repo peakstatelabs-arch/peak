@@ -110,6 +110,25 @@ export default function Home() {
                   </span>
                 </div>
 
+                {/* Included-with-every-order strip */}
+                <div className="mt-5 inline-flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3 animate-fade-in-up stagger-2">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
+                    Included with every order
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--primary)]/80">
+                    <svg className="w-4 h-4 text-[var(--accent-dark)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    1-on-1 coaching
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--primary)]/80">
+                    <svg className="w-4 h-4 text-[var(--accent-dark)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Custom dosing
+                  </span>
+                </div>
+
                 {/* CTA Buttons */}
                 <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up stagger-3">
                   <a
@@ -191,10 +210,9 @@ export default function Home() {
 
               {/* Subheadline */}
               <p className="mt-3 sm:mt-4 text-base sm:text-lg text-[var(--primary)]/70">
-                Every POWER CUT
-                <span className="text-[0.6em] align-super">™</span> member
-                receives direct access to personalized guidance and support
-                throughout their journey.
+                Every customer &mdash; on any order &mdash; gets ongoing 1-on-1
+                coaching for nutrition and training, plus custom dosing guidance
+                dialed in for their body. Included as standard, never an upsell.
               </p>
             </div>
 
@@ -220,11 +238,12 @@ export default function Home() {
                   </div>
                   <div className="flex-1 md:mt-5">
                     <h3 className="text-base md:text-xl font-bold text-[var(--primary)]">
-                      1-on-1 Guidance
+                      1-on-1 Coaching
                     </h3>
                     <p className="mt-1.5 md:mt-3 text-sm md:text-base text-[var(--primary)]/70 leading-relaxed">
-                      Get direct answers whenever questions come up so you
-                      never feel stuck or left guessing.
+                      Ongoing coaching for your nutrition and training, with a
+                      real person to answer questions so you&rsquo;re never left
+                      guessing.
                     </p>
                   </div>
                 </div>
@@ -262,7 +281,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Card 3 — Clear Next Steps */}
+              {/* Card 3 — Custom Dosing */}
               <div className="rounded-2xl md:rounded-3xl bg-white border border-[var(--border)] p-4 md:p-8 shadow-sm card-hover">
                 <div className="flex flex-row md:flex-col items-start gap-4 md:gap-0">
                   <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[var(--accent)]/15 flex items-center justify-center flex-shrink-0">
@@ -276,17 +295,18 @@ export default function Home() {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"
+                        d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
                       />
                     </svg>
                   </div>
                   <div className="flex-1 md:mt-5">
                     <h3 className="text-base md:text-xl font-bold text-[var(--primary)]">
-                      Clear Next Steps
+                      Custom Dosing, Dialed In
                     </h3>
                     <p className="mt-1.5 md:mt-3 text-sm md:text-base text-[var(--primary)]/70 leading-relaxed">
-                      No confusion around where to begin or what comes next.
-                      A simple path with support when you need it.
+                      Your dose guided by our calculator and reviewed with a
+                      coach &mdash; tailored to your body, not a one-size-fits-all
+                      chart.
                     </p>
                   </div>
                 </div>

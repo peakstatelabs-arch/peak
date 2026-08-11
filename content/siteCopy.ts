@@ -57,9 +57,9 @@ export const siteCopy = {
           "Follow a simple 10-week map that tells you exactly what to do every day.",
       },
       {
-        title: "Expert Coaching",
+        title: "1-on-1 Coaching",
         description:
-          "Get 1-on-1 support so you never feel alone on your journey.",
+          "Ongoing 1-on-1 coaching for your nutrition and training — included with every order.",
       },
       {
         title: "Proven Science",
@@ -67,9 +67,9 @@ export const siteCopy = {
           "Use the same clean, tested tools that the world's top athletes use.",
       },
       {
-        title: "Total Body Reset",
+        title: "Custom Dosing",
         description:
-          'Wake up with a "bolt of energy" and finally feel like yourself again.',
+          "Dosing guidance dialed in with our calculator and a coach — tailored to you, not a generic chart.",
       },
     ],
     secureNote:
@@ -175,6 +175,8 @@ export const siteCopy = {
           "A single 10-week burst to prove the system works. Perfect for hitting an immediate fat loss goal before deciding if you're ready for the elite level.",
         features: [
           "1\u00d7 POWER CUT\u2122 Research Cycle",
+          "Ongoing 1-on-1 coaching (nutrition & training)",
+          "Custom dosing guidance, tailored to you",
           "Full experiment protocol",
           "Handling & sequencing guidance",
           "Batch documentation (Purity Tests)",
@@ -201,6 +203,8 @@ export const siteCopy = {
           'The "Smart Choice" for 20 weeks of uninterrupted metabolic control. Stop "trying" and start guaranteeing your body finally cooperates with your ambition.',
         features: [
           "2\u00d7 POWER CUT\u2122 Research Cycles",
+          "Ongoing 1-on-1 coaching (nutrition & training)",
+          "Custom dosing guidance, tailored to you",
           "Extended protocol continuity",
           "Cleaner sequencing across phases",
           "Reduced variability from re-ordering",
@@ -231,6 +235,8 @@ export const siteCopy = {
           "Our most aggressive research timeline. Lock in three full cycles to ensure your new, lean physique becomes your permanent biological reality.",
         features: [
           "3\u00d7 POWER CUT\u2122 Research Cycles",
+          "Ongoing 1-on-1 coaching (nutrition & training)",
+          "Custom dosing guidance, tailored to you",
           "Full multi-phase protocol continuity",
           "Priority restocks on limited batches",
           "Highest cost-per-cycle efficiency",
