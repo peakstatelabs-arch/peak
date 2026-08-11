@@ -193,7 +193,7 @@ export default function SinglesCatalog() {
 
         <main>
           {/* Hero */}
-          <Section className="relative overflow-hidden gradient-hero">
+          <Section className="relative overflow-hidden gradient-hero !pb-8 sm:!pb-12">
             <div className="pointer-events-none absolute inset-0">
               <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
               <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
@@ -244,7 +244,7 @@ export default function SinglesCatalog() {
           </Section>
 
           {/* Product Grid */}
-          <Section className="bg-white">
+          <Section className="bg-white !pt-8 sm:!pt-12">
             <Container>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
                 {products.map((product) => (

@@ -591,7 +591,7 @@ export default function Home() {
         </Section>
 
         {/* Pricing Section */}
-        <Section id="pricing" className="bg-[var(--muted)]">
+        <Section id="pricing" className="bg-[var(--muted)] !pb-8 sm:!pb-12">
           <Container>
             <div className="text-center max-w-2xl mx-auto mb-12">
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -615,7 +615,7 @@ export default function Home() {
         </Section>
 
         {/* Singles Offer Section - capture leads not ready for the full stack */}
-        <Section className="bg-white relative overflow-hidden !pb-8 sm:!pb-12">
+        <Section className="bg-white relative overflow-hidden !pt-8 sm:!pt-12 !pb-8 sm:!pb-12">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-20 left-[-10%] h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl" />
             <div className="absolute bottom-0 right-[-10%] h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl" />
