@@ -15,9 +15,9 @@ const BENEFIT_ICONS = [
   FlameIcon,      // Burn 2lbs Every Week
   ActivityIcon,   // Strong, Toned Muscle
   MapPinCheckIcon, // No Guessing
-  TargetIcon,     // Expert Coaching
+  TargetIcon,     // 1-on-1 Coaching
   FlaskIcon,      // Proven Science
-  ZapIcon,        // Total Body Reset
+  ZapIcon,        // Custom Dosing
 ];
 
 export function BenefitsGrid({ benefits }: BenefitsGridProps) {
