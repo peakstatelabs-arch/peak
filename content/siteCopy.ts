@@ -325,7 +325,7 @@ export const siteCopy = {
     items: [
       {
         q: "Is this medical advice?",
-        a: "No. Nothing on this site constitutes medical advice. We do not provide recommendations for human use, dosing, or protocols. Always consult with a licensed healthcare professional before making any health decisions.",
+        a: "No. Nothing on this site is medical advice, and nothing here is intended to diagnose, treat, cure, or prevent any condition. Any coaching and dosing guidance is provided for educational and research purposes to help you structure your protocol — it is not a medical recommendation or prescription. Always consult a licensed healthcare professional before making any health decisions.",
       },
       {
         q: "Why a protocol?",
