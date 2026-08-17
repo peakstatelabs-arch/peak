@@ -1,11 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import posthog from "posthog-js";
 import { siteCopy } from "@/content/siteCopy";
 import { reviews, type Review } from "@/content/reviews";
 import { AddToCartButton } from "@/app/singles/cart/AddToCartButton";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
+import { PricingCard } from "@/app/components/PricingCard";
 import {
   type QuizAnswers,
   type Recommendation,
@@ -65,74 +65,145 @@ function Stars({ className = "" }: { className?: string }) {
   );
 }
 
-/* ─────────────────────────── Stack cycle selector ──────────────────────── */
+/* ────────────────────────── What's in the stack ────────────────────────── */
+//
+// Bug fix: a stack recommendation must show what's actually in the box. Pulls
+// the vial breakdown from siteCopy.contents and the value framing from
+// siteCopy.comparison — the same source the homepage uses — so it never drifts.
 
-type Tier = (typeof siteCopy.pricing.tiers)[number];
+function StackContents() {
+  const vials = siteCopy.contents.items;
+  const pc = siteCopy.comparison.powercut;
+  const diyTotal = siteCopy.comparison.diy.total;
+  const included = [
+    "Ongoing 1-on-1 coaching (nutrition & training)",
+    "Custom dosing guidance, tailored to you",
+    "Private community & support",
+    "Research Cycle Calculator access",
+    "Batch documentation (purity tests)",
+    "Free shipping",
+  ];
+
+  return (
+    <section className="mt-12">
+      <h3 className="text-xl font-bold text-[var(--primary)]">
+        What&apos;s inside your POWER CUT™ stack
+      </h3>
+      <p className="mt-1 text-sm text-[var(--primary)]/60">
+        Every 10-week cycle includes all three research peptides — plus the
+        coaching and tools to run them right.
+      </p>
+
+      {/* Vials */}
+      <div className="mt-5 grid gap-4 sm:grid-cols-3">
+        {vials.map((v) => (
+          <div
+            key={v.name}
+            className="flex items-center gap-4 rounded-3xl border border-[var(--border)] bg-white p-4"
+          >
+            <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl border border-[var(--border)] bg-white">
+              <img src={v.image} alt={v.name} className="h-full w-full object-contain" />
+            </div>
+            <div className="min-w-0">
+              <p className="font-bold text-[var(--primary)] leading-tight">{v.name}</p>
+              <p className="text-sm text-[var(--primary)]/60">{v.amount}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Also included + value */}
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <div className="rounded-3xl border border-[var(--border)] bg-white p-6">
+          <p className="text-sm font-bold uppercase tracking-wide text-[var(--accent-dark)]">
+            Also included with every cycle
+          </p>
+          <ul className="mt-3 space-y-2.5">
+            {included.map((item) => (
+              <li key={item} className="flex items-start gap-3">
+                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/20">
+                  <CheckIcon className="h-3 w-3 text-[var(--accent-dark)]" />
+                </span>
+                <span className="text-sm text-[var(--primary)]/85">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-col justify-center rounded-3xl border border-[var(--accent)]/30 bg-[var(--accent)]/[0.06] p-6">
+          <p className="text-sm font-bold uppercase tracking-wide text-[var(--accent-dark)]">
+            The math
+          </p>
+          <div className="mt-3 space-y-1.5 text-[var(--primary)]/80">
+            <div className="flex items-center justify-between">
+              <span>Bought separately</span>
+              <span className="font-semibold line-through text-[var(--primary)]/50">
+                {diyTotal}
+              </span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Your POWER CUT™ price</span>
+              <span className="text-xl font-extrabold text-[var(--primary)]">
+                {pc.price}
+              </span>
+            </div>
+          </div>
+          <p className="mt-3 inline-flex w-fit items-center rounded-full bg-[var(--accent)] px-3 py-1 text-sm font-extrabold text-[var(--primary)]">
+            You save {pc.savings}
+          </p>
+          <p className="mt-4 text-sm text-[var(--primary)]/70 leading-relaxed">
+            Bundled and sequenced so the three peptides compound instead of
+            competing — the whole reason the stack outperforms buying vials à la
+            carte.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────── Stack cycle selector ──────────────────────── */
 
 function StackOffer({
   recommendedTier,
-  onCheckout,
+  eventProps,
 }: {
   recommendedTier: StackTierId;
-  onCheckout: (tier: Tier) => void;
+  eventProps: Record<string, string | number | boolean | null | undefined>;
 }) {
   const tiers = siteCopy.pricing.tiers;
+  // Recommended tier first so it reads as the default choice.
   const ordered = [...tiers].sort((a, b) =>
     a.id === recommendedTier ? -1 : b.id === recommendedTier ? 1 : 0,
   );
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-3 pt-4">
       {ordered.map((tier) => {
-        const featured = tier.id === recommendedTier;
+        const recommended = tier.id === recommendedTier;
         return (
-          <div
+          <PricingCard
             key={tier.id}
-            className={`relative flex flex-col rounded-3xl border p-6 ${
-              featured
-                ? "border-[var(--accent)] bg-[var(--accent)]/[0.06] shadow-lg ring-1 ring-[var(--accent)]/40"
-                : "border-[var(--border)] bg-white"
-            }`}
-          >
-            {featured && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--accent)] px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-[var(--primary)]">
-                Best for you
-              </span>
-            )}
-            <p className="text-sm font-bold uppercase tracking-wide text-[var(--accent-dark)]">
-              {tier.subtitle}
-            </p>
-            <h4 className="mt-1 text-xl font-bold text-[var(--primary)]">
-              {tier.name}
-            </h4>
-            <div className="mt-3 flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-[var(--primary)]">
-                {tier.price}
-              </span>
-              {"perStackPrice" in tier && tier.perStackPrice ? (
-                <span className="text-xs font-semibold text-[var(--primary)]/60">
-                  {tier.perStackPrice}
-                </span>
-              ) : null}
-            </div>
-            <p className="mt-3 text-sm text-[var(--primary)]/70 leading-relaxed">
-              {tier.description}
-            </p>
-            <button
-              type="button"
-              onClick={() => onCheckout(tier)}
-              className={`mt-6 inline-flex h-12 w-full items-center justify-center rounded-2xl px-5 text-base font-bold transition-colors ${
-                featured
-                  ? "bg-[var(--accent)] text-[var(--primary)] hover:bg-[var(--accent-dark)] hover:text-white"
-                  : "bg-[var(--primary)] text-white hover:bg-[var(--primary)]/90"
-              }`}
-            >
-              {tier.ctaLabel}
-            </button>
-            <p className="mt-2 text-center text-xs text-[var(--primary)]/50">
-              Secure checkout by Stripe
-            </p>
-          </div>
+            id={tier.id}
+            name={tier.name}
+            subtitle={tier.subtitle}
+            description={tier.description}
+            features={tier.features}
+            estimatedValue={tier.estimatedValue}
+            price={tier.price}
+            perStackPrice={"perStackPrice" in tier ? tier.perStackPrice : undefined}
+            installment={tier.installment}
+            savings={tier.savings}
+            ctaLabel={tier.ctaLabel}
+            ctaSubtext={tier.ctaSubtext}
+            stripeUrl={tier.stripeUrl}
+            preorderNote={tier.preorderNote}
+            refundNote={tier.refundNote}
+            shipsBy={siteCopy.pricing.shipsBy || undefined}
+            highlighted={recommended}
+            badgeLabel={recommended ? "BEST FOR YOU" : null}
+            ctaEventProperties={eventProps}
+          />
         );
       })}
     </div>
@@ -210,21 +281,13 @@ export function QuizResults({
   const firstName = name?.split(/\s+/)[0];
   const arch = recommendation.archetype;
 
-  function checkoutStack(tier: Tier) {
-    // The POWER CUT stack is a hosted Stripe payment link (not the on-site
-    // cart), so we send the buyer straight there. Log the intent first so it
-    // lands in the same PostHog/Zapier funnels the singles cart uses.
-    try {
-      posthog.capture("quiz_stack_checkout_click", {
-        tier: tier.id,
-        price: tier.price,
-        primary_goal: answers.primaryGoal,
-      });
-    } catch {
-      // Never block checkout on analytics.
-    }
-    window.location.href = tier.stripeUrl;
-  }
+  // Extra context stamped onto the stack CTA's tracked event so quiz-sourced
+  // POWER CUT checkouts are attributable in the existing funnels.
+  const stackEventProps = {
+    source: "quiz",
+    quiz_archetype: arch.key,
+    primary_goal: answers.primaryGoal,
+  };
 
   return (
     <div className="min-h-screen bg-white text-[var(--primary)]">
@@ -339,6 +402,28 @@ export function QuizResults({
                     image={recommendation.primary.image}
                   />
                 </div>
+
+                {/* Inclusions strip — so single results don't feel bare. */}
+                <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--muted)] p-4">
+                  <p className="text-xs font-bold uppercase tracking-wide text-[var(--primary)]/50">
+                    Every order includes
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
+                    {[
+                      "1-on-1 coaching",
+                      "Custom dosing",
+                      "Free shipping",
+                    ].map((item) => (
+                      <span
+                        key={item}
+                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--primary)]/80"
+                      >
+                        <CheckIcon className="h-3.5 w-3.5 text-[var(--accent-dark)]" />
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -366,9 +451,12 @@ export function QuizResults({
           </div>
         </div>
 
+        {/* What's in the stack (stack recommendations only) */}
+        {isStack && <StackContents />}
+
         {/* Stack cycle selector (stack recommendations only) */}
         {isStack && (
-          <section className="mt-10">
+          <section className="mt-12">
             <h3 className="text-xl font-bold text-[var(--primary)]">
               Choose your cycle length
             </h3>
@@ -379,7 +467,7 @@ export function QuizResults({
             <div className="mt-5">
               <StackOffer
                 recommendedTier={recommendation.recommendedTier}
-                onCheckout={checkoutStack}
+                eventProps={stackEventProps}
               />
             </div>
           </section>
