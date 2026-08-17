@@ -1,9 +1,12 @@
 // Quiz data model + recommendation engine for the /quiz split-test funnel.
 //
-// This module is pure (no React, no side effects) so the recommendation
-// logic can be reasoned about and unit-tested in isolation. The quiz UI
-// (QuizExperience.tsx) collects `QuizAnswers`; `buildRecommendation` turns
-// those answers into a `Recommendation` the results page renders.
+// This module is pure (no React, no side effects) so the recommendation and
+// archetype logic can be reasoned about and tested in isolation. The quiz UI
+// (QuizExperience.tsx) collects `QuizAnswers` through a deliberately sequenced
+// set of *functional* questions — positive → neutral → problem → a
+// pressure-release choice — designed to build intent, not just identify the
+// visitor. `buildRecommendation` turns those answers into a `Recommendation`
+// (product pick + a diagnostic archetype) the results page renders.
 //
 // Products reuse the exact Stripe Price IDs / pricing the singles catalog
 // already sells (see app/singles/cart/priceCatalog.ts and app/singles/page.tsx)
@@ -17,8 +20,6 @@ import {
 
 /* ────────────────────────────── Answer model ───────────────────────────── */
 
-export type Gender = "male" | "female" | "unspecified";
-export type AgeRange = "21-29" | "30-39" | "40-49" | "50+";
 export type Goal =
   | "fat-loss"
   | "muscle"
@@ -26,17 +27,23 @@ export type Goal =
   | "antiaging"
   | "transformation";
 export type Experience = "new" | "some" | "experienced";
-export type Timeline = "10-weeks" | "event" | "long-term";
+export type AgeRange = "21-29" | "30-39" | "40-49" | "50+";
+export type Timeline = "event" | "10-weeks" | "long-term";
+export type Struggle = "fat" | "recovery" | "aging";
 export type StartPreference = "protocol" | "single" | "unsure";
 
 export interface QuizAnswers {
-  gender: Gender;
-  age: AgeRange;
   primaryGoal: Goal;
   secondaryGoals: Goal[];
   experience: Experience;
+  age: AgeRange;
   weight: number;
   timeline: Timeline;
+  /** "Lately, my body…" — the bridge into the problem state; drives archetype. */
+  struggle: Struggle;
+  /** "What frustrates me most is…" — free text or a preset label. */
+  frustration: string;
+  /** "What would you like instead?" — the pressure-release routing choice. */
   startPreference: StartPreference;
 }
 
@@ -45,41 +52,49 @@ export interface QuizAnswers {
 export interface GoalMeta {
   key: Goal;
   emoji: string;
+  /** Short label used in results copy, e.g. "lose fat". */
   label: string;
+  /** One-line description for option buttons. */
   blurb: string;
+  /** "I want" completion used on the opening (positive) question. */
+  want: string;
 }
 
-// Primary-goal options (includes the broad "transformation" pick).
 export const PRIMARY_GOALS: GoalMeta[] = [
   {
     key: "fat-loss",
     emoji: "🔥",
     label: "Lose fat",
     blurb: "Strip stubborn body fat and lean out",
+    want: "To finally get lean and see real definition",
   },
   {
     key: "muscle",
     emoji: "💪",
     label: "Build lean muscle",
     blurb: "Add lean mass, strength and better sleep",
+    want: "To build a strong, athletic body",
   },
   {
     key: "recovery",
     emoji: "🧠",
     label: "Recover & heal",
     blurb: "Bounce back from training, joints and injuries",
+    want: "To recover, heal and feel young again",
   },
   {
     key: "antiaging",
     emoji: "✨",
     label: "Look younger",
     blurb: "Skin, hair and visible tissue renewal",
+    want: "To look younger — skin, hair and vitality",
   },
   {
     key: "transformation",
     emoji: "⚡",
     label: "Total transformation",
     blurb: "Fat loss + muscle + recovery, all at once",
+    want: "To completely transform how I look and feel",
   },
 ];
 
@@ -157,8 +172,6 @@ export const SINGLES: Record<SinglesProductSlug, QuizProduct> = {
   },
 };
 
-// Which single vial each concrete goal maps to. "transformation" has no single
-// vial — it resolves to the stack (or the Engine if the user wants to start small).
 const GOAL_TO_SLUG: Record<Goal, SinglesProductSlug | null> = {
   "fat-loss": "retatrutide",
   muscle: "cjc-ipamorelin",
@@ -167,13 +180,121 @@ const GOAL_TO_SLUG: Record<Goal, SinglesProductSlug | null> = {
   transformation: null,
 };
 
-// Vials contained inside the POWER CUT stack (so we never suggest them as
-// "add-ons" to someone already buying the full protocol).
 const STACK_SLUGS: SinglesProductSlug[] = [
   "retatrutide",
   "cjc-ipamorelin",
   "bpc-tb500",
 ];
+
+/* ──────────────────────────── Diagnostic archetypes ─────────────────────── */
+//
+// The "reveal" on the results page. Each archetype gives the visitor a named
+// type, then explains the honest biological *mechanism* behind their problem —
+// no shame, all situation + science — before flipping to the solution. This is
+// the bad-news → mechanism → good-news contrast that makes the recommendation
+// land. Copy is intentionally editable in one place.
+
+export type ArchetypeKey =
+  | "stalled-cutter"
+  | "plateaued-builder"
+  | "worn-down-athlete"
+  | "reset-seeker"
+  | "total-transformer";
+
+export interface Archetype {
+  key: ArchetypeKey;
+  label: string;
+  /** Rapport + "you're not alone" comfort line. */
+  comfort: string;
+  /** The "here's the hard part" bad-news line that continues the problem state. */
+  badNews: string;
+  /** The honest mechanism — why the problem keeps happening. */
+  mechanism: string;
+  /** The flip into the solution (leads into the recommendation). */
+  goodNews: string;
+}
+
+export const ARCHETYPES: Record<ArchetypeKey, Archetype> = {
+  "stalled-cutter": {
+    key: "stalled-cutter",
+    label: "The Stalled Cutter",
+    comfort:
+      "You're far from alone — this is the single most common pattern we see, and almost everyone who takes this quiz describes it exactly the way you just did.",
+    badNews:
+      "Here's what almost no one tells you: the harder you've dieted, the more your body has learned to fight you back.",
+    mechanism:
+      "It isn't willpower. In a deficit your hunger hormones climb, “food noise” gets louder, and your metabolism quietly downshifts to burn less — so the exact effort that used to work stops working. You're not failing the plan; the plan is working against your biology.",
+    goodNews:
+      "The good news: that loop is breakable. Your protocol is built to quiet food noise and restore your metabolic output — so effort finally shows up on the scale again.",
+  },
+  "plateaued-builder": {
+    key: "plateaued-builder",
+    label: "The Plateaued Builder",
+    comfort:
+      "You're in good company — a lot of people who train hard hit this exact wall and can't figure out why.",
+    badNews:
+      "Here's the part that's rarely explained: past your mid-20s, the signal telling your body to grow gets quieter every year.",
+    mechanism:
+      "It isn't your effort. Your natural growth-hormone pulse declines with age and recovery becomes the real ceiling on new muscle — you train hard, but the “build” signal is muted and you recover too slowly to compound it.",
+    goodNews:
+      "The good news: that signal can be amplified. Your protocol is built to restore your GH pulse and recovery so the work you're already doing actually turns into muscle.",
+  },
+  "worn-down-athlete": {
+    key: "worn-down-athlete",
+    label: "The Worn-Down Athlete",
+    comfort:
+      "You're not alone, and you're not soft — the hardest-training people are usually the ones who feel this first.",
+    badNews:
+      "Here's what usually gets missed: your recovery debt has been compounding faster than your body can clear it.",
+    mechanism:
+      "It isn't that you're training wrong. As you age, micro-injuries and inflammation accumulate faster than your body repairs them, so nagging joints and slow recovery pile up and quietly cap everything else you're trying to do.",
+    goodNews:
+      "The good news: repair can be accelerated. Your protocol is built to speed connective-tissue recovery and clear the inflammatory drag holding you back.",
+  },
+  "reset-seeker": {
+    key: "reset-seeker",
+    label: "The Reset Seeker",
+    comfort:
+      "You're not alone — this is one of the most common things people quietly want and rarely say out loud.",
+    badNews:
+      "Here's what's really going on under the surface: your body's renewal signals slow down with age.",
+    mechanism:
+      "It isn't only genetics. Collagen production and copper-peptide signaling decline over time, so skin quality, hair vitality and tissue renewal all lose a step — gradually, then noticeably.",
+    goodNews:
+      "The good news: those signals can be switched back on. Your protocol is built to support visible renewal from the inside out.",
+  },
+  "total-transformer": {
+    key: "total-transformer",
+    label: "The Total Transformer",
+    comfort:
+      "You're not alone — wanting all of it at once is more common than people admit, and it's completely doable with the right system.",
+    badNews:
+      "Here's the catch most people run into: chasing fat loss, muscle and recovery separately means they end up fighting each other.",
+    mechanism:
+      "It isn't a lack of discipline. Dieting kills recovery, hard training stalls fat loss, and aging drops the hormones that drive all three — run in isolation, each goal quietly sabotages the others.",
+    goodNews:
+      "The good news: synchronized, they compound instead of competing. The POWER CUT™ protocol is built to run fat loss, muscle and recovery as one 10-week system.",
+  },
+};
+
+function archetypeFor(a: QuizAnswers, kind: "stack" | "single"): Archetype {
+  if (kind === "stack" && a.primaryGoal === "transformation") {
+    return ARCHETYPES["total-transformer"];
+  }
+  switch (a.primaryGoal) {
+    case "fat-loss":
+      return ARCHETYPES["stalled-cutter"];
+    case "muscle":
+      return ARCHETYPES["plateaued-builder"];
+    case "recovery":
+      return ARCHETYPES["worn-down-athlete"];
+    case "antiaging":
+      return ARCHETYPES["reset-seeker"];
+    case "transformation":
+    default:
+      return ARCHETYPES["total-transformer"];
+  }
+}
 
 /* ─────────────────────────── Recommendation model ──────────────────────── */
 
@@ -190,6 +311,8 @@ export interface Recommendation {
   primary?: QuizProduct;
   /** Present when kind === "stack" — the cycle tier we pre-select. */
   recommendedTier: StackTierId;
+  /** The diagnostic reveal shown before the solution. */
+  archetype: Archetype;
   /** "Why this is right for you" bullets, generated from the answers. */
   reasons: string[];
   /** Contextual single-vial upsells drawn from secondary goals. */
@@ -201,7 +324,7 @@ export interface Recommendation {
 /* ────────────────────────── Recommendation engine ──────────────────────── */
 
 function wantsStack(a: QuizAnswers): boolean {
-  // An explicit "just a vial or two" always wins — never override the user.
+  // An explicit "focused start" always wins — never override the user.
   if (a.startPreference === "single") return false;
 
   // The broad goal is the stack by definition.
@@ -267,7 +390,6 @@ function buildAddOns(
     }
   }
 
-  // Always give them at least one high-value, sensible add-on to consider.
   if (out.length === 0) {
     if (!used.has("ghk-cu")) {
       out.push({
@@ -315,11 +437,11 @@ function buildReasons(
 
   if (kind === "stack") {
     reasons.push(
-      `You told us your focus is “${gm.label.toLowerCase()}” — the POWER CUT™ protocol synchronizes fat loss, lean muscle and recovery in one 10-week system.`,
+      `You told us what you want most is “${gm.want.toLowerCase()}” — the POWER CUT™ protocol synchronizes fat loss, lean muscle and recovery in one 10-week system.`,
     );
   } else if (primary) {
     reasons.push(
-      `Your #1 goal is “${gm.label.toLowerCase()},” and ${primary.name} (${primary.tagline}) is the single most direct lever for it.`,
+      `What you want most is “${gm.want.toLowerCase()},” and ${primary.name} (${primary.tagline}) is the single most direct lever for it.`,
     );
   }
 
@@ -335,11 +457,11 @@ function buildReasons(
 
   if (a.timeline === "event") {
     reasons.push(
-      "With a hard deadline coming up, this is the fastest structured path to a visible change in time.",
+      "With a deadline coming up, this is the fastest structured path to a visible change in time.",
     );
   } else if (a.timeline === "long-term") {
     reasons.push(
-      "Since you're playing the long game, we've pre-selected the cycle length that compounds best over time.",
+      "Since you're in it for the long haul, we've pre-selected the cycle length that compounds best over time.",
     );
   }
 
@@ -353,6 +475,7 @@ export function buildRecommendation(a: QuizAnswers): Recommendation {
     return {
       kind: "stack",
       recommendedTier: recommendedTier(a),
+      archetype: archetypeFor(a, "stack"),
       reasons: buildReasons(a, "stack"),
       addOns: buildAddOns(a, "stack"),
       projection: buildProjection(a, "stack"),
@@ -365,6 +488,7 @@ export function buildRecommendation(a: QuizAnswers): Recommendation {
     kind: "single",
     primary,
     recommendedTier: "single",
+    archetype: archetypeFor(a, "single"),
     reasons: buildReasons(a, "single", primary),
     addOns: buildAddOns(a, "single", primary),
     projection: buildProjection(a, "single"),
@@ -373,7 +497,6 @@ export function buildRecommendation(a: QuizAnswers): Recommendation {
 
 /* ───────────────────────── Testimonial selection ──────────────────────── */
 
-// Map a goal to the review categories most relevant to it (see content/reviews.ts).
 export function reviewCategoriesForGoal(
   goal: Goal,
 ): ("fat-loss" | "food-noise" | "energy" | "mindset" | "strength")[] {

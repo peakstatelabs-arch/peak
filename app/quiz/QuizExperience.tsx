@@ -9,10 +9,10 @@ import {
   buildRecommendation,
   type AgeRange,
   type Experience,
-  type Gender,
   type Goal,
   type QuizAnswers,
   type StartPreference,
+  type Struggle,
   type Timeline,
 } from "./quizConfig";
 import { QuizResults } from "./QuizResults";
@@ -20,6 +20,13 @@ import { QuizResults } from "./QuizResults";
 type Draft = Partial<QuizAnswers>;
 
 const TOTAL_STEPS = 8;
+
+const FRUSTRATIONS: { key: string; label: string }[] = [
+  { key: "effort", label: "Putting in the effort and not seeing it show" },
+  { key: "metabolism", label: "Feeling like my own body is working against me" },
+  { key: "money", label: "Wasting time and money on things that don't deliver" },
+  { key: "other", label: "Something else" },
+];
 
 /* ────────────────────────── Reusable option button ─────────────────────── */
 
@@ -88,7 +95,6 @@ function QuestionShell({
   const pct = Math.round((step / TOTAL_STEPS) * 100);
   return (
     <div className="mx-auto w-full max-w-xl">
-      {/* Progress */}
       <div className="mb-8">
         <div className="flex items-center justify-between text-xs font-semibold text-[var(--primary)]/50">
           <button
@@ -120,9 +126,7 @@ function QuestionShell({
       <h1 className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[var(--primary)]">
         {title}
       </h1>
-      {subtitle && (
-        <p className="mt-2 text-[var(--primary)]/60">{subtitle}</p>
-      )}
+      {subtitle && <p className="mt-2 text-[var(--primary)]/60">{subtitle}</p>}
 
       <div className="mt-6 space-y-3">{children}</div>
     </div>
@@ -132,15 +136,21 @@ function QuestionShell({
 /* ──────────────────────────────── Experience ───────────────────────────── */
 
 export function QuizExperience() {
+  // step 0 = intro/hook lander; steps 1..8 = the eight functional questions.
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<Draft>({});
   const [answers, setAnswers] = useState<QuizAnswers | null>(null);
   const [weightInput, setWeightInput] = useState("");
+  const [frustrationKey, setFrustrationKey] = useState<string | null>(null);
+  const [frustrationOther, setFrustrationOther] = useState("");
   const contactRef = useRef<{ email?: string; name?: string }>({});
   const startedRef = useRef(false);
 
   useEffect(() => {
     contactRef.current = readClientContact();
+  }, []);
+
+  function begin() {
     if (!startedRef.current) {
       startedRef.current = true;
       try {
@@ -149,7 +159,8 @@ export function QuizExperience() {
         /* analytics never blocks */
       }
     }
-  }, []);
+    setStep(1);
+  }
 
   function goBack() {
     setStep((s) => Math.max(0, s - 1));
@@ -159,7 +170,7 @@ export function QuizExperience() {
     setStep((s) => s + 1);
   }
 
-  // Sets a single-select answer and auto-advances.
+  // Single-select answer that auto-advances.
   function choose<K extends keyof QuizAnswers>(key: K, value: QuizAnswers[K]) {
     setDraft((d) => ({ ...d, [key]: value }));
     next();
@@ -178,24 +189,33 @@ export function QuizExperience() {
 
   function finish(final: Draft) {
     const complete: QuizAnswers = {
-      gender: final.gender ?? "unspecified",
-      age: final.age ?? "30-39",
       primaryGoal: final.primaryGoal ?? "fat-loss",
       secondaryGoals: final.secondaryGoals ?? [],
       experience: final.experience ?? "new",
+      age: final.age ?? "30-39",
       weight: final.weight ?? 175,
       timeline: final.timeline ?? "10-weeks",
+      struggle: final.struggle ?? "fat",
+      frustration: final.frustration ?? "",
       startPreference: final.startPreference ?? "unsure",
     };
     setAnswers(complete);
     const rec = buildRecommendation(complete);
     try {
       posthog.capture("quiz_completed", {
-        ...complete,
+        primary_goal: complete.primaryGoal,
         secondary_goals: complete.secondaryGoals.join(","),
+        experience: complete.experience,
+        age: complete.age,
+        weight: complete.weight,
+        timeline: complete.timeline,
+        struggle: complete.struggle,
+        frustration: complete.frustration,
+        start_preference: complete.startPreference,
         recommendation_kind: rec.kind,
         recommended_primary: rec.primary?.slug ?? null,
         recommended_tier: rec.kind === "stack" ? rec.recommendedTier : null,
+        archetype: rec.archetype.key,
       });
     } catch {
       /* analytics never blocks */
@@ -206,6 +226,8 @@ export function QuizExperience() {
     setAnswers(null);
     setDraft({});
     setWeightInput("");
+    setFrustrationKey(null);
+    setFrustrationOther("");
     setStep(0);
   }
 
@@ -218,6 +240,55 @@ export function QuizExperience() {
         name={contactRef.current.name}
         onRestart={restart}
       />
+    );
+  }
+
+  const firstName = contactRef.current.name?.split(/\s+/)[0];
+
+  /* ── Intro / hook lander ── */
+  if (step === 0) {
+    return (
+      <div className="min-h-screen bg-white text-[var(--primary)]">
+        <header className="border-b border-[var(--border)]">
+          <div className="mx-auto flex h-16 max-w-6xl items-center justify-center px-4 sm:px-6">
+            <div className="flex items-center gap-2 font-bold text-lg">
+              <img src="/logo.png" alt="Peak State Labs" className="h-7 w-7 rounded-lg" />
+              <span>Peak State Labs</span>
+            </div>
+          </div>
+        </header>
+
+        <main className="relative overflow-hidden gradient-hero">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+            <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
+          </div>
+          <div className="relative mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-sm font-bold tracking-wider text-[var(--accent-dark)]">
+              <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
+              <span>60-SECOND DIAGNOSTIC</span>
+            </div>
+            <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
+              {firstName ? `${firstName}, discover ` : "Discover "}the hidden reason
+              your body won&apos;t change
+            </h1>
+            <p className="mx-auto mt-5 max-w-xl text-base sm:text-lg text-[var(--primary)]/70">
+              Answer 8 quick questions and we&apos;ll pinpoint exactly what&apos;s
+              been holding you back — and the precise protocol built to fix it.
+            </p>
+            <button
+              type="button"
+              onClick={begin}
+              className="btn-primary mt-8 inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold"
+            >
+              Start the diagnostic
+            </button>
+            <p className="mt-4 text-sm text-[var(--primary)]/50">
+              Takes under a minute · Free · No obligation
+            </p>
+          </div>
+        </main>
+      </div>
     );
   }
 
@@ -234,53 +305,12 @@ export function QuizExperience() {
       </header>
 
       <main className="px-4 py-10 sm:py-16">
-        {step === 0 && (
-          <QuestionShell
-            step={1}
-            eyebrow="Let's personalize your protocol"
-            title="First — who are we building this for?"
-            subtitle="This tailors your dosing guidance and what we show you."
-          >
-            {(
-              [
-                ["male", "Male"],
-                ["female", "Female"],
-                ["unspecified", "Prefer not to say"],
-              ] as [Gender, string][]
-            ).map(([val, label]) => (
-              <OptionButton
-                key={val}
-                label={label}
-                selected={draft.gender === val}
-                onClick={() => choose("gender", val)}
-              />
-            ))}
-          </QuestionShell>
-        )}
-
+        {/* Q1 — positive: what they want (primary goal) */}
         {step === 1 && (
           <QuestionShell
-            step={2}
-            eyebrow="About you"
-            title="What's your age range?"
-            onBack={goBack}
-          >
-            {(["21-29", "30-39", "40-49", "50+"] as AgeRange[]).map((val) => (
-              <OptionButton
-                key={val}
-                label={val === "50+" ? "50 or older" : `${val}`}
-                selected={draft.age === val}
-                onClick={() => choose("age", val)}
-              />
-            ))}
-          </QuestionShell>
-        )}
-
-        {step === 2 && (
-          <QuestionShell
-            step={3}
-            eyebrow="Your goal"
-            title="What's your #1 goal right now?"
+            step={1}
+            eyebrow="Let's start with the good part"
+            title="What I want most right now is…"
             subtitle="Pick the one that matters most — we'll ask about the rest next."
             onBack={goBack}
           >
@@ -288,8 +318,7 @@ export function QuizExperience() {
               <OptionButton
                 key={g.key}
                 emoji={g.emoji}
-                label={g.label}
-                blurb={g.blurb}
+                label={g.want}
                 selected={draft.primaryGoal === g.key}
                 onClick={() => choose("primaryGoal", g.key)}
               />
@@ -297,26 +326,25 @@ export function QuizExperience() {
           </QuestionShell>
         )}
 
-        {step === 3 && (
+        {/* Q2 — positive: secondary goals */}
+        {step === 2 && (
           <QuestionShell
-            step={4}
-            eyebrow="Your goal"
-            title="Anything else you want to improve?"
-            subtitle="Optional — select any that apply. These sharpen your add-on suggestions."
+            step={2}
+            eyebrow="While we're at it"
+            title="I'd also love to improve…"
+            subtitle="Optional — select any that apply. This sharpens what we suggest."
             onBack={goBack}
           >
-            {SECONDARY_GOALS.filter((g) => g.key !== draft.primaryGoal).map(
-              (g) => (
-                <OptionButton
-                  key={g.key}
-                  emoji={g.emoji}
-                  label={g.label}
-                  blurb={g.blurb}
-                  selected={(draft.secondaryGoals ?? []).includes(g.key)}
-                  onClick={() => toggleSecondary(g.key)}
-                />
-              ),
-            )}
+            {SECONDARY_GOALS.filter((g) => g.key !== draft.primaryGoal).map((g) => (
+              <OptionButton
+                key={g.key}
+                emoji={g.emoji}
+                label={g.label}
+                blurb={g.blurb}
+                selected={(draft.secondaryGoals ?? []).includes(g.key)}
+                onClick={() => toggleSecondary(g.key)}
+              />
+            ))}
             <button
               type="button"
               onClick={next}
@@ -327,19 +355,20 @@ export function QuizExperience() {
           </QuestionShell>
         )}
 
-        {step === 4 && (
+        {/* Q3 — neutral: experience */}
+        {step === 3 && (
           <QuestionShell
-            step={5}
-            eyebrow="Experience"
-            title="How experienced are you with peptides?"
-            subtitle="There are no wrong answers — this changes how much hand-holding we build in."
+            step={3}
+            eyebrow="Where you're at"
+            title="When it comes to peptides, I…"
+            subtitle="No wrong answer — this decides how much guidance we build in."
             onBack={goBack}
           >
             {(
               [
-                ["new", "New to peptides", "First time — I'll want guidance"],
-                ["some", "Some experience", "I've run a protocol or two"],
-                ["experienced", "Very experienced", "I know my way around a stack"],
+                ["new", "Am just starting to explore them", "First time — I'll want guidance"],
+                ["some", "Have run a protocol or two", "I've got some experience"],
+                ["experienced", "Know my way around a stack", "I'm comfortable dialing my own"],
               ] as [Experience, string, string][]
             ).map(([val, label, blurb]) => (
               <OptionButton
@@ -353,20 +382,38 @@ export function QuizExperience() {
           </QuestionShell>
         )}
 
-        {step === 5 && (
+        {/* Q4 — neutral: age + weight (with a reason for asking) */}
+        {step === 4 && (
           <QuestionShell
-            step={6}
+            step={4}
             eyebrow="Your stats"
-            title="What's your current weight?"
-            subtitle="We use this to tailor your dosing guidance and cycle length. This stays private."
+            title="So we can dial your exact dosing…"
+            subtitle="We use this to tailor your dose and cycle length. It stays private."
             onBack={goBack}
           >
             <div className="rounded-2xl border border-[var(--border)] bg-white p-5">
-              <label
-                htmlFor="quiz-weight"
-                className="block text-sm font-bold text-[var(--primary)]"
-              >
-                Current weight (lbs)
+              <p className="text-sm font-bold text-[var(--primary)]">This year, I&apos;m…</p>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {(["21-29", "30-39", "40-49", "50+"] as AgeRange[]).map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setDraft((d) => ({ ...d, age: val }))}
+                    className={`h-12 rounded-xl border text-sm font-bold transition-all ${
+                      draft.age === val
+                        ? "border-[var(--accent)] bg-[var(--accent)]/[0.1] text-[var(--primary)]"
+                        : "border-[var(--border)] bg-white text-[var(--primary)]/70 hover:border-[var(--accent)]/60"
+                    }`}
+                  >
+                    {val === "50+" ? "50 or older" : val}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-[var(--border)] bg-white p-5">
+              <label htmlFor="quiz-weight" className="block text-sm font-bold text-[var(--primary)]">
+                …and I currently weigh about (lbs)
               </label>
               <input
                 id="quiz-weight"
@@ -380,9 +427,11 @@ export function QuizExperience() {
                 className="mt-2 h-14 w-full rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-lg text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white"
               />
             </div>
+
             <button
               type="button"
               disabled={
+                !draft.age ||
                 weightInput.trim() === "" ||
                 Number(weightInput) < 90 ||
                 Number(weightInput) > 500
@@ -391,35 +440,26 @@ export function QuizExperience() {
                 setDraft((d) => ({ ...d, weight: Number(weightInput) }));
                 next();
               }}
-              className="btn-primary mt-3 inline-flex h-14 w-full items-center justify-center rounded-2xl px-6 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary mt-1 inline-flex h-14 w-full items-center justify-center rounded-2xl px-6 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setDraft((d) => ({ ...d, weight: 175 }));
-                next();
-              }}
-              className="mx-auto block text-sm font-semibold text-[var(--primary)]/50 underline underline-offset-4 hover:text-[var(--primary)]"
-            >
-              Skip this
             </button>
           </QuestionShell>
         )}
 
-        {step === 6 && (
+        {/* Q5 — neutral→: timeline */}
+        {step === 5 && (
           <QuestionShell
-            step={7}
-            eyebrow="Timeline"
-            title="When do you want to see results?"
+            step={5}
+            eyebrow="Your timeline"
+            title="I want to see real change…"
             onBack={goBack}
           >
             {(
               [
-                ["event", "I have a deadline", "A vacation, wedding or event in 1–3 months"],
-                ["10-weeks", "The next 10 weeks", "I'm ready to run a full cycle now"],
-                ["long-term", "Long-term", "No rush — I want lasting change"],
+                ["event", "Before a specific event", "A vacation, wedding or date in 1–3 months"],
+                ["10-weeks", "Over the next 10 weeks", "I'm ready to run a full cycle now"],
+                ["long-term", "Steadily, for the long haul", "No rush — I want lasting change"],
               ] as [Timeline, string, string][]
             ).map(([val, label, blurb]) => (
               <OptionButton
@@ -433,19 +473,96 @@ export function QuizExperience() {
           </QuestionShell>
         )}
 
-        {step === 7 && (
+        {/* Q6 — problem bridge: what their body is doing */}
+        {step === 6 && (
           <QuestionShell
-            step={8}
-            eyebrow="Almost there"
-            title="How do you want to start?"
-            subtitle="We'll match your recommendation to this."
+            step={6}
+            eyebrow="Let's get honest"
+            title="Lately, my body…"
+            subtitle="Be straight with us — this is how we find the real blocker."
             onBack={goBack}
           >
             {(
               [
-                ["protocol", "The full protocol", "Give me the complete, structured system"],
-                ["single", "Just a vial or two", "I want to start small and simple"],
-                ["unsure", "Not sure — recommend for me", "Tell me what's best for my goal"],
+                ["fat", "Holds onto fat no matter what I do"],
+                ["recovery", "Recovers slower than it used to"],
+                ["aging", "Doesn't respond the way it did in my 20s"],
+              ] as [Struggle, string][]
+            ).map(([val, label]) => (
+              <OptionButton
+                key={val}
+                label={label}
+                selected={draft.struggle === val}
+                onClick={() => choose("struggle", val)}
+              />
+            ))}
+          </QuestionShell>
+        )}
+
+        {/* Q7 — problem ownership: what frustrates them (+ an "out") */}
+        {step === 7 && (
+          <QuestionShell
+            step={7}
+            eyebrow="The honest truth"
+            title="What frustrates me most is…"
+            subtitle="We ask so we know exactly what to help you overcome."
+            onBack={goBack}
+          >
+            {FRUSTRATIONS.map((f) => (
+              <OptionButton
+                key={f.key}
+                label={f.label}
+                selected={frustrationKey === f.key}
+                onClick={() => {
+                  setFrustrationKey(f.key);
+                  if (f.key !== "other") {
+                    setDraft((d) => ({ ...d, frustration: f.label }));
+                    next();
+                  }
+                }}
+              />
+            ))}
+            {frustrationKey === "other" && (
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={frustrationOther}
+                  onChange={(e) => setFrustrationOther(e.target.value)}
+                  placeholder="In your own words…"
+                  className="h-14 w-full rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDraft((d) => ({
+                      ...d,
+                      frustration: frustrationOther.trim() || "Something else",
+                    }));
+                    next();
+                  }}
+                  className="btn-primary inline-flex h-14 w-full items-center justify-center rounded-2xl px-6 text-lg font-semibold"
+                >
+                  Continue
+                </button>
+              </div>
+            )}
+          </QuestionShell>
+        )}
+
+        {/* Q8 — pressure-release: what they'd like instead (routing) */}
+        {step === 8 && (
+          <QuestionShell
+            step={8}
+            eyebrow="Last one"
+            title="So — what would you like instead?"
+            subtitle="Choose the outcome you actually want. We'll build the plan around it."
+            onBack={goBack}
+          >
+            {(
+              [
+                ["protocol", "The complete transformation", "Give me the full, structured protocol"],
+                ["single", "A focused start", "The single biggest lever for my goal"],
+                ["unsure", "The fastest result", "Just tell me what's best for me"],
               ] as [StartPreference, string, string][]
             ).map(([val, label, blurb]) => (
               <OptionButton
