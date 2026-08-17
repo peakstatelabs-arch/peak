@@ -208,6 +208,7 @@ export function QuizResults({
   const gm = goalMeta(answers.primaryGoal);
   const isStack = recommendation.kind === "stack";
   const firstName = name?.split(/\s+/)[0];
+  const arch = recommendation.archetype;
 
   function checkoutStack(tier: Tier) {
     // The POWER CUT stack is a hosted Stripe payment link (not the on-site
@@ -247,25 +248,57 @@ export function QuizResults({
         <div className="relative mx-auto max-w-4xl px-4 py-12 sm:px-6 sm:py-16 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-sm font-bold tracking-wider text-[var(--accent-dark)]">
             <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-            <span>YOUR PERSONALIZED PROTOCOL</span>
+            <span>YOUR DIAGNOSTIC RESULT</span>
           </div>
           <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            {firstName ? `${firstName}, here's your match` : "Here's your match"}
+            {firstName ? `${firstName}, we read every answer` : "We read every answer"}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base sm:text-lg text-[var(--primary)]/70">
-            Based on your goal of{" "}
+            Here&apos;s what&apos;s really going on with your{" "}
             <span className="font-semibold text-[var(--primary)]">
               {gm.emoji} {gm.label.toLowerCase()}
-            </span>
-            , your experience level and your timeline, this is the fastest
-            structured path to your result.
+            </span>{" "}
+            — and the exact protocol built to fix it.
           </p>
         </div>
       </section>
 
       <main className="mx-auto max-w-4xl px-4 sm:px-6 pb-24">
-        {/* Primary recommendation card */}
+        {/* ── Diagnostic reveal: comfort → archetype → bad news → mechanism ── */}
         <div className="-mt-8 rounded-3xl border border-[var(--border)] bg-white p-6 sm:p-8 shadow-xl">
+          <p className="text-[var(--primary)]/75 leading-relaxed">{arch.comfort}</p>
+
+          <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--muted)] p-5 sm:p-6">
+            <p className="text-sm font-bold uppercase tracking-wide text-[var(--primary)]/50">
+              Your profile
+            </p>
+            <p className="mt-1 text-2xl sm:text-3xl font-extrabold text-[var(--primary)]">
+              {firstName ? `${firstName}, you're ` : "You're "}
+              {arch.label}
+            </p>
+          </div>
+
+          <div className="mt-6">
+            <p className="text-lg font-bold text-[var(--primary)]">{arch.badNews}</p>
+            <p className="mt-3 text-[var(--primary)]/80 leading-relaxed">
+              {arch.mechanism}
+            </p>
+          </div>
+        </div>
+
+        {/* ── The flip: good news → the recommendation ── */}
+        <div className="mt-10 flex items-center gap-3">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent)]/15 px-3 py-1.5 text-sm font-extrabold uppercase tracking-wide text-[var(--accent-dark)]">
+            Here&apos;s the good news
+          </span>
+          <span className="h-px flex-1 bg-[var(--border)]" />
+        </div>
+        <p className="mt-4 text-lg text-[var(--primary)]/80 leading-relaxed">
+          {arch.goodNews}
+        </p>
+
+        {/* Primary recommendation card */}
+        <div className="mt-6 rounded-3xl border border-[var(--border)] bg-white p-6 sm:p-8 shadow-xl">
           <p className="text-sm font-bold uppercase tracking-wide text-[var(--accent-dark)]">
             Recommended for you
           </p>
