@@ -5,7 +5,7 @@ import { siteCopy } from "@/content/siteCopy";
 import { reviews, type Review } from "@/content/reviews";
 import { AddToCartButton } from "@/app/singles/cart/AddToCartButton";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
-import { PricingCard } from "@/app/components/PricingCard";
+import { TrackedLink } from "@/app/components/TrackedLink";
 import {
   type QuizAnswers,
   type Recommendation,
@@ -163,6 +163,137 @@ function StackContents() {
 }
 
 /* ─────────────────────────── Stack cycle selector ──────────────────────── */
+//
+// Lean "difference-only" cards. The shared inclusions live once in
+// StackContents above, so these cards surface only what actually changes
+// between tiers: cycle count, weeks, total price, per-cycle price and savings.
+// The per-cycle price is the real value story ($599 -> $509 -> $419).
+
+const CYCLES: Record<StackTierId, number> = { single: 1, double: 2, triple: 3 };
+
+function VialGlyph({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M8 2h8v2h-1v3.6l3.3 6.9c.9 1.9-.5 4.1-2.6 4.1H8.3c-2.1 0-3.5-2.2-2.6-4.1L9 7.6V4H8V2zm3 2v4l-.3.6L8.7 13h6.6l-2-4.4L13 8V4h-2z" />
+    </svg>
+  );
+}
+
+function CycleCard({
+  tier,
+  recommended,
+  eventProps,
+}: {
+  tier: (typeof siteCopy.pricing.tiers)[number];
+  recommended: boolean;
+  eventProps: Record<string, string | number | boolean | null | undefined>;
+}) {
+  const cycles = CYCLES[tier.id as StackTierId];
+  const weeks = cycles * 10;
+  const priceNum = Number(tier.price.replace(/[^0-9.]/g, ""));
+  // Floor to match the site's rounded "per stack" figures (509, 419).
+  const perCycle = `$${Math.floor(priceNum / cycles).toLocaleString()}`;
+
+  return (
+    <div
+      className={`relative rounded-3xl p-1 ${
+        recommended
+          ? "bg-gradient-to-b from-[var(--accent)] to-[var(--accent-dark)]"
+          : ""
+      }`}
+    >
+      {recommended && (
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-[var(--accent)] px-4 py-1.5 text-xs font-extrabold uppercase tracking-wide text-[var(--primary)] shadow-lg">
+          Best for you
+        </div>
+      )}
+      <div
+        className={`flex h-full flex-col rounded-[1.4rem] bg-white p-6 ${
+          recommended ? "shadow-2xl" : "border border-[var(--border)] shadow-sm"
+        }`}
+      >
+        {/* Name */}
+        <h4 className="text-lg font-bold text-[var(--primary)] leading-tight">
+          {tier.name}
+        </h4>
+
+        {/* Cycle visual */}
+        <div className="mt-4 flex items-center gap-3 rounded-2xl bg-[var(--muted)] px-4 py-3">
+          <div className="flex gap-1 text-[var(--accent-dark)]">
+            {Array.from({ length: cycles }).map((_, i) => (
+              <VialGlyph key={i} className="h-6 w-6" />
+            ))}
+          </div>
+          <div className="leading-tight">
+            <p className="font-extrabold text-[var(--primary)]">
+              {cycles} {cycles === 1 ? "cycle" : "cycles"}
+            </p>
+            <p className="text-xs font-semibold text-[var(--primary)]/60">
+              {weeks} weeks
+            </p>
+          </div>
+        </div>
+
+        {/* Pricing — the differentiators */}
+        <div className="mt-5">
+          <p className="text-xs font-medium text-[var(--primary)]/45 line-through">
+            Value {tier.estimatedValue}
+          </p>
+          <div className="mt-0.5 flex items-baseline gap-2">
+            <span className="text-3xl font-extrabold text-[var(--primary)]">
+              {tier.price}
+            </span>
+            <span className="text-sm font-semibold text-[var(--accent-dark)]">
+              {perCycle}/cycle
+            </span>
+          </div>
+          <p className="mt-2 inline-flex items-center rounded-full bg-[var(--accent)]/15 px-2.5 py-1 text-xs font-bold text-[var(--accent-dark)]">
+            Save {tier.savings}
+          </p>
+        </div>
+
+        {/* What differs — everything else is in the block above */}
+        <p className="mt-4 flex items-start gap-2 text-sm text-[var(--primary)]/70">
+          <CheckIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--accent-dark)]" />
+          <span>
+            {cycles === 1
+              ? "Everything included above"
+              : `Everything above — ${cycles}× the cycles`}
+          </span>
+        </p>
+
+        <div className="flex-grow" />
+
+        {/* CTA */}
+        <TrackedLink
+          href={tier.stripeUrl}
+          data-rewardful
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`mt-5 block w-full rounded-xl px-5 py-3.5 text-center text-base font-bold transition-colors ${
+            recommended ? "btn-accent" : "btn-primary"
+          }`}
+          event="add_to_cart_click"
+          eventProperties={{
+            funnel: "powercut",
+            product: "POWER CUT™ Stack",
+            tier: tier.name,
+            tier_id: tier.id,
+            price: tier.price,
+            installment: tier.installment,
+            ...eventProps,
+          }}
+          webhookEndpoint="/api/cart-event"
+        >
+          {tier.ctaLabel}
+        </TrackedLink>
+        <p className="mt-2 text-center text-xs text-[var(--primary)]/50">
+          or 4 interest-free payments of {tier.installment}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 function StackOffer({
   recommendedTier,
@@ -178,34 +309,15 @@ function StackOffer({
   );
 
   return (
-    <div className="grid gap-6 sm:grid-cols-3 pt-4">
-      {ordered.map((tier) => {
-        const recommended = tier.id === recommendedTier;
-        return (
-          <PricingCard
-            key={tier.id}
-            id={tier.id}
-            name={tier.name}
-            subtitle={tier.subtitle}
-            description={tier.description}
-            features={tier.features}
-            estimatedValue={tier.estimatedValue}
-            price={tier.price}
-            perStackPrice={"perStackPrice" in tier ? tier.perStackPrice : undefined}
-            installment={tier.installment}
-            savings={tier.savings}
-            ctaLabel={tier.ctaLabel}
-            ctaSubtext={tier.ctaSubtext}
-            stripeUrl={tier.stripeUrl}
-            preorderNote={tier.preorderNote}
-            refundNote={tier.refundNote}
-            shipsBy={siteCopy.pricing.shipsBy || undefined}
-            highlighted={recommended}
-            badgeLabel={recommended ? "BEST FOR YOU" : null}
-            ctaEventProperties={eventProps}
-          />
-        );
-      })}
+    <div className="grid gap-5 pt-4 sm:grid-cols-3">
+      {ordered.map((tier) => (
+        <CycleCard
+          key={tier.id}
+          tier={tier}
+          recommended={tier.id === recommendedTier}
+          eventProps={eventProps}
+        />
+      ))}
     </div>
   );
 }
