@@ -137,12 +137,14 @@ export default function Home() {
                   >
                     Start Your Transformation
                   </a>
-                  <a
-                    href={siteCopy.brand.secondaryCtaHref}
+                  <TrackedLink
+                    href={siteCopy.brand.quizCtaHref}
                     className="inline-flex h-12 sm:h-14 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-6 sm:px-8 text-base sm:text-lg font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)] whitespace-nowrap"
+                    event="quiz_entry_click"
+                    eventProperties={{ source: "hero" }}
                   >
-                    {siteCopy.brand.secondaryCtaLabel}
-                  </a>
+                    {siteCopy.brand.quizCtaLabel}
+                  </TrackedLink>
                 </div>
               </div>
 
@@ -367,6 +369,26 @@ export default function Home() {
                     <span className="text-sm text-[var(--primary)]/80">Instant results, no guesswork</span>
                   </div>
                 </div>
+
+                {/* Companion quiz entry — hand off to the full protocol quiz */}
+                <TrackedLink
+                  href={siteCopy.calculator.quizCtaHref}
+                  className="group mt-6 flex items-center gap-3 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/[0.06] p-4 transition-colors hover:bg-[var(--accent)]/[0.12]"
+                  event="quiz_entry_click"
+                  eventProperties={{ source: "calculator" }}
+                >
+                  <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/20">
+                    <svg className="h-4 w-4 text-[var(--accent-dark)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </span>
+                  <span className="flex-1 text-sm font-semibold text-[var(--primary)]">
+                    {siteCopy.calculator.quizCtaLabel}
+                  </span>
+                  <svg className="h-5 w-5 flex-shrink-0 text-[var(--accent-dark)] transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </TrackedLink>
               </div>
 
               {/* Right Column - Calculator */}
