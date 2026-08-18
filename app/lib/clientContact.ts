@@ -108,3 +108,27 @@ export function readClientContact(): ClientContact {
     sessionId: getOrCreateSessionId(),
   };
 }
+
+/**
+ * Returns a display-safe first name for greetings, or undefined when the
+ * stored value isn't plausibly a name. Account "names" are user-entered and
+ * messy — often an email, a full name, or junk — so we only greet when it
+ * looks like a real first name:
+ *   - drop anything containing "@" (an email)
+ *   - keep the first token only ("Nichole Moore" -> "Nichole")
+ *   - reject tokens with digits/symbols, or shorter than 2 / longer than 20
+ *   - normalize casing ("alex"/"ALEX" -> "Alex") while preserving intentional
+ *     mixed case ("McKay", "DeOrsey")
+ */
+export function safeFirstName(raw?: string): string | undefined {
+  if (!raw) return undefined;
+  const trimmed = raw.trim();
+  if (!trimmed || trimmed.includes("@")) return undefined;
+  const first = trimmed.split(/\s+/)[0];
+  if (!/^[A-Za-z][A-Za-z'’-]{1,19}$/.test(first)) return undefined;
+  const allLower = first === first.toLowerCase();
+  const allUpper = first === first.toUpperCase();
+  return allLower || allUpper
+    ? first.charAt(0).toUpperCase() + first.slice(1).toLowerCase()
+    : first;
+}
