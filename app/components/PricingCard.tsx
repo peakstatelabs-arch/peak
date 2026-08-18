@@ -19,19 +19,6 @@ interface PricingCardProps {
   /** When set, renders a "Pre-order · Ships {shipsBy}" line under the CTA. */
   shipsBy?: string;
   popular?: boolean;
-  /**
-   * Force the highlighted (gradient + shadow) styling independent of
-   * `popular`. Defaults to `popular` so existing call sites are unchanged.
-   */
-  highlighted?: boolean;
-  /**
-   * Override the badge text. `undefined` keeps the default behavior (a
-   * "MOST POPULAR" badge when `popular`); an explicit `null` forces no badge;
-   * a string renders that badge (e.g. "BEST FOR YOU" from the quiz).
-   */
-  badgeLabel?: string | null;
-  /** Extra analytics properties merged into the CTA's tracked event. */
-  ctaEventProperties?: Record<string, string | number | boolean | null | undefined>;
 }
 
 export function PricingCard({
@@ -52,29 +39,23 @@ export function PricingCard({
   refundNote,
   shipsBy,
   popular,
-  highlighted,
-  badgeLabel,
-  ctaEventProperties,
 }: PricingCardProps) {
-  const isHighlighted = highlighted ?? popular;
-  const badge =
-    badgeLabel === undefined ? (popular ? "MOST POPULAR" : null) : badgeLabel;
   return (
     <div
       className={`relative rounded-3xl p-1 ${
-        isHighlighted
+        popular
           ? "bg-gradient-to-b from-[var(--accent)] to-[var(--accent-dark)]"
           : ""
       }`}
     >
-      {badge && (
+      {popular && (
         <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[var(--accent)] text-[var(--primary)] text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
-          {badge}
+          MOST POPULAR
         </div>
       )}
       <div
         className={`h-full rounded-[1.4rem] bg-white p-6 sm:p-8 flex flex-col ${
-          isHighlighted ? "shadow-2xl" : "border border-[var(--border)] shadow-sm"
+          popular ? "shadow-2xl" : "border border-[var(--border)] shadow-sm"
         } card-hover`}
       >
         {/* Header */}
@@ -141,7 +122,7 @@ export function PricingCard({
             target="_blank"
             rel="noopener noreferrer"
             className={`w-full mt-6 py-4 px-6 rounded-xl font-semibold text-base text-center transition-all duration-300 block ${
-              isHighlighted
+              popular
                 ? "btn-accent"
                 : "btn-primary"
             }`}
@@ -154,7 +135,6 @@ export function PricingCard({
               price,
               installment,
               popular: !!popular,
-              ...ctaEventProperties,
             }}
             webhookEndpoint="/api/cart-event"
           >
