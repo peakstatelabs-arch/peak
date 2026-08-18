@@ -8,6 +8,7 @@ import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
 import { TrackedLink } from "@/app/components/TrackedLink";
 import {
   type QuizAnswers,
+  type QuizProduct,
   type Recommendation,
   type StackTierId,
   goalMeta,
@@ -25,11 +26,17 @@ function pickTestimonials(answers: QuizAnswers, count = 3): Review[] {
   const rest = withQuote.filter((r) => !matched.includes(r));
   // Prefer goal-matched, then fill from the rest so we always show `count`.
   const ordered = [...matched, ...rest];
-  const seen = new Set<string>();
+  const seenIds = new Set<string>();
+  // Dedupe by person too — never show the same reviewer (e.g. "Erin D.")
+  // twice. Anonymous "Verified client" cards are also collapsed to one.
+  const seenNames = new Set<string>();
   const out: Review[] = [];
   for (const r of ordered) {
-    if (seen.has(r.id)) continue;
-    seen.add(r.id);
+    if (seenIds.has(r.id)) continue;
+    const nameKey = r.name.trim().toLowerCase();
+    if (seenNames.has(nameKey)) continue;
+    seenIds.add(r.id);
+    seenNames.add(nameKey);
     out.push(r);
     if (out.length >= count) break;
   }
@@ -374,6 +381,81 @@ function AddOnCard({
   );
 }
 
+/* ───────────────── Stack → singles down-sell hand-off ──────────────────── */
+//
+// When a stack is recommended we can't offer a single vial as add-to-cart:
+// stacks and singles run on separate Stripe accounts. Instead we present the
+// best-fit vial as a lower-commitment alternative that links to /singles,
+// where the singles cart + correct account live.
+
+function StackDownsell({
+  single,
+  eventProps,
+}: {
+  single: QuizProduct;
+  eventProps: Record<string, string | number | boolean | null | undefined>;
+}) {
+  return (
+    <section className="mt-12">
+      <div className="rounded-3xl border border-[var(--border)] bg-[var(--muted)] p-6 sm:p-8">
+        <p className="text-sm font-bold uppercase tracking-wide text-[var(--accent-dark)]">
+          Not ready for the full stack?
+        </p>
+        <h3 className="mt-1 text-xl font-bold text-[var(--primary)]">
+          Start with a single vial instead
+        </h3>
+        <p className="mt-2 max-w-2xl text-[var(--primary)]/70 leading-relaxed">
+          Prefer to test the waters first? You can start with one vial on its
+          own — the same lab-tested peptides and the same 1-on-1 coaching and
+          custom dosing, just a lower-commitment way in. (Single vials check out
+          separately from the stack.)
+        </p>
+
+        <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
+          <div className="h-28 w-28 flex-shrink-0 self-center overflow-hidden rounded-2xl border border-[var(--border)] bg-white">
+            <img
+              src={single.image}
+              alt={single.name}
+              className="h-full w-full object-contain"
+            />
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-[var(--primary)]">
+              {single.name}{" "}
+              <span className="font-semibold text-[var(--accent-dark)]">
+                — {single.tagline}
+              </span>
+            </p>
+            <p className="mt-1 text-sm text-[var(--primary)]/70 leading-relaxed">
+              {single.blurb}
+            </p>
+            <p className="mt-2 text-sm font-semibold text-[var(--primary)]">
+              From {single.price} · {single.dose} · single vial
+            </p>
+          </div>
+        </div>
+
+        <TrackedLink
+          href="/singles"
+          className="mt-6 inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-6 text-base font-semibold text-white transition-colors hover:bg-[var(--primary)]/90"
+          event="quiz_singles_handoff_click"
+          eventProperties={{
+            ...eventProps,
+            from: "stack_downsell",
+            product_slug: single.slug,
+          }}
+          webhookEndpoint="/api/cart-event"
+        >
+          Explore single vials
+          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </TrackedLink>
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────────────── Results ─────────────────────────────── */
 
 export function QuizResults({
@@ -585,34 +667,37 @@ export function QuizResults({
           </section>
         )}
 
-        {/* Add-ons */}
-        {recommendation.addOns.length > 0 && (
-          <section className="mt-12">
-            <h3 className="text-xl font-bold text-[var(--primary)]">
-              {isStack ? "Complete your protocol" : "Frequently added together"}
-            </h3>
-            <p className="mt-1 text-sm text-[var(--primary)]/60">
-              {isStack
-                ? "Add-on vials ship alongside your stack and add to your cart separately."
-                : "Clients chasing your goals almost always add these."}
-            </p>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              {recommendation.addOns.map((a) => (
-                <AddOnCard
-                  key={a.product.slug}
-                  name={a.product.name}
-                  dose={a.product.dose}
-                  price={a.product.price}
-                  image={a.product.image}
-                  reason={a.reason}
-                  slug={a.product.slug}
-                  priceId={a.product.priceId}
-                  priceCents={a.product.priceCents}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Stack → down-sell hand-off to singles (separate Stripe account, so
+            no add-to-cart here). Single → real add-to-cart add-ons. */}
+        {isStack
+          ? recommendation.downsellSingle && (
+              <StackDownsell single={recommendation.downsellSingle} eventProps={stackEventProps} />
+            )
+          : recommendation.addOns.length > 0 && (
+              <section className="mt-12">
+                <h3 className="text-xl font-bold text-[var(--primary)]">
+                  Frequently added together
+                </h3>
+                <p className="mt-1 text-sm text-[var(--primary)]/60">
+                  Clients chasing your goals almost always add these.
+                </p>
+                <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                  {recommendation.addOns.map((a) => (
+                    <AddOnCard
+                      key={a.product.slug}
+                      name={a.product.name}
+                      dose={a.product.dose}
+                      price={a.product.price}
+                      image={a.product.image}
+                      reason={a.reason}
+                      slug={a.product.slug}
+                      priceId={a.product.priceId}
+                      priceCents={a.product.priceCents}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
 
         {/* Testimonials */}
         {testimonials.length > 0 && (
@@ -658,6 +743,19 @@ export function QuizResults({
                   </figcaption>
                 </figure>
               ))}
+            </div>
+            <div className="mt-6 text-center">
+              <TrackedLink
+                href="/reviews"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--accent-dark)] underline underline-offset-4 hover:text-[var(--primary)]"
+                event="quiz_reviews_readmore_click"
+                eventProperties={{ source: "quiz", primary_goal: answers.primaryGoal }}
+              >
+                Read more reviews
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </TrackedLink>
             </div>
           </section>
         )}
