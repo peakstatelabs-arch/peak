@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import posthog from "posthog-js";
-import { readClientContact } from "@/app/lib/clientContact";
+import { readClientContact, safeFirstName } from "@/app/lib/clientContact";
 import {
   PRIMARY_GOALS,
   SECONDARY_GOALS,
@@ -311,7 +311,7 @@ export function QuizExperience() {
     );
   }
 
-  const firstName = contactRef.current.name?.split(/\s+/)[0];
+  const firstName = safeFirstName(contactRef.current.name);
 
   /* ── Intro / hook lander ── */
   if (step === 0) {

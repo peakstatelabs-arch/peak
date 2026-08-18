@@ -6,6 +6,7 @@ import { reviews, type Review } from "@/content/reviews";
 import { AddToCartButton } from "@/app/singles/cart/AddToCartButton";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
 import { TrackedLink } from "@/app/components/TrackedLink";
+import { safeFirstName } from "@/app/lib/clientContact";
 import {
   type QuizAnswers,
   type QuizProduct,
@@ -472,7 +473,7 @@ export function QuizResults({
   const testimonials = useMemo(() => pickTestimonials(answers), [answers]);
   const gm = goalMeta(answers.primaryGoal);
   const isStack = recommendation.kind === "stack";
-  const firstName = name?.split(/\s+/)[0];
+  const firstName = safeFirstName(name);
   const arch = recommendation.archetype;
 
   // Extra context stamped onto the stack CTA's tracked event so quiz-sourced
