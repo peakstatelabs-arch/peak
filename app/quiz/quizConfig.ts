@@ -319,6 +319,13 @@ export interface Recommendation {
   addOns: AddOn[];
   /** One-line, goal-specific expectation shown as the "projection". */
   projection: string;
+  /**
+   * For stack recommendations only: the single best-fit vial to offer as a
+   * "not ready for the full stack? start here instead" hand-off to /singles.
+   * (Stacks and singles use separate Stripe accounts, so a stack buyer can't
+   * add a single to the same cart — we send them to the singles funnel.)
+   */
+  downsellSingle?: QuizProduct;
 }
 
 /* ────────────────────────── Recommendation engine ──────────────────────── */
@@ -472,6 +479,9 @@ export function buildRecommendation(a: QuizAnswers): Recommendation {
   const stack = wantsStack(a);
 
   if (stack) {
+    // The vial that best matches their primary goal — Retatrutide (the
+    // metabolic engine) for the broad transformation/fat-loss goals.
+    const downsellSlug = GOAL_TO_SLUG[a.primaryGoal] ?? "retatrutide";
     return {
       kind: "stack",
       recommendedTier: recommendedTier(a),
@@ -479,6 +489,7 @@ export function buildRecommendation(a: QuizAnswers): Recommendation {
       reasons: buildReasons(a, "stack"),
       addOns: buildAddOns(a, "stack"),
       projection: buildProjection(a, "stack"),
+      downsellSingle: SINGLES[downsellSlug],
     };
   }
 
