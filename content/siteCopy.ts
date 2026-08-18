@@ -7,6 +7,11 @@ export const siteCopy = {
     primaryCtaHref: "#pricing",
     secondaryCtaLabel: "See What's Included",
     secondaryCtaHref: "#contents",
+    // Quiz entry point (repurposed hero secondary CTA). Kept short so the
+    // two-button hero row doesn't overflow — the "60-second" framing lives on
+    // the quiz page and the calculator CTA.
+    quizCtaLabel: "Find Your Protocol",
+    quizCtaHref: "/quiz",
   },
 
   urgencyBanner: {
@@ -105,6 +110,9 @@ export const siteCopy = {
     resultPrefix: "You Need",
     resultSuffix: "POWER CUT\u2122 Cycles",
     resultTagline: "to Hit Your Goal",
+    // Companion quiz entry point beside the calculator.
+    quizCtaLabel: "Prefer we build the whole protocol for you? Take the 60-second quiz",
+    quizCtaHref: "/quiz",
   },
 
   contents: {
