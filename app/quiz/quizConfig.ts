@@ -417,12 +417,35 @@ function buildAddOns(
   return out.slice(0, 2);
 }
 
+// Personalized fat-loss estimate from their weight + timeline. Uses the same
+// ~1.5–2 lbs/week the site already cites, then caps the upper bound at ~15% of
+// bodyweight so it never over-promises for lighter clients.
+function fatLossRange(weight: number, weeks: number): { lo: number; hi: number } {
+  const cap = Math.max(8, Math.round(weight * 0.15));
+  const hi = Math.min(Math.round(weeks * 2), cap);
+  const lo = Math.min(
+    Math.max(Math.round(hi * 0.7), Math.round(weeks * 1.2)),
+    hi - 1,
+  );
+  return { lo, hi };
+}
+
 function buildProjection(a: QuizAnswers, kind: "stack" | "single"): string {
   const goal = kind === "stack" ? "transformation" : a.primaryGoal;
+
+  if (goal === "fat-loss" || goal === "transformation") {
+    const weeks = a.timeline === "long-term" ? 20 : 10;
+    const { lo, hi } = fatLossRange(a.weight, weeks);
+    const byPhrase =
+      a.timeline === "event"
+        ? "before your event"
+        : a.timeline === "long-term"
+          ? "across your first two 10-week cycles"
+          : "over your first 10-week cycle";
+    return `Starting around ${a.weight} lbs, at the ~1.5–2 lbs/week clients in your range report, that's roughly ${lo}–${hi} lbs ${byPhrase}.`;
+  }
+
   switch (goal) {
-    case "fat-loss":
-    case "transformation":
-      return "Clients in your range routinely report ~1.5–2 lbs of fat loss per week — roughly 15–20 lbs over a single 10-week cycle.";
     case "muscle":
       return "Expect deeper, more restorative sleep within ~2 weeks and visible recovery and lean-mass gains by weeks 4–6.";
     case "recovery":

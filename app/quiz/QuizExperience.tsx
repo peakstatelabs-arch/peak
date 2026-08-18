@@ -35,6 +35,21 @@ type PersistedState = {
   frustrationOther: string;
 };
 
+// Readable names for the per-step drop-off funnel (quiz_step_viewed).
+const STEP_NAMES: Record<number, string> = {
+  1: "primary_goal",
+  2: "secondary_goals",
+  3: "experience",
+  4: "stats",
+  5: "timeline",
+  6: "struggle",
+  7: "frustration",
+  8: "start_preference",
+};
+
+// How long the "analyzing your answers" beat holds before results show.
+const ANALYZE_MS = 1500;
+
 const FRUSTRATIONS: { key: string; label: string }[] = [
   { key: "effort", label: "Putting in the effort and not seeing it show" },
   { key: "metabolism", label: "Feeling like my own body is working against me" },
@@ -147,6 +162,63 @@ function QuestionShell({
   );
 }
 
+/* ─────────────────────────── Analyzing interstitial ────────────────────── */
+
+function AnalyzingScreen() {
+  const steps = [
+    "Reading your answers",
+    "Pinpointing what's holding you back",
+    "Matching your protocol",
+  ];
+  return (
+    <div className="flex min-h-screen flex-col bg-white text-[var(--primary)]">
+      <header className="border-b border-[var(--border)]">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-center px-4 sm:px-6">
+          <div className="flex items-center gap-2 font-bold text-lg">
+            <img src="/logo.png" alt="Peak State Labs" className="h-7 w-7 rounded-lg" />
+            <span>Peak State Labs</span>
+          </div>
+        </div>
+      </header>
+      <main className="flex flex-1 items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md text-center">
+          <svg
+            className="mx-auto h-12 w-12 animate-spin text-[var(--accent)]"
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.2" />
+            <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+          </svg>
+          <h1 className="mt-6 text-2xl font-bold tracking-tight">
+            Building your personalized protocol…
+          </h1>
+          <p className="mt-2 text-[var(--primary)]/60">
+            Give us a second — we&apos;re reading every answer.
+          </p>
+          <ul className="mx-auto mt-8 max-w-xs space-y-3 text-left">
+            {steps.map((s, i) => (
+              <li
+                key={s}
+                className="flex items-center gap-3 opacity-0 animate-fade-in-up"
+                style={{ animationDelay: `${i * 400}ms` }}
+              >
+                <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[var(--accent)]/20">
+                  <svg className="h-3.5 w-3.5 text-[var(--accent-dark)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
+                <span className="text-sm font-semibold text-[var(--primary)]/80">{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 /* ──────────────────────────────── Experience ───────────────────────────── */
 
 export function QuizExperience() {
@@ -158,8 +230,10 @@ export function QuizExperience() {
   const [frustrationKey, setFrustrationKey] = useState<string | null>(null);
   const [frustrationOther, setFrustrationOther] = useState("");
   const [hydrated, setHydrated] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
   const contactRef = useRef<{ email?: string; name?: string }>({});
   const startedRef = useRef(false);
+  const viewedStepsRef = useRef<Set<number>>(new Set());
 
   // Rehydrate once from sessionStorage. First paint matches the server (intro,
   // no answers) to avoid a hydration mismatch; we then swap in saved state.
@@ -213,6 +287,19 @@ export function QuizExperience() {
     }
   }, [hydrated, step, draft, answers, weightInput, frustrationKey, frustrationOther]);
 
+  // Per-step drop-off funnel: fire once per question the first time it's shown
+  // (not while showing results, and not re-firing restored steps).
+  useEffect(() => {
+    if (!hydrated || answers || step < 1) return;
+    if (viewedStepsRef.current.has(step)) return;
+    viewedStepsRef.current.add(step);
+    try {
+      posthog.capture("quiz_step_viewed", { step, step_name: STEP_NAMES[step] });
+    } catch {
+      /* analytics never blocks */
+    }
+  }, [hydrated, step, answers]);
+
   function begin() {
     if (!startedRef.current) {
       startedRef.current = true;
@@ -262,7 +349,12 @@ export function QuizExperience() {
       frustration: final.frustration ?? "",
       startPreference: final.startPreference ?? "unsure",
     };
-    setAnswers(complete);
+    // Brief "analyzing" beat so the diagnostic feels earned, then reveal.
+    setAnalyzing(true);
+    window.setTimeout(() => {
+      setAnswers(complete);
+      setAnalyzing(false);
+    }, ANALYZE_MS);
     const rec = buildRecommendation(complete);
     try {
       posthog.capture("quiz_completed", {
@@ -297,6 +389,11 @@ export function QuizExperience() {
     setFrustrationKey(null);
     setFrustrationOther("");
     setStep(0);
+  }
+
+  /* ── Analyzing beat (between the last answer and the results) ── */
+  if (analyzing) {
+    return <AnalyzingScreen />;
   }
 
   /* ── Results phase ── */
