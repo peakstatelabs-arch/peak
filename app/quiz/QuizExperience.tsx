@@ -21,6 +21,20 @@ type Draft = Partial<QuizAnswers>;
 
 const TOTAL_STEPS = 8;
 
+// Persist quiz progress within the tab session so leaving the page (e.g.
+// clicking through to /singles) and hitting browser Back restores the exact
+// place they were — mid-quiz or on their results — instead of restarting.
+const QUIZ_STATE_KEY = "peak.quiz.state.v1";
+
+type PersistedState = {
+  step: number;
+  draft: Draft;
+  answers: QuizAnswers | null;
+  weightInput: string;
+  frustrationKey: string | null;
+  frustrationOther: string;
+};
+
 const FRUSTRATIONS: { key: string; label: string }[] = [
   { key: "effort", label: "Putting in the effort and not seeing it show" },
   { key: "metabolism", label: "Feeling like my own body is working against me" },
@@ -143,12 +157,61 @@ export function QuizExperience() {
   const [weightInput, setWeightInput] = useState("");
   const [frustrationKey, setFrustrationKey] = useState<string | null>(null);
   const [frustrationOther, setFrustrationOther] = useState("");
+  const [hydrated, setHydrated] = useState(false);
   const contactRef = useRef<{ email?: string; name?: string }>({});
   const startedRef = useRef(false);
 
+  // Rehydrate once from sessionStorage. First paint matches the server (intro,
+  // no answers) to avoid a hydration mismatch; we then swap in saved state.
   useEffect(() => {
     contactRef.current = readClientContact();
+    /* eslint-disable react-hooks/set-state-in-effect -- one-shot rehydration so browser Back restores progress */
+    try {
+      const raw =
+        typeof window !== "undefined"
+          ? window.sessionStorage.getItem(QUIZ_STATE_KEY)
+          : null;
+      if (raw) {
+        const s = JSON.parse(raw) as Partial<PersistedState>;
+        if (typeof s.step === "number") setStep(s.step);
+        if (s.draft && typeof s.draft === "object") setDraft(s.draft as Draft);
+        if (s.answers) setAnswers(s.answers as QuizAnswers);
+        if (typeof s.weightInput === "string") setWeightInput(s.weightInput);
+        setFrustrationKey(
+          typeof s.frustrationKey === "string" ? s.frustrationKey : null,
+        );
+        if (typeof s.frustrationOther === "string")
+          setFrustrationOther(s.frustrationOther);
+        // Don't re-fire quiz_started for a session already in progress.
+        if ((typeof s.step === "number" && s.step > 0) || s.answers) {
+          startedRef.current = true;
+        }
+      }
+    } catch {
+      /* ignore corrupt storage */
+    }
+    setHydrated(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
+
+  // Persist progress after hydration (guarded so we never overwrite saved
+  // state with the initial empty state before it's been read).
+  useEffect(() => {
+    if (!hydrated || typeof window === "undefined") return;
+    try {
+      const payload: PersistedState = {
+        step,
+        draft,
+        answers,
+        weightInput,
+        frustrationKey,
+        frustrationOther,
+      };
+      window.sessionStorage.setItem(QUIZ_STATE_KEY, JSON.stringify(payload));
+    } catch {
+      /* storage unavailable (private mode, quota) — quiz still works */
+    }
+  }, [hydrated, step, draft, answers, weightInput, frustrationKey, frustrationOther]);
 
   function begin() {
     if (!startedRef.current) {
@@ -223,6 +286,11 @@ export function QuizExperience() {
   }
 
   function restart() {
+    try {
+      window.sessionStorage.removeItem(QUIZ_STATE_KEY);
+    } catch {
+      /* ignore */
+    }
     setAnswers(null);
     setDraft({});
     setWeightInput("");
