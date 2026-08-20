@@ -245,9 +245,10 @@ export default function SinglesCatalog() {
                 </h1>
 
                 <p className="mt-6 text-lg sm:text-xl text-[var(--primary)]/70 animate-fade-in-up stagger-1">
-                  The same lab-tested peptides found inside the POWER CUT
+                  The lab-tested peptides that power the POWER CUT
                   <span className="text-[0.6em] align-super">™</span> system —
-                  available as standalone vials for research use.
+                  plus targeted standalone compounds for recovery, energy, and
+                  renewal — available as single vials for research use.
                 </p>
 
                 {/* Included-with-every-order strip */}
