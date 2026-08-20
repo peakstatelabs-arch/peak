@@ -667,7 +667,7 @@ export default function Home() {
                   </p>
 
                   {/* Product chips */}
-                  <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                  <div className="mt-8 mx-auto grid max-w-2xl sm:max-w-3xl grid-cols-2 sm:grid-cols-3 gap-3">
                     {[
                       "Retatrutide",
                       "CJC-1295 + Ipamorelin",
@@ -678,7 +678,7 @@ export default function Home() {
                     ].map((name) => (
                       <span
                         key={name}
-                        className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 backdrop-blur px-4 py-2 text-sm font-semibold"
+                        className="flex h-full w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 backdrop-blur px-4 py-2.5 text-center text-sm font-semibold text-balance"
                       >
                         <svg
                           className="w-4 h-4 text-[var(--accent)] flex-shrink-0"
