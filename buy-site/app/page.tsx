@@ -17,11 +17,11 @@ export default function Page() {
               <span className="eyebrow__dot" />
               PEAK STATE SKINCARE
             </span>
-            <h1>Four Formulas. One Standard.</h1>
+            <h1>Six Formulas. One Standard.</h1>
             <p>
-              Purpose-built skincare for renewal, repair, protection, and
-              strength — crafted with the same standard behind everything
-              Peak State makes.
+              Purpose-built skincare for renewal, repair, protection,
+              strength, glow, and tone — crafted with the same standard
+              behind everything Peak State makes.
             </p>
           </div>
         </section>
@@ -30,7 +30,7 @@ export default function Page() {
           <div className="container">
             <div className="products__heading">
               <h2>Shop The Collection</h2>
-              <p>Four targeted formulas, each built to do one job well.</p>
+              <p>Six targeted formulas, each built to do one job well.</p>
             </div>
 
             <div className="product-grid">
