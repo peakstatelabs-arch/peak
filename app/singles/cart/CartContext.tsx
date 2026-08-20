@@ -17,6 +17,10 @@ export type CartLine = {
   unitPriceCents: number;
   image?: string;
   quantity: number;
+  /** True for pre-order vials that ship on a future date, not immediately. */
+  preorder?: boolean;
+  /** Human-readable ship date for pre-order lines, e.g. "Sept 7". */
+  shipsBy?: string;
 };
 
 type CartState = {

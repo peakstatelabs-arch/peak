@@ -11,6 +11,8 @@ type Props = {
   dose: string;
   unitPriceCents: number;
   image?: string;
+  preorder?: boolean;
+  shipsBy?: string;
 };
 
 export function AddToCartButton(props: Props) {
@@ -26,6 +28,8 @@ export function AddToCartButton(props: Props) {
         dose: props.dose,
         unitPriceCents: props.unitPriceCents,
         image: props.image,
+        preorder: props.preorder,
+        shipsBy: props.shipsBy,
       },
       1,
     );
