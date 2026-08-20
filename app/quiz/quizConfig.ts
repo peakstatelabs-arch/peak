@@ -170,6 +170,30 @@ export const SINGLES: Record<SinglesProductSlug, QuizProduct> = {
     blurb:
       "Copper-peptide signaling for skin quality, hair vitality and visible tissue renewal as you transform.",
   },
+  kpv: {
+    slug: "kpv",
+    priceId: SINGLES_PRICE_IDS.kpv,
+    name: "KPV",
+    dose: "10mg",
+    price: "$65",
+    priceCents: 6500,
+    image: "/kpv-product.png",
+    tagline: "The Regulator",
+    blurb:
+      "Anti-inflammatory peptide signaling. Helps regulate inflammatory pathways, supports gut and skin health, and promotes a balanced immune response.",
+  },
+  nad: {
+    slug: "nad",
+    priceId: SINGLES_PRICE_IDS.nad,
+    name: "NAD+",
+    dose: "500mg",
+    price: "$135",
+    priceCents: 13500,
+    image: "/nad-product.png",
+    tagline: "The Catalyst",
+    blurb:
+      "Cellular energy and metabolic support. Fuels energy production, cellular repair and healthy mitochondrial function for recovery and healthy aging.",
+  },
 };
 
 const GOAL_TO_SLUG: Record<Goal, SinglesProductSlug | null> = {

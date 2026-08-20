@@ -673,6 +673,8 @@ export default function Home() {
                       "CJC-1295 + Ipamorelin",
                       "BPC-157 + TB-500",
                       "GHK-Cu",
+                      "KPV",
+                      "NAD+",
                     ].map((name) => (
                       <span
                         key={name}

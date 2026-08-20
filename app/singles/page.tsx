@@ -11,7 +11,7 @@ import { SINGLES_PRICE_IDS, type SinglesProductSlug } from "./cart/priceCatalog"
 export const metadata: Metadata = {
   title: `Singles Catalog — ${siteCopy.brand.name}`,
   description:
-    "Individual research peptides from Peak State Labs — Retatrutide, CJC-1295 + Ipamorelin, BPC-157 + TB-500, and GHK-Cu. Lab-tested 99%+ purity with single-vial options and protocol guidance.",
+    "Individual research peptides from Peak State Labs — Retatrutide, CJC-1295 + Ipamorelin, BPC-157 + TB-500, GHK-Cu, KPV, and NAD+. Lab-tested 99%+ purity with single-vial options and protocol guidance.",
 };
 
 export const revalidate = 3600;
@@ -117,6 +117,40 @@ const products: Product[] = [
     stockMinimum: 3,
     stockAnchorMs: Date.UTC(2026, 4, 30),
     preorder: false,
+  },
+  {
+    id: "kpv",
+    name: "KPV",
+    subtitle: "The Regulator",
+    dose: "10mg",
+    price: "$65",
+    priceCents: 6500,
+    description:
+      "Anti-inflammatory peptide signaling support. Helps regulate inflammatory pathways, supports gut and skin health, and promotes a balanced immune response. Designed to support recovery and overall tissue resilience.",
+    image: "/kpv-product.png",
+    startStock: 12,
+    stockStep: 1,
+    stockMinimum: 3,
+    stockAnchorMs: Date.UTC(2026, 7, 20),
+    preorder: true,
+    shipsBy: "Sept 7",
+  },
+  {
+    id: "nad",
+    name: "NAD+",
+    subtitle: "The Catalyst",
+    dose: "500mg",
+    price: "$135",
+    priceCents: 13500,
+    description:
+      "Cellular energy and metabolic support. Helps fuel energy production, cellular repair, and healthy mitochondrial function. Designed to support energy, recovery, and healthy aging at the cellular level.",
+    image: "/nad-product.png",
+    startStock: 19,
+    stockStep: 1,
+    stockMinimum: 3,
+    stockAnchorMs: Date.UTC(2026, 7, 20),
+    preorder: true,
+    shipsBy: "Sept 7",
   },
 ];
 
@@ -246,7 +280,7 @@ export default function SinglesCatalog() {
           {/* Product Grid */}
           <Section className="bg-white !pt-8 sm:!pt-12">
             <Container>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 {products.map((product) => (
                   <div
                     key={product.id}
