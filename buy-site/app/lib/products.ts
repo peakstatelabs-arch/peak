@@ -44,6 +44,24 @@ export const products: Product[] = [
     price: 8500,
     priceId: "price_1TqxO7B7ajQM0hh3MWREyOZV",
   },
+  {
+    id: "catalyst",
+    name: "The Catalyst",
+    tag: "Cellular Glow",
+    description:
+      "Works at the cellular level to activate skin's natural renewal process, helping spark a healthy, lasting glow from within.",
+    price: 13500,
+    priceId: "price_1U6dtWB7ajQM0hh3LZxQAAeh",
+  },
+  {
+    id: "regulator",
+    name: "The Regulator",
+    tag: "Tone Balance",
+    description:
+      "Helps regulate and even out skin tone, calming discoloration to support a more balanced, radiant complexion over time.",
+    price: 6500,
+    priceId: "price_1U6ds5B7ajQM0hh3C6JAi8AC",
+  },
 ];
 
 export function getProduct(id: string): Product | undefined {
