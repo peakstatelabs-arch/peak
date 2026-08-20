@@ -21,6 +21,13 @@ export function CartDrawer() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // When the cart mixes in-stock vials with pre-orders, the order ships in
+  // two waves: in-stock now, pre-orders on their release date. Surface that
+  // split explicitly so it's never a surprise after checkout.
+  const inStockLines = lines.filter((l) => !l.preorder);
+  const preorderLines = lines.filter((l) => l.preorder);
+  const isSplitShipment = inStockLines.length > 0 && preorderLines.length > 0;
+
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -162,6 +169,12 @@ export function CartDrawer() {
 
         {lines.length > 0 && (
           <footer className="border-t border-[var(--border)] px-5 sm:px-6 py-5 space-y-4 bg-[var(--muted)]">
+            {isSplitShipment && (
+              <SplitShipmentNotice
+                inStockLines={inStockLines}
+                preorderLines={preorderLines}
+              />
+            )}
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-[var(--primary)]/70">
                 Subtotal
@@ -249,6 +262,78 @@ export function CartDrawer() {
   );
 }
 
+function lineLabel(line: CartLine): string {
+  return line.quantity > 1 ? `${line.name} ×${line.quantity}` : line.name;
+}
+
+function SplitShipmentNotice({
+  inStockLines,
+  preorderLines,
+}: {
+  inStockLines: CartLine[];
+  preorderLines: CartLine[];
+}) {
+  // Group pre-orders by ship date so each wave lists the right vials, even if
+  // future pre-orders carry different release dates.
+  const byDate = new Map<string, CartLine[]>();
+  for (const line of preorderLines) {
+    const key = line.shipsBy ?? "when ready";
+    const group = byDate.get(key);
+    if (group) group.push(line);
+    else byDate.set(key, [line]);
+  }
+
+  return (
+    <div className="rounded-xl border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-4 py-3">
+      <div className="flex items-center gap-2">
+        <svg
+          className="w-4 h-4 flex-shrink-0 text-[var(--accent-dark)]"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 001 1h1m-2-8h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01.052.316V16a1 1 0 01-1 1h-1"
+          />
+        </svg>
+        <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
+          Your order ships in 2 shipments
+        </p>
+      </div>
+
+      <ul className="mt-2.5 space-y-1.5">
+        <li className="flex gap-2 text-xs text-[var(--primary)]/70">
+          <span className="font-bold text-[var(--primary)] whitespace-nowrap">
+            Ships now:
+          </span>
+          <span>{inStockLines.map(lineLabel).join(", ")}</span>
+        </li>
+        {Array.from(byDate.entries()).map(([date, group]) => (
+          <li key={date} className="flex gap-2 text-xs text-[var(--primary)]/70">
+            <span className="font-bold text-[var(--primary)] whitespace-nowrap">
+              Ships {date}:
+            </span>
+            <span>{group.map(lineLabel).join(", ")}</span>
+          </li>
+        ))}
+      </ul>
+
+      <p className="mt-2.5 text-[11px] leading-relaxed text-[var(--primary)]/55">
+        Both shipments are free — you&rsquo;re only charged once, today. Pre-order
+        vials follow as soon as they&rsquo;re ready.
+      </p>
+    </div>
+  );
+}
+
 function CartLineRow({
   line,
   onQtyChange,
@@ -281,6 +366,12 @@ function CartLineRow({
               {line.name}
             </p>
             <p className="text-xs text-[var(--primary)]/60">{line.dose}</p>
+            {line.preorder && (
+              <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-[var(--accent)]/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[var(--accent-dark)]">
+                Pre-order
+                {line.shipsBy ? ` · Ships ${line.shipsBy}` : ""}
+              </span>
+            )}
           </div>
           <button
             type="button"

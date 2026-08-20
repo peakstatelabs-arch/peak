@@ -306,6 +306,7 @@ export default function SinglesCatalog() {
                       </p>
 
                       {product.preorder ? (
+                        <>
                         <div className="mt-5 flex items-center gap-2 rounded-xl bg-[var(--accent)]/15 border border-[var(--accent)]/40 px-3 py-2.5">
                           <span className="relative flex h-2.5 w-2.5 shrink-0">
                             <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
@@ -337,6 +338,40 @@ export default function SinglesCatalog() {
                             ) : null}
                           </p>
                         </div>
+                        <p className="mt-2 flex items-start gap-1.5 text-xs text-[var(--primary)]/60 leading-relaxed">
+                          <svg
+                            className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[var(--accent-dark)]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 001 1h1m-2-8h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01.052.316V16a1 1 0 01-1 1h-1"
+                            />
+                          </svg>
+                          <span>
+                            Ships separately on{" "}
+                            <span className="font-semibold text-[var(--primary)]/75">
+                              {product.shipsBy ?? "its release date"}
+                            </span>
+                            . Add it alongside any in-stock vials and those go out
+                            right away — your pre-order follows when it&rsquo;s
+                            ready, with{" "}
+                            <span className="font-semibold text-[var(--primary)]/75">
+                              free shipping
+                            </span>{" "}
+                            on both.
+                          </span>
+                        </p>
+                        </>
                       ) : (
                         <div className="mt-5 flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2.5">
                           <span className="relative flex h-2.5 w-2.5 shrink-0">
@@ -378,6 +413,8 @@ export default function SinglesCatalog() {
                           dose={product.dose}
                           unitPriceCents={product.priceCents}
                           image={product.image}
+                          preorder={product.preorder}
+                          shipsBy={product.shipsBy}
                         />
 
                         <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs font-semibold text-[var(--accent-dark)]">
