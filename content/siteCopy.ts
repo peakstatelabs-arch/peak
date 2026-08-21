@@ -272,12 +272,14 @@ export const siteCopy = {
     headline: "Your Safety Is Our #1 Priority",
     subheadline: "Documentation & Purity Tests",
     description:
-      "Everything inside POWER CUT\u2122 is supported with documentation and references.",
+      "Every compound we sell \u2014 inside POWER CUT\u2122 and beyond \u2014 is backed by independent third-party lab documentation.",
     documents: [
       { name: "Retatrutide", amount: "20mg", url: "/purity-tests/reta" },
       { name: "CJC-1295 + Ipamorelin", amount: "10mg Blend", url: "/purity-tests/cjc-ipa" },
       { name: "BPC-157 + TB-500", amount: "20mg Blend", url: "/purity-tests/bpc-tb" },
       { name: "GHK-Cu", amount: "50mg", url: "/purity-tests/ghkcu" },
+      { name: "KPV", amount: "10mg", url: "/purity-tests/kpv" },
+      { name: "NAD+", amount: "500mg", url: "/purity-tests/nad" },
     ],
   },
 
