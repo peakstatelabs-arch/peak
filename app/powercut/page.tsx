@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
+import { DiscountPopup } from "@/app/components/DiscountPopup";
 
 export const metadata: Metadata = {
   title: `THE POWER CUT™ PROTOCOL — The 10-Week Catalytic Reset`,
@@ -1248,6 +1249,8 @@ export default function PowerCutProtocol() {
           </div>
         </Container>
       </footer>
+
+      <DiscountPopup />
     </div>
   );
 }
