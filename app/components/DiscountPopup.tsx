@@ -15,10 +15,6 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
-function isValidPhone(value: string) {
-  return value.replace(/[^\d]/g, "").length >= 10;
-}
-
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 const SEEN_COOKIE = "powercut_code_seen";
 const DELAY_MS = 30000; // fallback trigger (mobile has no exit-intent)
@@ -30,20 +26,16 @@ export function DiscountPopup() {
     "form",
   );
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [touched, setTouched] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [code, setCode] = useState(
-    process.env.NEXT_PUBLIC_POWERCUT_CODE || "PEAK10",
+    process.env.NEXT_PUBLIC_POWERCUT_CODE || "PEAKSTATE",
   );
   const firedRef = useRef(false);
 
   const show = useCallback(() => {
     if (firedRef.current) return;
     if (getCookie(SEEN_COOKIE)) return;
-    // Let the site's research-use disclaimer be acknowledged first so we
-    // never stack two modals on top of each other.
-    if (!getCookie("disclaimer_ack")) return;
     firedRef.current = true;
     setVisible(true);
   }, []);
@@ -80,20 +72,18 @@ export function DiscountPopup() {
   }
 
   const emailValid = isValidEmail(email);
-  const phoneValid = isValidPhone(phone);
-  const formValid = emailValid && phoneValid;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setTouched(true);
-    if (!formValid) return;
+    if (!emailValid) return;
     setStatus("loading");
     setErrorMsg("");
     try {
       const res = await fetch("/api/powercut-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), phone: phone.trim() }),
+        body: JSON.stringify({ email: email.trim() }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -160,7 +150,7 @@ export function DiscountPopup() {
             </h2>
             <p className="mt-3 text-sm text-[var(--primary)]/70">
               Use this code at checkout on your first order. We&rsquo;ve also
-              sent it to you.
+              sent it to your inbox.
             </p>
             <div className="mt-5 rounded-2xl border-2 border-dashed border-[var(--accent)]/50 bg-[var(--accent)]/10 px-6 py-4">
               <span className="text-2xl font-extrabold tracking-widest text-[var(--accent-dark)]">
@@ -195,7 +185,7 @@ export function DiscountPopup() {
               Want 10% off your first order?
             </h2>
             <p className="mt-3 text-center text-sm leading-relaxed text-[var(--primary)]/70">
-              Drop your details and we&rsquo;ll send a code for 10% off — plus
+              Enter your email and we&rsquo;ll send a code for 10% off — plus
               first access to restocks and new protocols. No spam.
             </p>
 
@@ -222,28 +212,6 @@ export function DiscountPopup() {
                 ) : null}
               </div>
 
-              <div>
-                <label className="sr-only" htmlFor="pc-phone">
-                  Phone
-                </label>
-                <input
-                  id="pc-phone"
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="Phone number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  onBlur={() => setTouched(true)}
-                  className="h-12 w-full rounded-xl border border-black/10 bg-white px-4 text-sm text-black shadow-sm outline-none placeholder:text-black/40 focus:border-black/20"
-                />
-                {touched && phone.length > 0 && !phoneValid ? (
-                  <p className="mt-1.5 text-xs text-red-600">
-                    Please enter a valid phone number.
-                  </p>
-                ) : null}
-              </div>
-
               {status === "error" && errorMsg ? (
                 <p className="text-sm text-red-600">{errorMsg}</p>
               ) : null}
@@ -265,9 +233,8 @@ export function DiscountPopup() {
             </button>
 
             <p className="mt-4 text-center text-[11px] leading-relaxed text-[var(--primary)]/40">
-              By submitting you agree to receive email and recurring automated
-              marketing texts at the number provided. Consent is not a condition
-              of purchase. Msg &amp; data rates may apply. Reply STOP to opt out.
+              By submitting you agree to receive marketing emails from Peak State
+              Labs. Unsubscribe anytime.
             </p>
           </>
         )}

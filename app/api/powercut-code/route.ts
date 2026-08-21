@@ -1,32 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Captures leads from the POWER CUT 10%-code popup (email + phone).
+// Captures leads from the POWER CUT 10%-code popup (email only).
 //
 // Storage target, in order of preference:
-//   1. POWERCUT_LEADS  — a dedicated Apps Script / Zapier catch-hook URL that
-//      accepts { email, phone, ... }. Set this to store phone numbers.
-//   2. Subscribers     — the existing email-only Google Apps Script sheet.
-//      Reused as a fallback so the popup captures something out of the box;
-//      extend that script with a `phone` column to persist the number.
+//   1. POWERCUT_LEADS  — a dedicated Apps Script / Zapier catch-hook URL.
+//   2. Subscribers     — the existing email Google Apps Script sheet.
 //
-// The visitor always receives their code on a 200 as long as the inputs are
+// The visitor always receives their code on a 200 as long as the email is
 // valid — a storage hiccup must never cost them the discount.
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
-function normalizePhone(value: string) {
-  const digits = value.replace(/[^\d]/g, "");
-  return digits.length >= 10 ? digits : "";
-}
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const email = (body.email ?? "").trim().toLowerCase();
-    const rawPhone = (body.phone ?? "").trim();
-    const phone = normalizePhone(rawPhone);
 
     if (!email || !isValidEmail(email)) {
       return NextResponse.json(
@@ -35,14 +25,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!phone) {
-      return NextResponse.json(
-        { error: "Please enter a valid phone number." },
-        { status: 400 },
-      );
-    }
-
-    const code = process.env.POWERCUT_CODE || "PEAK10";
+    const code = process.env.POWERCUT_CODE || "PEAKSTATE";
     const storeUrl = process.env.POWERCUT_LEADS || process.env.Subscribers;
 
     if (storeUrl) {
@@ -58,8 +41,6 @@ export async function POST(req: NextRequest) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email,
-            phone,
-            phone_display: rawPhone,
             source: "powercut-10-code",
             timestamp: new Date().toISOString(),
             ip,
