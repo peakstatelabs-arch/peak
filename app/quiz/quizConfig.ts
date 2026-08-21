@@ -403,6 +403,48 @@ function reasonForGoal(g: Goal): string {
   }
 }
 
+// Contextual single-vial suggestions for KPV + NAD+. These don't map to a quiz
+// goal (they're supportive compounds), so they're surfaced from the primary
+// goal + age instead: NAD+ for recovery / anti-aging / 40+, KPV for recovery /
+// anti-aging (inflammation, gut, skin).
+function contextualSingles(
+  a: QuizAnswers,
+): { slug: SinglesProductSlug; reason: string }[] {
+  const out: { slug: SinglesProductSlug; reason: string }[] = [];
+  const is40plus = a.age === "40-49" || a.age === "50+";
+
+  if (a.primaryGoal === "recovery") {
+    out.push({
+      slug: "nad",
+      reason: "Fuels the cellular energy and repair that power real recovery.",
+    });
+  } else if (a.primaryGoal === "antiaging") {
+    out.push({
+      slug: "nad",
+      reason: "Cellular energy and mitochondrial support for healthy aging.",
+    });
+  } else if (is40plus) {
+    out.push({
+      slug: "nad",
+      reason: "Restores the cellular energy that naturally declines with age.",
+    });
+  }
+
+  if (a.primaryGoal === "recovery") {
+    out.push({
+      slug: "kpv",
+      reason: "Calms the inflammation that quietly slows your recovery.",
+    });
+  } else if (a.primaryGoal === "antiaging") {
+    out.push({
+      slug: "kpv",
+      reason: "Supports gut and skin health from the inside out.",
+    });
+  }
+
+  return out;
+}
+
 function buildAddOns(
   a: QuizAnswers,
   kind: "stack" | "single",
@@ -418,6 +460,19 @@ function buildAddOns(
     if (slug && !used.has(slug)) {
       out.push({ product: SINGLES[slug], reason: reasonForGoal(g) });
       used.add(slug);
+    }
+  }
+
+  // KPV / NAD+ are single-only (they can't share a cart with the stack), so we
+  // only surface them for single-vial recommendations, after any secondary-goal
+  // add-ons and within the 2-item cap.
+  if (kind === "single") {
+    for (const c of contextualSingles(a)) {
+      if (out.length >= 2) break;
+      if (!used.has(c.slug)) {
+        out.push({ product: SINGLES[c.slug], reason: c.reason });
+        used.add(c.slug);
+      }
     }
   }
 
