@@ -48,4 +48,24 @@ export const PURITY_TESTS: Record<string, PurityTest> = {
       "/GHKCU Lab Report/2.png",
     ],
   },
+  kpv: {
+    slug: "kpv",
+    name: "KPV",
+    amount: "10mg",
+    title: "KPV 10mg Lab Report",
+    images: [
+      "/KPV 1.png",
+      "/KPV 2.png",
+    ],
+  },
+  nad: {
+    slug: "nad",
+    name: "NAD+",
+    amount: "500mg",
+    title: "NAD+ 500mg Lab Report",
+    images: [
+      "/NAD 1.png",
+      "/NAD 2.png",
+    ],
+  },
 };
