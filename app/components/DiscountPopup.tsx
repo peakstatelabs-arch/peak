@@ -17,8 +17,8 @@ function isValidEmail(value: string) {
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 const SEEN_COOKIE = "powercut_code_seen";
-const DELAY_MS = 30000; // fallback trigger (mobile has no exit-intent)
-const SCROLL_PCT = 0.6;
+const DELAY_MS = 8000; // fallback trigger (mobile has no exit-intent)
+const SCROLL_PCT = 0.35;
 
 export function DiscountPopup() {
   const [visible, setVisible] = useState(false);
@@ -227,9 +227,9 @@ export function DiscountPopup() {
 
             <button
               onClick={dismiss}
-              className="mt-3 w-full text-center text-xs text-[var(--primary)]/50 transition hover:text-[var(--primary)]/70"
+              className="mt-3 w-full rounded-2xl border border-[var(--border)] py-3 text-center text-sm font-medium text-[var(--primary)]/60 transition hover:bg-[var(--primary)]/5 hover:text-[var(--primary)]/80"
             >
-              No thanks, I&rsquo;ll pay full price
+              Maybe later
             </button>
 
             <p className="mt-4 text-center text-[11px] leading-relaxed text-[var(--primary)]/40">
