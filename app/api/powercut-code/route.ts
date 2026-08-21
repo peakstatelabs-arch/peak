@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Captures leads from the POWER CUT 10%-code popup (email only).
 //
-// Storage target, in order of preference:
-//   1. POWERCUT_LEADS  — a dedicated Apps Script / Zapier catch-hook URL.
-//   2. Subscribers     — the existing email Google Apps Script sheet.
+// Forwards to a Zapier catch hook that adds the email to ClickFunnels with the
+// `powercut-10-code` tag. Hardcoded (catch-hook URLs are write-only, so they
+// can't leak data) but overridable via POWERCUT_LEADS without a redeploy.
 //
 // The visitor always receives their code on a 200 as long as the email is
 // valid — a storage hiccup must never cost them the discount.
+
+const ZAPIER_WEBHOOK_URL =
+  "https://hooks.zapier.com/hooks/catch/27218922/4tfwrh2/";
 
 function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -26,7 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     const code = process.env.POWERCUT_CODE || "PEAKSTATE";
-    const storeUrl = process.env.POWERCUT_LEADS || process.env.Subscribers;
+    const storeUrl = process.env.POWERCUT_LEADS || ZAPIER_WEBHOOK_URL;
 
     if (storeUrl) {
       const ip =
