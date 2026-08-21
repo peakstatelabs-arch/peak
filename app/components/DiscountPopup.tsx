@@ -157,9 +157,16 @@ export function DiscountPopup() {
                 {code}
               </span>
             </div>
+            <a
+              href="https://www.peakstate.shop"
+              onClick={dismiss}
+              className="btn-primary mt-6 flex w-full h-12 items-center justify-center rounded-2xl text-base font-semibold"
+            >
+              Shop Now
+            </a>
             <button
               onClick={dismiss}
-              className="btn-primary mt-6 w-full h-12 rounded-2xl text-base font-semibold"
+              className="mt-3 w-full rounded-2xl border border-[var(--border)] py-3 text-center text-sm font-medium text-[var(--primary)]/60 transition hover:bg-[var(--primary)]/5 hover:text-[var(--primary)]/80"
             >
               Keep reading the guide
             </button>
