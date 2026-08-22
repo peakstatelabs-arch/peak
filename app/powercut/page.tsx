@@ -3,6 +3,24 @@ import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { DiscountPopup } from "@/app/components/DiscountPopup";
+import { highlightStats } from "@/content/reviews";
+
+function StarRating({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex gap-0.5 ${className}`} aria-label="5 out of 5 stars">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <svg
+          key={i}
+          className="w-4 h-4 text-[var(--accent)]"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6L12 2Z" />
+        </svg>
+      ))}
+    </div>
+  );
+}
 
 export const metadata: Metadata = {
   title: `THE POWER CUT™ PROTOCOL — The 10-Week Catalytic Reset`,
@@ -371,6 +389,23 @@ export default function PowerCutProtocol() {
                 </p>
               </div>
 
+              {/* Highlight stats */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-14">
+                {highlightStats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="p-5 rounded-2xl bg-white/10 backdrop-blur border border-white/10 text-center"
+                  >
+                    <div className="text-2xl sm:text-3xl font-bold text-[var(--accent)]">
+                      {stat.value}
+                    </div>
+                    <div className="mt-1 text-xs sm:text-sm text-white/60 leading-snug">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
               <div className="text-center mb-8">
                 <div className="flex items-center justify-center gap-6 text-2xl sm:text-3xl font-bold tracking-tight">
                   <span>Before</span>
@@ -402,29 +437,46 @@ export default function PowerCutProtocol() {
 
               <div className="grid sm:grid-cols-3 gap-6">
                 <div className="p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
-                  <svg className="w-8 h-8 text-[var(--accent)] mb-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                  </svg>
+                  <StarRating className="mb-4" />
                   <p className="text-lg font-semibold leading-relaxed">
                     Down 20.8 lbs and 4.8% body fat&hellip; not slowing down.
                   </p>
                 </div>
                 <div className="p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
-                  <svg className="w-8 h-8 text-[var(--accent)] mb-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                  </svg>
+                  <StarRating className="mb-4" />
                   <p className="text-lg font-semibold leading-relaxed">
                     Food noise gone. Sleeping better. Actually sticking to it.
                   </p>
                 </div>
                 <div className="p-6 rounded-2xl bg-white/10 backdrop-blur border border-white/10">
-                  <svg className="w-8 h-8 text-[var(--accent)] mb-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                  </svg>
+                  <StarRating className="mb-4" />
                   <p className="text-lg font-semibold leading-relaxed">
                     This is the first time something has actually worked.
                   </p>
                 </div>
+              </div>
+
+              {/* View more results CTA */}
+              <div className="mt-12 text-center">
+                <a
+                  href="/reviews"
+                  className="btn-primary inline-flex h-14 items-center justify-center gap-2 rounded-2xl px-8 text-base sm:text-lg font-bold"
+                >
+                  View more results
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </a>
               </div>
             </div>
           </Container>
