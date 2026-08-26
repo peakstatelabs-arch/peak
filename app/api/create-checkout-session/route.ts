@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       line_items: lineItems,
       allow_promotion_codes: true,
       shipping_address_collection: {
-        allowed_countries: ["US", "CA", "MX", "GB", "IE", "FR", "ES", "SE"],
+        allowed_countries: ["US", "CA", "MX", "GB", "IE", "FR", "ES", "SE", "TT"],
       },
       phone_number_collection: { enabled: true },
       billing_address_collection: "auto",
