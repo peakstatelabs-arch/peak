@@ -49,7 +49,12 @@ export async function POST(req: NextRequest) {
     const tiktok = str(body.tiktok);
     const instagram = str(body.instagram);
     const followers = str(body.followers);
-    const contentType = str(body.contentType);
+    // contentType is multi-select: accept an array (and tolerate a legacy string).
+    const contentTypes: string[] = Array.isArray(body.contentType)
+      ? body.contentType.map(str).filter(Boolean)
+      : str(body.contentType)
+      ? [str(body.contentType)]
+      : [];
     const usingPeptides = str(body.usingPeptides);
     const why = str(body.why);
     const acknowledged = body.acknowledged === true;
@@ -79,9 +84,12 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
-    if (!CONTENT_OPTIONS.includes(contentType)) {
+    if (
+      contentTypes.length === 0 ||
+      !contentTypes.every((c) => CONTENT_OPTIONS.includes(c))
+    ) {
       return NextResponse.json(
-        { error: "Please select a content type" },
+        { error: "Please select at least one content type" },
         { status: 400 }
       );
     }
@@ -149,7 +157,10 @@ export async function POST(req: NextRequest) {
         tiktok_handle: normalizeHandle(tiktok),
         instagram_handle: normalizeHandle(instagram),
         followers,
-        content_type: contentType,
+        // Comma-joined for easy mapping into a single ClickFunnels field, plus
+        // the raw array for anyone who wants to fan it out in Zapier.
+        content_type: contentTypes.join(", "),
+        content_types: contentTypes,
         using_peptides: usingPeptides,
         why,
         acknowledged_guidelines: acknowledged,
