@@ -8,6 +8,9 @@ const SUPPRESSED_PATHS = [
   "/research-access",
   "/bridge",
   "/transitionguide",
+  "/creator",
+  "/creator/apply",
+  "/creator/success",
 ];
 
 const CAL_LINK = "peakstatelabs/power-cut-strategy-call";
