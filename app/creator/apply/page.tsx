@@ -10,8 +10,16 @@ import { saveClientContact } from "@/app/lib/clientContact";
 /* -------------------------------------------------------------------------- */
 
 type ChoiceStep = {
-  id: "followers" | "contentType" | "usingPeptides";
+  id: "followers" | "usingPeptides";
   kind: "choice";
+  question: string;
+  subtext?: string;
+  options: string[];
+};
+
+type MultiChoiceStep = {
+  id: "contentType";
+  kind: "multichoice";
   question: string;
   subtext?: string;
   options: string[];
@@ -47,7 +55,13 @@ type ConsentStep = {
   label: string;
 };
 
-type Step = ChoiceStep | TextStep | NameStep | LongTextStep | ConsentStep;
+type Step =
+  | ChoiceStep
+  | MultiChoiceStep
+  | TextStep
+  | NameStep
+  | LongTextStep
+  | ConsentStep;
 
 const STEPS: Step[] = [
   {
@@ -67,7 +81,8 @@ const STEPS: Step[] = [
     id: "phone",
     kind: "text",
     question: "What's your phone number?",
-    subtext: "Optional — only if you're open to us texting creators.",
+    subtext:
+      "Optional — only if you're open to us texting you about your approval.",
     placeholder: "(555) 555-5555",
     inputType: "tel",
     optional: true,
@@ -103,8 +118,9 @@ const STEPS: Step[] = [
   },
   {
     id: "contentType",
-    kind: "choice",
+    kind: "multichoice",
     question: "What kind of content do you currently create?",
+    subtext: "Select all that apply.",
     options: [
       "Health & wellness",
       "Fitness",
@@ -145,7 +161,7 @@ type Answers = {
   tiktok: string;
   instagram: string;
   followers: string;
-  contentType: string;
+  contentType: string[];
   usingPeptides: string;
   why: string;
   acknowledged: boolean;
@@ -159,7 +175,7 @@ const EMPTY_ANSWERS: Answers = {
   tiktok: "",
   instagram: "",
   followers: "",
-  contentType: "",
+  contentType: [],
   usingPeptides: "",
   why: "",
   acknowledged: false,
@@ -279,9 +295,9 @@ export default function CreatorApplyPage() {
     }
   }, [canAdvance, isLast, submit, goNext]);
 
-  // Select a choice → set it and auto-advance for that quiz-like feel.
+  // Single-select choice → set it and auto-advance for that quiz-like feel.
   const selectChoice = useCallback(
-    (field: "followers" | "contentType" | "usingPeptides", value: string) => {
+    (field: "followers" | "usingPeptides", value: string) => {
       setAnswers((a) => ({ ...a, [field]: value }));
       setError(null);
       setDirection("forward");
@@ -289,6 +305,17 @@ export default function CreatorApplyPage() {
     },
     []
   );
+
+  // Multi-select choice → toggle membership; the visitor taps Continue when done.
+  const toggleContentType = useCallback((value: string) => {
+    setError(null);
+    setAnswers((a) => ({
+      ...a,
+      contentType: a.contentType.includes(value)
+        ? a.contentType.filter((v) => v !== value)
+        : [...a.contentType, value],
+    }));
+  }, []);
 
   const progressPct = Math.round(((current + 1) / TOTAL) * 100);
   const animClass =
@@ -447,6 +474,50 @@ export default function CreatorApplyPage() {
                       <span>{option}</span>
                       <span
                         className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 transition ${
+                          selected
+                            ? "border-[var(--accent)] bg-[var(--accent)] text-white"
+                            : "border-[var(--border)] text-transparent group-hover:border-[var(--accent)]/60"
+                        }`}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={3}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="h-3.5 w-3.5"
+                          aria-hidden
+                        >
+                          <path d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : null}
+
+            {/* Multi-select choices */}
+            {step.kind === "multichoice" ? (
+              <div className="flex flex-col gap-3">
+                {step.options.map((option) => {
+                  const selected = answers.contentType.includes(option);
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => toggleContentType(option)}
+                      className={`group flex items-center justify-between gap-3 rounded-2xl border-2 px-5 py-4 text-left text-lg font-medium transition ${
+                        selected
+                          ? "border-[var(--accent)] bg-[var(--accent)]/10"
+                          : "border-[var(--border)] bg-white hover:border-[var(--accent)]/60 hover:bg-[var(--muted)]"
+                      }`}
+                    >
+                      <span>{option}</span>
+                      <span
+                        className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-md border-2 transition ${
                           selected
                             ? "border-[var(--accent)] bg-[var(--accent)] text-white"
                             : "border-[var(--border)] text-transparent group-hover:border-[var(--accent)]/60"
