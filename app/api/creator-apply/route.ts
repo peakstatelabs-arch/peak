@@ -4,11 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 // ClickFunnels 2.0 (where the "Creator Program" tag is applied). Catch-hook URLs
 // are write-only, so the value is safe to keep here as a fallback, but it can be
 // overridden via the ZAPIER_CREATOR_WEBHOOK_URL env var without a redeploy.
-//
-// TODO: replace the placeholder below with the real catch-hook URL, or set
-// ZAPIER_CREATOR_WEBHOOK_URL in the environment.
 const ZAPIER_CREATOR_WEBHOOK_URL =
-  "https://hooks.zapier.com/hooks/catch/REPLACE_ME/creator-program/";
+  "https://hooks.zapier.com/hooks/catch/27218922/4h3217o/";
 
 // Tag ClickFunnels should apply to everyone who comes through this funnel.
 // Zapier reads this field off the payload so the tag can change without a deploy.
