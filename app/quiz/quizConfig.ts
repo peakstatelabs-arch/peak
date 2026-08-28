@@ -189,7 +189,7 @@ export const SINGLES: Record<SinglesProductSlug, QuizProduct> = {
     dose: "500mg",
     price: "$135",
     priceCents: 13500,
-    image: "/nad-product.png",
+    image: "/NAD Vial Brown.png",
     tagline: "The Catalyst",
     blurb:
       "Cellular energy and metabolic support. Fuels energy production, cellular repair and healthy mitochondrial function for recovery and healthy aging.",
