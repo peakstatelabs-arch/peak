@@ -144,7 +144,7 @@ const products: Product[] = [
     priceCents: 13500,
     description:
       "Cellular energy and metabolic support. Helps fuel energy production, cellular repair, and healthy mitochondrial function. Designed to support energy, recovery, and healthy aging at the cellular level.",
-    image: "/nad-product.png",
+    image: "/NAD Vial Brown.png",
     startStock: 19,
     stockStep: 1,
     stockMinimum: 3,
