@@ -36,7 +36,7 @@ export default function ResearchAccessPage() {
 
       <main>
         {/* Hero */}
-        <Section className="relative overflow-hidden gradient-hero !py-10 sm:!py-16">
+        <Section className="relative overflow-hidden gradient-hero !pt-10 !pb-4 sm:!pt-16 sm:!pb-5">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
             <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
@@ -108,7 +108,7 @@ export default function ResearchAccessPage() {
         </Section>
 
         {/* Trust badge + Account form */}
-        <Section className="bg-white !py-6 sm:!py-10">
+        <Section className="bg-white !pt-4 !pb-6 sm:!pt-5 sm:!pb-10">
           <Container>
             <div className="max-w-md mx-auto">
               {/* Verified reviews badge — compact trust bar */}
