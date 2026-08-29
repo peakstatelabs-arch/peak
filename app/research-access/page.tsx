@@ -114,39 +114,83 @@ export default function ResearchAccessPage() {
               {/* Verified reviews badge */}
               <Link
                 href="/reviews"
-                className="group block rounded-3xl border border-[var(--border)] bg-[var(--muted)] p-6 text-center shadow-sm transition-all hover:border-[var(--accent)] hover:shadow-md"
+                aria-label="Read verified client reviews — rated 4.9 out of 5"
+                className="group relative block overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-b from-white to-[var(--muted)] p-7 text-center shadow-[0_12px_40px_-14px_rgba(21,80,144,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--accent)] hover:shadow-[0_20px_54px_-14px_rgba(21,80,144,0.38)]"
               >
-                <div className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] px-4 py-2 text-white">
-                  <img
-                    src="/logo.png"
-                    alt=""
+                {/* Soft glows */}
+                <div className="pointer-events-none absolute -top-20 left-1/2 h-44 w-44 -translate-x-1/2 rounded-full bg-[var(--accent)]/25 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-24 -right-10 h-40 w-40 rounded-full bg-amber-300/20 blur-3xl" />
+
+                <div className="relative">
+                  {/* Pill */}
+                  <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary-light)] px-4 py-2 text-white shadow-[0_6px_18px_-6px_rgba(21,80,144,0.7)] ring-1 ring-white/20">
+                    <img
+                      src="/logo.png"
+                      alt=""
+                      aria-hidden="true"
+                      className="h-5 w-5 rounded"
+                    />
+                    <span className="text-sm font-bold tracking-wide">
+                      Verified Reviews
+                    </span>
+                  </div>
+
+                  {/* Gold stars */}
+                  <div
+                    className="mt-4 flex items-center justify-center gap-1"
                     aria-hidden="true"
-                    className="h-5 w-5 rounded"
-                  />
-                  <span className="text-sm font-bold tracking-tight">
-                    Verified Reviews
+                  >
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg
+                        key={i}
+                        width="26"
+                        height="26"
+                        viewBox="0 0 24 24"
+                        className="drop-shadow-[0_1px_2px_rgba(217,119,6,0.45)]"
+                      >
+                        <defs>
+                          <linearGradient
+                            id={`ra-star-${i}`}
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop offset="0%" stopColor="#FDE68A" />
+                            <stop offset="45%" stopColor="#FBBF24" />
+                            <stop offset="100%" stopColor="#F59E0B" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          fill={`url(#ra-star-${i})`}
+                          stroke="#E0930B"
+                          strokeWidth="0.6"
+                          strokeLinejoin="round"
+                          d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6L12 2Z"
+                        />
+                      </svg>
+                    ))}
+                  </div>
+
+                  {/* Score */}
+                  <div className="mt-4 flex items-end justify-center gap-1.5">
+                    <span className="text-5xl font-extrabold leading-none tracking-tight text-[var(--primary)]">
+                      4.9
+                    </span>
+                    <span className="mb-1 text-xl font-bold text-[var(--primary)]/40">
+                      / 5
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-sm font-semibold text-[var(--primary)]/70">
+                    70+ verified client check-ins
+                  </p>
+
+                  <span className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-4 py-2 text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)] transition-all group-hover:gap-2.5 group-hover:bg-[var(--accent)]/20">
+                    Read the reviews
+                    <span aria-hidden="true">→</span>
                   </span>
                 </div>
-                <div
-                  className="mt-3 text-lg tracking-widest text-[var(--accent-dark)]"
-                  aria-hidden="true"
-                >
-                  ★★★★★
-                </div>
-                <div className="mt-1 flex items-center justify-center gap-2">
-                  <span className="text-3xl font-bold tracking-tight text-[var(--primary)]">
-                    4.9
-                  </span>
-                  <span className="text-lg font-bold text-[var(--primary)]/50">
-                    / 5
-                  </span>
-                </div>
-                <p className="mt-1 text-sm font-semibold text-[var(--primary)]/70">
-                  30+ verified client check-ins
-                </p>
-                <p className="mt-3 text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)] group-hover:underline">
-                  Read the reviews →
-                </p>
               </Link>
 
               {/* Account form */}

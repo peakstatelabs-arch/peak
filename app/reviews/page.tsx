@@ -3,6 +3,7 @@ import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { highlightStats } from "@/content/reviews";
+import { GatedShopLink } from "@/app/components/GatedShopLink";
 import { ReviewsGallery } from "./ReviewsGallery";
 
 export const metadata: Metadata = {
@@ -44,20 +45,17 @@ export default function ReviewsPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
         <Container className="flex h-16 items-center justify-between">
-          <a href="/" className="flex items-center gap-2 text-lg font-bold">
+          <GatedShopLink className="flex items-center gap-2 text-lg font-bold">
             <img
               src="/logo.png"
               alt="Peak State Labs Logo"
               className="h-7 w-7 rounded-lg"
             />
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-          </a>
-          <a
-            href="/"
-            className="text-sm font-semibold text-[var(--primary)]/70 transition-colors hover:text-[var(--primary)]"
-          >
+          </GatedShopLink>
+          <GatedShopLink className="text-sm font-semibold text-[var(--primary)]/70 transition-colors hover:text-[var(--primary)]">
             Explore POWER CUT™ &rarr;
-          </a>
+          </GatedShopLink>
         </Container>
       </header>
 
@@ -146,12 +144,9 @@ export default function ReviewsPage() {
                 See the full 10-week protocol, what&rsquo;s included, and how to
                 get started.
               </p>
-              <a
-                href="/"
-                className="btn-primary mt-8 inline-flex items-center justify-center rounded-full px-8 py-4 text-base font-bold"
-              >
+              <GatedShopLink className="btn-primary mt-8 inline-flex items-center justify-center rounded-full px-8 py-4 text-base font-bold">
                 Explore POWER CUT&trade;
-              </a>
+              </GatedShopLink>
             </div>
           </Container>
         </Section>
@@ -160,14 +155,14 @@ export default function ReviewsPage() {
       {/* Footer */}
       <footer className="border-t border-[var(--border)] bg-white">
         <Container className="flex flex-col items-center gap-4 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
-          <a href="/" className="flex items-center gap-2 font-bold">
+          <GatedShopLink className="flex items-center gap-2 font-bold">
             <img
               src="/logo.png"
               alt="Peak State Labs Logo"
               className="h-6 w-6 rounded-lg"
             />
             <span>{siteCopy.brand.name}</span>
-          </a>
+          </GatedShopLink>
           <p className="max-w-md text-xs text-[var(--primary)]/50">
             Individual results vary and are not guaranteed. For laboratory
             research only. Not for human consumption.
