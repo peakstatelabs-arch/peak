@@ -52,7 +52,7 @@ export const highlightStats: { value: string; label: string }[] = [
   { value: "20+ lbs", label: "down in a single 10-week cycle" },
   { value: "5.5%", label: "body fat reduction reported" },
   { value: "+4.2%", label: "lean muscle gained" },
-  { value: "30+", label: "verified client check-ins" },
+  { value: "70+", label: "verified client check-ins" },
 ];
 
 export const reviews: Review[] = [
