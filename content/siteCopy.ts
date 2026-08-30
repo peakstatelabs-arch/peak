@@ -164,7 +164,7 @@ export const siteCopy = {
       ],
       pros: ["Step-by-step proven system", "Private community and support"],
       price: "$599",
-      savings: "$330+",
+      savings: "$300+",
     },
   },
 
@@ -178,7 +178,7 @@ export const siteCopy = {
       {
         id: "single",
         name: "The Body Reset",
-        subtitle: "One 10-Week POWER CUT\u2122 Cycle",
+        subtitle: "One 10-Week POWER CUT\u2122 Cycle \u00b7 2 vials of each peptide",
         description:
           "A single 10-week burst to prove the system works. Perfect for hitting an immediate fat loss goal before deciding if you're ready for the elite level.",
         features: [
@@ -206,7 +206,7 @@ export const siteCopy = {
       {
         id: "double",
         name: "The Total Transformation",
-        subtitle: "Two 10-Week POWER CUT\u2122 Cycles",
+        subtitle: "Two 10-Week POWER CUT\u2122 Cycles \u00b7 4 vials of each peptide",
         description:
           'The "Smart Choice" for 20 weeks of uninterrupted metabolic control. Stop "trying" and start guaranteeing your body finally cooperates with your ambition.',
         features: [
@@ -238,7 +238,7 @@ export const siteCopy = {
       {
         id: "triple",
         name: "The Biological Overhaul",
-        subtitle: "Three 10-Week POWER CUT\u2122 Cycles",
+        subtitle: "Three 10-Week POWER CUT\u2122 Cycles \u00b7 6 vials of each peptide",
         description:
           "Our most aggressive research timeline. Lock in three full cycles to ensure your new, lean physique becomes your permanent biological reality.",
         features: [
