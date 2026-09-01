@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
@@ -111,77 +110,8 @@ export default function ResearchAccessPage() {
         <Section className="bg-white !pt-4 !pb-6 sm:!pt-5 sm:!pb-10">
           <Container>
             <div className="max-w-md mx-auto">
-              {/* Verified reviews badge — compact trust bar */}
-              <Link
-                href="/reviews"
-                aria-label="Verified reviews — 4.9 out of 5 from 70+ client check-ins. Read the reviews."
-                className="group flex items-center justify-center gap-2.5 rounded-2xl border border-[var(--border)] bg-gradient-to-r from-white to-[var(--muted)] px-4 py-3 shadow-sm transition-all hover:border-[var(--accent)] hover:shadow-md sm:gap-3"
-              >
-                {/* Gold stars */}
-                <span className="flex items-center gap-0.5" aria-hidden="true">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <svg
-                      key={i}
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      className="drop-shadow-[0_1px_1px_rgba(217,119,6,0.4)]"
-                    >
-                      <defs>
-                        <linearGradient
-                          id={`ra-star-${i}`}
-                          x1="0"
-                          y1="0"
-                          x2="0"
-                          y2="1"
-                        >
-                          <stop offset="0%" stopColor="#FDE68A" />
-                          <stop offset="45%" stopColor="#FBBF24" />
-                          <stop offset="100%" stopColor="#F59E0B" />
-                        </linearGradient>
-                      </defs>
-                      <path
-                        fill={`url(#ra-star-${i})`}
-                        stroke="#E0930B"
-                        strokeWidth="0.6"
-                        strokeLinejoin="round"
-                        d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21 8 14 2 9.4h7.6L12 2Z"
-                      />
-                    </svg>
-                  ))}
-                </span>
-
-                {/* Score */}
-                <span className="flex items-baseline gap-0.5">
-                  <span className="text-base font-extrabold leading-none text-[var(--primary)]">
-                    4.9
-                  </span>
-                  <span className="text-xs font-bold text-[var(--primary)]/40">
-                    /5
-                  </span>
-                </span>
-
-                <span
-                  className="h-4 w-px bg-[var(--border)]"
-                  aria-hidden="true"
-                />
-
-                {/* Count */}
-                <span className="whitespace-nowrap text-sm font-semibold text-[var(--primary)]/70">
-                  70+ verified reviews
-                </span>
-
-                {/* Affordance */}
-                <span
-                  className="text-[var(--accent-dark)] transition-transform group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                >
-                  →
-                </span>
-              </Link>
-
               {/* Account form */}
-              <div className="mt-6 p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
+              <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
                 <ResearchAccessForm />
               </div>
 
