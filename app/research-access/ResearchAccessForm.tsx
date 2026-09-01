@@ -103,42 +103,8 @@ export function ResearchAccessForm() {
 
   return (
     <div>
-      {/* Tabs */}
-      <div
-        role="tablist"
-        aria-label="Research access"
-        className="grid grid-cols-2 gap-1 rounded-full border border-[var(--border)] bg-[var(--muted)] p-1"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "signin"}
-          onClick={() => switchTab("signin")}
-          className={`h-11 rounded-full text-sm font-bold transition-all ${
-            tab === "signin"
-              ? "bg-white text-[var(--primary)] border-2 border-[var(--primary)] shadow-sm"
-              : "text-[var(--primary)]/70 hover:text-[var(--primary)]"
-          }`}
-        >
-          Sign in
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "create"}
-          onClick={() => switchTab("create")}
-          className={`h-11 rounded-full text-sm font-bold transition-all ${
-            tab === "create"
-              ? "bg-white text-[var(--primary)] border-2 border-[var(--primary)] shadow-sm"
-              : "text-[var(--primary)]/70 hover:text-[var(--primary)]"
-          }`}
-        >
-          Create account
-        </button>
-      </div>
-
       {tab === "create" ? (
-        <form onSubmit={handleCreateSubmit} className="mt-6 space-y-5">
+        <form onSubmit={handleCreateSubmit} className="space-y-5">
           <div>
             <label htmlFor="username" className={labelClass}>
               Name
@@ -201,16 +167,44 @@ export function ResearchAccessForm() {
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn-primary inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {submitting ? "Creating account..." : "Create account"}
-          </button>
+          <div>
+            <p className="mb-3 text-center text-sm text-[var(--primary)]/60 leading-relaxed">
+              Unlock live pricing, third-party COAs &amp; 99%+ purity docs.
+            </p>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn-primary inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {submitting ? "Getting access..." : "Get Instant Access"}
+            </button>
+            <p className="mt-3 text-center text-xs text-[var(--primary)]/50 leading-relaxed">
+              Free · takes 10 seconds · we never share your email.
+            </p>
+          </div>
+
+          <p className="text-center text-sm text-[var(--primary)]/70">
+            Already have access?{" "}
+            <button
+              type="button"
+              onClick={() => switchTab("signin")}
+              className="font-bold text-[var(--accent-dark)] hover:underline"
+            >
+              Sign in
+            </button>
+          </p>
         </form>
       ) : (
-        <form onSubmit={handleSignInSubmit} className="mt-6 space-y-5">
+        <form onSubmit={handleSignInSubmit} className="space-y-5">
+          <div className="text-center">
+            <h2 className="text-xl font-bold tracking-tight text-[var(--primary)]">
+              Welcome back
+            </h2>
+            <p className="mt-1 text-sm text-[var(--primary)]/60">
+              Sign in to continue browsing product information.
+            </p>
+          </div>
+
           <div>
             <label htmlFor="signin-name" className={labelClass}>
               Name
@@ -278,6 +272,17 @@ export function ResearchAccessForm() {
           >
             Sign in
           </button>
+
+          <p className="text-center text-sm text-[var(--primary)]/70">
+            Need an account?{" "}
+            <button
+              type="button"
+              onClick={() => switchTab("create")}
+              className="font-bold text-[var(--accent-dark)] hover:underline"
+            >
+              Create one
+            </button>
+          </p>
         </form>
       )}
     </div>

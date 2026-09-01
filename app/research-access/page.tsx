@@ -67,12 +67,12 @@ export default function ResearchAccessPage() {
 
               {/* Headline */}
               <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] animate-fade-in-up">
-                Access {siteCopy.brand.name}
+                Unlock the {siteCopy.brand.name} catalog
               </h1>
 
               <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed">
-                Create an account or sign in to continue browsing product
-                information, lab-backed resources, and research-use materials.
+                Create your free account to view live pricing, third-party COAs,
+                and 99%+ purity docs.
               </p>
 
               {/* Stat cards */}
@@ -112,6 +112,23 @@ export default function ResearchAccessPage() {
             <div className="max-w-md mx-auto">
               {/* Account form */}
               <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
+                {/* Social proof */}
+                <div className="mb-6 flex items-center justify-center gap-2 text-sm font-semibold text-[var(--primary)]/70">
+                  <svg
+                    className="h-4 w-4 flex-shrink-0 text-[var(--accent-dark)]"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Join 6,000+ researchers
+                </div>
+
                 <ResearchAccessForm />
               </div>
 
