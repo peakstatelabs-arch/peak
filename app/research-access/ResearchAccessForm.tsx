@@ -168,9 +168,6 @@ export function ResearchAccessForm() {
           )}
 
           <div>
-            <p className="mb-3 text-center text-sm text-[var(--primary)]/60 leading-relaxed">
-              Unlock live pricing, third-party COAs &amp; 99%+ purity docs.
-            </p>
             <button
               type="submit"
               disabled={submitting}
