@@ -1,12 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
 
 type Tab = "create" | "signin";
 
 const SHOP_URL = "https://peakstate.shop";
+
+/** Fire-and-forget PostHog capture that never breaks the form. */
+function track(event: string, props?: Record<string, string>) {
+  try {
+    posthog.capture(event, props);
+  } catch (err) {
+    console.error("PostHog capture failed:", err);
+  }
+}
 
 export function ResearchAccessForm() {
   const [tab, setTab] = useState<Tab>("create");
@@ -19,6 +28,16 @@ export function ResearchAccessForm() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Fires "research_access_started" once, the first time a visitor engages
+  // with any field, so we can tell "never touched the form" apart from
+  // "started but didn't finish."
+  const startedRef = useRef(false);
+  function handleFieldFocus() {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    track("research_access_started");
+  }
+
   function switchTab(next: Tab) {
     setTab(next);
     setError(null);
@@ -28,11 +47,13 @@ export function ResearchAccessForm() {
     e.preventDefault();
 
     if (!username.trim() || !email.trim()) {
+      track("research_access_blocked", { method: "create", reason: "missing_fields" });
       setError("Please fill in your name and email.");
       return;
     }
 
     if (!agreed) {
+      track("research_access_blocked", { method: "create", reason: "terms_unchecked" });
       setError("You must agree to the research-only terms to continue.");
       return;
     }
@@ -47,10 +68,10 @@ export function ResearchAccessForm() {
 
     try {
       posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
-      posthog.capture("research_access_signup", { method: "create" });
     } catch (err) {
       console.error("PostHog identify failed:", err);
     }
+    track("research_access_signup", { method: "create" });
 
     try {
       await fetch("/api/research-access", {
@@ -72,11 +93,13 @@ export function ResearchAccessForm() {
     e.preventDefault();
 
     if (!signInName.trim() || !signInEmail.trim()) {
+      track("research_access_blocked", { method: "signin", reason: "missing_fields" });
       setError("Please enter your name and email to sign in.");
       return;
     }
 
     if (!signInAgreed) {
+      track("research_access_blocked", { method: "signin", reason: "terms_unchecked" });
       setError("You must agree to the research-only terms to continue.");
       return;
     }
@@ -89,10 +112,10 @@ export function ResearchAccessForm() {
 
     try {
       posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
-      posthog.capture("research_access_signup", { method: "signin" });
     } catch (err) {
       console.error("PostHog identify failed:", err);
     }
+    track("research_access_signup", { method: "signin" });
 
     window.location.href = SHOP_URL;
   }
@@ -116,6 +139,7 @@ export function ResearchAccessForm() {
               autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              onFocus={handleFieldFocus}
               className={inputClass}
             />
           </div>
@@ -131,6 +155,7 @@ export function ResearchAccessForm() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              onFocus={handleFieldFocus}
               className={inputClass}
             />
           </div>
@@ -213,6 +238,7 @@ export function ResearchAccessForm() {
               autoComplete="name"
               value={signInName}
               onChange={(e) => setSignInName(e.target.value)}
+              onFocus={handleFieldFocus}
               className={inputClass}
             />
           </div>
@@ -228,6 +254,7 @@ export function ResearchAccessForm() {
               autoComplete="email"
               value={signInEmail}
               onChange={(e) => setSignInEmail(e.target.value)}
+              onFocus={handleFieldFocus}
               className={inputClass}
             />
           </div>
