@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type ProductKey = "stack" | "single";
+type ProductKey = "stack" | "singles";
 
 function CheckIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -21,13 +21,13 @@ function CheckIcon({ className = "w-4 h-4" }: { className?: string }) {
 const PRODUCTS: Record<
   ProductKey,
   {
-    tabLabel: string;
+    buttonLabel: string;
     inBox: string;
     steps: { title: string; body: string }[];
   }
 > = {
   stack: {
-    tabLabel: "POWER CUT™ Stack",
+    buttonLabel: "I got the POWER CUT™ Stack",
     inBox:
       "Your complete POWER CUT™ set of research vials, sealed and ready for storage.",
     steps: [
@@ -45,21 +45,22 @@ const PRODUCTS: Record<
       },
     ],
   },
-  single: {
-    tabLabel: "Single Vial",
-    inBox: "Your single research vial, sealed and ready for storage.",
+  singles: {
+    buttonLabel: "I ordered individual vials",
+    inBox:
+      "Your individual research vials, sealed and ready for storage. You may have one or several — whether they're the same vial or a mix, the steps below apply to all of them.",
     steps: [
       {
-        title: "Refrigerate it right away",
-        body: "Place your vial in the fridge. Keep it sealed and away from light and heat until you're ready to begin.",
+        title: "Refrigerate them right away",
+        body: "Place your vial (or vials) in the fridge. Keep them sealed and away from light and heat until you're ready to begin.",
       },
       {
-        title: "Keep it labeled",
-        body: "Keep your vial in a safe, consistent spot so it stays organized and easy to find.",
+        title: "Keep them labeled",
+        body: "If you have more than one, keep your vials together and labeled so you always know which is which.",
       },
       {
         title: "Join the community for the details",
-        body: "The detailed guidance for your vial lives inside our customer community — the best place to get specifics and ask questions.",
+        body: "The detailed guidance for your vials lives inside our customer community — the best place to get specifics and ask questions.",
       },
     ],
   },
@@ -92,7 +93,7 @@ export function ProductToggle() {
                   <CheckIcon className="w-3 h-3" />
                 </span>
               )}
-              I got the {PRODUCTS[key].tabLabel}
+              {PRODUCTS[key].buttonLabel}
             </button>
           );
         })}
