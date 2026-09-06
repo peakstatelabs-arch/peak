@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const SUPPRESSED_PATHS = [
   "/thankyou",
+  "/instructions",
   "/research-access",
   "/bridge",
   "/transitionguide",
