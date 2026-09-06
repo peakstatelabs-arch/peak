@@ -5,7 +5,7 @@ import { siteCopy } from "@/content/siteCopy";
 import { ProductToggle } from "./ProductToggle";
 
 const COMMUNITY_URL = "https://www.skool.com/peak-state-labs-7241";
-const SUPPORT_EMAIL = "peakstatelabs@gmail.com";
+const SUPPORT_EMAIL = "support@peakstate.shop";
 
 export const metadata: Metadata = {
   title: "Setup Instructions — Peak State Labs",
@@ -75,8 +75,9 @@ export default function InstructionsPage() {
 
               <p className="mt-6 text-lg sm:text-xl text-[var(--primary)]/80 leading-relaxed animate-fade-in-up stagger-1">
                 Whether you received the POWER CUT
-                <span className="text-[0.5em] align-super">™</span> Stack or a
-                single vial, these few steps will set you up for success. The
+                <span className="text-[0.5em] align-super">™</span> Stack or
+                individual vials, these few steps will set you up for success.
+                The
                 full, detailed instructions live inside our customer community —
                 and joining takes less than a minute.
               </p>
