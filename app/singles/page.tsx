@@ -128,12 +128,11 @@ const products: Product[] = [
     description:
       "Anti-inflammatory peptide signaling support. Helps regulate inflammatory pathways, supports gut and skin health, and promotes a balanced immune response. Designed to support recovery and overall tissue resilience.",
     image: "/kpv-product.png",
-    startStock: 12,
-    stockStep: 1,
+    startStock: 16,
+    stockStep: 2,
     stockMinimum: 3,
-    stockAnchorMs: Date.UTC(2026, 7, 20),
-    preorder: true,
-    shipsBy: "Sept 7",
+    stockAnchorMs: Date.UTC(2026, 8, 7),
+    preorder: false,
   },
   {
     id: "nad",
@@ -145,12 +144,11 @@ const products: Product[] = [
     description:
       "Cellular energy and metabolic support. Helps fuel energy production, cellular repair, and healthy mitochondrial function. Designed to support energy, recovery, and healthy aging at the cellular level.",
     image: "/NAD Vial Brown.png",
-    startStock: 19,
-    stockStep: 1,
+    startStock: 18,
+    stockStep: 2,
     stockMinimum: 3,
-    stockAnchorMs: Date.UTC(2026, 7, 20),
-    preorder: true,
-    shipsBy: "Sept 7",
+    stockAnchorMs: Date.UTC(2026, 8, 5),
+    preorder: false,
   },
 ];
 
