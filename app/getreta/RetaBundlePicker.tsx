@@ -2,81 +2,17 @@
 
 import { useState } from "react";
 import { useCart, formatUsd } from "@/app/singles/cart/CartContext";
-import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
 import { readClientContact } from "@/app/lib/clientContact";
+import { RETA, TIERS, tierPricing } from "./retaBundles";
 
-// ── Reta product (mirrors the Stripe Price + /singles catalog) ──────────────
-const RETA = {
-  slug: "retatrutide" as const,
-  priceId: SINGLES_PRICE_IDS.retatrutide,
-  name: "Retatrutide",
-  dose: "20mg",
-  unitPriceCents: 21500,
-  image: "/reta-product.png",
+type Props = {
+  /** Selected vial count, owned by the parent so the product image can swap. */
+  selected: number;
+  onSelect: (vials: number) => void;
 };
 
-/**
- * Bundle discounts.
- *
- * The cart charges through the single-vial Stripe Price, so a real bundle
- * discount is delivered by a Stripe *promotion code* the customer applies at
- * checkout (`allow_promotion_codes` is already enabled on the Checkout
- * Session). Until those codes exist in Stripe this stays `false` so the page
- * never advertises a discount that wouldn't actually apply.
- *
- * To turn savings on:
- *   1. Create the promo codes below in Stripe (percent-off, first-order).
- *   2. Flip BUNDLE_DISCOUNTS_LIVE to true.
- * (Or ask to switch to dedicated bundle Price IDs for auto-applied pricing.)
- */
-const BUNDLE_DISCOUNTS_LIVE = false;
-
-type Tier = {
-  vials: number;
-  label: string;
-  blurb: string;
-  /** Percent off when BUNDLE_DISCOUNTS_LIVE — applied via `code` at checkout. */
-  discountPct: number;
-  code?: string;
-  highlight?: boolean;
-};
-
-const TIERS: Tier[] = [
-  {
-    vials: 1,
-    label: "Single Vial",
-    blurb: "One 20mg vial — try it or top up a run in progress.",
-    discountPct: 0,
-  },
-  {
-    vials: 2,
-    label: "Two-Vial",
-    blurb: "Covers titration into your maintenance dose without a reorder.",
-    discountPct: 10,
-    code: "RETA2",
-    highlight: true,
-  },
-  {
-    vials: 3,
-    label: "Full Cycle",
-    blurb: "A complete research cycle, stocked start to finish.",
-    discountPct: 15,
-    code: "RETA3",
-  },
-];
-
-function tierPricing(tier: Tier) {
-  const full = tier.vials * RETA.unitPriceCents;
-  const live = BUNDLE_DISCOUNTS_LIVE && tier.discountPct > 0;
-  const discounted = live
-    ? Math.round(full * (1 - tier.discountPct / 100))
-    : full;
-  return { full, discounted, live, saves: full - discounted };
-}
-
-export function RetaBundlePicker() {
+export function RetaBundlePicker({ selected, onSelect }: Props) {
   const { addItem, openCart } = useCart();
-  const [selected, setSelected] = useState<number>(2); // default: two-vial
   const [copied, setCopied] = useState(false);
 
   const tier = TIERS.find((t) => t.vials === selected) ?? TIERS[0];
@@ -90,7 +26,7 @@ export function RetaBundlePicker() {
         name: RETA.name,
         dose: RETA.dose,
         unitPriceCents: RETA.unitPriceCents,
-        image: RETA.image,
+        image: tier.image,
       },
       tier.vials,
     );
@@ -146,7 +82,8 @@ export function RetaBundlePicker() {
             <button
               key={t.vials}
               type="button"
-              onClick={() => setSelected(t.vials)}
+              onClick={() => onSelect(t.vials)}
+              aria-pressed={isActive}
               className={`relative flex flex-col rounded-2xl border-2 p-4 text-left transition-all ${
                 isActive
                   ? "border-[var(--primary)] bg-[var(--muted)] shadow-sm"
@@ -183,6 +120,23 @@ export function RetaBundlePicker() {
                   {formatUsd(RETA.unitPriceCents)}/vial
                 </span>
               )}
+              <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-[var(--accent-dark)]">
+                <svg
+                  className="w-3 h-3 flex-shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                ~{t.supply}
+              </span>
             </button>
           );
         })}
@@ -198,6 +152,32 @@ export function RetaBundlePicker() {
           <p className="text-sm font-bold text-emerald-700">
             In Stock • Lab-tested 99%+ purity • Ships within 24 hrs
           </p>
+        </div>
+
+        {/* Supply length for the selected tier */}
+        <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <svg
+              className="w-5 h-5 flex-shrink-0 text-[var(--accent-dark)]"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-sm font-semibold text-[var(--primary)]/80">
+              Supply
+            </span>
+          </div>
+          <span className="text-base font-extrabold text-[var(--accent-dark)]">
+            ~{tier.supply}
+          </span>
         </div>
 
         <p className="mt-3 text-sm text-[var(--primary)]/70 leading-relaxed">
