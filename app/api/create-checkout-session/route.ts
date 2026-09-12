@@ -49,6 +49,15 @@ async function resolveBulkDiscount(
     const promo = promos.data[0];
     if (promo) return { promotion_code: promo.id };
   } catch {
+    // Ignore — try coupon-by-name next.
+  }
+  // 3) A coupon whose *name* is `id` (Stripe auto-generates coupon IDs, so a
+  //    coupon created in the dashboard as "BULK15" likely has a random ID).
+  try {
+    const coupons = await stripe.coupons.list({ limit: 100 });
+    const match = coupons.data.find((c) => c.valid && c.name === id);
+    if (match) return { coupon: match.id };
+  } catch {
     // Ignore — fall through to null.
   }
   return null;
