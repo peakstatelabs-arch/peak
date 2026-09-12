@@ -20,6 +20,13 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const email = (body.email ?? "").trim().toLowerCase();
+    const name = (body.name ?? "").trim();
+    // Optional source override so different popups (POWER CUT vs. /getreta) can
+    // be told apart in the leads sheet without a second endpoint.
+    const source =
+      typeof body.source === "string" && body.source.trim()
+        ? body.source.trim()
+        : "powercut-10-code";
 
     if (!email || !isValidEmail(email)) {
       return NextResponse.json(
@@ -44,7 +51,8 @@ export async function POST(req: NextRequest) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email,
-            source: "powercut-10-code",
+            name,
+            source,
             timestamp: new Date().toISOString(),
             ip,
             user_agent: userAgent,
