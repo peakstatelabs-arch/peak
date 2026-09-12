@@ -329,7 +329,7 @@ export default function GetRetaPage() {
                     {[
                       {
                         week: "Week 1 – 2",
-                        body: "Appetite suppression begins as triple-receptor activity ramps up. Mild GI effects can show up during initial adaptation.",
+                        body: "Appetite suppression begins as triple-receptor activity ramps up.",
                       },
                       {
                         week: "Week 2 – 4",
