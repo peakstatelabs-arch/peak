@@ -32,7 +32,7 @@ export const CROSS_SELL: Record<string, CrossSellItem> = {
     unitPriceCents: 10500,
     priceLabel: "$105",
     image: "/cjc-ipa-product.png",
-    blurb: "Hold muscle, sleep & recovery",
+    blurb: "Build lean muscle, sleep & recovery",
   },
   "bpc-tb500": {
     slug: "bpc-tb500",
