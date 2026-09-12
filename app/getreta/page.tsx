@@ -85,29 +85,6 @@ const otherSingles = [
   },
 ];
 
-const whyReta = [
-  {
-    stat: "~24%",
-    label:
-      "Mean body-weight reduction at 48 weeks at the highest dose in the Phase 2 obesity trial.",
-  },
-  {
-    stat: "3 receptors",
-    label:
-      "GLP-1 + GIP + glucagon — the only one of its class adding a glucagon arm for extra energy expenditure and fat mobilization.",
-  },
-  {
-    stat: "Dose-dependent",
-    label:
-      "Weight and HbA1c response scaled with dose across the 1 / 4 / 8 / 12 mg arms tested.",
-  },
-  {
-    stat: "Hepatic fat",
-    label:
-      "Sub-studies reported substantial reductions in liver fat (MASLD/NAFLD) alongside weight loss.",
-  },
-];
-
 const faqs = [
   {
     q: "Is this real, lab-tested retatrutide?",
@@ -321,47 +298,6 @@ export default function GetRetaPage() {
                     Start My Transformation
                   </a>
                 </div>
-              </div>
-            </Container>
-          </Section>
-
-          {/* ── Why Retatrutide (numbers) ────────────────────────── */}
-          <Section id="why" className="bg-[var(--muted)]">
-            <Container>
-              <div className="max-w-4xl mx-auto">
-                <div className="text-center">
-                  <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                    Why retatrutide, specifically
-                  </h2>
-                  <p className="mt-4 text-lg text-[var(--primary)]/70">
-                    Semaglutide hits one receptor. Tirzepatide hits two. Reta is
-                    the first to hit three — and the trial numbers reflect it.
-                  </p>
-                </div>
-
-                <div className="mt-10 grid sm:grid-cols-2 gap-6">
-                  {whyReta.map((f) => (
-                    <div
-                      key={f.stat}
-                      className="p-6 rounded-2xl bg-white border border-[var(--border)] shadow-sm"
-                    >
-                      <p className="text-3xl font-bold text-[var(--accent-dark)]">
-                        {f.stat}
-                      </p>
-                      <p className="mt-2 text-[var(--primary)]/80">{f.label}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <p className="mt-6 text-center text-sm text-[var(--primary)]/55 italic">
-                  Figures summarized from peer-reviewed Phase 2 publications.{" "}
-                  <a
-                    href="/reta"
-                    className="underline hover:text-[var(--accent-dark)]"
-                  >
-                    See the full research overview →
-                  </a>
-                </p>
               </div>
             </Container>
           </Section>
