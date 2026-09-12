@@ -19,6 +19,50 @@ function siteOrigin(req: NextRequest): string {
   return new URL(req.url).origin;
 }
 
+/**
+ * Resolve a configured bulk-discount identifier (e.g. "BULK15") to something
+ * Stripe Checkout can apply. The value may have been created either as a
+ * Coupon (whose ID is that string) or as a Promotion code (whose customer-
+ * facing code is that string) — try both. Returns null if neither exists, so
+ * the caller can fall back to full price instead of breaking checkout.
+ */
+async function resolveBulkDiscount(
+  stripe: Stripe,
+  id: string,
+): Promise<Stripe.Checkout.SessionCreateParams.Discount | null> {
+  // 1) A coupon whose ID is exactly `id`.
+  try {
+    const coupon = await stripe.coupons.retrieve(id);
+    if (!("deleted" in coupon && coupon.deleted) && coupon.valid) {
+      return { coupon: id };
+    }
+  } catch {
+    // Not a coupon ID — try a promotion code next.
+  }
+  // 2) An active promotion code whose code is `id` (e.g. "BULK15").
+  try {
+    const promos = await stripe.promotionCodes.list({
+      code: id,
+      active: true,
+      limit: 1,
+    });
+    const promo = promos.data[0];
+    if (promo) return { promotion_code: promo.id };
+  } catch {
+    // Ignore — try coupon-by-name next.
+  }
+  // 3) A coupon whose *name* is `id` (Stripe auto-generates coupon IDs, so a
+  //    coupon created in the dashboard as "BULK15" likely has a random ID).
+  try {
+    const coupons = await stripe.coupons.list({ limit: 100 });
+    const match = coupons.data.find((c) => c.valid && c.name === id);
+    if (match) return { coupon: match.id };
+  } catch {
+    // Ignore — fall through to null.
+  }
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) {
@@ -90,28 +134,27 @@ export async function POST(req: NextRequest) {
     automatic_tax: { enabled: false },
   };
 
-  const bulkParams: Stripe.Checkout.SessionCreateParams = bulkTier
-    ? { ...baseParams, discounts: [{ coupon: resolveCouponId(bulkTier) }] }
+  // The configured value (e.g. "BULK15") may be either a coupon ID or a
+  // promotion-code name — resolve whichever actually exists in this account.
+  let bulkDiscount: Stripe.Checkout.SessionCreateParams.Discount | null = null;
+  if (bulkTier) {
+    const id = resolveCouponId(bulkTier);
+    bulkDiscount = await resolveBulkDiscount(stripe, id);
+    if (!bulkDiscount) {
+      console.error(
+        `Bulk discount "${id}" not found as a coupon ID or an active promotion code — charging full price.`,
+      );
+    }
+  }
+
+  // Stripe forbids combining `discounts` with a customer-entered promo code,
+  // so only offer the promo-code box when no bulk discount is applied.
+  const sessionParams: Stripe.Checkout.SessionCreateParams = bulkDiscount
+    ? { ...baseParams, discounts: [bulkDiscount] }
     : { ...baseParams, allow_promotion_codes: true };
 
   try {
-    let session: Stripe.Checkout.Session;
-    try {
-      session = await stripe.checkout.sessions.create(bulkParams);
-    } catch (bulkErr) {
-      // If the bulk coupon isn't set up in Stripe yet, never break checkout —
-      // fall back to a normal session with the promo-code box enabled.
-      const msg = bulkErr instanceof Error ? bulkErr.message : "";
-      if (bulkTier && /no such coupon|resource_missing/i.test(msg)) {
-        console.error("Bulk coupon missing — falling back without discount:", msg);
-        session = await stripe.checkout.sessions.create({
-          ...baseParams,
-          allow_promotion_codes: true,
-        });
-      } else {
-        throw bulkErr;
-      }
-    }
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     if (!session.url) {
       return NextResponse.json(
