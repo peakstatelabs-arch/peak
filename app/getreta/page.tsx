@@ -186,8 +186,11 @@ export default function GetRetaPage() {
             </div>
 
             <Container className="relative">
-              <div className="grid lg:grid-cols-2 gap-10 items-center">
-                <div>
+              {/* Mobile order: heading → image → button → centered proof.
+                  Desktop: text left, image right (unchanged). */}
+              <div className="grid gap-y-8 lg:grid-cols-2 lg:gap-10 lg:items-start">
+                {/* Heading */}
+                <div className="order-1 lg:col-start-1 lg:row-start-1">
                   <div className="flex flex-wrap items-center gap-3">
                     <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-sm font-bold tracking-wider text-[var(--accent-dark)]">
                       <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
@@ -207,8 +210,31 @@ export default function GetRetaPage() {
                     support a faster metabolism so getting leaner doesn’t have to
                     consume your entire life.
                   </p>
+                </div>
 
-                  <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                {/* Product image */}
+                <div className="order-2 flex items-center justify-center lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
+                  <div className="relative mx-auto w-full max-w-[280px] sm:max-w-md">
+                    <img
+                      src="/reta-product-transparent-2.png"
+                      alt="Retatrutide 20mg research vial"
+                      className="w-full drop-shadow-2xl"
+                    />
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[var(--accent)]/30 to-[var(--accent)]/10 blur-3xl rounded-full scale-90" />
+                    <div className="absolute bottom-4 left-4 rounded-2xl bg-white/90 backdrop-blur border border-[var(--border)] px-4 py-3 shadow-lg">
+                      <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
+                        COA Verified
+                      </p>
+                      <p className="text-sm font-bold text-[var(--primary)]">
+                        99%+ purity
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* CTA + proof */}
+                <div className="order-3 lg:col-start-1 lg:row-start-2">
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <a
                       href="#buy"
                       className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
@@ -217,8 +243,8 @@ export default function GetRetaPage() {
                     </a>
                   </div>
 
-                  {/* Proof strip — before the sell */}
-                  <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+                  {/* Proof strip — centered on mobile, left on desktop */}
+                  <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 lg:justify-start">
                     <div className="flex items-center gap-1.5">
                       <div className="flex text-[var(--accent-dark)]">
                         {"★★★★★".split("").map((s, i) => (
@@ -239,36 +265,16 @@ export default function GetRetaPage() {
                     </span>
                   </div>
                 </div>
-
-                <div className="relative flex items-center justify-center">
-                  <div className="relative">
-                    <img
-                      src="/reta-product-transparent-2.png"
-                      alt="Retatrutide 20mg research vial"
-                      className="w-full max-w-md drop-shadow-2xl"
-                    />
-                    <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[var(--accent)]/30 to-[var(--accent)]/10 blur-3xl rounded-full scale-90" />
-                    <div className="absolute bottom-4 left-4 rounded-2xl bg-white/90 backdrop-blur border border-[var(--border)] px-4 py-3 shadow-lg">
-                      <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
-                        COA Verified
-                      </p>
-                      <p className="text-sm font-bold text-[var(--primary)]">
-                        99%+ purity
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </Container>
           </Section>
 
           {/* ── Trust bar ────────────────────────────────────────── */}
           <div className="border-y border-[var(--border)] bg-[var(--muted)]">
-            <Container className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 py-5">
+            <Container className="grid grid-cols-2 gap-x-4 gap-y-3 py-5 [&>span]:justify-self-center sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-8 sm:[&>span]:justify-self-auto">
               <TrustItem>Third-party COA</TrustItem>
               <TrustItem>99%+ purity</TrustItem>
               <TrustItem>Ships within 24 hrs</TrustItem>
-              <TrustItem>Discreet packaging</TrustItem>
               <TrustItem>1-on-1 coaching included</TrustItem>
             </Container>
           </div>
