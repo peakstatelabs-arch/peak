@@ -61,8 +61,8 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
 
   return (
     <div className="rounded-3xl border border-[var(--border)] bg-white p-5 sm:p-6 shadow-sm">
-      {/* Tier selector */}
-      <div className="grid gap-2.5 sm:grid-cols-3">
+      {/* Tier selector — horizontal rows on mobile, cards on desktop */}
+      <div className="grid gap-3 sm:grid-cols-3">
         {TIERS.map((t) => {
           const p = tierPricing(t);
           const isActive = t.vials === selected;
@@ -72,7 +72,7 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
               type="button"
               onClick={() => onSelect(t.vials)}
               aria-pressed={isActive}
-              className={`relative flex flex-col rounded-2xl border-2 p-3.5 text-left transition-all ${
+              className={`relative flex items-center justify-between gap-3 rounded-2xl border-2 p-3 text-left transition-all sm:flex-col sm:items-stretch sm:justify-start sm:gap-0 sm:p-3.5 ${
                 isActive
                   ? "border-[var(--primary)] bg-[var(--muted)] shadow-sm"
                   : "border-[var(--border)] bg-white hover:border-[var(--accent)]"
@@ -83,48 +83,56 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
                   Most popular
                 </span>
               ) : null}
-              <span className="text-sm font-bold text-[var(--primary)]">
-                {t.label}
-              </span>
-              <span className="mt-0.5 text-xs font-medium text-[var(--primary)]/55">
-                {t.vials} × 20mg vial{t.vials > 1 ? "s" : ""}
-              </span>
-              <span className="mt-3 flex flex-wrap items-baseline gap-x-1.5 tabular-nums">
-                <span className="text-xl font-extrabold text-[var(--primary)]">
-                  {formatUsd(p.discounted)}
+
+              {/* Identity */}
+              <div className="min-w-0">
+                <span className="block text-sm font-bold text-[var(--primary)]">
+                  {t.label}
                 </span>
-                {p.live ? (
-                  <span className="text-xs font-semibold text-[var(--primary)]/40 line-through">
-                    {formatUsd(p.full)}
+                <span className="mt-0.5 block text-xs font-medium text-[var(--primary)]/55">
+                  {t.vials} × 20mg vial{t.vials > 1 ? "s" : ""}
+                </span>
+                <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-[var(--accent-dark)] sm:mt-2">
+                  <svg
+                    className="h-3 w-3 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  ~{t.supply}
+                </span>
+              </div>
+
+              {/* Pricing */}
+              <div className="flex flex-shrink-0 flex-col items-end text-right sm:mt-3 sm:items-start sm:text-left">
+                <span className="flex flex-wrap items-baseline justify-end gap-x-1.5 tabular-nums sm:justify-start">
+                  <span className="text-lg font-extrabold text-[var(--primary)] sm:text-xl">
+                    {formatUsd(p.discounted)}
                   </span>
-                ) : null}
-              </span>
-              {p.live && p.saves > 0 ? (
-                <span className="mt-1.5 inline-flex self-start items-center whitespace-nowrap rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
-                  Save {formatUsd(p.saves)} · {p.pct}%
+                  {p.live ? (
+                    <span className="text-xs font-semibold text-[var(--primary)]/40 line-through">
+                      {formatUsd(p.full)}
+                    </span>
+                  ) : null}
                 </span>
-              ) : (
-                <span className="mt-1 text-xs font-medium text-[var(--primary)]/50">
-                  {formatUsd(RETA.unitPriceCents)}/vial
-                </span>
-              )}
-              <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-[var(--accent-dark)]">
-                <svg
-                  className="w-3 h-3 flex-shrink-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                ~{t.supply}
-              </span>
+                {p.live && p.saves > 0 ? (
+                  <span className="mt-1 inline-flex items-center whitespace-nowrap rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                    Save {formatUsd(p.saves)} · {p.pct}%
+                  </span>
+                ) : (
+                  <span className="mt-1 text-xs font-medium text-[var(--primary)]/50">
+                    {formatUsd(RETA.unitPriceCents)}/vial
+                  </span>
+                )}
+              </div>
             </button>
           );
         })}
