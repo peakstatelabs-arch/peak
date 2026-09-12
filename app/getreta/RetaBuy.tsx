@@ -6,13 +6,6 @@ import { TIERS } from "./retaBundles";
 import { CrossSellStrip } from "@/app/singles/cart/CrossSellStrip";
 import { BUYBOX_CROSSSELL_SLUGS } from "@/app/singles/cart/crossSell";
 
-const BULLETS = [
-  "GLP-1 / GIP / glucagon triple agonist (LY-3437943)",
-  "Third-party COA + 99%+ purity, in every box",
-  "1-on-1 coaching + custom dosing included",
-  "Discreet, tracked shipping within 24 hrs",
-];
-
 export function RetaBuy() {
   const [selected, setSelected] = useState(2); // default: two-vial (most popular)
   const tier = TIERS.find((t) => t.vials === selected) ?? TIERS[0];
@@ -61,9 +54,9 @@ export function RetaBuy() {
         </p>
       </div>
 
-      {/* Image + supply + bullets — mobile: below the offer; desktop: left
-          column, under the heading. */}
-      <div className="order-3 lg:col-start-1 lg:row-start-2">
+      {/* Big product image + supply — desktop only. On mobile each tier
+          option carries its own thumbnail, so this would be redundant. */}
+      <div className="order-3 hidden lg:col-start-1 lg:row-start-2 lg:block">
         <div className="rounded-3xl border border-[var(--border)] bg-white p-4 sm:p-6">
           <div className="flex items-center justify-center">
             <img
@@ -98,30 +91,6 @@ export function RetaBuy() {
             </p>
           </div>
         </div>
-
-        <ul className="mt-5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-1">
-          {BULLETS.map((line) => (
-            <li
-              key={line}
-              className="flex items-start gap-2.5 text-sm sm:text-base text-[var(--primary)]/80"
-            >
-              <svg
-                className="w-5 h-5 mt-0.5 flex-shrink-0 text-[var(--accent-dark)]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-              {line}
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );

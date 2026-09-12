@@ -35,7 +35,7 @@ export const TIERS: Tier[] = [
   },
   {
     vials: 2,
-    label: "Two-Vial",
+    label: "Two Vials",
     blurb: "Covers titration into your maintenance dose without a reorder.",
     image: "/reta%20mockup%202.png",
     supply: "12–16 weeks",

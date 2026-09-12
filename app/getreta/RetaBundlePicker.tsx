@@ -14,7 +14,7 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
   const { addItem, openCart } = useCart();
 
   const tier = TIERS.find((t) => t.vials === selected) ?? TIERS[0];
-  const { full, discounted, live } = tierPricing(tier);
+  const { discounted, live } = tierPricing(tier);
 
   function handleAdd() {
     addItem(
@@ -84,6 +84,15 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
                 </span>
               ) : null}
 
+              {/* Thumbnail — mobile only (desktop shows the big product image) */}
+              <img
+                src={t.image}
+                alt=""
+                aria-hidden="true"
+                className="h-14 w-14 flex-shrink-0 object-contain sm:hidden"
+                loading="lazy"
+              />
+
               {/* Identity */}
               <div className="min-w-0">
                 <span className="block text-sm font-bold text-[var(--primary)]">
@@ -138,119 +147,34 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
         })}
       </div>
 
-      {/* Selected tier detail + add to cart */}
-      <div className="mt-5 rounded-2xl bg-[var(--muted)] p-4 sm:p-5">
-        <div className="flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3 py-2.5">
-          <span className="relative flex h-2.5 w-2.5 shrink-0">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-          </span>
-          <p className="text-sm font-bold text-emerald-700">
-            In Stock • Lab-tested 99%+ purity • Ships within 24 hrs
-          </p>
-        </div>
-
-        {/* Supply length for the selected tier */}
-        <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3">
-          <div className="flex items-center gap-2">
-            <svg
-              className="w-5 h-5 flex-shrink-0 text-[var(--accent-dark)]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span className="text-sm font-semibold text-[var(--primary)]/80">
-              Supply
-            </span>
-          </div>
-          <span className="text-base font-extrabold text-[var(--accent-dark)]">
-            ~{tier.supply}
-          </span>
-        </div>
-
-        <p className="mt-3 text-sm text-[var(--primary)]/70 leading-relaxed">
-          {tier.blurb}
-        </p>
-
-        <div className="mt-4 flex items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-[var(--primary)]/50">
-              {tier.label}
-            </p>
-            <p className="text-3xl font-bold text-[var(--primary)]">
-              {formatUsd(discounted)}
-              {live && discounted !== full ? (
-                <span className="ml-2 text-lg font-semibold text-[var(--primary)]/40 line-through">
-                  {formatUsd(full)}
-                </span>
-              ) : null}
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleAdd}
-          className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-semibold py-3.5 px-6 hover:bg-[var(--primary)]/90 transition-colors"
+      {/* Add to cart — right under the options */}
+      <button
+        type="button"
+        onClick={handleAdd}
+        className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-semibold py-3.5 px-6 hover:bg-[var(--primary)]/90 transition-colors"
+      >
+        <svg
+          className="w-5 h-5 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          aria-hidden="true"
         >
-          <svg
-            className="w-5 h-5 flex-shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-            />
-          </svg>
-          Add {tier.vials > 1 ? `${tier.vials} Vials` : "to Cart"} — {formatUsd(discounted)}
-        </button>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+          />
+        </svg>
+        Add {tier.vials > 1 ? `${tier.vials} Vials` : "to Cart"} — {formatUsd(discounted)}
+      </button>
 
-        {live ? (
-          <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
-            Bulk discount applied automatically at checkout — no code needed.
-          </p>
-        ) : null}
-
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs font-semibold text-[var(--primary)]/60">
-          <span className="inline-flex items-center gap-1.5">
-            <Check /> Third-party COA included
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Check /> 1-on-1 coaching + custom dosing
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Check /> Discreet shipping
-          </span>
-        </div>
-      </div>
+      {live ? (
+        <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
+          Bulk discount applied automatically at checkout — no code needed.
+        </p>
+      ) : null}
     </div>
-  );
-}
-
-function Check() {
-  return (
-    <svg
-      className="w-3.5 h-3.5 flex-shrink-0 text-[var(--accent-dark)]"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={3}
-      aria-hidden="true"
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-    </svg>
   );
 }
