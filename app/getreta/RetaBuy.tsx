@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { RetaBundlePicker } from "./RetaBundlePicker";
 import { TIERS } from "./retaBundles";
+import { CrossSellStrip } from "@/app/singles/cart/CrossSellStrip";
+import { BUYBOX_CROSSSELL_SLUGS } from "@/app/singles/cart/crossSell";
 
 const BULLETS = [
   "GLP-1 / GIP / glucagon triple agonist (LY-3437943)",
@@ -39,6 +41,7 @@ export function RetaBuy() {
           right column spanning both rows. */}
       <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-24">
         <RetaBundlePicker selected={selected} onSelect={setSelected} />
+        <CrossSellStrip slugs={BUYBOX_CROSSSELL_SLUGS} variant="buybox" />
         <p className="mt-4 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">
           <svg
             className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-[var(--primary)]/45"
