@@ -8,6 +8,9 @@ export const RETA = {
   name: "Retatrutide",
   dose: "20mg",
   unitPriceCents: 21500,
+  // Standard single-vial product shot used for the cart line (the tier
+  // thumbnails use the 1/2/3-vial mockups, but the cart stays consistent).
+  cartImage: "/reta-product.png",
 };
 
 // The reta vial tiers add N of the SAME product, so their discount is just the

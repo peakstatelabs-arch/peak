@@ -24,7 +24,7 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
         name: RETA.name,
         dose: RETA.dose,
         unitPriceCents: RETA.unitPriceCents,
-        image: tier.image,
+        image: RETA.cartImage,
       },
       tier.vials,
     );
