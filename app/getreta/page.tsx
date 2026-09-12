@@ -238,12 +238,6 @@ export default function GetRetaPage() {
                     >
                       Get Retatrutide
                     </a>
-                    <a
-                      href="#why"
-                      className="inline-flex h-14 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-8 text-lg font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)]"
-                    >
-                      Why reta?
-                    </a>
                   </div>
 
                   {/* Proof strip — before the sell */}
@@ -310,21 +304,21 @@ export default function GetRetaPage() {
                   The reason nothing has stuck
                 </p>
                 <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-                  It was never willpower. It was the noise.
+                  You don’t need more willpower. You need less food noise.
                 </h2>
                 <p className="mt-6 text-lg text-[var(--primary)]/75 leading-relaxed">
-                  The constant pull toward the next snack. Eating past full.
-                  The 3 p.m. crash. That&rsquo;s not a character flaw —
-                  it&rsquo;s biology running louder than you can out-discipline.
-                  Retatrutide turns the volume down at the receptor level, so
-                  the &ldquo;right&rdquo; choice stops being a fight.
+                  You already know what to eat. You know you should stop when
+                  you’re full. The hard part is doing it when your brain keeps
+                  asking for more. Retatrutide helps turn down the hunger and
+                  food noise so eating less feels natural instead of something
+                  you have to fight all day.
                 </p>
                 <div className="mt-8">
                   <a
                     href="#buy"
                     className="btn-primary inline-flex items-center justify-center rounded-2xl px-8 py-4 text-base font-semibold"
                   >
-                    Quiet the noise — get reta
+                    Start My Transformation
                   </a>
                 </div>
               </div>
