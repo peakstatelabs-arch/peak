@@ -37,7 +37,10 @@ const TESTIMONIAL_IDS = [
 ];
 const testimonials = TESTIMONIAL_IDS.map((id) =>
   reviews.find((r) => r.id === id),
-).filter((r): r is NonNullable<typeof r> => Boolean(r));
+)
+  .filter((r): r is NonNullable<typeof r> => Boolean(r))
+  // Show each reviewer name only once (keep the first/strongest quote).
+  .filter((r, i, arr) => arr.findIndex((x) => x.name === r.name) === i);
 
 // Transformation photos that exist in /public/reviews.
 const transformationPhotos = [
@@ -271,11 +274,13 @@ export default function GetRetaPage() {
 
           {/* ── Trust bar ────────────────────────────────────────── */}
           <div className="border-y border-[var(--border)] bg-[var(--muted)]">
-            <Container className="grid grid-cols-2 gap-x-4 gap-y-3 py-5 [&>span]:justify-self-center sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-8 sm:[&>span]:justify-self-auto">
-              <TrustItem>Third-party COA</TrustItem>
-              <TrustItem>99%+ purity</TrustItem>
-              <TrustItem>Ships within 24 hrs</TrustItem>
-              <TrustItem>1-on-1 coaching included</TrustItem>
+            <Container className="py-5">
+              <div className="mx-auto grid max-w-sm grid-cols-2 gap-x-4 gap-y-3 sm:flex sm:max-w-none sm:flex-wrap sm:items-center sm:justify-center sm:gap-x-8">
+                <TrustItem>Third-party COA</TrustItem>
+                <TrustItem>99%+ purity</TrustItem>
+                <TrustItem>Ships within 24 hrs</TrustItem>
+                <TrustItem>1-on-1 coaching</TrustItem>
+              </div>
             </Container>
           </div>
 
@@ -428,10 +433,12 @@ export default function GetRetaPage() {
 
                 {/* Transformation photos */}
                 <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {transformationPhotos.map((p) => (
+                  {transformationPhotos.map((p, i) => (
                     <figure
                       key={p.src}
-                      className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--muted)]"
+                      className={`overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--muted)] ${
+                        i >= 2 ? "hidden sm:block" : ""
+                      }`}
                     >
                       <img
                         src={p.src}
