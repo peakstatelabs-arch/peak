@@ -11,6 +11,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const name = (body.name ?? body.username ?? "").trim();
     const email = (body.email ?? "").trim().toLowerCase();
+    // Optional lead source so /reta-access can be told apart from
+    // /research-access in the same Zapier flow (defaults to the original).
+    const source =
+      typeof body.source === "string" && body.source.trim()
+        ? body.source.trim()
+        : "research-access-form";
 
     if (!name) {
       return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -35,7 +41,7 @@ export async function POST(req: NextRequest) {
         name,
         email,
         timestamp: new Date().toISOString(),
-        source: "research-access-form",
+        source,
         ip,
         user_agent: userAgent,
       }),

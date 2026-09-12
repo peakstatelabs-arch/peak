@@ -7,7 +7,6 @@ import { CartProvider } from "@/app/singles/cart/CartContext";
 import { CartDrawer } from "@/app/singles/cart/CartDrawer";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
 import { RetaBuy } from "./RetaBuy";
-import { RetaDiscountPopup } from "./RetaDiscountPopup";
 
 export const metadata: Metadata = {
   title: "Buy Retatrutide (20mg) — Lab-Tested, Ships in 24h | Peak State Labs",
@@ -810,7 +809,6 @@ export default function GetRetaPage() {
         </footer>
 
         <CartDrawer />
-        <RetaDiscountPopup />
       </div>
     </CartProvider>
   );

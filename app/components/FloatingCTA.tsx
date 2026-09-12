@@ -7,6 +7,7 @@ const SUPPRESSED_PATHS = [
   "/thankyou",
   "/instructions",
   "/research-access",
+  "/reta-access",
   "/getreta",
   "/bridge",
   "/transitionguide",
