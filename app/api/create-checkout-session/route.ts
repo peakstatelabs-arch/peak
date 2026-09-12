@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
     mode: "payment",
     line_items: lineItems,
     shipping_address_collection: {
-      allowed_countries: ["US", "CA", "MX", "GB", "IE", "FR", "ES", "SE", "TT"],
+      allowed_countries: ["US", "CA", "MX", "GB", "IE", "FR", "ES", "PT", "SE", "TT"],
     },
     phone_number_collection: { enabled: true },
     billing_address_collection: "auto",
