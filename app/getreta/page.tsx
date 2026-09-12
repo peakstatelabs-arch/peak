@@ -393,6 +393,8 @@ export default function GetRetaPage() {
                 <p className="mt-6 text-center text-sm text-[var(--primary)]/55">
                   <a
                     href="/purity-tests/reta"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="underline hover:text-[var(--accent-dark)]"
                   >
                     View all purity tests →
