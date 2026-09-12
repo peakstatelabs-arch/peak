@@ -85,13 +85,6 @@ const otherSingles = [
   },
 ];
 
-const retaFacts = [
-  { label: "Compound", value: "LY-3437943" },
-  { label: "Class", value: "Triple Agonist" },
-  { label: "Targets", value: "GLP-1 / GIP / GCG" },
-  { label: "Half-life", value: "~6 days" },
-];
-
 const whyReta = [
   {
     stat: "~24%",
@@ -227,19 +220,15 @@ export default function GetRetaPage() {
                   </div>
 
                   <h1 className="mt-6 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                    The triple agonist,
+                    Lose the weight.
                     <span className="block text-[var(--accent-dark)]">
-                      done right.
+                      Keep the life you actually want.
                     </span>
                   </h1>
                   <p className="mt-6 text-lg text-[var(--primary)]/70 max-w-xl">
-                    Retatrutide (LY-3437943) hits GLP-1, GIP{" "}
-                    <span className="font-semibold text-[var(--primary)]">
-                      and
-                    </span>{" "}
-                    glucagon at once — quieting food noise while raising the rate
-                    your body burns. Lab-tested to 99%+ purity, with a
-                    third-party COA in every box.
+                    Retatrutide helps quiet food noise, control appetite and
+                    support a faster metabolism so getting leaner doesn’t have to
+                    consume your entire life.
                   </p>
 
                   <div className="mt-8 flex flex-col sm:flex-row gap-3">
@@ -298,23 +287,6 @@ export default function GetRetaPage() {
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Quick facts */}
-              <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl">
-                {retaFacts.map((f) => (
-                  <div
-                    key={f.label}
-                    className="p-4 rounded-2xl bg-white border border-[var(--border)] shadow-sm"
-                  >
-                    <p className="text-xs uppercase tracking-wider text-[var(--primary)]/60 font-semibold">
-                      {f.label}
-                    </p>
-                    <p className="mt-1 font-bold text-[var(--primary)]">
-                      {f.value}
-                    </p>
-                  </div>
-                ))}
               </div>
             </Container>
           </Section>
