@@ -100,8 +100,8 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
                 ) : null}
               </span>
               {p.live && p.saves > 0 ? (
-                <span className="mt-1 text-xs font-bold text-[var(--accent-dark)]">
-                  Save {formatUsd(p.saves)} ({p.pct}% off)
+                <span className="mt-1.5 inline-flex self-start items-center whitespace-nowrap rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                  Save {formatUsd(p.saves)} · {p.pct}%
                 </span>
               ) : (
                 <span className="mt-1 text-xs font-medium text-[var(--primary)]/50">
