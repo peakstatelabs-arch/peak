@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
+import { bulkTierForQty, resolveCouponId } from "@/app/lib/bulkDiscount";
 
 export const runtime = "nodejs";
 
@@ -65,20 +66,52 @@ export async function POST(req: NextRequest) {
   const stripe = new Stripe(secretKey);
   const origin = siteOrigin(req);
 
+  // Bulk discount: driven by the HIGHEST quantity of any single product in the
+  // cart (2 → 10%, 3 → 15%, 4+ → 20%). Applied server-side as a Stripe coupon
+  // on the whole cart. Stripe forbids combining `discounts` with a
+  // customer-entered promo code, so the promo-code box is only offered when no
+  // bulk tier applies.
+  const maxSameQty = lineItems.reduce(
+    (m, li) => Math.max(m, li.quantity ?? 0),
+    0,
+  );
+  const bulkTier = bulkTierForQty(maxSameQty);
+
+  const baseParams: Stripe.Checkout.SessionCreateParams = {
+    mode: "payment",
+    line_items: lineItems,
+    shipping_address_collection: {
+      allowed_countries: ["US", "CA", "MX", "GB", "IE", "FR", "ES", "SE", "TT"],
+    },
+    phone_number_collection: { enabled: true },
+    billing_address_collection: "auto",
+    success_url: `${origin}/singles/thankyou?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origin}/singles?checkout=cancelled`,
+    automatic_tax: { enabled: false },
+  };
+
+  const bulkParams: Stripe.Checkout.SessionCreateParams = bulkTier
+    ? { ...baseParams, discounts: [{ coupon: resolveCouponId(bulkTier) }] }
+    : { ...baseParams, allow_promotion_codes: true };
+
   try {
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      line_items: lineItems,
-      allow_promotion_codes: true,
-      shipping_address_collection: {
-        allowed_countries: ["US", "CA", "MX", "GB", "IE", "FR", "ES", "SE", "TT"],
-      },
-      phone_number_collection: { enabled: true },
-      billing_address_collection: "auto",
-      success_url: `${origin}/singles/thankyou?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/singles?checkout=cancelled`,
-      automatic_tax: { enabled: false },
-    });
+    let session: Stripe.Checkout.Session;
+    try {
+      session = await stripe.checkout.sessions.create(bulkParams);
+    } catch (bulkErr) {
+      // If the bulk coupon isn't set up in Stripe yet, never break checkout —
+      // fall back to a normal session with the promo-code box enabled.
+      const msg = bulkErr instanceof Error ? bulkErr.message : "";
+      if (bulkTier && /no such coupon|resource_missing/i.test(msg)) {
+        console.error("Bulk coupon missing — falling back without discount:", msg);
+        session = await stripe.checkout.sessions.create({
+          ...baseParams,
+          allow_promotion_codes: true,
+        });
+      } else {
+        throw bulkErr;
+      }
+    }
 
     if (!session.url) {
       return NextResponse.json(

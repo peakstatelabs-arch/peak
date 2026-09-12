@@ -7,6 +7,9 @@ import { CartDrawer } from "./cart/CartDrawer";
 import { ViewCartButton } from "./cart/ViewCartButton";
 import { AddToCartButton } from "./cart/AddToCartButton";
 import { SINGLES_PRICE_IDS, type SinglesProductSlug } from "./cart/priceCatalog";
+import { BULK_DISCOUNTS_LIVE, BULK_TIERS } from "@/app/lib/bulkDiscount";
+
+const BULK_MAX_PCT = BULK_TIERS[BULK_TIERS.length - 1].pct;
 
 export const metadata: Metadata = {
   title: `Singles Catalog — ${siteCopy.brand.name}`,
@@ -279,6 +282,21 @@ export default function SinglesCatalog() {
           {/* Product Grid */}
           <Section className="bg-white !pt-8 sm:!pt-12">
             <Container>
+              {BULK_DISCOUNTS_LIVE && (
+                <div className="mb-8 rounded-2xl border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-5 py-4 text-center">
+                  <p className="text-sm font-bold text-[var(--primary)]">
+                    Buy more of the same product, save more —{" "}
+                    {BULK_TIERS.map(
+                      (t) =>
+                        `${t.minQty}${t.minQty >= 4 ? "+" : ""} for ${t.pct}% off`,
+                    ).join(" · ")}
+                  </p>
+                  <p className="mt-1 text-xs text-[var(--primary)]/60">
+                    Discount applies to your whole cart, automatically at
+                    checkout.
+                  </p>
+                </div>
+              )}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 {products.map((product) => (
                   <div
@@ -403,6 +421,11 @@ export default function SinglesCatalog() {
                               {product.price}
                             </p>
                           </div>
+                          {BULK_DISCOUNTS_LIVE && (
+                            <span className="inline-flex items-center rounded-full bg-[var(--accent)]/15 px-2.5 py-1 text-[11px] font-bold text-[var(--accent-dark)]">
+                              Buy 2+, save up to {BULK_MAX_PCT}%
+                            </span>
+                          )}
                         </div>
                         <AddToCartButton
                           slug={product.id}

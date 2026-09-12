@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { formatUsd, useCart, type CartLine } from "./CartContext";
+import {
+  bulkTierForQty,
+  maxSameProductQty,
+  nextBulkTier,
+} from "@/app/lib/bulkDiscount";
 
 export function CartDrawer() {
   const {
@@ -27,6 +32,20 @@ export function CartDrawer() {
   const inStockLines = lines.filter((l) => !l.preorder);
   const preorderLines = lines.filter((l) => l.preorder);
   const isSplitShipment = inStockLines.length > 0 && preorderLines.length > 0;
+
+  // Bulk discount preview (highest quantity of any single product).
+  const bulkMaxQty = maxSameProductQty(lines);
+  const bulkTier = bulkTierForQty(bulkMaxQty);
+  const bulkNext = nextBulkTier(bulkMaxQty);
+  const bulkPct = bulkTier?.pct ?? 0;
+  const bulkDiscountCents = Math.round((subtotalCents * bulkPct) / 100);
+  const estimatedTotalCents = subtotalCents - bulkDiscountCents;
+  // The line closest to the next tier — the one we nudge them to add to.
+  const topLine = lines.reduce<CartLine | null>(
+    (best, l) => (best && best.quantity >= l.quantity ? best : l),
+    null,
+  );
+  const addForNext = bulkNext ? bulkNext.minQty - bulkMaxQty : 0;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -175,16 +194,58 @@ export function CartDrawer() {
                 preorderLines={preorderLines}
               />
             )}
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-[var(--primary)]/70">
-                Subtotal
-              </span>
-              <span className="text-2xl font-bold text-[var(--primary)]">
-                {formatUsd(subtotalCents)}
-              </span>
-            </div>
+
+            {(bulkTier || bulkNext) && (
+              <BulkNudge
+                active={!!bulkTier}
+                pct={bulkPct}
+                nextPct={bulkNext?.pct ?? 0}
+                addForNext={addForNext}
+                productName={topLine?.name}
+              />
+            )}
+
+            {bulkTier ? (
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold text-[var(--primary)]/70">
+                    Subtotal
+                  </span>
+                  <span className="font-semibold text-[var(--primary)]/70">
+                    {formatUsd(subtotalCents)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold text-[var(--accent-dark)]">
+                    Bulk discount ({bulkPct}% off)
+                  </span>
+                  <span className="font-bold text-[var(--accent-dark)]">
+                    −{formatUsd(bulkDiscountCents)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-sm font-semibold text-[var(--primary)]/70">
+                    Estimated total
+                  </span>
+                  <span className="text-2xl font-bold text-[var(--primary)]">
+                    {formatUsd(estimatedTotalCents)}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-[var(--primary)]/70">
+                  Subtotal
+                </span>
+                <span className="text-2xl font-bold text-[var(--primary)]">
+                  {formatUsd(subtotalCents)}
+                </span>
+              </div>
+            )}
             <p className="text-xs text-[var(--primary)]/55">
-              Shipping and taxes calculated at checkout.
+              {bulkTier
+                ? "Discount applied automatically at checkout. Shipping and taxes calculated there."
+                : "Shipping and taxes calculated at checkout."}
             </p>
             {checkoutError && (
               <p className="text-sm text-red-600 font-medium">{checkoutError}</p>
@@ -264,6 +325,75 @@ export function CartDrawer() {
 
 function lineLabel(line: CartLine): string {
   return line.quantity > 1 ? `${line.name} ×${line.quantity}` : line.name;
+}
+
+function BulkNudge({
+  active,
+  pct,
+  nextPct,
+  addForNext,
+  productName,
+}: {
+  active: boolean;
+  pct: number;
+  nextPct: number;
+  addForNext: number;
+  productName?: string;
+}) {
+  const hasNext = nextPct > 0 && addForNext > 0;
+  const moreLabel =
+    productName && addForNext === 1
+      ? `Add 1 more ${productName}`
+      : `Add ${addForNext} more of one product`;
+
+  return (
+    <div className="rounded-xl border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-4 py-3">
+      {active ? (
+        <p className="flex items-center gap-2 text-sm font-bold text-[var(--accent-dark)]">
+          <svg
+            className="w-4 h-4 flex-shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={3}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          {pct}% off unlocked
+        </p>
+      ) : (
+        <p className="flex items-center gap-2 text-sm font-bold text-[var(--primary)]">
+          <svg
+            className="w-4 h-4 flex-shrink-0 text-[var(--accent-dark)]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
+          </svg>
+          Buy more of one product, save more
+        </p>
+      )}
+      {hasNext ? (
+        <p className="mt-1 text-xs text-[var(--primary)]/70">
+          {moreLabel} to {active ? "reach" : "unlock"}{" "}
+          <span className="font-bold text-[var(--accent-dark)]">
+            {nextPct}% off
+          </span>{" "}
+          the whole cart.
+        </p>
+      ) : (
+        <p className="mt-1 text-xs text-[var(--primary)]/70">
+          That&rsquo;s the biggest discount — applied to your whole cart.
+        </p>
+      )}
+    </div>
+  );
 }
 
 function SplitShipmentNotice({

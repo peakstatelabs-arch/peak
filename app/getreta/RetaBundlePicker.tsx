@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useCart, formatUsd } from "@/app/singles/cart/CartContext";
 import { readClientContact } from "@/app/lib/clientContact";
 import { RETA, TIERS, tierPricing } from "./retaBundles";
@@ -13,10 +12,9 @@ type Props = {
 
 export function RetaBundlePicker({ selected, onSelect }: Props) {
   const { addItem, openCart } = useCart();
-  const [copied, setCopied] = useState(false);
 
   const tier = TIERS.find((t) => t.vials === selected) ?? TIERS[0];
-  const { full, discounted, live, saves } = tierPricing(tier);
+  const { full, discounted, live } = tierPricing(tier);
 
   function handleAdd() {
     addItem(
@@ -30,16 +28,6 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
       },
       tier.vials,
     );
-
-    if (live && tier.code) {
-      try {
-        navigator.clipboard?.writeText(tier.code);
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 2000);
-      } catch {
-        // Clipboard blocked — code is still displayed for manual entry.
-      }
-    }
 
     openCart();
 
@@ -113,7 +101,7 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
               </span>
               {p.live && p.saves > 0 ? (
                 <span className="mt-1 text-xs font-bold text-[var(--accent-dark)]">
-                  Save {formatUsd(p.saves)} with code {t.code}
+                  Save {formatUsd(p.saves)} ({p.pct}% off)
                 </span>
               ) : (
                 <span className="mt-1 text-xs font-medium text-[var(--primary)]/50">
@@ -222,11 +210,9 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
           Add {tier.vials > 1 ? `${tier.vials} Vials` : "to Cart"} — {formatUsd(discounted)}
         </button>
 
-        {live && tier.code ? (
+        {live ? (
           <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
-            {copied
-              ? `Code ${tier.code} copied — paste it at checkout`
-              : `Apply code ${tier.code} at checkout for ${tier.discountPct}% off`}
+            Bulk discount applied automatically at checkout — no code needed.
           </p>
         ) : null}
 
