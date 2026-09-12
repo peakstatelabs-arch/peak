@@ -7,6 +7,8 @@ import {
   maxSameProductQty,
   nextBulkTier,
 } from "@/app/lib/bulkDiscount";
+import { CrossSellStrip } from "./CrossSellStrip";
+import { CART_CROSSSELL_SLUGS } from "./crossSell";
 
 export function CartDrawer() {
   const {
@@ -173,16 +175,19 @@ export function CartDrawer() {
               </button>
             </div>
           ) : (
-            <ul className="flex flex-col gap-4">
-              {lines.map((line) => (
-                <CartLineRow
-                  key={line.priceId}
-                  line={line}
-                  onQtyChange={(q) => setQuantity(line.priceId, q)}
-                  onRemove={() => removeItem(line.priceId)}
-                />
-              ))}
-            </ul>
+            <>
+              <ul className="flex flex-col gap-4">
+                {lines.map((line) => (
+                  <CartLineRow
+                    key={line.priceId}
+                    line={line}
+                    onQtyChange={(q) => setQuantity(line.priceId, q)}
+                    onRemove={() => removeItem(line.priceId)}
+                  />
+                ))}
+              </ul>
+              <CrossSellStrip slugs={CART_CROSSSELL_SLUGS} variant="cart" />
+            </>
           )}
         </div>
 
