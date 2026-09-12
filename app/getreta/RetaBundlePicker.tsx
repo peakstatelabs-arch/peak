@@ -60,9 +60,9 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
   }
 
   return (
-    <div className="rounded-3xl border border-[var(--border)] bg-white p-5 sm:p-7 shadow-sm">
+    <div className="rounded-3xl border border-[var(--border)] bg-white p-5 sm:p-6 shadow-sm">
       {/* Tier selector */}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-2.5 sm:grid-cols-3">
         {TIERS.map((t) => {
           const p = tierPricing(t);
           const isActive = t.vials === selected;
@@ -72,7 +72,7 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
               type="button"
               onClick={() => onSelect(t.vials)}
               aria-pressed={isActive}
-              className={`relative flex flex-col rounded-2xl border-2 p-4 text-left transition-all ${
+              className={`relative flex flex-col rounded-2xl border-2 p-3.5 text-left transition-all ${
                 isActive
                   ? "border-[var(--primary)] bg-[var(--muted)] shadow-sm"
                   : "border-[var(--border)] bg-white hover:border-[var(--accent)]"
@@ -89,12 +89,12 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
               <span className="mt-0.5 text-xs font-medium text-[var(--primary)]/55">
                 {t.vials} × 20mg vial{t.vials > 1 ? "s" : ""}
               </span>
-              <span className="mt-3 flex items-baseline gap-2">
-                <span className="text-2xl font-extrabold text-[var(--primary)]">
+              <span className="mt-3 flex flex-wrap items-baseline gap-x-1.5 tabular-nums">
+                <span className="text-xl font-extrabold text-[var(--primary)]">
                   {formatUsd(p.discounted)}
                 </span>
                 {p.live ? (
-                  <span className="text-sm font-semibold text-[var(--primary)]/40 line-through">
+                  <span className="text-xs font-semibold text-[var(--primary)]/40 line-through">
                     {formatUsd(p.full)}
                   </span>
                 ) : null}
