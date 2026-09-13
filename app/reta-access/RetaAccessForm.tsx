@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
 
@@ -12,6 +12,17 @@ type Tab = "create" | "signin";
 // measurable on its own.
 const REDIRECT_URL = "/getreta";
 const LEAD_SOURCE = "reta-access-form";
+
+// Live "verified members" social-proof count. Anchored at 6,124 on
+// 2026-09-13 and grows by 33 each calendar day (UTC), never resetting.
+const MEMBERS_ANCHOR_MS = Date.UTC(2026, 8, 13); // Sep 13, 2026 (month is 0-based)
+const MEMBERS_BASE = 6124;
+const MEMBERS_PER_DAY = 33;
+
+function memberCount(now = Date.now()): number {
+  const days = Math.max(0, Math.floor((now - MEMBERS_ANCHOR_MS) / 86_400_000));
+  return MEMBERS_BASE + days * MEMBERS_PER_DAY;
+}
 
 /** Fire-and-forget PostHog capture that never breaks the form. */
 function track(event: string, props?: Record<string, string>) {
@@ -33,9 +44,16 @@ export function RetaAccessForm() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // Fires "reta_access_started" once, the first time a visitor engages with any
-  // field, so we can tell "never touched the form" apart from "started but
-  // didn't finish."
+  // Fires "reta_access_started" once, the first time a visitor engages
+  // with any field, so we can tell "never touched the form" apart from
+  // "started but didn't finish."
+  // Recompute the member count after mount so it stays correct across a day
+  // boundary without risking a server/client hydration mismatch.
+  const [members, setMembers] = useState<number>(() => memberCount());
+  useEffect(() => {
+    setMembers(memberCount());
+  }, []);
+
   const startedRef = useRef(false);
   function handleFieldFocus() {
     if (startedRef.current) return;
@@ -132,8 +150,59 @@ export function RetaAccessForm() {
 
   return (
     <div>
+      {/* Sign in / Create account toggle */}
+      <div
+        role="tablist"
+        aria-label="Research access"
+        className="grid grid-cols-2 gap-1 rounded-full border border-[var(--border)] bg-[var(--muted)] p-1"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "signin"}
+          onClick={() => switchTab("signin")}
+          className={`h-11 rounded-full text-sm font-bold transition-all ${
+            tab === "signin"
+              ? "bg-white text-[var(--primary)] border-2 border-[var(--primary)] shadow-sm"
+              : "text-[var(--primary)]/70 hover:text-[var(--primary)]"
+          }`}
+        >
+          Sign in
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "create"}
+          onClick={() => switchTab("create")}
+          className={`h-11 rounded-full text-sm font-bold transition-all ${
+            tab === "create"
+              ? "bg-white text-[var(--primary)] border-2 border-[var(--primary)] shadow-sm"
+              : "text-[var(--primary)]/70 hover:text-[var(--primary)]"
+          }`}
+        >
+          Create account
+        </button>
+      </div>
+
+      {/* Social proof */}
+      <div className="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-[var(--primary)]/70">
+        <svg
+          className="h-4 w-4 flex-shrink-0 text-[var(--accent-dark)]"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fillRule="evenodd"
+            d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0Z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Join {members.toLocaleString("en-US")} verified members
+      </div>
+
       {tab === "create" ? (
-        <form onSubmit={handleCreateSubmit} className="space-y-5">
+        <form onSubmit={handleCreateSubmit} className="mt-6 space-y-5">
           <div>
             <label htmlFor="username" className={labelClass}>
               Name
@@ -210,20 +279,9 @@ export function RetaAccessForm() {
               Free · takes 10 seconds · we never share your email.
             </p>
           </div>
-
-          <p className="text-center text-sm text-[var(--primary)]/70">
-            Already have access?{" "}
-            <button
-              type="button"
-              onClick={() => switchTab("signin")}
-              className="font-bold text-[var(--accent-dark)] hover:underline"
-            >
-              Sign in
-            </button>
-          </p>
         </form>
       ) : (
-        <form onSubmit={handleSignInSubmit} className="space-y-5">
+        <form onSubmit={handleSignInSubmit} className="mt-6 space-y-5">
           <div className="text-center">
             <h2 className="text-xl font-bold tracking-tight text-[var(--primary)]">
               Welcome back
@@ -302,17 +360,6 @@ export function RetaAccessForm() {
           >
             Sign in
           </button>
-
-          <p className="text-center text-sm text-[var(--primary)]/70">
-            Need an account?{" "}
-            <button
-              type="button"
-              onClick={() => switchTab("create")}
-              className="font-bold text-[var(--accent-dark)] hover:underline"
-            >
-              Create one
-            </button>
-          </p>
         </form>
       )}
     </div>
