@@ -44,8 +44,22 @@ export default function ResearchAccessPage() {
           <Container className="relative">
             {/* Value prop */}
             <div className="max-w-2xl mx-auto text-center">
-              {/* Eyebrow */}
+              {/* Brand lockup */}
               <div className="flex justify-center">
+                <div className="inline-flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white/70 px-5 py-3 shadow-sm animate-fade-in">
+                  <img
+                    src="/logo.png"
+                    alt="Peak State Labs Logo"
+                    className="h-8 w-8 rounded-lg"
+                  />
+                  <span className="text-xl font-bold tracking-tight">
+                    {siteCopy.brand.name}
+                  </span>
+                </div>
+              </div>
+
+              {/* Eyebrow */}
+              <div className="mt-6 flex justify-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-[0.18em] text-[var(--accent-dark)]">
                   <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
                   <span>RESEARCH ACCESS REQUIRED</span>
@@ -66,23 +80,6 @@ export default function ResearchAccessPage() {
             {/* Account form — placed first so the ask is above the fold */}
             <div className="max-w-md mx-auto mt-8 text-left">
               <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
-                {/* Social proof */}
-                <div className="mb-6 flex items-center justify-center gap-2 text-sm font-semibold text-[var(--primary)]/70">
-                  <svg
-                    className="h-4 w-4 flex-shrink-0 text-[var(--accent-dark)]"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Join 6,000+ researchers
-                </div>
-
                 <ResearchAccessForm />
               </div>
             </div>
