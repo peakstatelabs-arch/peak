@@ -35,30 +35,17 @@ export default function ResearchAccessPage() {
 
       <main>
         {/* Hero */}
-        <Section className="relative overflow-hidden gradient-hero !pt-10 !pb-4 sm:!pt-16 sm:!pb-5">
+        <Section className="relative overflow-hidden gradient-hero !pt-8 !pb-12 sm:!pt-12 sm:!pb-16">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
             <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
           </div>
 
           <Container className="relative">
+            {/* Value prop */}
             <div className="max-w-2xl mx-auto text-center">
-              {/* Brand lockup */}
-              <div className="flex justify-center">
-                <div className="inline-flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white/70 px-5 py-3 shadow-sm animate-fade-in">
-                  <img
-                    src="/logo.png"
-                    alt="Peak State Labs Logo"
-                    className="h-8 w-8 rounded-lg"
-                  />
-                  <span className="text-xl font-bold tracking-tight">
-                    {siteCopy.brand.name}
-                  </span>
-                </div>
-              </div>
-
               {/* Eyebrow */}
-              <div className="mt-6 flex justify-center">
+              <div className="flex justify-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-[0.18em] text-[var(--accent-dark)]">
                   <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
                   <span>RESEARCH ACCESS REQUIRED</span>
@@ -67,16 +54,43 @@ export default function ResearchAccessPage() {
 
               {/* Headline */}
               <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] animate-fade-in-up">
-                Unlock the {siteCopy.brand.name} catalog
+                Access {siteCopy.brand.name}
               </h1>
 
               <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed">
                 Create your free account to view live pricing, third-party COAs,
                 and 99%+ purity docs.
               </p>
+            </div>
 
+            {/* Account form — placed first so the ask is above the fold */}
+            <div className="max-w-md mx-auto mt-8 text-left">
+              <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
+                {/* Social proof */}
+                <div className="mb-6 flex items-center justify-center gap-2 text-sm font-semibold text-[var(--primary)]/70">
+                  <svg
+                    className="h-4 w-4 flex-shrink-0 text-[var(--accent-dark)]"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Join 6,000+ researchers
+                </div>
+
+                <ResearchAccessForm />
+              </div>
+            </div>
+
+            {/* Trust info — below the form as supporting reinforcement */}
+            <div className="max-w-2xl mx-auto mt-10 text-center">
               {/* Stat cards */}
-              <div className="mt-8 grid grid-cols-3 gap-3 sm:gap-4">
+              <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 {stats.map((s) => (
                   <div
                     key={s.label}
@@ -103,40 +117,11 @@ export default function ResearchAccessPage() {
                 </p>
               </div>
             </div>
-          </Container>
-        </Section>
 
-        {/* Trust badge + Account form */}
-        <Section className="bg-white !pt-4 !pb-6 sm:!pt-5 sm:!pb-10">
-          <Container>
-            <div className="max-w-md mx-auto">
-              {/* Account form */}
-              <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
-                {/* Social proof */}
-                <div className="mb-6 flex items-center justify-center gap-2 text-sm font-semibold text-[var(--primary)]/70">
-                  <svg
-                    className="h-4 w-4 flex-shrink-0 text-[var(--accent-dark)]"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Join 6,000+ researchers
-                </div>
-
-                <ResearchAccessForm />
-              </div>
-
-              <p className="mt-6 text-center text-xs text-[var(--primary)]/50 leading-relaxed">
-                Materials are supplied strictly for laboratory research and
-                non-human use. You must be 21 or older to create an account.
-              </p>
-            </div>
+            <p className="max-w-md mx-auto mt-6 text-center text-xs text-[var(--primary)]/50 leading-relaxed">
+              Materials are supplied strictly for laboratory research and
+              non-human use. You must be 21 or older to create an account.
+            </p>
           </Container>
         </Section>
       </main>
