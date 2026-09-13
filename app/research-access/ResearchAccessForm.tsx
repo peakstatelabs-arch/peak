@@ -1,12 +1,23 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
 
 type Tab = "create" | "signin";
 
 const SHOP_URL = "https://peakstate.shop";
+
+// Live "verified members" social-proof count. Anchored at 6,124 on
+// 2026-09-13 and grows by 33 each calendar day (UTC), never resetting.
+const MEMBERS_ANCHOR_MS = Date.UTC(2026, 8, 13); // Sep 13, 2026 (month is 0-based)
+const MEMBERS_BASE = 6124;
+const MEMBERS_PER_DAY = 33;
+
+function memberCount(now = Date.now()): number {
+  const days = Math.max(0, Math.floor((now - MEMBERS_ANCHOR_MS) / 86_400_000));
+  return MEMBERS_BASE + days * MEMBERS_PER_DAY;
+}
 
 /** Fire-and-forget PostHog capture that never breaks the form. */
 function track(event: string, props?: Record<string, string>) {
@@ -31,6 +42,13 @@ export function ResearchAccessForm() {
   // Fires "research_access_started" once, the first time a visitor engages
   // with any field, so we can tell "never touched the form" apart from
   // "started but didn't finish."
+  // Recompute the member count after mount so it stays correct across a day
+  // boundary without risking a server/client hydration mismatch.
+  const [members, setMembers] = useState<number>(() => memberCount());
+  useEffect(() => {
+    setMembers(memberCount());
+  }, []);
+
   const startedRef = useRef(false);
   function handleFieldFocus() {
     if (startedRef.current) return;
@@ -174,7 +192,7 @@ export function ResearchAccessForm() {
             clipRule="evenodd"
           />
         </svg>
-        Join 6,000+ researchers
+        Join {members.toLocaleString("en-US")} verified members
       </div>
 
       {tab === "create" ? (
