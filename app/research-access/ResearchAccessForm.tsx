@@ -174,7 +174,7 @@ export function ResearchAccessForm() {
             clipRule="evenodd"
           />
         </svg>
-        Join 6,000+ researchers
+        Join 6,000+ members
       </div>
 
       {tab === "create" ? (
