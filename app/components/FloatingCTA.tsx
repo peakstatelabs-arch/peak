@@ -8,7 +8,6 @@ const SUPPRESSED_PATHS = [
   "/instructions",
   "/research-access",
   "/reta-access",
-  "/getreta",
   "/bridge",
   "/transitionguide",
   "/creator",
@@ -287,12 +286,25 @@ export function FloatingCTA() {
             {/* Body */}
             <div className="px-5 sm:px-6 pt-5 pb-6">
               <p className="text-[15px] leading-relaxed text-[var(--primary)]/80">
-                Book a free 15-minute call and get clarity around your goals
-                and whether the{" "}
-                <span className="font-semibold text-[var(--primary)]">
-                  POWER CUT
-                </span>{" "}
-                system is the right starting point for you.
+                {pathname === "/getreta" ? (
+                  <>
+                    Book a free 15-minute call and get clarity around your goals
+                    and whether{" "}
+                    <span className="font-semibold text-[var(--primary)]">
+                      Retatrutide
+                    </span>{" "}
+                    is the right starting point for you.
+                  </>
+                ) : (
+                  <>
+                    Book a free 15-minute call and get clarity around your goals
+                    and whether the{" "}
+                    <span className="font-semibold text-[var(--primary)]">
+                      POWER CUT
+                    </span>{" "}
+                    system is the right starting point for you.
+                  </>
+                )}
               </p>
 
               <button
