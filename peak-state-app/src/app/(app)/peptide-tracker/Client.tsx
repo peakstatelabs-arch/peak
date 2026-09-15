@@ -85,7 +85,14 @@ export function PeptideTrackerClient({
       />
     );
   }
-  if (mode === "single-reta" || mode === "single-cjc" || mode === "single-bpc" || mode === "single-ghk") {
+  if (
+    mode === "single-reta" ||
+    mode === "single-cjc" ||
+    mode === "single-bpc" ||
+    mode === "single-ghk" ||
+    mode === "single-nad" ||
+    mode === "single-kpv"
+  ) {
     return (
       <SinglePeptideWizard
         choice={mode}

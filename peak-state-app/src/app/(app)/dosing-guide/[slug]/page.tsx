@@ -29,7 +29,11 @@ export default async function PeptideDetail({ params }: { params: Promise<{ slug
         </div>
         <div className="card">
           <h3 className="font-semibold mb-3">Reconstitution calculator</h3>
-          <ReconstitutionCalc defaultVialMg={p.vialMg} />
+          <ReconstitutionCalc
+            defaultVialMg={p.vialMg}
+            defaultBacWaterMl={p.reconBacMl}
+            defaultDoseMg={p.reconDoseMg}
+          />
         </div>
       </div>
 

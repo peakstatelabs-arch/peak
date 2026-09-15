@@ -2,10 +2,18 @@
 
 import { useMemo, useState } from "react";
 
-export function ReconstitutionCalc({ defaultVialMg = 10 }: { defaultVialMg?: number }) {
+export function ReconstitutionCalc({
+  defaultVialMg = 10,
+  defaultBacWaterMl = 2,
+  defaultDoseMg = 0.25,
+}: {
+  defaultVialMg?: number;
+  defaultBacWaterMl?: number;
+  defaultDoseMg?: number;
+}) {
   const [vialMg, setVialMg] = useState(defaultVialMg);
-  const [bacWaterMl, setBacWaterMl] = useState(2);
-  const [doseMg, setDoseMg] = useState(0.25);
+  const [bacWaterMl, setBacWaterMl] = useState(defaultBacWaterMl);
+  const [doseMg, setDoseMg] = useState(defaultDoseMg);
   const [syringeUnits, setSyringeUnits] = useState(100);
 
   const result = useMemo(() => {

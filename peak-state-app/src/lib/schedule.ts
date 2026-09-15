@@ -167,18 +167,31 @@ export function generateSingleSchedule(opts: {
     | "twice-weekly"
     | "thrice-weekly"
     | "five-on-two-off"
-    | "weekly";
+    | "weekly"
+    | "custom-days";
   time_of_day: "morning" | "evening";
   startDate: Date;
   weeks: number;
-  weekdays?: number[]; // 1=Mon..7=Sun, for "thrice-weekly" / "twice-weekly"
+  weekdays?: number[]; // 1=Mon..7=Sun, for "twice-weekly" / "thrice-weekly" / "custom-days"
 }): DoseRow[] {
   const { peptide_name, dose_mg, frequency, time_of_day, startDate, weeks } = opts;
   const rows: DoseRow[] = [];
   const start = new Date(startDate);
   const end = new Date(start.getTime() + weeks * 7 * DAY);
 
-  if (frequency === "daily") {
+  if (frequency === "custom-days") {
+    // Member-selected weekdays (1=Mon..7=Sun), repeated every week. Walk each
+    // calendar day and keep the ones whose weekday is in the selected set, so
+    // any combination of days works regardless of the start day.
+    const selected = new Set(opts.weekdays && opts.weekdays.length > 0 ? opts.weekdays : [1, 3, 5]);
+    for (let t = start.getTime(); t <= end.getTime(); t += DAY) {
+      const d = new Date(t);
+      const wd = d.getDay() === 0 ? 7 : d.getDay(); // JS Sun=0 -> 7
+      if (selected.has(wd)) {
+        rows.push(makeRow(peptide_name, dose_mg, d, time_of_day));
+      }
+    }
+  } else if (frequency === "daily") {
     for (let t = start.getTime(); t <= end.getTime(); t += DAY) {
       rows.push(makeRow(peptide_name, dose_mg, new Date(t), time_of_day));
     }

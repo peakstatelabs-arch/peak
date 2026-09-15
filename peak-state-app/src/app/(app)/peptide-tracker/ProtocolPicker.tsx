@@ -6,7 +6,9 @@ export type PickerChoice =
   | "single-reta"
   | "single-cjc"
   | "single-bpc"
-  | "single-ghk";
+  | "single-ghk"
+  | "single-nad"
+  | "single-kpv";
 
 type Option = {
   choice: PickerChoice;
@@ -52,6 +54,18 @@ const OPTIONS: Option[] = [
     choice: "single-ghk",
     label: "GHK-Cu",
     blurb: "Daily or 3–5× weekly, evening before bed.",
+    badge: "Single vial",
+  },
+  {
+    choice: "single-nad",
+    label: "NAD+ — The Catalyst™",
+    blurb: "25 mg, 3–5× weekly on the days you choose. Cellular energy & longevity.",
+    badge: "Single vial",
+  },
+  {
+    choice: "single-kpv",
+    label: "KPV — The Regulator™",
+    blurb: "0.30 mg once daily. Inflammatory balance, gut & recovery.",
     badge: "Single vial",
   },
 ];

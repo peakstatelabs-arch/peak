@@ -16,6 +16,9 @@ export type PeptideRef = {
   timing: string;
   description: string;
   cautions: string;
+  /** Optional reconstitution defaults to pre-fill the calculator on the detail page. */
+  reconBacMl?: number;
+  reconDoseMg?: number;
   extended?: {
     intro?: string;
     question?: string;
@@ -111,6 +114,37 @@ export const PEPTIDES: PeptideRef[] = [
         "Think of it like a team of specialists rather than five quarterbacks — GHK-Cu handles regenerative signaling; BPC + TB handle recovery pathways.",
       ],
     },
+  },
+  {
+    slug: "nad-plus",
+    name: "NAD+",
+    vialMg: 500,
+    category: "NAD+ coenzyme — cellular energy & longevity",
+    doseRange: "Reference amount: 25 mg per use (20 doses per 500 mg vial).",
+    frequency: "3–5× per week — choose the days that fit your routine.",
+    timing:
+      "No clinically established best time of day. Pick a schedule you can keep consistent.",
+    description:
+      "A naturally occurring coenzyme (nicotinamide adenine dinucleotide) central to cellular energy metabolism, mitochondrial function, DNA repair, and sirtuin activity — a major focus of longevity and healthy-aging research. Technically a dinucleotide coenzyme rather than a peptide.",
+    cautions:
+      "No FDA-approved dose, frequency, or duration exists for wellness or longevity, and human evidence for injectable NAD+ remains limited. Educational reference only — not intended to diagnose, treat, cure, or prevent any disease. Not for human consumption. Research use only.",
+    reconBacMl: 5,
+    reconDoseMg: 25,
+  },
+  {
+    slug: "kpv",
+    name: "KPV",
+    vialMg: 10,
+    category: "Anti-inflammatory tripeptide — gut, immune & skin",
+    doseRange: "Reference amount: 0.30 mg per use (≈33 daily doses per 10 mg vial).",
+    frequency: "Once daily, 7 days per week.",
+    timing: "Morning or evening — consistency matters more than the exact time.",
+    description:
+      "A tripeptide (Lysine–Proline–Valine) derived from the α-MSH hormone, studied in preclinical models for inflammatory regulation (NF-κB / MAPK signaling), gut and intestinal health, immune balance, and skin/epithelial support.",
+    cautions:
+      "Research remains largely preclinical; human efficacy, optimal dosing, and long-term safety have not been established in controlled trials. Not an FDA-approved drug. Educational reference only — not medical advice. Research use only.",
+    reconBacMl: 2,
+    reconDoseMg: 0.3,
   },
 ];
 

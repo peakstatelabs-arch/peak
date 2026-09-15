@@ -7,7 +7,13 @@ import { requestNotificationPermission, notificationsSupported } from "@/lib/not
 import { todayInZone } from "@/lib/utils";
 import type { ProfilePrefs } from "./Client";
 
-type Choice = "single-reta" | "single-cjc" | "single-bpc" | "single-ghk";
+type Choice =
+  | "single-reta"
+  | "single-cjc"
+  | "single-bpc"
+  | "single-ghk"
+  | "single-nad"
+  | "single-kpv";
 
 type Config = {
   label: string;
@@ -17,6 +23,10 @@ type Config = {
   defaultTime: "morning" | "evening";
   frequencyOptions: { value: Frequency; label: string }[];
   note?: string;
+  /** When true, show a weekday picker instead of the frequency dropdown. */
+  usesDayPicker?: boolean;
+  /** Default selected weekdays (1=Mon..7=Sun) when usesDayPicker is on. */
+  defaultWeekdays?: number[];
 };
 
 type Frequency =
@@ -25,7 +35,8 @@ type Frequency =
   | "twice-weekly"
   | "thrice-weekly"
   | "five-on-two-off"
-  | "weekly";
+  | "weekly"
+  | "custom-days";
 
 const CONFIGS: Record<Choice, Config> = {
   "single-reta": {
@@ -74,7 +85,37 @@ const CONFIGS: Record<Choice, Config> = {
     ],
     note: "Evening before bed. Avoid mixing with vitamin C at injection time.",
   },
+  "single-nad": {
+    label: "NAD+ — The Catalyst™",
+    peptide_name: "NAD+",
+    defaultDose: 25,
+    defaultFrequency: "custom-days",
+    defaultTime: "morning",
+    frequencyOptions: [],
+    usesDayPicker: true,
+    defaultWeekdays: [1, 3, 5],
+    note: "Reconstitute 500 mg with 5 mL BAC water (100 mg/mL → 25 mg = 25 units). Pick 3–5 days per week you can keep consistent. Refrigerate after mixing.",
+  },
+  "single-kpv": {
+    label: "KPV — The Regulator™",
+    peptide_name: "KPV",
+    defaultDose: 0.3,
+    defaultFrequency: "daily",
+    defaultTime: "evening",
+    frequencyOptions: [{ value: "daily", label: "Once daily (7 days/week)" }],
+    note: "Reconstitute 10 mg with 2 mL BAC water (5 mg/mL → 0.30 mg = 6 units). Daily, 7 days/week. Refrigerate after mixing.",
+  },
 };
+
+const WEEKDAY_LABELS: { value: number; label: string }[] = [
+  { value: 1, label: "Mon" },
+  { value: 2, label: "Tue" },
+  { value: 3, label: "Wed" },
+  { value: 4, label: "Thu" },
+  { value: 5, label: "Fri" },
+  { value: 6, label: "Sat" },
+  { value: 7, label: "Sun" },
+];
 
 export function SinglePeptideWizard({
   choice,
@@ -93,6 +134,7 @@ export function SinglePeptideWizard({
   const [frequency, setFrequency] = useState<Frequency>(config.defaultFrequency);
   const [time, setTime] = useState<"morning" | "evening">(config.defaultTime);
   const [weeks, setWeeks] = useState(12);
+  const [weekdays, setWeekdays] = useState<number[]>(config.defaultWeekdays ?? [1, 3, 5]);
   const [startDate, setStartDate] = useState(() => todayInZone(profile.timezone));
   const [morningTime, setMorningTime] = useState(profile.morning_time);
   const [eveningTime, setEveningTime] = useState(profile.evening_time);
@@ -109,8 +151,9 @@ export function SinglePeptideWizard({
         time_of_day: time,
         startDate: new Date(startDate + "T00:00:00"),
         weeks,
+        weekdays: config.usesDayPicker ? weekdays : undefined,
       }),
-    [config.peptide_name, dose, frequency, time, startDate, weeks]
+    [config.peptide_name, config.usesDayPicker, dose, frequency, time, startDate, weeks, weekdays]
   );
 
   async function save() {
@@ -141,9 +184,13 @@ export function SinglePeptideWizard({
     const endISO = new Date(new Date(startDate + "T00:00:00").getTime() + weeks * 7 * 86400000)
       .toISOString().slice(0, 10);
 
+    const freqText = config.usesDayPicker
+      ? `${weekdays.length}×/wk`
+      : frequencyLabel(frequency);
+
     const { error: pErr } = await supabase.from("peptide_protocols").insert({
       user_id: user.id,
-      name: `${config.label} · ${dose} mg ${frequencyLabel(frequency)}`,
+      name: `${config.label} · ${dose} mg ${freqText}`,
       peptide_name: config.peptide_name,
       dose_mg: dose,
       frequency,
@@ -212,18 +259,53 @@ export function SinglePeptideWizard({
               onChange={(e) => setDose(Number(e.target.value))}
             />
           </div>
-          <div>
-            <label className="label">Frequency</label>
-            <select
-              className="input"
-              value={frequency}
-              onChange={(e) => setFrequency(e.target.value as Frequency)}
-            >
-              {config.frequencyOptions.map((f) => (
-                <option key={f.value} value={f.value}>{f.label}</option>
-              ))}
-            </select>
-          </div>
+          {config.usesDayPicker ? (
+            <div className="sm:col-span-2">
+              <label className="label">Days of the week</label>
+              <div className="flex flex-wrap gap-2">
+                {WEEKDAY_LABELS.map((d) => {
+                  const on = weekdays.includes(d.value);
+                  return (
+                    <button
+                      key={d.value}
+                      type="button"
+                      onClick={() =>
+                        setWeekdays((prev) =>
+                          prev.includes(d.value)
+                            ? prev.filter((x) => x !== d.value)
+                            : [...prev, d.value].sort((a, b) => a - b)
+                        )
+                      }
+                      className={`px-3 py-1.5 rounded-lg border text-sm transition ${
+                        on
+                          ? "border-accent bg-accent/10 text-fg font-medium"
+                          : "border-border text-fg-muted hover:border-accent/40"
+                      }`}
+                    >
+                      {d.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-1.5 text-xs text-fg-subtle">
+                {weekdays.length} day{weekdays.length === 1 ? "" : "s"} per week selected
+                {" · "}reference protocol is 3–5×/week.
+              </p>
+            </div>
+          ) : (
+            <div>
+              <label className="label">Frequency</label>
+              <select
+                className="input"
+                value={frequency}
+                onChange={(e) => setFrequency(e.target.value as Frequency)}
+              >
+                {config.frequencyOptions.map((f) => (
+                  <option key={f.value} value={f.value}>{f.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
           <div>
             <label className="label">Time of day</label>
             <select
@@ -327,5 +409,6 @@ function frequencyLabel(f: Frequency): string {
     case "thrice-weekly": return "3×/wk";
     case "five-on-two-off": return "Mon–Fri";
     case "weekly": return "weekly";
+    case "custom-days": return "custom days";
   }
 }
