@@ -58,13 +58,13 @@ const OPTIONS: Option[] = [
   },
   {
     choice: "single-nad",
-    label: "NAD+ — The Catalyst™",
+    label: "NAD+",
     blurb: "25 mg, 3–5× weekly on the days you choose. Cellular energy & longevity.",
     badge: "Single vial",
   },
   {
     choice: "single-kpv",
-    label: "KPV — The Regulator™",
+    label: "KPV",
     blurb: "0.30 mg once daily. Inflammatory balance, gut & recovery.",
     badge: "Single vial",
   },

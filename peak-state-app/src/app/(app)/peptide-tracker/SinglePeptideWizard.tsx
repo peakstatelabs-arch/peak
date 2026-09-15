@@ -86,7 +86,7 @@ const CONFIGS: Record<Choice, Config> = {
     note: "Evening before bed. Avoid mixing with vitamin C at injection time.",
   },
   "single-nad": {
-    label: "NAD+ — The Catalyst™",
+    label: "NAD+",
     peptide_name: "NAD+",
     defaultDose: 25,
     defaultFrequency: "custom-days",
@@ -97,7 +97,7 @@ const CONFIGS: Record<Choice, Config> = {
     note: "Reconstitute 500 mg with 5 mL BAC water (100 mg/mL → 25 mg = 25 units). Pick 3–5 days per week you can keep consistent. Refrigerate after mixing.",
   },
   "single-kpv": {
-    label: "KPV — The Regulator™",
+    label: "KPV",
     peptide_name: "KPV",
     defaultDose: 0.3,
     defaultFrequency: "daily",
