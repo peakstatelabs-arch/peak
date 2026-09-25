@@ -1,4 +1,5 @@
 import { type StackProtocol, parseMg, getStackProtocol } from "./protocols";
+import { localDateISO } from "./utils";
 
 export type DoseRow = {
   peptide_name: string;
@@ -10,8 +11,13 @@ export type DoseRow = {
 
 export type PowerCutChoice = "foundation" | "performance";
 
-const DAY = 86400000;
-const iso = (d: Date) => d.toISOString().slice(0, 10);
+// Step by whole CALENDAR days in local time and emit the local YYYY-MM-DD, so
+// stored dose dates line up with how the calendar, dashboard, and reminder cron
+// all read "today" in the user's timezone. Building dates off UTC (toISOString)
+// or fixed 86,400,000-ms steps shifted dose dates by a day across timezones and
+// the daylight-saving change.
+const addDays = (base: Date, n: number) =>
+  new Date(base.getFullYear(), base.getMonth(), base.getDate() + n);
 
 /**
  * Generate the full dose schedule for a POWER CUT protocol.
@@ -35,7 +41,7 @@ export function generatePowerCutSchedule(opts: {
 
   for (let w = 0; w < protocol.totalWeeks; w++) {
     const weekNum = w + 1;
-    const weekStart = new Date(week1Start.getTime() + w * 7 * DAY);
+    const weekStart = addDays(week1Start, w * 7);
 
     // RETA — same weekday as start, morning
     const retaDoseStr = protocol.reta.schedule[w]?.dose;
@@ -45,7 +51,7 @@ export function generatePowerCutSchedule(opts: {
         rows.push({
           peptide_name: "Retatrutide",
           dose_mg: mg,
-          scheduled_for: iso(weekStart),
+          scheduled_for: localDateISO(weekStart),
           time_of_day: "morning",
           notes: `Week ${weekNum} · POWER CUT`,
         });
@@ -58,11 +64,11 @@ export function generatePowerCutSchedule(opts: {
       const mg = parseMg(cjcEntry.dose);
       if (mg > 0) {
         for (let d = 0; d < 5; d++) {
-          const day = new Date(weekStart.getTime() + d * DAY);
+          const day = addDays(weekStart, d);
           rows.push({
             peptide_name: "CJC-1295 + Ipamorelin",
             dose_mg: mg,
-            scheduled_for: iso(day),
+            scheduled_for: localDateISO(day),
             time_of_day: "evening",
             notes: `Week ${weekNum} · fasted (90 min after meal, before next meal)`,
           });
@@ -75,11 +81,11 @@ export function generatePowerCutSchedule(opts: {
       const days = bpc === "foundation" ? [0, 3] : [0, 2, 4];
       const dosePerInj = bpc === "foundation" ? 2.0 : 1.3;
       for (const d of days) {
-        const day = new Date(weekStart.getTime() + d * DAY);
+        const day = addDays(weekStart, d);
         rows.push({
           peptide_name: "BPC-157 + TB-500",
           dose_mg: dosePerInj,
-          scheduled_for: iso(day),
+          scheduled_for: localDateISO(day),
           time_of_day: "evening",
           notes: `Week ${weekNum} · ${bpc === "foundation" ? "Foundation 2×/wk" : "Performance 3×/wk"}`,
         });
@@ -105,17 +111,17 @@ export function generateCjcStackSchedule(opts: {
 
   for (let w = 0; w < protocol.totalWeeks; w++) {
     const weekNum = w + 1;
-    const weekStart = new Date(week1Start.getTime() + w * 7 * DAY);
+    const weekStart = addDays(week1Start, w * 7);
     const cjcEntry = protocol.cjc.schedule[w];
     if (!cjcEntry || cjcEntry.isOff) continue;
     const mg = parseMg(cjcEntry.dose);
     if (mg <= 0) continue;
     for (let d = 0; d < 5; d++) {
-      const day = new Date(weekStart.getTime() + d * DAY);
+      const day = addDays(weekStart, d);
       rows.push({
         peptide_name: "CJC-1295 + Ipamorelin",
         dose_mg: mg,
-        scheduled_for: iso(day),
+        scheduled_for: localDateISO(day),
         time_of_day: "evening",
         notes: `Week ${weekNum} · fasted (90 min after meal, before next meal)`,
       });
@@ -142,13 +148,13 @@ export function generateSingleCjcSchedule(opts: { startDate: Date }): DoseRow[] 
   for (let w = 0; w < SINGLE_CJC_WEEKLY_MG.length; w++) {
     const weekNum = w + 1;
     const mg = SINGLE_CJC_WEEKLY_MG[w];
-    const weekStart = new Date(week1Start.getTime() + w * 7 * DAY);
+    const weekStart = addDays(week1Start, w * 7);
     for (let d = 0; d < 5; d++) {
-      const day = new Date(weekStart.getTime() + d * DAY);
+      const day = addDays(weekStart, d);
       rows.push({
         peptide_name: "CJC-1295 + Ipamorelin",
         dose_mg: mg,
-        scheduled_for: iso(day),
+        scheduled_for: localDateISO(day),
         time_of_day: "evening",
         notes: `Week ${weekNum} · fasted (90 min after meal, before next meal)`,
       });
@@ -177,38 +183,37 @@ export function generateSingleSchedule(opts: {
   const { peptide_name, dose_mg, frequency, time_of_day, startDate, weeks } = opts;
   const rows: DoseRow[] = [];
   const start = new Date(startDate);
-  const end = new Date(start.getTime() + weeks * 7 * DAY);
+  const totalDays = weeks * 7; // inclusive horizon, in calendar days from start
 
   if (frequency === "custom-days") {
     // Member-selected weekdays (1=Mon..7=Sun), repeated every week. Walk each
     // calendar day and keep the ones whose weekday is in the selected set, so
     // any combination of days works regardless of the start day.
     const selected = new Set(opts.weekdays && opts.weekdays.length > 0 ? opts.weekdays : [1, 3, 5]);
-    for (let t = start.getTime(); t <= end.getTime(); t += DAY) {
-      const d = new Date(t);
+    for (let i = 0; i <= totalDays; i++) {
+      const d = addDays(start, i);
       const wd = d.getDay() === 0 ? 7 : d.getDay(); // JS Sun=0 -> 7
       if (selected.has(wd)) {
         rows.push(makeRow(peptide_name, dose_mg, d, time_of_day));
       }
     }
   } else if (frequency === "daily") {
-    for (let t = start.getTime(); t <= end.getTime(); t += DAY) {
-      rows.push(makeRow(peptide_name, dose_mg, new Date(t), time_of_day));
+    for (let i = 0; i <= totalDays; i++) {
+      rows.push(makeRow(peptide_name, dose_mg, addDays(start, i), time_of_day));
     }
   } else if (frequency === "every-other-day") {
-    for (let t = start.getTime(); t <= end.getTime(); t += 2 * DAY) {
-      rows.push(makeRow(peptide_name, dose_mg, new Date(t), time_of_day));
+    for (let i = 0; i <= totalDays; i += 2) {
+      rows.push(makeRow(peptide_name, dose_mg, addDays(start, i), time_of_day));
     }
   } else if (frequency === "weekly") {
-    for (let t = start.getTime(); t <= end.getTime(); t += 7 * DAY) {
-      rows.push(makeRow(peptide_name, dose_mg, new Date(t), time_of_day));
+    for (let i = 0; i <= totalDays; i += 7) {
+      rows.push(makeRow(peptide_name, dose_mg, addDays(start, i), time_of_day));
     }
   } else if (frequency === "five-on-two-off") {
     // 5 consecutive days from start, then 2 off — repeated weekly.
     for (let w = 0; w < weeks; w++) {
-      const weekStart = new Date(start.getTime() + w * 7 * DAY);
       for (let d = 0; d < 5; d++) {
-        rows.push(makeRow(peptide_name, dose_mg, new Date(weekStart.getTime() + d * DAY), time_of_day));
+        rows.push(makeRow(peptide_name, dose_mg, addDays(start, w * 7 + d), time_of_day));
       }
     }
   } else if (frequency === "twice-weekly" || frequency === "thrice-weekly") {
@@ -225,9 +230,8 @@ export function generateSingleSchedule(opts: {
         ? [0, 3]
         : [0, 2, 4];
     for (let w = 0; w < weeks; w++) {
-      const weekStart = new Date(start.getTime() + w * 7 * DAY);
       for (const off of offsets) {
-        rows.push(makeRow(peptide_name, dose_mg, new Date(weekStart.getTime() + off * DAY), time_of_day));
+        rows.push(makeRow(peptide_name, dose_mg, addDays(start, w * 7 + off), time_of_day));
       }
     }
   }
@@ -238,7 +242,7 @@ function makeRow(name: string, mg: number, d: Date, t: "morning" | "evening"): D
   return {
     peptide_name: name,
     dose_mg: mg,
-    scheduled_for: iso(d),
+    scheduled_for: localDateISO(d),
     time_of_day: t,
     notes: null,
   };
