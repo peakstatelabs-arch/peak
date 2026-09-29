@@ -7,7 +7,7 @@ import { ResearchAccessForm } from "./ResearchAccessForm";
 export const metadata: Metadata = {
   title: `Peak State Labs — Research Access`,
   description:
-    "Create a research account to access product information. Materials are supplied strictly for laboratory research and non-human use.",
+    "Create a free account and get 10% off your order. Materials are supplied strictly for laboratory research and non-human use.",
 };
 
 const stats: { value: string; label: string }[] = [
@@ -62,7 +62,7 @@ export default function ResearchAccessPage() {
               <div className="mt-6 flex justify-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-[0.18em] text-[var(--accent-dark)]">
                   <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-                  <span>RESEARCH ACCESS REQUIRED</span>
+                  <span>MEMBERS SAVE 10%</span>
                 </div>
               </div>
 
@@ -72,16 +72,14 @@ export default function ResearchAccessPage() {
               </h1>
 
               <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed">
-                Create your free account to view live pricing, third-party COAs,
-                and 99%+ purity docs.
+                Create your free account and get 10% off your order — or
+                continue to the catalog.
               </p>
             </div>
 
             {/* Account form — placed first so the ask is above the fold */}
             <div className="max-w-md mx-auto mt-8 text-left">
-              <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
-                <ResearchAccessForm />
-              </div>
+              <ResearchAccessForm />
             </div>
 
             {/* Trust info — below the form as supporting reinforcement */}
@@ -101,17 +99,6 @@ export default function ResearchAccessPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-
-              {/* Regulatory callout */}
-              <div className="mt-6 rounded-2xl border border-[var(--accent)]/40 bg-[var(--muted)] p-5 text-left sm:text-center">
-                <p className="text-sm font-bold text-[var(--accent-dark)]">
-                  {siteCopy.brand.name}
-                </p>
-                <p className="mt-2 text-sm text-[var(--primary)]/75 leading-relaxed">
-                  Due to regulatory changes in this industry, we require account
-                  login before product information can be accessed.
-                </p>
               </div>
             </div>
 

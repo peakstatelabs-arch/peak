@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
+import { TrackedLink } from "@/app/components/TrackedLink";
+import { MEMBER_DISCOUNT_CODE, SHOP_URL } from "./constants";
 
 type Tab = "create" | "signin";
-
-const SHOP_URL = "https://peakstate.shop";
 
 // Live "verified members" social-proof count. Anchored at 6,124 on
 // 2026-09-13 and grows by 33 each calendar day (UTC), never resetting.
@@ -18,6 +18,12 @@ function memberCount(now = Date.now()): number {
   const days = Math.max(0, Math.floor((now - MEMBERS_ANCHOR_MS) / 86_400_000));
   return MEMBERS_BASE + days * MEMBERS_PER_DAY;
 }
+
+// The page is statically prerendered at deploy time, so the server can't know
+// today's count. Render nothing server-side (null), then read the live count
+// on the client — no hydration mismatch.
+const subscribeNoop = () => () => {};
+const getServerMemberCount = () => null;
 
 /** Fire-and-forget PostHog capture that never breaks the form. */
 function track(event: string, props?: Record<string, string>) {
@@ -38,17 +44,39 @@ export function ResearchAccessForm() {
   const [signInAgreed, setSignInAgreed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Set once the visitor creates an account or signs in; swaps the form for
+  // the discount-code success screen.
+  const [unlocked, setUnlocked] = useState<Tab | null>(null);
+  const [unlockedEmail, setUnlockedEmail] = useState("");
+  const [copied, setCopied] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const members = useSyncExternalStore(
+    subscribeNoop,
+    memberCount,
+    getServerMemberCount
+  );
+
+  // The success card is much shorter than the form, so bring it into view.
+  useEffect(() => {
+    if (unlocked) {
+      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [unlocked]);
+
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(MEMBER_DISCOUNT_CODE);
+      setCopied(true);
+      track("research_access_code_copied", { method: unlocked ?? "unknown" });
+    } catch {
+      // Clipboard unavailable (e.g. older browsers) — the code stays visible.
+    }
+  }
 
   // Fires "research_access_started" once, the first time a visitor engages
   // with any field, so we can tell "never touched the form" apart from
   // "started but didn't finish."
-  // Recompute the member count after mount so it stays correct across a day
-  // boundary without risking a server/client hydration mismatch.
-  const [members, setMembers] = useState<number>(() => memberCount());
-  useEffect(() => {
-    setMembers(memberCount());
-  }, []);
-
   const startedRef = useRef(false);
   function handleFieldFocus() {
     if (startedRef.current) return;
@@ -104,7 +132,9 @@ export function ResearchAccessForm() {
       console.error("Failed to record account:", err);
     }
 
-    window.location.href = SHOP_URL;
+    setSubmitting(false);
+    setUnlockedEmail(cleanEmail);
+    setUnlocked("create");
   }
 
   function handleSignInSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -135,15 +165,76 @@ export function ResearchAccessForm() {
     }
     track("research_access_signup", { method: "signin" });
 
-    window.location.href = SHOP_URL;
+    setUnlockedEmail(cleanEmail);
+    setUnlocked("signin");
   }
 
   const inputClass =
     "mt-2 w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white";
   const labelClass = "block text-sm font-bold text-[var(--primary)]";
+  const cardClass =
+    "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
+
+  if (unlocked) {
+    return (
+      <div ref={cardRef} className={`${cardClass} text-center`}>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent)]/15">
+          <svg
+            className="h-7 w-7 text-[var(--accent-dark)]"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+
+        <h2 className="mt-4 text-2xl font-bold tracking-tight text-[var(--primary)]">
+          You&rsquo;re in!
+        </h2>
+        <p className="mt-2 text-sm text-[var(--primary)]/70">
+          Here&rsquo;s your 10% member discount code:
+        </p>
+
+        <div className="mt-5 flex items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-[var(--accent)] bg-[var(--muted)] py-3 pl-5 pr-3">
+          <span className="font-mono text-2xl font-bold tracking-[0.2em] text-[var(--primary)]">
+            {MEMBER_DISCOUNT_CODE}
+          </span>
+          <button
+            type="button"
+            onClick={copyCode}
+            className="h-10 flex-shrink-0 rounded-xl bg-white px-4 text-sm font-bold text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)] transition-colors hover:bg-[var(--accent)]/10"
+          >
+            {copied ? "Copied!" : "Copy"}
+          </button>
+        </div>
+
+        <p className="mt-3 text-xs text-[var(--primary)]/60 leading-relaxed">
+          Enter it at checkout for 10% off your order.
+          {unlocked === "create" && unlockedEmail && (
+            <> We&rsquo;ve also sent it to {unlockedEmail}.</>
+          )}
+        </p>
+
+        <TrackedLink
+          href={SHOP_URL}
+          event="research_access_continue"
+          eventProperties={{ method: unlocked }}
+          className="btn-primary mt-6 inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold"
+        >
+          Continue to shop <span aria-hidden="true" className="ml-2">→</span>
+        </TrackedLink>
+      </div>
+    );
+  }
 
   return (
     <div>
+      <div ref={cardRef} className={cardClass}>
       {/* Sign in / Create account toggle */}
       <div
         role="tablist"
@@ -179,7 +270,13 @@ export function ResearchAccessForm() {
       </div>
 
       {/* Social proof */}
-      <div className="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-[var(--primary)]/70">
+      {/* Space is always reserved; the line fades in once the live count is known. */}
+      <div
+        aria-hidden={members === null}
+        className={`mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-[var(--primary)]/70 transition-opacity duration-300 ${
+          members === null ? "opacity-0" : "opacity-100"
+        }`}
+      >
         <svg
           className="h-4 w-4 flex-shrink-0 text-[var(--accent-dark)]"
           viewBox="0 0 20 20"
@@ -192,7 +289,7 @@ export function ResearchAccessForm() {
             clipRule="evenodd"
           />
         </svg>
-        Join {members.toLocaleString("en-US")} verified members
+        Join {(members ?? MEMBERS_BASE).toLocaleString("en-US")} verified members
       </div>
 
       {tab === "create" ? (
@@ -265,9 +362,10 @@ export function ResearchAccessForm() {
             <button
               type="submit"
               disabled={submitting}
-              className="btn-primary inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+              className="btn-primary inline-flex w-full min-h-14 items-center justify-center rounded-2xl px-4 py-3 text-base sm:text-lg font-semibold leading-tight disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {submitting ? "Getting access..." : "Get Instant Access"}
+              {/* Non-breaking spaces keep "Get 10% Off" together on small phones. */}
+              {submitting ? "Creating account..." : "Create Account & Get 10% Off"}
             </button>
             <p className="mt-3 text-center text-xs text-[var(--primary)]/50 leading-relaxed">
               Free · takes 10 seconds · we never share your email.
@@ -281,7 +379,7 @@ export function ResearchAccessForm() {
               Welcome back
             </h2>
             <p className="mt-1 text-sm text-[var(--primary)]/60">
-              Sign in to continue browsing product information.
+              Sign in to unlock your 10% member discount.
             </p>
           </div>
 
@@ -356,6 +454,18 @@ export function ResearchAccessForm() {
           </button>
         </form>
       )}
+      </div>
+
+      {/* Skip path — nobody is blocked from the shop */}
+      <div className="mt-5 text-center">
+        <TrackedLink
+          href={SHOP_URL}
+          event="research_access_skip"
+          className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]/60 underline-offset-4 transition-colors hover:text-[var(--primary)] hover:underline"
+        >
+          Continue without discount <span aria-hidden="true">→</span>
+        </TrackedLink>
+      </div>
     </div>
   );
 }
