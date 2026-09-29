@@ -457,15 +457,14 @@ export function ResearchAccessForm() {
       </div>
 
       {/* Skip path — nobody is blocked from the shop */}
-      <div className="mt-5 text-center">
-        <TrackedLink
-          href={SHOP_URL}
-          event="research_access_skip"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--primary)]/60 underline-offset-4 transition-colors hover:text-[var(--primary)] hover:underline"
-        >
-          Continue without discount <span aria-hidden="true">→</span>
-        </TrackedLink>
-      </div>
+      {/* Outlined so it's easy to find but still secondary to the solid CTA. */}
+      <TrackedLink
+        href={SHOP_URL}
+        event="research_access_skip"
+        className="mt-4 flex w-full min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-[var(--primary)] bg-white px-4 py-3 text-base sm:text-lg font-semibold text-[var(--primary)] shadow-sm transition-colors hover:bg-[var(--muted)]"
+      >
+        Continue without discount <span aria-hidden="true">→</span>
+      </TrackedLink>
     </div>
   );
 }
