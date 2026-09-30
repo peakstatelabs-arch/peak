@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useCart } from "./CartContext";
 import { readClientContact } from "@/app/lib/clientContact";
+import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 
 type Props = {
   slug: string;
@@ -37,8 +38,17 @@ export function AddToCartButton(props: Props) {
     openCart();
     window.setTimeout(() => setJustAdded(false), 1200);
 
-    // Fire-and-forget analytics ping. Reuses the existing cart-event route
-    // so PostHog / Zapier funnels keep working without a rewrite.
+    trackAddToCartInPostHog({
+      funnel: "singles",
+      product_slug: props.slug,
+      product_name: props.name,
+      price_id: props.priceId,
+      dose: props.dose,
+      unit_price_cents: props.unitPriceCents,
+      quantity: 1,
+    });
+
+    // Fire-and-forget Zapier ping via the existing cart-event route (unchanged).
     try {
       const { email, name, sessionId } = readClientContact();
       fetch("/api/cart-event", {

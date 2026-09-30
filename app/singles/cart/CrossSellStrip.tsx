@@ -2,6 +2,7 @@
 
 import { useCart } from "./CartContext";
 import { readClientContact } from "@/app/lib/clientContact";
+import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import { CROSS_SELL, type CrossSellItem } from "./crossSell";
 
 type Props = {
@@ -35,6 +36,17 @@ export function CrossSellStrip({ slugs, variant }: Props) {
     // it's already open, so leave the scroll position alone.
     if (variant === "buybox") openCart();
 
+    trackAddToCartInPostHog({
+      funnel: `cross_sell_${variant}`,
+      product_slug: item.slug,
+      product_name: item.name,
+      price_id: item.priceId,
+      dose: item.dose,
+      unit_price_cents: item.unitPriceCents,
+      quantity: 1,
+    });
+
+    // Zapier ping via the existing cart-event route (unchanged).
     try {
       const { email, name, sessionId } = readClientContact();
       fetch("/api/cart-event", {
