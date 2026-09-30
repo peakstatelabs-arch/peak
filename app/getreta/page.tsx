@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
+import { MemberBanner } from "@/app/components/member/MemberBanner";
 import { reviews } from "@/content/reviews";
 import { CartProvider } from "@/app/singles/cart/CartContext";
 import { CartDrawer } from "@/app/singles/cart/CartDrawer";
@@ -150,6 +151,9 @@ export default function GetRetaPage() {
   return (
     <CartProvider>
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
+        {/* Members save 10% — non-members only; opens the signup popup */}
+        <MemberBanner page="getreta" leadSource="reta-access-form" />
+
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
           <Container className="flex h-16 items-center justify-between">

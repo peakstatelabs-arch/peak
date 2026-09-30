@@ -110,6 +110,17 @@ export function readClientContact(): ClientContact {
 }
 
 /**
+ * True when this browser already has a saved account (created or signed in at
+ * /research-access, /reta-access, or the member popup). Side-effect free —
+ * unlike readClientContact it never writes a session id — so it's safe to call
+ * during render.
+ */
+export function hasSavedContact(): boolean {
+  if (typeof window === "undefined") return false;
+  return Boolean(getFromLocalStorage().email || getFromPostHog().email);
+}
+
+/**
  * Returns a display-safe first name for greetings, or undefined when the
  * stored value isn't plausibly a name. Account "names" are user-entered and
  * messy — often an email, a full name, or junk — so we only greet when it
