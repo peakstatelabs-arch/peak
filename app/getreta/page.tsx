@@ -165,12 +165,6 @@ export default function GetRetaPage() {
             </div>
             <div className="flex items-center gap-4 sm:gap-6">
               <a
-                href="/reta"
-                className="hidden sm:inline text-sm font-medium text-[var(--primary)]/70 hover:text-[var(--primary)] transition-colors"
-              >
-                Research overview
-              </a>
-              <a
                 href="#buy"
                 className="hidden sm:inline-flex btn-primary h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
               >
