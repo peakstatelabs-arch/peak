@@ -2,6 +2,7 @@
 
 import { useCart, formatUsd } from "@/app/singles/cart/CartContext";
 import { readClientContact } from "@/app/lib/clientContact";
+import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import { RETA, TIERS, tierPricing } from "./retaBundles";
 
 type Props = {
@@ -31,7 +32,17 @@ export function RetaBundlePicker({ selected, onSelect }: Props) {
 
     openCart();
 
-    // Fire-and-forget analytics, matching the /singles add-to-cart event.
+    trackAddToCartInPostHog({
+      funnel: "getreta",
+      product_slug: RETA.slug,
+      product_name: RETA.name,
+      price_id: RETA.priceId,
+      dose: RETA.dose,
+      unit_price_cents: RETA.unitPriceCents,
+      quantity: tier.vials,
+    });
+
+    // Fire-and-forget Zapier ping, matching the /singles add-to-cart event (unchanged).
     try {
       const { email, name, sessionId } = readClientContact();
       fetch("/api/cart-event", {
