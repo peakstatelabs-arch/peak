@@ -32,7 +32,7 @@ export function RetaBuy() {
 
       {/* Picker + guarantee — mobile: right after the heading; desktop: sticky
           right column spanning both rows. */}
-      <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-24">
+      <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(6rem+var(--member-banner-h,0px))]">
         <RetaBundlePicker selected={selected} onSelect={setSelected} />
         <CrossSellStrip slugs={BUYBOX_CROSSSELL_SLUGS} variant="buybox" />
         <p className="mt-4 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">

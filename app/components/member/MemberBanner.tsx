@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import posthog from "posthog-js";
 import { MemberSignupModal } from "./MemberSignupModal";
 import {
@@ -23,6 +24,10 @@ function track(event: string, props?: Record<string, string>) {
  * Slim "Members save 10%" strip for visitors without an account. Tapping it
  * opens the signup popup on the same page (click-only — it never opens by
  * itself). Hidden for members and for 7 days after ✕.
+ *
+ * Rendered inside the sticky page header so it stays pinned under the logo
+ * bar while scrolling. It publishes its height as --member-banner-h so anchor
+ * jumps and other sticky elements can clear it.
  */
 export function MemberBanner({
   page,
@@ -41,6 +46,26 @@ export function MemberBanner({
   );
   const [open, setOpen] = useState(false);
   const closePopup = useCallback(() => setOpen(false), []);
+  const stripRef = useRef<HTMLDivElement>(null);
+
+  // Publish the strip's live height (0 when hidden) as a CSS variable.
+  useEffect(() => {
+    const root = document.documentElement;
+    const el = stripRef.current;
+    if (!visible || !el) {
+      root.style.removeProperty("--member-banner-h");
+      return;
+    }
+    const update = () =>
+      root.style.setProperty("--member-banner-h", `${el.offsetHeight}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty("--member-banner-h");
+    };
+  }, [visible]);
 
   useEffect(() => {
     if (visible) track("member_banner_shown", { page });
@@ -49,7 +74,10 @@ export function MemberBanner({
   return (
     <>
       {visible && (
-        <div className="animate-fade-in border-b border-[var(--accent)]/30 bg-[var(--accent)]/15 text-[var(--primary)]">
+        <div
+          ref={stripRef}
+          className="animate-fade-in border-t border-[var(--accent)]/30 bg-[#ebfafb] text-[var(--primary)]"
+        >
           <div className="mx-auto flex max-w-6xl items-center gap-2 px-3 sm:px-4">
             {/* Balances the ✕ on the right so the message sits truly centered */}
             <span className="w-8 flex-shrink-0" aria-hidden="true" />
@@ -98,14 +126,20 @@ export function MemberBanner({
         </div>
       )}
 
-      {/* Kept mounted outside the banner so the success screen survives the
-          banner hiding once the visitor becomes a member. */}
-      <MemberSignupModal
-        open={open}
-        onClose={closePopup}
-        page={page}
-        leadSource={leadSource}
-      />
+      {/* Portaled to <body>: the header's frosted-glass backdrop-filter would
+          otherwise trap this full-screen popup inside the header bar. Kept
+          outside the strip so the success screen survives the strip hiding
+          once the visitor becomes a member. */}
+      {open &&
+        createPortal(
+          <MemberSignupModal
+            open={open}
+            onClose={closePopup}
+            page={page}
+            leadSource={leadSource}
+          />,
+          document.body
+        )}
     </>
   );
 }

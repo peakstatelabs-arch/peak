@@ -36,6 +36,9 @@ body {
 
 /* Smooth scroll for all anchor links */
 html {
+  /* Set by MemberBanner while the pinned "Members save 10%" strip shows, so
+     in-page anchor jumps land below it (0 when hidden). */
+  scroll-padding-top: var(--member-banner-h, 0px);
   scroll-behavior: smooth;
 }
 
