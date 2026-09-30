@@ -234,6 +234,20 @@ export function ResearchAccessForm() {
 
   return (
     <div>
+      {/* Phones only: the bottom skip button sits below the fold under the
+          long form, so offer the way out up top too. */}
+      <p className="-mt-3 mb-5 text-center text-sm text-[var(--primary)]/70 sm:hidden">
+        Just browsing?{" "}
+        <TrackedLink
+          href={SHOP_URL}
+          event="research_access_skip"
+          eventProperties={{ placement: "top" }}
+          className="whitespace-nowrap font-bold text-[var(--primary)] underline underline-offset-2"
+        >
+          Continue to shop <span aria-hidden="true">→</span>
+        </TrackedLink>
+      </p>
+
       <div ref={cardRef} className={cardClass}>
       {/* Sign in / Create account toggle */}
       <div
@@ -461,6 +475,7 @@ export function ResearchAccessForm() {
       <TrackedLink
         href={SHOP_URL}
         event="research_access_skip"
+        eventProperties={{ placement: "bottom" }}
         className="mt-4 flex w-full min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-[var(--primary)] bg-white px-4 py-3 text-base sm:text-lg font-semibold text-[var(--primary)] shadow-sm transition-colors hover:bg-[var(--muted)]"
       >
         Continue without discount <span aria-hidden="true">→</span>
