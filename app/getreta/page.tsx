@@ -154,14 +154,15 @@ export default function GetRetaPage() {
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
           <Container className="flex h-16 items-center justify-between">
-            <a href="/" className="flex items-center gap-2 font-bold text-lg">
+            {/* Not a link: keeps paid traffic on /getreta instead of the homepage */}
+            <div className="flex items-center gap-2 font-bold text-lg">
               <img
                 src="/logo.png"
                 alt="Peak State Labs Logo"
                 className="h-7 w-7 rounded-lg"
               />
               <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-            </a>
+            </div>
             <div className="flex items-center gap-4 sm:gap-6">
               <a
                 href="/reta"
@@ -608,6 +609,8 @@ export default function GetRetaPage() {
                     </ul>
                     <a
                       href="/"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-6 text-base font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)]"
                     >
                       See the full stack →
@@ -764,14 +767,14 @@ export default function GetRetaPage() {
             </div>
             <div className="py-8 border-b border-white/10">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                <a href="/" className="flex items-center gap-2 font-bold text-lg">
+                <div className="flex items-center gap-2 font-bold text-lg">
                   <img
                     src="/logo.png"
                     alt="Peak State Labs Logo"
                     className="h-7 w-7 rounded-lg"
                   />
                   <span>{siteCopy.brand.name}</span>
-                </a>
+                </div>
                 <nav className="flex flex-wrap justify-center gap-6 text-sm">
                   <a
                     href="/reta"
