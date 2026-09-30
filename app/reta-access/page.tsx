@@ -7,7 +7,7 @@ import { RetaAccessForm } from "./RetaAccessForm";
 export const metadata: Metadata = {
   title: `Peak State Labs — Research Access`,
   description:
-    "Create a research account to access product information. Materials are supplied strictly for laboratory research and non-human use.",
+    "Create a free account and get 10% off your order. Materials are supplied strictly for laboratory research and non-human use.",
   alternates: { canonical: "/reta-access" },
 };
 
@@ -36,7 +36,7 @@ export default function RetaAccessPage() {
 
       <main>
         {/* Hero */}
-        <Section className="relative overflow-hidden gradient-hero !pt-8 !pb-12 sm:!pt-12 sm:!pb-16">
+        <Section className="relative overflow-clip gradient-hero !pt-8 !pb-12 sm:!pt-12 sm:!pb-16">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
             <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
@@ -63,7 +63,7 @@ export default function RetaAccessPage() {
               <div className="mt-6 flex justify-center">
                 <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-[0.18em] text-[var(--accent-dark)]">
                   <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-                  <span>RESEARCH ACCESS REQUIRED</span>
+                  <span>MEMBERS SAVE 10%</span>
                 </div>
               </div>
 
@@ -73,16 +73,14 @@ export default function RetaAccessPage() {
               </h1>
 
               <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed">
-                Create your free account to view live pricing, third-party COAs,
-                and 99%+ purity docs.
+                Create your free account and get 10% off your order — or
+                continue without an account.
               </p>
             </div>
 
             {/* Account form — placed first so the ask is above the fold */}
             <div className="max-w-md mx-auto mt-8 text-left">
-              <div className="p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm">
-                <RetaAccessForm />
-              </div>
+              <RetaAccessForm />
             </div>
 
             {/* Trust info — below the form as supporting reinforcement */}
@@ -102,17 +100,6 @@ export default function RetaAccessPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-
-              {/* Regulatory callout */}
-              <div className="mt-6 rounded-2xl border border-[var(--accent)]/40 bg-[var(--muted)] p-5 text-left sm:text-center">
-                <p className="text-sm font-bold text-[var(--accent-dark)]">
-                  {siteCopy.brand.name}
-                </p>
-                <p className="mt-2 text-sm text-[var(--primary)]/75 leading-relaxed">
-                  Due to regulatory changes in this industry, we require account
-                  login before product information can be accessed.
-                </p>
               </div>
             </div>
 
