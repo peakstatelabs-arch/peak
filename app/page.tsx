@@ -9,6 +9,7 @@ import { UrgencyBanner } from "@/app/components/UrgencyBanner";
 import { TrackedLink } from "@/app/components/TrackedLink";
 import { ShippingNoteText } from "@/app/components/ShippingNoteText";
 import { siteCopy } from "@/content/siteCopy";
+import { MemberBanner } from "@/app/components/member/MemberBanner";
 
 export default function Home() {
   return (
@@ -24,6 +25,9 @@ export default function Home() {
           />
         </Container>
       </div>
+
+      {/* Members save 10% — non-members only; opens the signup popup */}
+      <MemberBanner page="homepage" />
 
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
