@@ -35,7 +35,7 @@ export default function ResearchAccessPage() {
 
       <main>
         {/* Hero */}
-        <Section className="relative overflow-hidden gradient-hero !pt-8 !pb-12 sm:!pt-12 sm:!pb-16">
+        <Section className="relative overflow-clip gradient-hero !pt-8 !pb-12 sm:!pt-12 sm:!pb-16">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
             <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />

@@ -201,13 +201,13 @@ export function ResearchAccessForm() {
         </p>
 
         <div className="mt-5 flex items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-[var(--accent)] bg-[var(--muted)] py-3 pl-5 pr-3">
-          <span className="font-mono text-2xl font-bold tracking-[0.2em] text-[var(--primary)]">
+          <span className="min-w-0 font-mono text-xl sm:text-2xl font-bold tracking-[0.15em] text-[var(--primary)]">
             {MEMBER_DISCOUNT_CODE}
           </span>
           <button
             type="button"
             onClick={copyCode}
-            className="h-10 flex-shrink-0 rounded-xl bg-white px-4 text-sm font-bold text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)] transition-colors hover:bg-[var(--accent)]/10"
+            className="h-10 w-24 flex-shrink-0 rounded-xl bg-white text-sm font-bold text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)] transition-colors hover:bg-[var(--accent)]/10"
           >
             {copied ? "Copied!" : "Copy"}
           </button>
