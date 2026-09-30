@@ -151,9 +151,6 @@ export default function GetRetaPage() {
   return (
     <CartProvider>
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
-        {/* Members save 10% — non-members only; opens the signup popup */}
-        <MemberBanner page="getreta" leadSource="reta-access-form" />
-
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
           <Container className="flex h-16 items-center justify-between">
@@ -181,6 +178,9 @@ export default function GetRetaPage() {
               <ViewCartButton variant="header" />
             </div>
           </Container>
+
+          {/* Members save 10% — non-members only; pinned under the logo bar */}
+          <MemberBanner page="getreta" leadSource="reta-access-form" />
         </header>
 
         <main>

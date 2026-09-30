@@ -26,9 +26,6 @@ export default function Home() {
         </Container>
       </div>
 
-      {/* Members save 10% — non-members only; opens the signup popup */}
-      <MemberBanner page="homepage" />
-
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
         <Container className="flex h-16 items-center justify-between">
@@ -58,6 +55,9 @@ export default function Home() {
             {siteCopy.brand.primaryCtaLabel}
           </a>
         </Container>
+
+        {/* Members save 10% — non-members only; pinned under the logo bar */}
+        <MemberBanner page="homepage" />
       </header>
 
       <main>
