@@ -48,12 +48,26 @@ export default function Home() {
               </a>
             ))}
           </nav>
-          <a
-            href={siteCopy.brand.primaryCtaHref}
-            className="btn-primary inline-flex h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
-          >
-            {siteCopy.brand.primaryCtaLabel}
-          </a>
+          <div className="flex items-center gap-3 sm:gap-6">
+            {/* Shortcut for Reta-aware visitors — text-weight so the hero stays untouched
+                and the primary CTA keeps visual priority. Hidden md→lg, where the nav
+                already fills the bar; short label on phones so it fits beside the CTA. */}
+            <TrackedLink
+              href={siteCopy.brand.retaCtaHref}
+              className="md:hidden lg:inline text-sm font-semibold text-[var(--primary)]/70 transition-colors hover:text-[var(--primary)] whitespace-nowrap"
+              event="reta_entry_click"
+              eventProperties={{ source: "header" }}
+            >
+              <span className="lg:hidden">{siteCopy.brand.retaCtaLabelShort}</span>
+              <span className="hidden lg:inline">{siteCopy.brand.retaCtaLabel}</span>
+            </TrackedLink>
+            <a
+              href={siteCopy.brand.primaryCtaHref}
+              className="btn-primary inline-flex h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
+            >
+              {siteCopy.brand.primaryCtaLabel}
+            </a>
+          </div>
         </Container>
 
         {/* Members save 10% — non-members only; pinned under the logo bar */}

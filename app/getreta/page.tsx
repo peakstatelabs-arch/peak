@@ -7,6 +7,7 @@ import { reviews } from "@/content/reviews";
 import { CartProvider } from "@/app/singles/cart/CartContext";
 import { CartDrawer } from "@/app/singles/cart/CartDrawer";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
+import { TrackedLink } from "@/app/components/TrackedLink";
 import { RetaBuy } from "./RetaBuy";
 
 export const metadata: Metadata = {
@@ -164,6 +165,17 @@ export default function GetRetaPage() {
               <span className="hidden sm:inline">{siteCopy.brand.name}</span>
             </div>
             <div className="flex items-center gap-4 sm:gap-6">
+              {/* Power Cut cross-sell — text-weight, new tab so the Reta cart/page stays open */}
+              <TrackedLink
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold text-[var(--primary)]/70 transition-colors hover:text-[var(--primary)] whitespace-nowrap"
+                event="powercut_entry_click"
+                eventProperties={{ source: "getreta_header" }}
+              >
+                Shop POWER CUT&trade;
+              </TrackedLink>
               <a
                 href="#buy"
                 className="hidden sm:inline-flex btn-primary h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
