@@ -54,12 +54,13 @@ export default function Home() {
                 already fills the bar; short label on phones so it fits beside the CTA. */}
             <TrackedLink
               href={siteCopy.brand.retaCtaHref}
-              className="md:hidden lg:inline text-sm font-semibold text-[var(--primary)]/70 transition-colors hover:text-[var(--primary)] whitespace-nowrap"
+              className="md:hidden lg:inline group text-sm font-bold text-[var(--primary)] underline underline-offset-2 whitespace-nowrap"
               event="reta_entry_click"
               eventProperties={{ source: "header" }}
             >
               <span className="lg:hidden">{siteCopy.brand.retaCtaLabelShort}</span>
-              <span className="hidden lg:inline">{siteCopy.brand.retaCtaLabel}</span>
+              <span className="hidden lg:inline">{siteCopy.brand.retaCtaLabel}</span>{" "}
+              <span aria-hidden="true" className="relative left-0 transition-[left] group-hover:left-0.5">→</span>
             </TrackedLink>
             <a
               href={siteCopy.brand.primaryCtaHref}

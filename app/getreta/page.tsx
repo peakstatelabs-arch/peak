@@ -170,11 +170,12 @@ export default function GetRetaPage() {
                 href="/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-semibold text-[var(--primary)]/70 transition-colors hover:text-[var(--primary)] whitespace-nowrap"
+                className="group text-sm font-bold text-[var(--primary)] underline underline-offset-2 whitespace-nowrap"
                 event="powercut_entry_click"
                 eventProperties={{ source: "getreta_header" }}
               >
-                Shop POWER CUT&trade;
+                Shop POWER CUT&trade;{" "}
+                <span aria-hidden="true" className="relative left-0 transition-[left] group-hover:left-0.5">→</span>
               </TrackedLink>
               <a
                 href="#buy"
