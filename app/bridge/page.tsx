@@ -49,7 +49,7 @@ export default function BridgePage() {
               <div className="mt-8 relative flex items-center justify-center animate-drop-in">
                 <div className="relative">
                   <img
-                    src="/product.png"
+                    src="/power-cut-stack.png"
                     alt="POWER CUT Peptide Kit"
                     className="w-full max-w-sm sm:max-w-md drop-shadow-2xl"
                   />
