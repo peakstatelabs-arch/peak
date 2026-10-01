@@ -55,7 +55,7 @@ export default function ThankYouPage() {
               <div className="mt-10 relative flex items-center justify-center animate-drop-in">
                 <div className="relative">
                   <img
-                    src="/power-cut-stack.png"
+                    src="/power-cut-stack.webp"
                     alt="POWER CUT Peptide Kit"
                     className="w-full max-w-md lg:max-w-lg drop-shadow-2xl"
                   />
