@@ -156,7 +156,7 @@ export default function Home() {
               <div className="relative flex items-center justify-center lg:justify-end">
                 <div className="relative animate-drop-in">
                   <img
-                    src="/power-cut-stack.png"
+                    src="/power-cut-stack.webp"
                     alt="POWER CUT Peptide Kit"
                     className="w-full max-w-md lg:max-w-lg drop-shadow-2xl"
                   />
