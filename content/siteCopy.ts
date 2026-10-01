@@ -12,6 +12,11 @@ export const siteCopy = {
     // the quiz page and the calculator CTA.
     quizCtaLabel: "Find Your Protocol",
     quizCtaHref: "/quiz",
+    // Header shortcut for visitors who already know they want Reta.
+    retaCtaLabel: "Shop Retatrutide",
+    // Phones: the full label doesn't fit beside the header CTA.
+    retaCtaLabelShort: "Shop Reta",
+    retaCtaHref: "/getreta",
   },
 
   urgencyBanner: {
