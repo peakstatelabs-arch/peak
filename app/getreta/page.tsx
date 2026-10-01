@@ -7,7 +7,7 @@ import { reviews } from "@/content/reviews";
 import { CartProvider } from "@/app/singles/cart/CartContext";
 import { CartDrawer } from "@/app/singles/cart/CartDrawer";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
-import { TrackedLink } from "@/app/components/TrackedLink";
+import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { RetaBuy } from "./RetaBuy";
 
 export const metadata: Metadata = {
@@ -165,20 +165,10 @@ export default function GetRetaPage() {
               <span className="hidden sm:inline">{siteCopy.brand.name}</span>
             </div>
             <div className="flex items-center gap-4 sm:gap-6">
-              {/* Power Cut cross-sell — text-weight, new tab so the Reta cart/page stays open */}
-              <TrackedLink
-                href="/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group text-sm font-bold text-[var(--primary)] whitespace-nowrap"
-                event="powercut_entry_click"
-                eventProperties={{ source: "getreta_header" }}
-              >
-                <span className="underline underline-offset-2">Shop POWER CUT&trade;</span>
-                <svg aria-hidden="true" className="ml-1 inline-block h-3.5 w-3.5 -mt-0.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.75}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M7 17L17 7M17 7H9M17 7v8" />
-                </svg>
-              </TrackedLink>
+              {/* Power Cut cross-sell — text-weight so "Get Retatrutide" keeps priority */}
+              <HeaderCrossLink href="/" event="powercut_entry_click" source="getreta_header">
+                Shop POWER CUT&trade;
+              </HeaderCrossLink>
               <a
                 href="#buy"
                 className="hidden sm:inline-flex btn-primary h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
