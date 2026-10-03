@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
+import { SmsOptIn } from "@/app/components/SmsOptIn";
+import { fetchCheckoutContact, phoneLast4 } from "@/app/lib/smsOptIn";
 
 export const metadata: Metadata = {
   title: "Welcome to the 1% — Peak State Labs",
@@ -9,7 +11,14 @@ export const metadata: Metadata = {
     "Your POWER CUT order is confirmed. Here's your transformation timeline and next steps.",
 };
 
-export default function ThankYouPage() {
+export default async function ThankYouPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ session_id?: string }>;
+}) {
+  const { session_id } = await searchParams;
+  const contact = session_id ? await fetchCheckoutContact(session_id) : null;
+
   return (
     <div className="min-h-screen bg-white text-[var(--primary)]">
       {/* Header */}
@@ -65,6 +74,15 @@ export default function ThankYouPage() {
             </div>
           </Container>
         </Section>
+
+        {/* SMS support opt-in */}
+        <SmsOptIn
+          source="powercut"
+          sessionId={contact?.sessionId}
+          hasPhone={Boolean(contact?.phone)}
+          phoneLast4={phoneLast4(contact?.phone)}
+          copy="Get your instructions, check-ins, and Power Cut support by text."
+        />
 
         {/* Transformation Timeline */}
         <Section className="bg-white">

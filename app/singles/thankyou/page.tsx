@@ -4,6 +4,8 @@ import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
+import { SmsOptIn } from "@/app/components/SmsOptIn";
+import { phoneLast4 } from "@/app/lib/smsOptIn";
 
 export const metadata: Metadata = {
   title: "Order Confirmed — Peak State Labs",
@@ -33,6 +35,7 @@ type OrderSummary = {
   shippingPostal?: string;
   shippingCountry?: string;
   email?: string;
+  phone?: string;
 };
 
 const ALLOWED_PRICE_IDS = new Set<string>(Object.values(SINGLES_PRICE_IDS));
@@ -88,6 +91,7 @@ async function fetchOrder(sessionId: string): Promise<OrderSummary | null> {
       shippingPostal: address?.postal_code ?? undefined,
       shippingCountry: address?.country ?? undefined,
       email: session.customer_details?.email ?? undefined,
+      phone: session.customer_details?.phone ?? undefined,
     };
   } catch (err) {
     console.error("singles/thankyou fetchOrder error:", err);
@@ -167,6 +171,15 @@ export default async function SinglesThankYouPage({
             </div>
           </Container>
         </Section>
+
+        {/* SMS support opt-in */}
+        <SmsOptIn
+          source="singles"
+          sessionId={order ? session_id : undefined}
+          hasPhone={Boolean(order?.phone)}
+          phoneLast4={phoneLast4(order?.phone)}
+          copy="Get product instructions, check-ins, and support by text."
+        />
 
         {/* Order Summary */}
         {order && (
