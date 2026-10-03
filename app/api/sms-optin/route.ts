@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  SMS_CHECKBOX_TEXT,
   SMS_CONSENT_TEXT,
   SMS_OPT_IN_SOURCES,
   type SmsOptInSource,
@@ -41,6 +42,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unknown source." }, { status: 400 });
   }
 
+  // The consent checkbox must be ticked before an opt-in is recorded.
+  if (body.consentChecked !== true) {
+    return NextResponse.json(
+      { error: "Please check the box to agree to receive texts." },
+      { status: 400 },
+    );
+  }
+
   // Prefer the phone the customer already gave Stripe at checkout. The client
   // never supplies it in that case, so it can't be spoofed.
   const sessionId = str(body.sessionId);
@@ -77,6 +86,8 @@ export async function POST(req: NextRequest) {
       : "",
     currency: contact?.currency ?? "",
     consent_text: SMS_CONSENT_TEXT,
+    consent_checkbox_checked: true,
+    consent_checkbox_text: SMS_CHECKBOX_TEXT,
     ip:
       req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
       req.headers.get("x-real-ip") ||

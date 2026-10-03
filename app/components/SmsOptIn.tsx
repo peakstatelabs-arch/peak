@@ -5,6 +5,7 @@ import posthog from "posthog-js";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import {
+  SMS_CHECKBOX_TEXT,
   SMS_CONSENT_TEXT,
   type SmsOptInSource,
 } from "@/app/lib/smsOptInCopy";
@@ -32,12 +33,16 @@ export function SmsOptIn({
   const storageKey = `peak:sms-optin:${sessionId || source}`;
   const [status, setStatus] = useState<Status>("idle");
   const [phone, setPhone] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Keep the "You're in" state across refreshes of the same order page.
   useEffect(() => {
     try {
-      if (localStorage.getItem(storageKey)) setStatus("done");
+      if (localStorage.getItem(storageKey)) {
+        setAgreed(true);
+        setStatus("done");
+      }
     } catch {
       // Storage blocked — fine, the button just shows again.
     }
@@ -45,7 +50,7 @@ export function SmsOptIn({
 
   async function optIn(e: React.FormEvent) {
     e.preventDefault();
-    if (status !== "idle") return;
+    if (status !== "idle" || !agreed) return;
     setStatus("submitting");
     setError(null);
     try {
@@ -56,6 +61,7 @@ export function SmsOptIn({
           source,
           sessionId,
           phone: hasPhone ? undefined : phone,
+          consentChecked: agreed,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -102,14 +108,25 @@ export function SmsOptIn({
                 className="h-14 w-full max-w-sm rounded-2xl border-2 border-[var(--border)] bg-white px-5 text-base text-[var(--primary)] outline-none focus:border-[var(--accent)]"
               />
             )}
+            <label className="flex w-full max-w-sm items-start gap-3 text-left text-sm text-[var(--primary)]/80 leading-snug cursor-pointer">
+              <input
+                type="checkbox"
+                name="sms_consent"
+                checked={agreed}
+                disabled={status !== "idle"}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[var(--primary)]"
+              />
+              <span>{SMS_CHECKBOX_TEXT}</span>
+            </label>
             <button
               type="submit"
-              disabled={status !== "idle"}
+              disabled={status !== "idle" || !agreed}
               aria-live="polite"
               className={`inline-flex min-h-14 w-full max-w-sm items-center justify-center gap-2 rounded-2xl px-8 py-3 text-base sm:text-lg ${
                 done
                   ? "bg-[var(--primary)] text-white font-bold"
-                  : "btn-accent font-extrabold uppercase tracking-wide shadow-lg disabled:opacity-70"
+                  : "btn-accent font-extrabold uppercase tracking-wide shadow-lg disabled:opacity-50 disabled:pointer-events-none"
               }`}
             >
               {done ? (
