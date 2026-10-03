@@ -5,6 +5,7 @@ import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
 import { SmsOptIn } from "@/app/components/SmsOptIn";
+import { LegalLinks } from "@/app/components/LegalPage";
 import { phoneLast4 } from "@/app/lib/smsOptIn";
 
 export const metadata: Metadata = {
@@ -461,6 +462,7 @@ export default async function SinglesThankYouPage({
             <p className="text-xs text-white/50 leading-relaxed max-w-4xl mx-auto text-center">
               {siteCopy.footer.disclaimer}
             </p>
+            <LegalLinks />
             <p className="text-xs text-white/40 text-center mt-6">
               &copy; {new Date().getFullYear()} {siteCopy.footer.copyrightName}.
               All rights reserved.
