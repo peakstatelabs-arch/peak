@@ -100,9 +100,18 @@ export async function POST(req: NextRequest) {
     user_agent: req.headers.get("user-agent") || "",
   };
 
-  // Always log the full record so an opt-in is recoverable from the Vercel
-  // logs even if Zapier is down or not configured yet.
+  // Always log the full record (including consent proof) so an opt-in is
+  // recoverable from the Vercel logs even if Zapier is down.
   console.log("SMS opt-in:", JSON.stringify(record));
+
+  // Zapier only gets the fields it needs to text the customer.
+  const zapierPayload = {
+    first_name: contact?.name?.trim().split(/\s+/)[0] ?? "",
+    email: record.email,
+    phone: record.phone,
+    source: record.source,
+    opted_in_at: record.opted_in_at,
+  };
 
   if (!ZAPIER_SMS_OPTIN_WEBHOOK_URL) {
     console.error("ZAPIER_SMS_OPTIN_WEBHOOK_URL is not set");
@@ -116,7 +125,7 @@ export async function POST(req: NextRequest) {
     const res = await fetch(ZAPIER_SMS_OPTIN_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(record),
+      body: JSON.stringify(zapierPayload),
     });
     if (!res.ok) {
       console.error("Zapier SMS opt-in webhook non-OK:", res.status, await res.text());
