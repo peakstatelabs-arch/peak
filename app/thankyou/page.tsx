@@ -18,7 +18,7 @@ export default async function ThankYouPage({
   searchParams: Promise<{ session_id?: string }>;
 }) {
   const { session_id } = await searchParams;
-  const contact = session_id ? await fetchCheckoutContact(session_id) : null;
+  const contact = session_id ? await fetchCheckoutContact(session_id, "powercut") : null;
 
   return (
     <div className="min-h-screen bg-white text-[var(--primary)]">

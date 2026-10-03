@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
   // Prefer the phone the customer already gave Stripe at checkout. The client
   // never supplies it in that case, so it can't be spoofed.
   const sessionId = str(body.sessionId);
-  const contact = sessionId ? await fetchCheckoutContact(sessionId) : null;
+  const contact = sessionId ? await fetchCheckoutContact(sessionId, source) : null;
 
   let phone = contact?.phone ?? "";
   let phoneSource = "stripe_checkout";
