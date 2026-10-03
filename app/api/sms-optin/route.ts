@@ -11,7 +11,12 @@ export const runtime = "nodejs";
 
 // Zapier Catch Hook that receives each post-purchase SMS support opt-in (route
 // it to a Google Sheet, ClickFunnels, or your SMS tool from inside Zapier).
-const ZAPIER_SMS_OPTIN_WEBHOOK_URL = process.env.ZAPIER_SMS_OPTIN_WEBHOOK_URL;
+// Catch-hook URLs are write-only, so the value is safe to keep here as a
+// fallback, but it can be overridden via the ZAPIER_SMS_OPTIN_WEBHOOK_URL env
+// var without a redeploy.
+const ZAPIER_SMS_OPTIN_WEBHOOK_URL =
+  process.env.ZAPIER_SMS_OPTIN_WEBHOOK_URL ||
+  "https://hooks.zapier.com/hooks/catch/27218922/4mwk1ga/";
 
 function str(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
