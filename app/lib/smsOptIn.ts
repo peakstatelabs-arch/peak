@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import type { SmsOptInSource } from "@/app/lib/smsOptInCopy";
 
 // Server-only Stripe lookup behind the post-purchase SMS support opt-in.
 
@@ -13,16 +14,29 @@ export type CheckoutContact = {
   currency?: string;
 };
 
+// Power Cut (Payment Links) and Singles (our own checkout route) live in two
+// separate Stripe accounts, so each source needs its own account's key.
+const STRIPE_KEY_ENV: Record<SmsOptInSource, string> = {
+  powercut: "STRIPE_POWERCUT_SECRET_KEY",
+  singles: "STRIPE_SECRET_KEY",
+};
+
 /**
- * Look up the buyer's contact details from a paid Stripe Checkout Session
- * (created by our own checkout route or by a Payment Link). Returns null if
- * Stripe isn't configured, the ID is bogus, or the session isn't paid.
+ * Look up the buyer's contact details from a paid Stripe Checkout Session in
+ * the Stripe account that owns `source`. Returns null if that account's key
+ * isn't configured, the ID is bogus, or the session isn't paid.
  */
 export async function fetchCheckoutContact(
   sessionId: string,
+  source: SmsOptInSource,
 ): Promise<CheckoutContact | null> {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key || !/^cs_[A-Za-z0-9_]+$/.test(sessionId)) return null;
+  const keyEnv = STRIPE_KEY_ENV[source];
+  const key = process.env[keyEnv];
+  if (!/^cs_[A-Za-z0-9_]+$/.test(sessionId)) return null;
+  if (!key) {
+    console.error(`fetchCheckoutContact: ${keyEnv} is not set`);
+    return null;
+  }
   try {
     const stripe = new Stripe(key);
     const session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -43,7 +57,7 @@ export async function fetchCheckoutContact(
       currency: session.currency?.toUpperCase(),
     };
   } catch (err) {
-    console.error("fetchCheckoutContact error:", err);
+    console.error(`fetchCheckoutContact error (${source}, ${keyEnv}):`, err);
     return null;
   }
 }
