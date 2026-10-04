@@ -22,9 +22,10 @@ function str(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-// Loose E.164-ish normalization for the manual fallback field only. Stripe
-// already returns phones in E.164, so those are passed through untouched.
-function normalizeEnteredPhone(raw: string): string | null {
+// Normalize a phone to E.164 (e.g. "(515) 802-4949" -> "+15158024949").
+// Bare 10-digit numbers are treated as US. Used for both the Stripe checkout
+// phone (Payment Links can return it formatted) and the manual fallback field.
+function normalizePhone(raw: string): string | null {
   const digits = raw.replace(/\D/g, "");
   if (raw.trim().startsWith("+") && digits.length >= 8 && digits.length <= 15) {
     return `+${digits}`;
@@ -60,10 +61,13 @@ export async function POST(req: NextRequest) {
   const sessionId = str(body.sessionId);
   const contact = sessionId ? await fetchCheckoutContact(sessionId, source) : null;
 
-  let phone = contact?.phone ?? "";
+  const stripePhone = contact?.phone?.trim() ?? "";
+  // If a Stripe phone can't be normalized, keep it as-is rather than lose the
+  // opt-in.
+  let phone = stripePhone ? normalizePhone(stripePhone) ?? stripePhone : "";
   let phoneSource = "stripe_checkout";
   if (!phone) {
-    const entered = normalizeEnteredPhone(str(body.phone));
+    const entered = normalizePhone(str(body.phone));
     if (!entered) {
       return NextResponse.json(
         { error: "Please enter a valid mobile number.", needsPhone: true },
