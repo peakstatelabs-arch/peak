@@ -1,0 +1,355 @@
+"use client";
+
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import posthog from "posthog-js";
+import { saveClientContact } from "@/app/lib/clientContact";
+import { TrackedLink } from "@/app/components/TrackedLink";
+import { MEMBER_DISCOUNT_CODE, SHOP_URL } from "@/app/research-access/constants";
+
+type Method = "create" | "signin";
+
+// Live "verified members" social-proof count. Anchored at 6,124 on
+// 2026-09-13 and grows by 33 each calendar day (UTC), never resetting.
+// Kept in step with /research-access and /reta-access.
+const MEMBERS_ANCHOR_MS = Date.UTC(2026, 8, 13); // Sep 13, 2026 (month is 0-based)
+const MEMBERS_BASE = 6124;
+const MEMBERS_PER_DAY = 33;
+
+function memberCount(now = Date.now()): number {
+  const days = Math.max(0, Math.floor((now - MEMBERS_ANCHOR_MS) / 86_400_000));
+  return MEMBERS_BASE + days * MEMBERS_PER_DAY;
+}
+
+// The page is statically prerendered at deploy time, so the server can't know
+// today's count. Render nothing server-side (null), then read the live count
+// on the client — no hydration mismatch.
+const subscribeNoop = () => () => {};
+const getServerMemberCount = () => null;
+
+/** Fire-and-forget PostHog capture that never breaks the form. */
+function track(event: string, props?: Record<string, string>) {
+  try {
+    posthog.capture(event, props);
+  } catch (err) {
+    console.error("PostHog capture failed:", err);
+  }
+}
+
+/**
+ * /signup form: like /research-access but with no way to skip to the
+ * catalog — creating an account (or signing in) is the only path forward.
+ * Create-account first, with a small "Already a member? Sign in" link.
+ */
+export function SignupForm() {
+  const [view, setView] = useState<Method>("create");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [agreed, setAgreed] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  // Set once the visitor creates an account or signs in; swaps the form for
+  // the discount-code success screen.
+  const [unlocked, setUnlocked] = useState<Method | null>(null);
+  const [unlockedEmail, setUnlockedEmail] = useState("");
+  const [copied, setCopied] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const members = useSyncExternalStore(
+    subscribeNoop,
+    memberCount,
+    getServerMemberCount
+  );
+
+  // The success card is much shorter than the form, so bring it into view.
+  useEffect(() => {
+    if (unlocked) {
+      cardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [unlocked]);
+
+  // Fires "signup_page_started" once, the first time a visitor engages with
+  // any field, so we can tell "never touched the form" apart from "started
+  // but didn't finish."
+  const startedRef = useRef(false);
+  function handleFieldFocus() {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    track("signup_page_started");
+  }
+
+  function switchView(next: Method) {
+    setView(next);
+    setError(null);
+  }
+
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(MEMBER_DISCOUNT_CODE);
+      setCopied(true);
+      track("signup_page_code_copied", { method: unlocked ?? "unknown" });
+    } catch {
+      // Clipboard unavailable (e.g. older browsers) — the code stays visible.
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const method = view;
+
+    if (!name.trim() || !email.trim()) {
+      track("signup_page_blocked", { method, reason: "missing_fields" });
+      setError(
+        method === "signin"
+          ? "Please enter your name and email to sign in."
+          : "Please fill in your name and email."
+      );
+      return;
+    }
+    if (!agreed) {
+      track("signup_page_blocked", { method, reason: "terms_unchecked" });
+      setError("You must agree to the research-only terms to continue.");
+      return;
+    }
+
+    setError(null);
+    setSubmitting(true);
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
+    saveClientContact({ email: cleanEmail, name: cleanName });
+
+    try {
+      posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
+    } catch (err) {
+      console.error("PostHog identify failed:", err);
+    }
+    track("signup_page_signup", { method });
+
+    // Same API + payload as /research-access (no source, so it's tagged
+    // "research-access-form") — the "account created" Zaps fire identically.
+    // Only new accounts trigger it, never sign-ins.
+    if (method === "create") {
+      try {
+        await fetch("/api/research-access", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: cleanName, email: cleanEmail }),
+        });
+      } catch (err) {
+        console.error("Failed to record account:", err);
+      }
+    }
+
+    setSubmitting(false);
+    setUnlockedEmail(cleanEmail);
+    setUnlocked(method);
+  }
+
+  const inputClass =
+    "mt-2 w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white";
+  const labelClass = "block text-sm font-bold text-[var(--primary)]";
+  const cardClass =
+    "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
+
+  if (unlocked) {
+    return (
+      <div ref={cardRef} className={`${cardClass} text-center`}>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent)]/15">
+          <svg
+            className="h-7 w-7 text-[var(--accent-dark)]"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+
+        <h2 className="mt-4 text-2xl font-bold tracking-tight text-[var(--primary)]">
+          You&rsquo;re in!
+        </h2>
+        <p className="mt-2 text-sm text-[var(--primary)]/70">
+          Here&rsquo;s your 10% member discount code:
+        </p>
+
+        <div className="mt-5 flex items-center justify-between gap-3 rounded-2xl border-2 border-dashed border-[var(--accent)] bg-[var(--muted)] py-3 pl-5 pr-3">
+          <span className="min-w-0 font-mono text-xl sm:text-2xl font-bold tracking-[0.15em] text-[var(--primary)]">
+            {MEMBER_DISCOUNT_CODE}
+          </span>
+          <button
+            type="button"
+            onClick={copyCode}
+            className="h-10 w-24 flex-shrink-0 rounded-xl bg-white text-sm font-bold text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)] transition-colors hover:bg-[var(--accent)]/10"
+          >
+            {copied ? "Copied!" : "Copy"}
+          </button>
+        </div>
+
+        <p className="mt-3 text-xs text-[var(--primary)]/60 leading-relaxed">
+          Enter it at checkout for 10% off your order.
+          {unlocked === "create" && unlockedEmail && (
+            <> We&rsquo;ve also sent it to {unlockedEmail}.</>
+          )}
+        </p>
+
+        <TrackedLink
+          href={SHOP_URL}
+          event="signup_page_continue"
+          eventProperties={{ method: unlocked }}
+          className="btn-primary mt-6 inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold"
+        >
+          Continue to shop <span aria-hidden="true" className="ml-2">→</span>
+        </TrackedLink>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={cardRef} className={cardClass}>
+      {view === "create" ? (
+        /* Social proof */
+        /* Space is always reserved; the line fades in once the live count is known. */
+        <div
+          aria-hidden={members === null}
+          className={`flex items-center justify-center gap-2 text-sm font-semibold text-[var(--primary)]/70 transition-opacity duration-300 ${
+            members === null ? "opacity-0" : "opacity-100"
+          }`}
+        >
+          <svg
+            className="h-4 w-4 flex-shrink-0 text-[var(--accent-dark)]"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0l-3.5-3.5a1 1 0 1 1 1.4-1.4l2.8 2.8 6.8-6.8a1 1 0 0 1 1.4 0Z"
+              clipRule="evenodd"
+            />
+          </svg>
+          Join {(members ?? MEMBERS_BASE).toLocaleString("en-US")} verified members
+        </div>
+      ) : (
+        <div className="text-center">
+          <h2 className="text-xl font-bold tracking-tight text-[var(--primary)]">
+            Welcome back
+          </h2>
+          <p className="mt-1 text-sm text-[var(--primary)]/60">
+            Sign in to unlock your 10% member discount.
+          </p>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+        <div>
+          <label htmlFor="signup-name" className={labelClass}>
+            Name
+          </label>
+          <input
+            id="signup-name"
+            name="name"
+            type="text"
+            autoComplete="name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setError(null);
+            }}
+            onFocus={handleFieldFocus}
+            className={inputClass}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="signup-email" className={labelClass}>
+            Email
+          </label>
+          <input
+            id="signup-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError(null);
+            }}
+            onFocus={handleFieldFocus}
+            className={inputClass}
+          />
+        </div>
+
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--muted)] p-5">
+          <h3 className="text-base font-bold text-[var(--primary)]">
+            Research Use Only
+          </h3>
+          <p className="mt-2 text-sm text-[var(--primary)]/70 leading-relaxed">
+            By using this site, you acknowledge that all products and
+            information are provided for research purposes only and are not
+            intended for human consumption or medical use.
+          </p>
+          <p className="mt-2 text-sm text-[var(--primary)]/70 leading-relaxed">
+            You must be 21 years of age or older to use this website.
+          </p>
+          <label className="mt-4 flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(e) => {
+                setAgreed(e.target.checked);
+                setError(null);
+              }}
+              className="mt-1 h-4 w-4 flex-shrink-0 rounded border-[var(--border)] accent-[var(--accent-dark)]"
+            />
+            <span className="text-sm font-bold text-[var(--primary)] leading-snug">
+              {view === "signin"
+                ? "By signing in you agree to the research-only terms above."
+                : "By creating an account you agree to the research-only terms above."}
+            </span>
+          </label>
+        </div>
+
+        {error && (
+          <p className="text-sm text-red-500 text-center" role="alert">
+            {error}
+          </p>
+        )}
+
+        <div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="btn-primary inline-flex w-full min-h-14 items-center justify-center rounded-2xl px-4 py-3 text-base sm:text-lg font-semibold leading-tight disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {/* Non-breaking spaces keep "Get 10% Off" together on small phones. */}
+            {view === "signin"
+              ? "Sign in"
+              : submitting
+                ? "Creating account..."
+                : "Create Account & Get 10% Off"}
+          </button>
+          {view === "create" && (
+            <p className="mt-3 text-center text-xs text-[var(--primary)]/50 leading-relaxed">
+              Free · takes 10 seconds · we never share your email.
+            </p>
+          )}
+        </div>
+
+        <p className="text-center text-sm text-[var(--primary)]/70">
+          {view === "signin" ? "New here? " : "Already a member? "}
+          <button
+            type="button"
+            onClick={() => switchView(view === "signin" ? "create" : "signin")}
+            className="font-bold text-[var(--accent-dark)] hover:underline"
+          >
+            {view === "signin" ? "Create a free account" : "Sign in"}
+          </button>
+        </p>
+      </form>
+    </div>
+  );
+}
