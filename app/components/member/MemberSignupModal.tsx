@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
+import { acknowledgeDisclaimer } from "@/app/lib/disclaimer";
 import { MEMBER_DISCOUNT_CODE } from "@/app/research-access/constants";
 import { notifyMemberChange } from "./memberState";
 
@@ -101,6 +102,8 @@ export function MemberSignupModal({
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = name.trim();
     saveClientContact({ email: cleanEmail, name: cleanName });
+    // They just agreed to the research-only terms, so skip the notice popup.
+    acknowledgeDisclaimer();
 
     try {
       posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
