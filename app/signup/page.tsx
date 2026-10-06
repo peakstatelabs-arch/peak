@@ -73,9 +73,9 @@ export default function SignupPage() {
                 Get 10% Off Your Order
               </h1>
 
-              <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed">
-                Create your free {siteCopy.brand.name} account and get your
-                code instantly.
+              <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed text-balance">
+                Create a free account to unlock the full catalog — and get
+                your 10% code instantly.
               </p>
             </div>
 
