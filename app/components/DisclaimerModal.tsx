@@ -2,19 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
+import { DISCLAIMER_COOKIE, acknowledgeDisclaimer } from "@/app/lib/disclaimer";
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
   return match ? decodeURIComponent(match[1]) : null;
 }
 
-function setCookie(name: string, value: string, maxAgeSeconds: number) {
-  document.cookie = `${name}=${encodeURIComponent(value)};path=/;max-age=${maxAgeSeconds};SameSite=Lax`;
-}
-
-const ONE_DAY = 60 * 60 * 24;
-
-const SUPPRESSED_PATHS = ["/thankyou", "/structured-peptides", "/bridge", "/research-access", "/reta-access", "/powercut", "/creator", "/creator/apply", "/creator/success", "/privacy", "/sms-terms"];
+const SUPPRESSED_PATHS = ["/thankyou", "/structured-peptides", "/bridge", "/research-access", "/reta-access", "/signup", "/powercut", "/creator", "/creator/apply", "/creator/success", "/privacy", "/sms-terms"];
 
 export function DisclaimerModal() {
   const [visible, setVisible] = useState(false);
@@ -22,14 +17,14 @@ export function DisclaimerModal() {
   const suppressed = SUPPRESSED_PATHS.includes(pathname ?? "");
 
   const show = useCallback(() => {
-    if (getCookie("disclaimer_ack")) return;
+    if (getCookie(DISCLAIMER_COOKIE)) return;
     setVisible(true);
   }, []);
 
   useEffect(() => {
     if (suppressed) return;
     // Already acknowledged within the last 24 hours
-    if (getCookie("disclaimer_ack")) return;
+    if (getCookie(DISCLAIMER_COOKIE)) return;
 
     // Timer trigger — 9 seconds
     const timer = setTimeout(show, 9000);
@@ -52,7 +47,7 @@ export function DisclaimerModal() {
   if (suppressed) return null;
 
   function dismiss() {
-    setCookie("disclaimer_ack", "1", ONE_DAY);
+    acknowledgeDisclaimer();
     setVisible(false);
   }
 

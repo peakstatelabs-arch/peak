@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
+import { acknowledgeDisclaimer } from "@/app/lib/disclaimer";
 import { TrackedLink } from "@/app/components/TrackedLink";
 import { MEMBER_DISCOUNT_CODE } from "@/app/research-access/constants";
 
@@ -118,6 +119,8 @@ export function RetaAccessForm() {
     const cleanName = username.trim();
 
     saveClientContact({ email: cleanEmail, name: cleanName });
+    // They just agreed to the research-only terms, so skip the notice popup.
+    acknowledgeDisclaimer();
 
     try {
       posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
@@ -165,6 +168,8 @@ export function RetaAccessForm() {
     const cleanEmail = signInEmail.trim().toLowerCase();
     const cleanName = signInName.trim();
     saveClientContact({ email: cleanEmail, name: cleanName });
+    // They just agreed to the research-only terms, so skip the notice popup.
+    acknowledgeDisclaimer();
 
     try {
       posthog.identify(cleanEmail, { email: cleanEmail, name: cleanName });
