@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   SMS_CHECKBOX_TEXT,
   SMS_CONSENT_TEXT,
+  SMS_MIN_AGE,
   SMS_OPT_IN_SOURCES,
+  SMS_UNDERAGE_TEXT,
+  ageFromDob,
   type SmsOptInSource,
 } from "@/app/lib/smsOptInCopy";
 import { fetchCheckoutContact } from "@/app/lib/smsOptIn";
@@ -46,6 +49,24 @@ export async function POST(req: NextRequest) {
   const source = str(body.source) as SmsOptInSource;
   if (!Object.hasOwn(SMS_OPT_IN_SOURCES, source)) {
     return NextResponse.json({ error: "Unknown source." }, { status: 400 });
+  }
+
+  // Age gate: re-check the date of birth server-side so the 18+ requirement
+  // can't be bypassed. "Today" is taken in UTC+14 (the earliest timezone) so a
+  // customer who has just turned 18 in their own timezone is never rejected.
+  const dateOfBirth = str(body.dateOfBirth);
+  const today = new Date(Date.now() + 14 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+  const age = ageFromDob(dateOfBirth, today);
+  if (age === null) {
+    return NextResponse.json(
+      { error: "Please enter a valid date of birth." },
+      { status: 400 },
+    );
+  }
+  if (age < SMS_MIN_AGE) {
+    return NextResponse.json({ error: SMS_UNDERAGE_TEXT }, { status: 403 });
   }
 
   // The consent checkbox must be ticked before an opt-in is recorded.
@@ -97,6 +118,9 @@ export async function POST(req: NextRequest) {
     consent_text: SMS_CONSENT_TEXT,
     consent_checkbox_checked: true,
     consent_checkbox_text: SMS_CHECKBOX_TEXT,
+    date_of_birth: dateOfBirth,
+    age_verified: true,
+    age_at_opt_in: age,
     ip:
       req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
       req.headers.get("x-real-ip") ||
@@ -115,6 +139,7 @@ export async function POST(req: NextRequest) {
     phone: record.phone,
     source: record.source,
     opted_in_at: record.opted_in_at,
+    age_verified: record.age_verified,
   };
 
   if (!ZAPIER_SMS_OPTIN_WEBHOOK_URL) {

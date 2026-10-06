@@ -37,6 +37,10 @@ export default function SmsTermsPage() {
         that page).
       </p>
       <p>
+        You must be 18 or older to join. We verify your date of birth before
+        you opt in.
+      </p>
+      <p>
         <strong>Consent is not a condition of purchase.</strong> You do not
         need to opt in to buy from us or to receive your order.
       </p>

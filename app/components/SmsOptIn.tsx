@@ -7,10 +7,20 @@ import { Section } from "@/app/components/Section";
 import {
   SMS_CHECKBOX_TEXT,
   SMS_CONSENT_TEXT,
+  SMS_MIN_AGE,
+  SMS_UNDERAGE_TEXT,
+  ageFromDob,
   type SmsOptInSource,
 } from "@/app/lib/smsOptInCopy";
 
 type Status = "idle" | "submitting" | "done";
+
+/** Today's date in the visitor's own timezone, as YYYY-MM-DD. */
+function localToday(): string {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
 
 /**
  * Post-purchase "support by text" opt-in. When the Stripe checkout already
@@ -34,7 +44,17 @@ export function SmsOptIn({
   const [status, setStatus] = useState<Status>("idle");
   const [phone, setPhone] = useState("");
   const [agreed, setAgreed] = useState(false);
+  const [dob, setDob] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  // Age gate: the consent checkbox and button stay locked until a valid date
+  // of birth shows the customer is 18+.
+  // Set on the client only, so server and browser render the same markup.
+  const [today, setToday] = useState("");
+  useEffect(() => setToday(localToday()), []);
+  const age = dob && today ? ageFromDob(dob, today) : null;
+  const ageVerified = age !== null && age >= SMS_MIN_AGE;
+  const underage = age !== null && age < SMS_MIN_AGE;
 
   // Keep the "You're in" state across refreshes of the same order page.
   useEffect(() => {
@@ -50,7 +70,7 @@ export function SmsOptIn({
 
   async function optIn(e: React.FormEvent) {
     e.preventDefault();
-    if (status !== "idle" || !agreed) return;
+    if (status !== "idle" || !agreed || !ageVerified) return;
     setStatus("submitting");
     setError(null);
     try {
@@ -62,6 +82,7 @@ export function SmsOptIn({
           sessionId,
           phone: hasPhone ? undefined : phone,
           consentChecked: agreed,
+          dateOfBirth: dob,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
@@ -108,12 +129,53 @@ export function SmsOptIn({
                 className="h-14 w-full max-w-sm rounded-2xl border-2 border-[var(--border)] bg-white px-5 text-base text-[var(--primary)] outline-none focus:border-[var(--accent)]"
               />
             )}
-            <label className="flex w-full max-w-sm items-start gap-3 text-left text-sm text-[var(--primary)]/80 leading-snug cursor-pointer">
+            {!done && (
+              <div className="w-full max-w-sm text-left">
+                <label
+                  htmlFor={`sms-dob-${source}`}
+                  className="block text-sm font-semibold text-[var(--primary)]"
+                >
+                  Date of birth
+                </label>
+                <input
+                  id={`sms-dob-${source}`}
+                  type="date"
+                  name="date_of_birth"
+                  autoComplete="bday"
+                  required
+                  min="1900-01-01"
+                  max={today || undefined}
+                  value={dob}
+                  disabled={status !== "idle"}
+                  onChange={(e) => {
+                    setDob(e.target.value);
+                    const next = ageFromDob(e.target.value, today);
+                    if (next === null || next < SMS_MIN_AGE) setAgreed(false);
+                  }}
+                  aria-describedby={underage ? `sms-dob-msg-${source}` : undefined}
+                  className="mt-1 h-14 w-full rounded-2xl border-2 border-[var(--border)] bg-white px-5 text-base text-[var(--primary)] outline-none focus:border-[var(--accent)]"
+                />
+                {underage && (
+                  <p
+                    id={`sms-dob-msg-${source}`}
+                    role="alert"
+                    className="mt-2 text-sm text-red-600 font-medium"
+                  >
+                    {SMS_UNDERAGE_TEXT}
+                  </p>
+                )}
+              </div>
+            )}
+            <label
+              className={`flex w-full max-w-sm items-start gap-3 text-left text-sm text-[var(--primary)]/80 leading-snug ${
+                ageVerified || done ? "cursor-pointer" : "opacity-50 cursor-not-allowed"
+              }`}
+            >
               <input
                 type="checkbox"
                 name="sms_consent"
                 checked={agreed}
-                disabled={status !== "idle"}
+                disabled={status !== "idle" || !ageVerified}
                 onChange={(e) => setAgreed(e.target.checked)}
                 className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-[var(--primary)]"
               />
@@ -121,7 +183,7 @@ export function SmsOptIn({
             </label>
             <button
               type="submit"
-              disabled={status !== "idle" || !agreed}
+              disabled={status !== "idle" || !agreed || !ageVerified}
               aria-live="polite"
               className={`inline-flex min-h-14 w-full max-w-sm items-center justify-center gap-2 rounded-2xl px-8 py-3 text-base sm:text-lg ${
                 done
