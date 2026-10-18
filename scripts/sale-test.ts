@@ -238,6 +238,19 @@ await t("server status flips at cutoff (reta) / deadline (power cut)", () => {
   assert.deepEqual(sale.saleStatus(T("2026-10-24T00:00:01-04:00")), { reta: false, powerCut: false });
 });
 
+await t("urgency phases escalate with real time left; countdown formats", async () => {
+  const { salePhase, formatRemaining } = await import("../app/components/SaleUrgency");
+  const H = 3_600_000;
+  assert.equal(salePhase(3 * 24 * H).label, "SALE ENDS FRIDAY");
+  assert.equal(salePhase(24 * H).label, "LAST DAY");
+  assert.equal(salePhase(3 * H).label, "FINAL 3 HOURS");
+  assert.equal(salePhase(H).label, "FINAL HOUR");
+  assert.equal(salePhase(1000).label, "FINAL HOUR");
+  assert.equal(formatRemaining(2 * 86400e3 + 4 * H + 31 * 60e3 + 12e3), "2d 04h 31m 12s");
+  assert.equal(formatRemaining(5 * H + 7e3), "05h 00m 07s");
+  assert.equal(formatRemaining(-5), "00h 00m 00s");
+});
+
 console.log(`\n${passed} checks passed`);
 }
 

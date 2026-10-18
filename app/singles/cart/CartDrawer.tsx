@@ -7,7 +7,8 @@ import {
   maxSameProductQty,
   nextBulkTier,
 } from "@/app/lib/bulkDiscount";
-import { priceCart } from "@/app/lib/sale";
+import { RETA_PRICE_ID, priceCart, retaSaleTotalCents } from "@/app/lib/sale";
+import { SaleCountdown } from "@/app/components/SaleUrgency";
 import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { CrossSellStrip } from "./CrossSellStrip";
 import { CART_CROSSSELL_SLUGS } from "./crossSell";
@@ -210,6 +211,14 @@ export function CartDrawer() {
               />
             )}
 
+            {priced.hasSaleLines && (
+              <SaleCartNote
+                savingsCents={priced.saleSavingsCents}
+                retaLine={lines.find((l) => l.priceId === RETA_PRICE_ID) ?? null}
+                onAddOne={(line) => setQuantity(line.priceId, line.quantity + 1)}
+              />
+            )}
+
             {(bulkTier || bulkNext) && discountableLines.length > 0 && (
               <BulkNudge
                 active={!!bulkTier}
@@ -354,6 +363,63 @@ export function CartDrawer() {
 
 function lineLabel(line: CartLine): string {
   return line.quantity > 1 ? `${line.name} ×${line.quantity}` : line.name;
+}
+
+/** Savings confirmation, deadline, and a nudge to the next sale tier. */
+function SaleCartNote({
+  savingsCents,
+  retaLine,
+  onAddOne,
+}: {
+  savingsCents: number;
+  retaLine: CartLine | null;
+  onAddOne: (line: CartLine) => void;
+}) {
+  const nextQty = retaLine ? retaLine.quantity + 1 : 0;
+  const nextSale = retaLine ? retaSaleTotalCents(nextQty) : null;
+  const curSale = retaLine ? retaSaleTotalCents(retaLine.quantity) : null;
+  const nudge =
+    retaLine && nextSale !== null && curSale !== null
+      ? {
+          addCents: nextSale - curSale,
+          totalSaveCents: retaLine.unitPriceCents * nextQty - nextSale,
+        }
+      : null;
+
+  return (
+    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+      <p className="flex items-center gap-2 text-sm font-bold text-emerald-700">
+        <svg
+          className="w-4 h-4 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={3}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        You&rsquo;re saving {formatUsd(savingsCents)} with the limited-time sale
+      </p>
+      <p className="mt-1 text-xs text-[var(--primary)]/65">
+        Sale ends in <SaleCountdown kind="reta" className="text-[var(--primary)]" />
+      </p>
+      {nudge && retaLine && (
+        <div className="mt-2.5 flex items-center justify-between gap-3 border-t border-emerald-200 pt-2.5">
+          <p className="text-xs font-semibold text-[var(--primary)]/80">
+            Add 1 more vial for just {formatUsd(nudge.addCents)} — save{" "}
+            {formatUsd(nudge.totalSaveCents)} total
+          </p>
+          <button
+            type="button"
+            onClick={() => onAddOne(retaLine)}
+            className="flex-shrink-0 rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-bold text-white hover:bg-[var(--primary)]/90 transition-colors"
+          >
+            Add 1 more
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function BulkNudge({

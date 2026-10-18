@@ -11,12 +11,23 @@ let latest: SaleStatus | null = null;
 const listeners = new Set<(s: SaleStatus) => void>();
 let timer: number | undefined;
 
+// Server clock sync for countdowns: offset = server time - browser time.
+type Clock = { offsetMs: number; endsAt: { reta: number; powerCut: number } };
+let clock: Clock | null = null;
+const clockListeners = new Set<() => void>();
+
 async function refresh() {
   try {
     const res = await fetch("/api/sale-status", { cache: "no-store" });
     if (!res.ok) return;
-    latest = (await res.json()) as SaleStatus;
+    const data = (await res.json()) as SaleStatus & {
+      serverNow: number;
+      endsAt: Clock["endsAt"];
+    };
+    clock = { offsetMs: data.serverNow - Date.now(), endsAt: data.endsAt };
+    latest = { reta: data.reta, powerCut: data.powerCut };
     listeners.forEach((fn) => fn(latest as SaleStatus));
+    clockListeners.forEach((fn) => fn());
   } catch {
     // Keep the last known state; checkout is authoritative anyway.
   }
@@ -49,4 +60,29 @@ export function useSaleStatus(initial: SaleStatus = OFF): SaleStatus {
   }, []);
 
   return status;
+}
+
+/**
+ * Milliseconds left in the sale for `kind`, ticking every second off the
+ * SERVER clock. null until the first sync with the server completes.
+ */
+export function useSaleCountdown(kind: "reta" | "powerCut"): number | null {
+  useSaleStatus(); // keeps the shared poller running
+  const [msLeft, setMsLeft] = useState<number | null>(null);
+
+  useEffect(() => {
+    const update = () =>
+      setMsLeft(
+        clock ? clock.endsAt[kind] - (Date.now() + clock.offsetMs) : null,
+      );
+    update();
+    clockListeners.add(update);
+    const id = window.setInterval(update, 1000);
+    return () => {
+      clockListeners.delete(update);
+      window.clearInterval(id);
+    };
+  }, [kind]);
+
+  return msLeft;
 }

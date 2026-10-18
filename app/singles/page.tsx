@@ -11,6 +11,7 @@ import { BULK_DISCOUNTS_LIVE, BULK_TIERS } from "@/app/lib/bulkDiscount";
 import { saleStatus } from "@/app/lib/sale";
 import { SalePriceInline } from "@/app/components/SalePrice";
 import { RetaSaleNote } from "./cart/RetaSaleNote";
+import { SaleBar, SaleHeroStrip } from "@/app/components/SaleUrgency";
 
 const BULK_MAX_PCT = BULK_TIERS[BULK_TIERS.length - 1].pct;
 
@@ -209,6 +210,8 @@ export default function SinglesCatalog() {
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
+          {/* Limited-time sale bar — pinned with the header */}
+          <SaleBar kind="reta" href="#retatrutide" initial={initialSale} />
           <Container className="flex h-16 items-center justify-between">
             <a href="/" className="flex items-center gap-2 font-bold text-lg">
               <img
@@ -255,6 +258,13 @@ export default function SinglesCatalog() {
                   plus targeted standalone compounds for recovery, energy, and
                   renewal — available as single vials for research use.
                 </p>
+
+                <SaleHeroStrip
+                  kind="reta"
+                  href="#retatrutide"
+                  initial={initialSale}
+                  className="mx-auto mt-7 max-w-md text-left"
+                />
 
                 {/* Included-with-every-order strip */}
                 <div className="mt-7 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3 animate-fade-in-up stagger-2">
@@ -305,6 +315,7 @@ export default function SinglesCatalog() {
                 {products.map((product) => (
                   <div
                     key={product.id}
+                    id={product.id}
                     className="group flex flex-col rounded-3xl border border-[var(--border)] bg-[var(--muted)] p-5 sm:p-6 card-hover"
                   >
                     <ProductImage product={product} />

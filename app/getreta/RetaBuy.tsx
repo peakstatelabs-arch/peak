@@ -33,7 +33,7 @@ export function RetaBuy({ initialSale }: { initialSale?: SaleStatus }) {
 
       {/* Picker + guarantee — mobile: right after the heading; desktop: sticky
           right column spanning both rows. */}
-      <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(6rem+var(--member-banner-h,0px))]">
+      <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(6rem+var(--member-banner-h,0px)+var(--sale-bar-h,0px))]">
         <RetaBundlePicker
           selected={selected}
           onSelect={setSelected}

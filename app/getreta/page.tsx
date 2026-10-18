@@ -11,6 +11,7 @@ import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { RetaBuy } from "./RetaBuy";
 import { saleStatus } from "@/app/lib/sale";
 import { SalePriceInline } from "@/app/components/SalePrice";
+import { SaleBar, SaleHeroStrip } from "@/app/components/SaleUrgency";
 
 // Re-render often so the server-evaluated sale state flips soon after expiry.
 export const revalidate = 60;
@@ -160,6 +161,8 @@ export default function GetRetaPage() {
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
+          {/* Limited-time sale bar — pinned with the header */}
+          <SaleBar kind="reta" href="#buy" initial={initialSale} />
           <Container className="flex h-16 items-center justify-between">
             {/* Not a link: keeps paid traffic on /getreta instead of the homepage */}
             <div className="flex items-center gap-2 font-bold text-lg">
@@ -222,6 +225,12 @@ export default function GetRetaPage() {
                     support a faster metabolism so getting leaner doesn’t have to
                     consume your entire life.
                   </p>
+                  <SaleHeroStrip
+                    kind="reta"
+                    href="#buy"
+                    initial={initialSale}
+                    className="mt-6 max-w-xl"
+                  />
                 </div>
 
                 {/* Product image */}
