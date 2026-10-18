@@ -5,8 +5,9 @@ import { RetaBundlePicker } from "./RetaBundlePicker";
 import { TIERS } from "./retaBundles";
 import { CrossSellStrip } from "@/app/singles/cart/CrossSellStrip";
 import { BUYBOX_CROSSSELL_SLUGS } from "@/app/singles/cart/crossSell";
+import type { SaleStatus } from "@/app/lib/sale";
 
-export function RetaBuy() {
+export function RetaBuy({ initialSale }: { initialSale?: SaleStatus }) {
   const [selected, setSelected] = useState(2); // default: two-vial (most popular)
   const tier = TIERS.find((t) => t.vials === selected) ?? TIERS[0];
 
@@ -33,7 +34,11 @@ export function RetaBuy() {
       {/* Picker + guarantee — mobile: right after the heading; desktop: sticky
           right column spanning both rows. */}
       <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-[calc(6rem+var(--member-banner-h,0px))]">
-        <RetaBundlePicker selected={selected} onSelect={setSelected} />
+        <RetaBundlePicker
+          selected={selected}
+          onSelect={setSelected}
+          initialSale={initialSale}
+        />
         <CrossSellStrip slugs={BUYBOX_CROSSSELL_SLUGS} variant="buybox" />
         <p className="mt-4 flex items-start justify-center gap-1.5 text-center text-xs text-[var(--primary)]/55 leading-relaxed">
           <svg

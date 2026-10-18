@@ -4,6 +4,11 @@ import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { DiscountPopup } from "@/app/components/DiscountPopup";
 import { highlightStats } from "@/content/reviews";
+import { saleStatus } from "@/app/lib/sale";
+import { SaleBanner } from "@/app/components/SalePrice";
+
+// Re-render often so the server-evaluated sale state flips soon after expiry.
+export const revalidate = 60;
 
 function StarRating({ className = "" }: { className?: string }) {
   return (
@@ -68,6 +73,7 @@ function SectionDivider() {
 }
 
 export default function PowerCutProtocol() {
+  const initialSale = saleStatus();
   return (
     <div className="min-h-screen bg-white text-[var(--primary)]">
       {/* Header */}
@@ -351,6 +357,9 @@ export default function PowerCutProtocol() {
                 <p className="mt-3 text-lg font-bold text-[var(--accent-dark)]">
                   This is synergy over volume.
                 </p>
+                <div>
+                  <SaleBanner kind="powerCut" initial={initialSale} className="mt-8" />
+                </div>
                 <a
                   href="/research-access"
                   className="btn-accent inline-flex h-auto sm:h-20 items-center justify-center gap-2 sm:gap-3 rounded-2xl px-5 sm:px-14 py-4 sm:py-0 text-sm sm:text-2xl font-extrabold uppercase tracking-normal sm:tracking-wide leading-tight mt-8 shadow-2xl ring-4 ring-[var(--accent)]/30 animate-pulse-slow text-center max-w-full"

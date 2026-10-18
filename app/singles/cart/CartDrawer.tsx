@@ -7,6 +7,8 @@ import {
   maxSameProductQty,
   nextBulkTier,
 } from "@/app/lib/bulkDiscount";
+import { priceCart } from "@/app/lib/sale";
+import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { CrossSellStrip } from "./CrossSellStrip";
 import { CART_CROSSSELL_SLUGS } from "./crossSell";
 
@@ -35,15 +37,22 @@ export function CartDrawer() {
   const preorderLines = lines.filter((l) => l.preorder);
   const isSplitShipment = inStockLines.length > 0 && preorderLines.length > 0;
 
-  // Bulk discount preview (highest quantity of any single product).
-  const bulkMaxQty = maxSameProductQty(lines);
+  // Cart pricing — the same priceCart() the checkout route's rules mirror, so
+  // the preview and Stripe agree. Sale lines are fixed-price and sit outside
+  // the bulk discount; the bulk tier comes from the remaining lines.
+  const retaSale = useSaleStatus().reta;
+  const priced = priceCart(lines, retaSale);
+  const discountableLines = lines.filter(
+    (l) => priced.saleLineCents[l.priceId] === null,
+  );
+  const bulkMaxQty = maxSameProductQty(discountableLines);
   const bulkTier = bulkTierForQty(bulkMaxQty);
   const bulkNext = nextBulkTier(bulkMaxQty);
-  const bulkPct = bulkTier?.pct ?? 0;
-  const bulkDiscountCents = Math.round((subtotalCents * bulkPct) / 100);
-  const estimatedTotalCents = subtotalCents - bulkDiscountCents;
+  const bulkPct = priced.bulkPct;
+  const bulkDiscountCents = priced.bulkDiscountCents;
+  const estimatedTotalCents = priced.totalCents;
   // The line closest to the next tier — the one we nudge them to add to.
-  const topLine = lines.reduce<CartLine | null>(
+  const topLine = discountableLines.reduce<CartLine | null>(
     (best, l) => (best && best.quantity >= l.quantity ? best : l),
     null,
   );
@@ -89,7 +98,7 @@ export function CartDrawer() {
         setSubmitting(false);
         return;
       }
-      window.location.href = data.url;
+      window.location.assign(data.url);
     } catch {
       setCheckoutError(
         "Network error starting checkout. Please try again in a moment.",
@@ -181,6 +190,7 @@ export function CartDrawer() {
                   <CartLineRow
                     key={line.priceId}
                     line={line}
+                    saleCents={priced.saleLineCents[line.priceId]}
                     onQtyChange={(q) => setQuantity(line.priceId, q)}
                     onRemove={() => removeItem(line.priceId)}
                   />
@@ -200,7 +210,7 @@ export function CartDrawer() {
               />
             )}
 
-            {(bulkTier || bulkNext) && (
+            {(bulkTier || bulkNext) && discountableLines.length > 0 && (
               <BulkNudge
                 active={!!bulkTier}
                 pct={bulkPct}
@@ -210,7 +220,7 @@ export function CartDrawer() {
               />
             )}
 
-            {bulkTier ? (
+            {bulkTier || priced.hasSaleLines ? (
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-semibold text-[var(--primary)]/70">
@@ -220,14 +230,26 @@ export function CartDrawer() {
                     {formatUsd(subtotalCents)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-semibold text-[var(--accent-dark)]">
-                    Bulk discount ({bulkPct}% off)
-                  </span>
-                  <span className="font-bold text-[var(--accent-dark)]">
-                    −{formatUsd(bulkDiscountCents)}
-                  </span>
-                </div>
+                {priced.hasSaleLines && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-[var(--accent-dark)]">
+                      Limited-time sale
+                    </span>
+                    <span className="font-bold text-[var(--accent-dark)]">
+                      −{formatUsd(priced.saleSavingsCents)}
+                    </span>
+                  </div>
+                )}
+                {bulkTier && bulkDiscountCents > 0 && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold text-[var(--accent-dark)]">
+                      Bulk discount ({bulkPct}% off)
+                    </span>
+                    <span className="font-bold text-[var(--accent-dark)]">
+                      −{formatUsd(bulkDiscountCents)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between pt-1">
                   <span className="text-sm font-semibold text-[var(--primary)]/70">
                     Estimated total
@@ -248,9 +270,11 @@ export function CartDrawer() {
               </div>
             )}
             <p className="text-xs text-[var(--primary)]/55">
-              {bulkTier
-                ? "Discount applied automatically at checkout. Shipping and taxes calculated there."
-                : "Shipping and taxes calculated at checkout."}
+              {priced.hasSaleLines
+                ? "Sale prices apply automatically and can\u2019t be combined with other discounts or codes. Shipping and taxes calculated at checkout."
+                : bulkTier
+                  ? "Discount applied automatically at checkout. Shipping and taxes calculated there."
+                  : "Shipping and taxes calculated at checkout."}
             </p>
             {checkoutError && (
               <p className="text-sm text-red-600 font-medium">{checkoutError}</p>
@@ -471,10 +495,13 @@ function SplitShipmentNotice({
 
 function CartLineRow({
   line,
+  saleCents,
   onQtyChange,
   onRemove,
 }: {
   line: CartLine;
+  /** Fixed sale total for this line, or null when it's at list price. */
+  saleCents: number | null;
   onQtyChange: (q: number) => void;
   onRemove: () => void;
 }) {
@@ -579,9 +606,24 @@ function CartLineRow({
               </svg>
             </button>
           </div>
-          <p className="font-bold text-[var(--primary)]">
-            {formatUsd(line.unitPriceCents * line.quantity)}
-          </p>
+          {saleCents !== null ? (
+            <div className="text-right">
+              <p className="font-bold text-[var(--primary)]">
+                <span className="mr-1.5 text-xs font-semibold text-[var(--primary)]/40 line-through">
+                  {formatUsd(line.unitPriceCents * line.quantity)}
+                </span>
+                {formatUsd(saleCents)}
+              </p>
+              <p className="text-[11px] font-bold text-emerald-700">
+                Sale · Save{" "}
+                {formatUsd(line.unitPriceCents * line.quantity - saleCents)}
+              </p>
+            </div>
+          ) : (
+            <p className="font-bold text-[var(--primary)]">
+              {formatUsd(line.unitPriceCents * line.quantity)}
+            </p>
+          )}
         </div>
       </div>
     </li>

@@ -9,6 +9,11 @@ import { CartDrawer } from "@/app/singles/cart/CartDrawer";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
 import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { RetaBuy } from "./RetaBuy";
+import { saleStatus } from "@/app/lib/sale";
+import { SalePriceInline } from "@/app/components/SalePrice";
+
+// Re-render often so the server-evaluated sale state flips soon after expiry.
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Buy Retatrutide (20mg) — Lab-Tested, Ships in 24h | Peak State Labs",
@@ -149,6 +154,7 @@ function TrustItem({ children }: { children: React.ReactNode }) {
 }
 
 export default function GetRetaPage() {
+  const initialSale = saleStatus();
   return (
     <CartProvider>
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
@@ -512,7 +518,7 @@ export default function GetRetaPage() {
           {/* ── Buy ──────────────────────────────────────────────── */}
           <Section id="buy" className="bg-[var(--muted)]">
             <Container>
-              <RetaBuy />
+              <RetaBuy initialSale={initialSale} />
             </Container>
           </Section>
 
@@ -542,7 +548,12 @@ export default function GetRetaPage() {
                       Retatrutide, solo
                     </h3>
                     <p className="mt-1 text-3xl font-extrabold text-[var(--primary)]">
-                      $215
+                      <SalePriceInline
+                        kind="reta"
+                        list="$215"
+                        sale="$165"
+                        initial={initialSale}
+                      />
                       <span className="text-base font-semibold text-[var(--primary)]/50">
                         {" "}
                         / 20mg vial
@@ -583,7 +594,12 @@ export default function GetRetaPage() {
                       <span className="text-[0.6em] align-super">™</span> stack
                     </h3>
                     <p className="mt-1 text-3xl font-extrabold text-[var(--primary)]">
-                      $599
+                      <SalePriceInline
+                        kind="powerCut"
+                        list="$599"
+                        sale="$499"
+                        initial={initialSale}
+                      />
                       <span className="text-base font-semibold text-[var(--primary)]/50">
                         {" "}
                         / full protocol

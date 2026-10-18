@@ -11,8 +11,14 @@ import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { ShippingNoteText } from "@/app/components/ShippingNoteText";
 import { siteCopy } from "@/content/siteCopy";
 import { MemberBanner } from "@/app/components/member/MemberBanner";
+import { saleStatus } from "@/app/lib/sale";
+import { SaleBanner } from "@/app/components/SalePrice";
+
+// Re-render often so the server-evaluated sale state flips soon after expiry.
+export const revalidate = 60;
 
 export default function Home() {
+  const initialSale = saleStatus();
   return (
     <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
       {/* Urgency Banner */}
@@ -641,6 +647,7 @@ export default function Home() {
               <p className="mt-3 text-lg text-[var(--accent-dark)] font-semibold">
                 [{siteCopy.pricing.subheadline}]
               </p>
+              <SaleBanner kind="powerCut" initial={initialSale} className="mt-4" />
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -649,6 +656,7 @@ export default function Home() {
                   key={tier.id}
                   {...tier}
                   shipsBy={siteCopy.pricing.shipsBy}
+                  initialSale={initialSale}
                 />
               ))}
             </div>
