@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
-import { bulkTierForQty, resolveCouponId } from "@/app/lib/bulkDiscount";
+import {
+  bulkTierForQty,
+  maxSameProductQty,
+  resolveCouponId,
+} from "@/app/lib/bulkDiscount";
+import {
+  RETA_PRICE_ID,
+  SALE_ENDS_AT_MS,
+  isRetaSaleActive,
+  isRetaSaleLine,
+  retaSaleTotalCents,
+} from "@/app/lib/sale";
 
 export const runtime = "nodejs";
 
@@ -63,6 +74,17 @@ async function resolveBulkDiscount(
   return null;
 }
 
+/** Stripe product ID behind a Price (needed to scope sale-cart coupons). */
+async function productIdForPrice(
+  stripe: Stripe,
+  priceId: string,
+): Promise<{ productId: string; currency: string }> {
+  const price = await stripe.prices.retrieve(priceId);
+  const productId =
+    typeof price.product === "string" ? price.product : price.product.id;
+  return { productId, currency: price.currency };
+}
+
 export async function POST(req: NextRequest) {
   const secretKey = process.env.STRIPE_SECRET_KEY;
   if (!secretKey) {
@@ -86,6 +108,7 @@ export async function POST(req: NextRequest) {
   }
 
   const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+  const cartLines: { priceId: string; quantity: number }[] = [];
   for (const raw of rawItems) {
     const priceId = typeof raw.priceId === "string" ? raw.priceId : "";
     const quantity =
@@ -105,21 +128,17 @@ export async function POST(req: NextRequest) {
       );
     }
     lineItems.push({ price: priceId, quantity });
+    cartLines.push({ priceId, quantity });
   }
 
   const stripe = new Stripe(secretKey);
   const origin = siteOrigin(req);
 
-  // Bulk discount: driven by the HIGHEST quantity of any single product in the
-  // cart (2 → 10%, 3 → 15%, 4+ → 20%). Applied server-side as a Stripe coupon
-  // on the whole cart. Stripe forbids combining `discounts` with a
-  // customer-entered promo code, so the promo-code box is only offered when no
-  // bulk tier applies.
-  const maxSameQty = lineItems.reduce(
-    (m, li) => Math.max(m, li.quantity ?? 0),
-    0,
-  );
-  const bulkTier = bulkTierForQty(maxSameQty);
+  // Temporary Reta sale (see app/lib/sale.ts). Decided here, on the server
+  // clock, from the quantities in the request — the client only displays it.
+  const nowMs = Date.now();
+  const retaSale = isRetaSaleActive(nowMs);
+  const saleLines = cartLines.filter((l) => isRetaSaleLine(l, retaSale));
 
   const baseParams: Stripe.Checkout.SessionCreateParams = {
     mode: "payment",
@@ -134,24 +153,107 @@ export async function POST(req: NextRequest) {
     automatic_tax: { enabled: false },
   };
 
-  // The configured value (e.g. "BULK15") may be either a coupon ID or a
-  // promotion-code name — resolve whichever actually exists in this account.
-  let bulkDiscount: Stripe.Checkout.SessionCreateParams.Discount | null = null;
-  if (bulkTier) {
-    const id = resolveCouponId(bulkTier);
-    bulkDiscount = await resolveBulkDiscount(stripe, id);
-    if (!bulkDiscount) {
-      console.error(
-        `Bulk discount "${id}" not found as a coupon ID or an active promotion code — charging full price.`,
-      );
-    }
-  }
+  let sessionParams: Stripe.Checkout.SessionCreateParams;
 
-  // Stripe forbids combining `discounts` with a customer-entered promo code,
-  // so only offer the promo-code box when no bulk discount is applied.
-  const sessionParams: Stripe.Checkout.SessionCreateParams = bulkDiscount
-    ? { ...baseParams, discounts: [bulkDiscount] }
-    : { ...baseParams, allow_promotion_codes: true };
+  if (saleLines.length > 0) {
+    // SALE CART. Sale lines are charged their fixed sale price (priced inline
+    // against the existing Reta product — no Stripe prices are changed) and
+    // are excluded from every other discount: no customer promo codes, and a
+    // bulk coupon scoped to the remaining products only.
+    try {
+      const { productId: retaProductId, currency } = await productIdForPrice(
+        stripe,
+        RETA_PRICE_ID,
+      );
+      // The session can't outlive the sale (and Stripe caps sessions at 24h).
+      const expiresAt = Math.min(
+        Math.floor(SALE_ENDS_AT_MS / 1000),
+        Math.floor(nowMs / 1000) + 24 * 3600,
+      );
+
+      const saleItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
+        cartLines.map((l) => {
+          const saleTotal = isRetaSaleLine(l, retaSale)
+            ? retaSaleTotalCents(l.quantity)
+            : null;
+          return saleTotal === null
+            ? { price: l.priceId, quantity: l.quantity }
+            : {
+                price_data: {
+                  currency,
+                  product: retaProductId,
+                  unit_amount: saleTotal / l.quantity,
+                },
+                quantity: l.quantity,
+              };
+        });
+
+      sessionParams = {
+        ...baseParams,
+        line_items: saleItems,
+        expires_at: expiresAt,
+      };
+
+      const nonSale = cartLines.filter((l) => !isRetaSaleLine(l, retaSale));
+      const tier = bulkTierForQty(maxSameProductQty(nonSale));
+      if (tier && nonSale.length > 0) {
+        try {
+          const products = await Promise.all(
+            nonSale.map((l) => productIdForPrice(stripe, l.priceId)),
+          );
+          const coupon = await stripe.coupons.create({
+            percent_off: tier.pct,
+            duration: "once",
+            name: `Bulk discount (${tier.pct}% off)`,
+            applies_to: { products: products.map((p) => p.productId) },
+            max_redemptions: 1,
+            redeem_by: expiresAt,
+          });
+          sessionParams.discounts = [{ coupon: coupon.id }];
+        } catch (err) {
+          console.error(
+            "Could not create scoped bulk coupon for sale cart — charging full price for non-sale items.",
+            err,
+          );
+        }
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to price sale checkout.";
+      console.error("Sale checkout pricing error:", err);
+      return NextResponse.json({ error: message }, { status: 502 });
+    }
+  } else {
+    // Bulk discount: driven by the HIGHEST quantity of any single product in
+    // the cart (2 → 10%, 3 → 15%, 4+ → 20%). Applied server-side as a Stripe
+    // coupon on the whole cart. Stripe forbids combining `discounts` with a
+    // customer-entered promo code, so the promo-code box is only offered when
+    // no bulk tier applies.
+    const maxSameQty = lineItems.reduce(
+      (m, li) => Math.max(m, li.quantity ?? 0),
+      0,
+    );
+    const bulkTier = bulkTierForQty(maxSameQty);
+
+    // The configured value (e.g. "BULK15") may be either a coupon ID or a
+    // promotion-code name — resolve whichever actually exists in this account.
+    let bulkDiscount: Stripe.Checkout.SessionCreateParams.Discount | null = null;
+    if (bulkTier) {
+      const id = resolveCouponId(bulkTier);
+      bulkDiscount = await resolveBulkDiscount(stripe, id);
+      if (!bulkDiscount) {
+        console.error(
+          `Bulk discount "${id}" not found as a coupon ID or an active promotion code — charging full price.`,
+        );
+      }
+    }
+
+    // Stripe forbids combining `discounts` with a customer-entered promo code,
+    // so only offer the promo-code box when no bulk discount is applied.
+    sessionParams = bulkDiscount
+      ? { ...baseParams, discounts: [bulkDiscount] }
+      : { ...baseParams, allow_promotion_codes: true };
+  }
 
   try {
     const session = await stripe.checkout.sessions.create(sessionParams);

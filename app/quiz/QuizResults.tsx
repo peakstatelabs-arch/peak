@@ -6,6 +6,7 @@ import { reviews, type Review } from "@/content/reviews";
 import { AddToCartButton } from "@/app/singles/cart/AddToCartButton";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
 import { TrackedLink } from "@/app/components/TrackedLink";
+import { SalePriceInline } from "@/app/components/SalePrice";
 import { safeFirstName } from "@/app/lib/clientContact";
 import {
   type QuizAnswers,
@@ -360,7 +361,13 @@ function AddOnCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
             <p className="font-bold text-[var(--primary)]">{name}</p>
-            <p className="font-bold text-[var(--primary)]">{price}</p>
+            <p className="font-bold text-[var(--primary)]">
+              {slug === "retatrutide" ? (
+                <SalePriceInline kind="reta" list={price} sale="$165" />
+              ) : (
+                price
+              )}
+            </p>
           </div>
           <p className="text-xs text-[var(--primary)]/60">{dose}</p>
           <p className="mt-2 text-sm text-[var(--primary)]/70 leading-snug">
@@ -431,7 +438,13 @@ function StackDownsell({
               {single.blurb}
             </p>
             <p className="mt-2 text-sm font-semibold text-[var(--primary)]">
-              From {single.price} · {single.dose} · single vial
+              From{" "}
+              {single.slug === "retatrutide" ? (
+                <SalePriceInline kind="reta" list={single.price} sale="$165" />
+              ) : (
+                single.price
+              )}{" "}
+              · {single.dose} · single vial
             </p>
           </div>
         </div>
@@ -581,7 +594,15 @@ export function QuizResults({
                 </p>
                 <div className="mt-4 flex items-baseline gap-2">
                   <span className="text-3xl font-extrabold text-[var(--primary)]">
-                    {recommendation.primary.price}
+                    {recommendation.primary.slug === "retatrutide" ? (
+                      <SalePriceInline
+                        kind="reta"
+                        list={recommendation.primary.price}
+                        sale="$165"
+                      />
+                    ) : (
+                      recommendation.primary.price
+                    )}
                   </span>
                   <span className="text-sm text-[var(--primary)]/60">
                     {recommendation.primary.dose} · single vial

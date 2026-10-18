@@ -1,4 +1,9 @@
+"use client";
+
 import { TrackedLink } from "./TrackedLink";
+import { POWERCUT_SALE, withPromoCode, type SaleStatus } from "@/app/lib/sale";
+import { useSaleStatus } from "@/app/lib/useSaleStatus";
+import { formatUsd } from "@/app/singles/cart/CartContext";
 
 interface PricingCardProps {
   id: string;
@@ -19,6 +24,8 @@ interface PricingCardProps {
   /** When set, renders a "Pre-order · Ships {shipsBy}" line under the CTA. */
   shipsBy?: string;
   popular?: boolean;
+  /** Server-evaluated sale state, so the first paint matches the server clock. */
+  initialSale?: SaleStatus;
 }
 
 export function PricingCard({
@@ -39,7 +46,18 @@ export function PricingCard({
   refundNote,
   shipsBy,
   popular,
+  initialSale,
 }: PricingCardProps) {
+  // Temporary sale: only the tiers listed in POWERCUT_SALE are discounted. The
+  // discount itself is a Stripe promo code pre-applied on the Payment Link.
+  const saleOn = useSaleStatus(initialSale).powerCut;
+  const ps = saleOn ? POWERCUT_SALE[id] : undefined;
+  const shownPrice = ps ? formatUsd(ps.saleCents) : price;
+  const shownInstallment = ps ? ps.installment : installment;
+  const shownPerStack =
+    ps && id === "double" ? `Only ${formatUsd(ps.saleCents / 2)} per stack` : perStackPrice;
+  const href = ps ? withPromoCode(stripeUrl, ps.code) : stripeUrl;
+
   return (
     <div
       className={`relative rounded-3xl p-1 ${
@@ -102,22 +120,32 @@ export function PricingCard({
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-sm text-[var(--primary)]/60">Your Price:</span>
+            {ps && (
+              <span className="text-lg font-semibold text-[var(--primary)]/40 line-through">
+                {price}
+              </span>
+            )}
             <span className="text-3xl font-bold text-[var(--primary)]">
-              {price}
+              {shownPrice}
             </span>
           </div>
-          {perStackPrice && (
+          {ps && (
+            <p className="mt-2 inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-700">
+              Save {formatUsd(ps.listCents - ps.saleCents)} · code {ps.code} applied at checkout
+            </p>
+          )}
+          {shownPerStack && (
             <p className="mt-2 inline-flex items-center rounded-full bg-[var(--accent)]/15 px-3 py-1 text-sm font-bold text-[var(--accent-dark)]">
-              {perStackPrice}
+              {shownPerStack}
             </p>
           )}
           <p className="text-sm text-[var(--primary)]/60 mt-2">
-            or 4 interest-free payments of <span className="font-semibold text-[var(--primary)]">{installment}</span>
+            or 4 interest-free payments of <span className="font-semibold text-[var(--primary)]">{shownInstallment}</span>
           </p>
 
           {/* CTA Button */}
           <TrackedLink
-            href={stripeUrl}
+            href={href}
             data-rewardful
             target="_blank"
             rel="noopener noreferrer"
@@ -132,8 +160,9 @@ export function PricingCard({
               product: "POWER CUT™ Stack",
               tier: name,
               tier_id: id,
-              price,
-              installment,
+              price: shownPrice,
+              installment: shownInstallment,
+              sale_code: ps?.code,
               popular: !!popular,
             }}
             webhookEndpoint="/api/cart-event"

@@ -8,6 +8,9 @@ import { ViewCartButton } from "./cart/ViewCartButton";
 import { AddToCartButton } from "./cart/AddToCartButton";
 import { SINGLES_PRICE_IDS, type SinglesProductSlug } from "./cart/priceCatalog";
 import { BULK_DISCOUNTS_LIVE, BULK_TIERS } from "@/app/lib/bulkDiscount";
+import { saleStatus } from "@/app/lib/sale";
+import { SalePriceInline } from "@/app/components/SalePrice";
+import { RetaSaleNote } from "./cart/RetaSaleNote";
 
 const BULK_MAX_PCT = BULK_TIERS[BULK_TIERS.length - 1].pct;
 
@@ -17,7 +20,7 @@ export const metadata: Metadata = {
     "Individual research peptides from Peak State Labs — Retatrutide, CJC-1295 + Ipamorelin, BPC-157 + TB-500, GHK-Cu, KPV, and NAD+. Lab-tested 99%+ purity with single-vial options and protocol guidance.",
 };
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 const STOCK_EPOCH_MS = Date.UTC(2026, 4, 1);
 
@@ -200,6 +203,7 @@ function PlaceholderImage({ label }: { label: string }) {
 }
 
 export default function SinglesCatalog() {
+  const initialSale = saleStatus();
   return (
     <CartProvider>
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
@@ -418,7 +422,16 @@ export default function SinglesCatalog() {
                               Price
                             </p>
                             <p className="text-3xl font-bold text-[var(--primary)]">
-                              {product.price}
+                              {product.id === "retatrutide" ? (
+                                <SalePriceInline
+                                  kind="reta"
+                                  list={product.price}
+                                  sale="$165"
+                                  initial={initialSale}
+                                />
+                              ) : (
+                                product.price
+                              )}
                             </p>
                           </div>
                           {BULK_DISCOUNTS_LIVE && (
@@ -427,6 +440,9 @@ export default function SinglesCatalog() {
                             </span>
                           )}
                         </div>
+                        {product.id === "retatrutide" ? (
+                          <RetaSaleNote initial={initialSale} />
+                        ) : null}
                         <AddToCartButton
                           slug={product.id}
                           priceId={SINGLES_PRICE_IDS[product.id]}
