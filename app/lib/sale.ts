@@ -27,9 +27,13 @@ export const SALE_ENDS_AT_MS = Date.parse(SALE.endsAt);
 const STRIPE_MIN_SESSION_MS = 31 * 60 * 1000;
 export const RETA_SALE_CUTOFF_MS = SALE_ENDS_AT_MS - STRIPE_MIN_SESSION_MS;
 
-/** POWER CUT sale: runs to the end of the window (Stripe expires the codes). */
+// POWER CUT sale is paused until this instant (Mon Oct 19, 2026, 12:00 AM
+// America/New_York), then resumes on its own. Reta is unaffected.
+export const POWERCUT_RESUMES_AT_MS = Date.parse("2026-10-19T00:00:00-04:00");
+
+/** POWER CUT sale: paused until the resume time, then runs to the end of the window. */
 export function isPowerCutSaleActive(nowMs: number = Date.now()): boolean {
-  return nowMs <= SALE_ENDS_AT_MS;
+  return nowMs >= POWERCUT_RESUMES_AT_MS && nowMs <= SALE_ENDS_AT_MS;
 }
 
 /** Reta sale: server-priced, so it stops early enough for session expiry. */

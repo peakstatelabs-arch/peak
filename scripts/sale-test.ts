@@ -115,6 +115,11 @@ await t("sale ends Fri Oct 23 2026 11:59 PM America/New_York", () => {
   const f = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "long", month: "long", day: "numeric", year: "numeric", hour: "numeric", minute: "numeric", hour12: true });
   assert.equal(f.format(new Date(sale.SALE_ENDS_AT_MS)), "Friday, October 23, 2026 at 11:59 PM");
   assert.ok(sale.isPowerCutSaleActive(T("2026-10-23T23:59:00-04:00")));
+  // POWER CUT is paused until midnight ET Oct 19; Reta is unaffected.
+  assert.ok(!sale.isPowerCutSaleActive(T("2026-10-18T12:00:00-04:00")));
+  assert.ok(!sale.isPowerCutSaleActive(T("2026-10-18T23:59:59-04:00")));
+  assert.ok(sale.isPowerCutSaleActive(T("2026-10-19T00:00:00-04:00")));
+  assert.ok(sale.isRetaSaleActive(T("2026-10-18T12:00:00-04:00")));
   assert.ok(!sale.isPowerCutSaleActive(T("2026-10-24T00:00:00-04:00")));
 });
 
@@ -234,6 +239,7 @@ await t("getreta tiers: sale on / off", () => {
 });
 await t("server status flips at cutoff (reta) / deadline (power cut)", () => {
   assert.deepEqual(sale.saleStatus(T(NOW)), { reta: true, powerCut: true });
+  assert.deepEqual(sale.saleStatus(T("2026-10-18T15:00:00-04:00")), { reta: true, powerCut: false });
   assert.deepEqual(sale.saleStatus(T("2026-10-23T23:45:00-04:00")), { reta: false, powerCut: true });
   assert.deepEqual(sale.saleStatus(T("2026-10-24T00:00:01-04:00")), { reta: false, powerCut: false });
 });
