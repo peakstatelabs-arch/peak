@@ -47,10 +47,11 @@ export function saleStatus(nowMs: number = Date.now()): SaleStatus {
 export const RETA_PRICE_ID = SINGLES_PRICE_IDS.retatrutide;
 export const RETA_LIST_UNIT_CENTS = 21500;
 
-/** Sale TOTAL (cents) for the Reta quantities that are on sale. */
+/** Sale TOTAL (cents) for the Reta quantities that are on sale (1–3 vials). 4+ keep bulk pricing. */
 export const RETA_SALE_TOTAL_CENTS: Record<number, number> = {
   1: 16500,
   2: 33000,
+  3: 49500,
 };
 
 export function retaSaleTotalCents(quantity: number): number | null {

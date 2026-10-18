@@ -130,11 +130,11 @@ await t("2 Reta = $330 (no extra 10%)", async () => {
   assert.equal(r.params.discounts, undefined);
   assert.equal(r.params.allow_promotion_codes, undefined);
 });
-await t("3 Reta = $548.25 (unchanged, BULK15, promo box rules as before)", async () => {
-  const r = await sameAsDrawer([[R, 3]], NOW, 54825);
-  assert.deepEqual(r.params.discounts, [{ coupon: "BULK15" }]);
-  assert.equal(r.params.line_items[0].price, R);
-  assert.equal(r.params.expires_at, undefined);
+await t("3 Reta = $495 (sale, $150 off list; no bulk coupon)", async () => {
+  const r = await sameAsDrawer([[R, 3]], NOW, 49500);
+  assert.equal(r.params.discounts, undefined);
+  assert.equal(r.params.allow_promotion_codes, undefined);
+  assert.equal(r.params.line_items[0].price_data.unit_amount, 16500);
 });
 await t("4+ Reta keep 20% bulk", async () => {
   await sameAsDrawer([[R, 4]], NOW, 68800);
@@ -170,9 +170,13 @@ await t("mixed: 1 Reta + 3 BPC → 15% on BPC only", async () => {
   const r = await sameAsDrawer([[R, 1], [BPC, 3]], NOW, 16500 + 36975);
   assert.deepEqual(r.coupon.applies_to.products, [PRODUCT(BPC)]);
 });
-await t("mixed: 3 Reta + 1 CJC → pre-sale behaviour (15% whole cart, BULK15)", async () => {
-  const r = await sameAsDrawer([[R, 3], [CJC, 1]], NOW, Math.round((64500 + 10500) * 0.85));
-  assert.deepEqual(r.params.discounts, [{ coupon: "BULK15" }]);
+await t("mixed: 4 Reta + 1 CJC → pre-sale behaviour (20% whole cart, BULK20)", async () => {
+  const r = await sameAsDrawer([[R, 4], [CJC, 1]], NOW, Math.round((86000 + 10500) * 0.8));
+  assert.deepEqual(r.params.discounts, [{ coupon: "BULK20" }]);
+});
+await t("mixed: 3 Reta + 1 CJC → $495 + $105, no bulk", async () => {
+  const r = await sameAsDrawer([[R, 3], [CJC, 1]], NOW, 49500 + 10500);
+  assert.equal(r.params.discounts, undefined);
 });
 await t("sale cart never offers customer promo codes (can't stack)", async () => {
   for (const items of [[[R, 1]], [[R, 2], [CJC, 1]], [[R, 1], [BPC, 2]]] as Item[][]) {
@@ -208,7 +212,7 @@ await t("no sale sessions after the cutoff: full price + normal bulk rules", asy
     assert.equal(r.params.allow_promotion_codes, true);
     r = await sameAsDrawer([[R, 2]], iso, 38700);
     assert.deepEqual(r.params.discounts, [{ coupon: "BULK10" }]);
-    await sameAsDrawer([[R, 3]], iso, 54825);
+    await sameAsDrawer([[R, 3]], iso, 54825);  // pre-sale price returns
     await sameAsDrawer([[R, 2], [CJC, 1]], iso, Math.round(53500 * 0.9));
   }
 });
@@ -222,8 +226,8 @@ await t("getreta tiers: sale on / off", () => {
   const p = (v: number, on: boolean) => tierPricing(TIERS.find((x) => x.vials === v)!, on);
   assert.deepEqual([p(1, true).discounted, p(1, true).full, p(1, true).saves], [16500, 21500, 5000]);
   assert.deepEqual([p(2, true).discounted, p(2, true).full, p(2, true).saves], [33000, 43000, 10000]);
-  assert.deepEqual([p(3, true).discounted, p(3, true).pct], [54825, 15]);
-  assert.equal(p(3, true).onSale, false);
+  assert.deepEqual([p(3, true).discounted, p(3, true).full, p(3, true).saves], [49500, 64500, 15000]);
+  assert.equal(p(3, true).onSale, true);
   assert.equal(p(1, false).discounted, 21500);
   assert.equal(p(2, false).discounted, 38700);
   assert.equal(p(3, false).discounted, 54825);

@@ -20,11 +20,16 @@ export function RetaSaleNote({ initial }: { initial?: SaleStatus }) {
         <span className="text-[var(--accent-dark)]">$330</span>{" "}
         <span className="text-xs font-semibold text-[var(--primary)]/45 line-through">
           $430
+        </span>{" "}
+        <span className="text-[var(--primary)]/30">·</span> 3 vials{" "}
+        <span className="text-[var(--accent-dark)]">$495</span>{" "}
+        <span className="text-xs font-semibold text-[var(--primary)]/45 line-through">
+          $645
         </span>
       </p>
       <p className="mt-1 text-[11px] text-[var(--primary)]/60">
-        Save $50 on one, $100 on two. Sale prices don&rsquo;t combine with other
-        discounts.
+        Save $50 on one, $100 on two, $150 on three. Sale prices don&rsquo;t
+        combine with other discounts.
       </p>
     </div>
   );
