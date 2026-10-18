@@ -55,7 +55,7 @@ export function PricingCard({
   const shownPrice = ps ? formatUsd(ps.saleCents) : price;
   const shownInstallment = ps ? ps.installment : installment;
   const shownPerStack =
-    ps && id === "double" ? `Only ${formatUsd(ps.saleCents / 2)} per stack` : perStackPrice;
+    ps && id === "double" ? `Only $${(ps.saleCents / 200).toFixed(2)} per stack` : perStackPrice;
   const href = ps ? withPromoCode(stripeUrl, ps.code) : stripeUrl;
 
   return (
@@ -130,9 +130,14 @@ export function PricingCard({
             </span>
           </div>
           {ps && (
-            <p className="mt-2 inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-700">
-              Save {formatUsd(ps.listCents - ps.saleCents)} · code {ps.code} applied at checkout
-            </p>
+            <div className="mt-3">
+              <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-700">
+                Save {formatUsd(ps.listCents - ps.saleCents)}
+              </span>
+              <p className="mt-1.5 text-xs text-[var(--primary)]/55">
+                Code {ps.code} auto-applied at checkout
+              </p>
+            </div>
           )}
           {shownPerStack && (
             <p className="mt-2 inline-flex items-center rounded-full bg-[var(--accent)]/15 px-3 py-1 text-sm font-bold text-[var(--accent-dark)]">
