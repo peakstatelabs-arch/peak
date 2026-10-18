@@ -9,8 +9,7 @@ import { AddToCartButton } from "./cart/AddToCartButton";
 import { SINGLES_PRICE_IDS, type SinglesProductSlug } from "./cart/priceCatalog";
 import { BULK_DISCOUNTS_LIVE, BULK_TIERS } from "@/app/lib/bulkDiscount";
 import { saleStatus } from "@/app/lib/sale";
-import { SalePriceInline } from "@/app/components/SalePrice";
-import { RetaSaleNote } from "./cart/RetaSaleNote";
+import { RetaCardBuy } from "./cart/RetaCardBuy";
 import { SaleBar, SaleHeroStrip } from "@/app/components/SaleUrgency";
 
 const BULK_MAX_PCT = BULK_TIERS[BULK_TIERS.length - 1].pct;
@@ -427,22 +426,54 @@ export default function SinglesCatalog() {
                       )}
 
                       <div className="mt-5 pt-5 border-t border-[var(--border)]">
+                        {product.id === "retatrutide" ? (
+                          <RetaCardBuy
+                            initial={initialSale}
+                            slug={product.id}
+                            priceId={SINGLES_PRICE_IDS[product.id]}
+                            name={product.name}
+                            dose={product.dose}
+                            unitPriceCents={product.priceCents}
+                            image={product.image}
+                            fallback={
+                              <>
+                                <div className="flex items-end justify-between gap-4 mb-4">
+                                  <div>
+                                    <p className="text-xs font-medium uppercase tracking-wider text-[var(--primary)]/50">
+                                      Price
+                                    </p>
+                                    <p className="text-3xl font-bold text-[var(--primary)]">
+                                      {product.price}
+                                    </p>
+                                  </div>
+                                  {BULK_DISCOUNTS_LIVE && (
+                                    <span className="inline-flex items-center rounded-full bg-[var(--accent)]/15 px-2.5 py-1 text-[11px] font-bold text-[var(--accent-dark)]">
+                                      Buy 2+, save up to {BULK_MAX_PCT}%
+                                    </span>
+                                  )}
+                                </div>
+                                <AddToCartButton
+                                  slug={product.id}
+                                  priceId={SINGLES_PRICE_IDS[product.id]}
+                                  name={product.name}
+                                  dose={product.dose}
+                                  unitPriceCents={product.priceCents}
+                                  image={product.image}
+                                  preorder={product.preorder}
+                                  shipsBy={product.shipsBy}
+                                />
+                              </>
+                            }
+                          />
+                        ) : (
+                          <>
                         <div className="flex items-end justify-between gap-4 mb-4">
                           <div>
                             <p className="text-xs font-medium uppercase tracking-wider text-[var(--primary)]/50">
                               Price
                             </p>
                             <p className="text-3xl font-bold text-[var(--primary)]">
-                              {product.id === "retatrutide" ? (
-                                <SalePriceInline
-                                  kind="reta"
-                                  list={product.price}
-                                  sale="$165"
-                                  initial={initialSale}
-                                />
-                              ) : (
-                                product.price
-                              )}
+                              {product.price}
                             </p>
                           </div>
                           {BULK_DISCOUNTS_LIVE && (
@@ -451,9 +482,6 @@ export default function SinglesCatalog() {
                             </span>
                           )}
                         </div>
-                        {product.id === "retatrutide" ? (
-                          <RetaSaleNote initial={initialSale} />
-                        ) : null}
                         <AddToCartButton
                           slug={product.id}
                           priceId={SINGLES_PRICE_IDS[product.id]}
@@ -464,6 +492,8 @@ export default function SinglesCatalog() {
                           preorder={product.preorder}
                           shipsBy={product.shipsBy}
                         />
+                          </>
+                        )}
 
                         <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs font-semibold text-[var(--accent-dark)]">
                           <svg

@@ -16,15 +16,17 @@ type Props = {
   image?: string;
   preorder?: boolean;
   shipsBy?: string;
+  /** Units added per click (default 1). */
+  quantity?: number;
 };
 
 export function AddToCartButton(props: Props) {
   const { addItem, openCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
+  const qty = props.quantity ?? 1;
   const saleActive = useSaleStatus().reta;
-  // One Reta vial is on sale; the button adds exactly one.
   const salePrice =
-    saleActive && props.priceId === RETA_PRICE_ID ? retaSaleTotalCents(1) : null;
+    saleActive && props.priceId === RETA_PRICE_ID ? retaSaleTotalCents(qty) : null;
 
   function handleClick() {
     addItem(
@@ -38,7 +40,7 @@ export function AddToCartButton(props: Props) {
         preorder: props.preorder,
         shipsBy: props.shipsBy,
       },
-      1,
+      qty,
     );
     setJustAdded(true);
     openCart();
@@ -51,7 +53,7 @@ export function AddToCartButton(props: Props) {
       price_id: props.priceId,
       dose: props.dose,
       unit_price_cents: props.unitPriceCents,
-      quantity: 1,
+      quantity: qty,
     });
 
     // Fire-and-forget Zapier ping via the existing cart-event route (unchanged).
@@ -74,6 +76,7 @@ export function AddToCartButton(props: Props) {
           product_name: props.name,
           dose: props.dose,
           unit_price_cents: props.unitPriceCents,
+          quantity: qty,
         }),
       }).catch(() => {});
     } catch {
@@ -121,7 +124,7 @@ export function AddToCartButton(props: Props) {
               d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
             />
           </svg>
-          Add to Cart{salePrice !== null ? ` — ${formatUsd(salePrice)}` : ""}
+          {qty > 1 ? `Add ${qty} Vials` : "Add to Cart"}{salePrice !== null ? ` — ${formatUsd(salePrice)}` : ""}
         </>
       )}
     </button>
