@@ -13,7 +13,7 @@ import { siteCopy } from "@/content/siteCopy";
 import { MemberBanner } from "@/app/components/member/MemberBanner";
 import { saleStatus } from "@/app/lib/sale";
 import { SaleBanner } from "@/app/components/SalePrice";
-import { SaleBar, SaleHeroStrip } from "@/app/components/SaleUrgency";
+import { SaleBar } from "@/app/components/SaleUrgency";
 
 // Re-render often so the server-evaluated sale state flips soon after expiry.
 export const revalidate = 60;
@@ -157,12 +157,6 @@ export default function Home() {
                   </span>
                 </div>
 
-                <SaleHeroStrip
-                  kind="powerCut"
-                  href="#pricing"
-                  initial={initialSale}
-                  className="mt-5 mx-auto max-w-md lg:mx-0"
-                />
 
                 {/* CTA Buttons */}
                 <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up stagger-3">
