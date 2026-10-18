@@ -11,7 +11,7 @@ import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { RetaBuy } from "./RetaBuy";
 import { saleStatus } from "@/app/lib/sale";
 import { SalePriceInline } from "@/app/components/SalePrice";
-import { SaleBar, SaleHeroStrip } from "@/app/components/SaleUrgency";
+import { SaleBar } from "@/app/components/SaleUrgency";
 
 // Re-render often so the server-evaluated sale state flips soon after expiry.
 export const revalidate = 60;
@@ -225,12 +225,6 @@ export default function GetRetaPage() {
                     support a faster metabolism so getting leaner doesn’t have to
                     consume your entire life.
                   </p>
-                  <SaleHeroStrip
-                    kind="reta"
-                    href="#buy"
-                    initial={initialSale}
-                    className="mt-6 max-w-xl"
-                  />
                 </div>
 
                 {/* Product image */}

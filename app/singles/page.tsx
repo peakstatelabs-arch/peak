@@ -10,7 +10,7 @@ import { SINGLES_PRICE_IDS, type SinglesProductSlug } from "./cart/priceCatalog"
 import { BULK_DISCOUNTS_LIVE, BULK_TIERS } from "@/app/lib/bulkDiscount";
 import { saleStatus } from "@/app/lib/sale";
 import { RetaCardBuy } from "./cart/RetaCardBuy";
-import { SaleBar, SaleHeroStrip } from "@/app/components/SaleUrgency";
+import { SaleBar } from "@/app/components/SaleUrgency";
 
 const BULK_MAX_PCT = BULK_TIERS[BULK_TIERS.length - 1].pct;
 
@@ -258,12 +258,6 @@ export default function SinglesCatalog() {
                   renewal — available as single vials for research use.
                 </p>
 
-                <SaleHeroStrip
-                  kind="reta"
-                  href="#retatrutide"
-                  initial={initialSale}
-                  className="mx-auto mt-7 max-w-md text-left"
-                />
 
                 {/* Included-with-every-order strip */}
                 <div className="mt-7 inline-flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/10 px-4 py-3 animate-fade-in-up stagger-2">
