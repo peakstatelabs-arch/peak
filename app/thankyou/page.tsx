@@ -4,7 +4,11 @@ import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { SmsOptIn } from "@/app/components/SmsOptIn";
 import { LegalLinks } from "@/app/components/LegalPage";
-import { fetchCheckoutContact, phoneLast4 } from "@/app/lib/smsOptIn";
+import {
+  fetchCheckoutContact,
+  isCompleteContact,
+  phoneLast4,
+} from "@/app/lib/smsOptIn";
 
 export const metadata: Metadata = {
   title: "Welcome to the 1% — Peak State Labs",
@@ -76,14 +80,15 @@ export default async function ThankYouPage({
           </Container>
         </Section>
 
-        {/* SMS support opt-in */}
-        <SmsOptIn
-          source="powercut"
-          sessionId={contact?.sessionId}
-          hasPhone={Boolean(contact?.phone)}
-          phoneLast4={phoneLast4(contact?.phone)}
-          copy="Get your instructions, check-ins, and Power Cut support by text."
-        />
+        {/* SMS support opt-in — only when Stripe has name, email and phone */}
+        {isCompleteContact(contact) && (
+          <SmsOptIn
+            source="powercut"
+            sessionId={contact.sessionId}
+            phoneLast4={phoneLast4(contact.phone)}
+            copy="Get your instructions, check-ins, and Power Cut support by text."
+          />
+        )}
 
         {/* Transformation Timeline */}
         <Section className="bg-white">

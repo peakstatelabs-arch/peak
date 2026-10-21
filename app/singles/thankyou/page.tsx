@@ -6,7 +6,11 @@ import { siteCopy } from "@/content/siteCopy";
 import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
 import { SmsOptIn } from "@/app/components/SmsOptIn";
 import { LegalLinks } from "@/app/components/LegalPage";
-import { phoneLast4 } from "@/app/lib/smsOptIn";
+import {
+  fetchCheckoutContact,
+  isCompleteContact,
+  phoneLast4,
+} from "@/app/lib/smsOptIn";
 
 export const metadata: Metadata = {
   title: "Order Confirmed — Peak State Labs",
@@ -36,7 +40,6 @@ type OrderSummary = {
   shippingPostal?: string;
   shippingCountry?: string;
   email?: string;
-  phone?: string;
 };
 
 const ALLOWED_PRICE_IDS = new Set<string>(Object.values(SINGLES_PRICE_IDS));
@@ -92,7 +95,6 @@ async function fetchOrder(sessionId: string): Promise<OrderSummary | null> {
       shippingPostal: address?.postal_code ?? undefined,
       shippingCountry: address?.country ?? undefined,
       email: session.customer_details?.email ?? undefined,
-      phone: session.customer_details?.phone ?? undefined,
     };
   } catch (err) {
     console.error("singles/thankyou fetchOrder error:", err);
@@ -115,7 +117,14 @@ export default async function SinglesThankYouPage({
   searchParams: Promise<{ session_id?: string }>;
 }) {
   const { session_id } = await searchParams;
-  const order = session_id ? await fetchOrder(session_id) : null;
+  // The SMS contact is looked up on its own (no price allowlist), so sale
+  // orders and any future pricing changes still get the customer's details.
+  const [order, smsContact] = session_id
+    ? await Promise.all([
+        fetchOrder(session_id),
+        fetchCheckoutContact(session_id, "singles"),
+      ])
+    : [null, null];
   const firstName = order?.shippingName?.trim().split(/\s+/)[0];
 
   return (
@@ -173,14 +182,15 @@ export default async function SinglesThankYouPage({
           </Container>
         </Section>
 
-        {/* SMS support opt-in */}
-        <SmsOptIn
-          source="singles"
-          sessionId={order ? session_id : undefined}
-          hasPhone={Boolean(order?.phone)}
-          phoneLast4={phoneLast4(order?.phone)}
-          copy="Get product instructions, check-ins, and support by text."
-        />
+        {/* SMS support opt-in — only when Stripe has name, email and phone */}
+        {isCompleteContact(smsContact) && (
+          <SmsOptIn
+            source="singles"
+            sessionId={smsContact.sessionId}
+            phoneLast4={phoneLast4(smsContact.phone)}
+            copy="Get product instructions, check-ins, and support by text."
+          />
+        )}
 
         {/* Order Summary */}
         {order && (

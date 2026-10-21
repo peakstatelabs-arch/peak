@@ -23,26 +23,23 @@ function localToday(): string {
 }
 
 /**
- * Post-purchase "support by text" opt-in. When the Stripe checkout already
- * captured a phone (`hasPhone`), it's one tap — the server looks the number up
- * from the session. Otherwise (e.g. PayPal orders) a single phone field shows.
+ * Post-purchase "support by text" opt-in. Only rendered when the customer's
+ * Stripe checkout has their name, email and phone; the server looks all three
+ * up from the session, so the customer never re-enters anything.
  */
 export function SmsOptIn({
   source,
   sessionId,
-  hasPhone,
   phoneLast4,
   copy,
 }: {
   source: SmsOptInSource;
-  sessionId?: string;
-  hasPhone: boolean;
+  sessionId: string;
   phoneLast4?: string | null;
   copy: string;
 }) {
-  const storageKey = `peak:sms-optin:${sessionId || source}`;
+  const storageKey = `peak:sms-optin:${sessionId}`;
   const [status, setStatus] = useState<Status>("idle");
-  const [phone, setPhone] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [dob, setDob] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +77,6 @@ export function SmsOptIn({
         body: JSON.stringify({
           source,
           sessionId,
-          phone: hasPhone ? undefined : phone,
           consentChecked: agreed,
           dateOfBirth: dob,
         }),
@@ -116,19 +112,6 @@ export function SmsOptIn({
           </p>
 
           <form onSubmit={optIn} className="mt-6 flex flex-col items-center gap-3">
-            {!hasPhone && !done && (
-              <input
-                type="tel"
-                name="phone"
-                autoComplete="tel"
-                inputMode="tel"
-                required
-                placeholder="Mobile number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="h-14 w-full max-w-sm rounded-2xl border-2 border-[var(--border)] bg-white px-5 text-base text-[var(--primary)] outline-none focus:border-[var(--accent)]"
-              />
-            )}
             {!done && (
               <div className="w-full max-w-sm text-left">
                 <label
@@ -210,7 +193,7 @@ export function SmsOptIn({
                 "YES — TEXT ME SUPPORT"
               )}
             </button>
-            {hasPhone && phoneLast4 && !done && (
+            {phoneLast4 && !done && (
               <p className="text-sm text-[var(--primary)]/60">
                 We&rsquo;ll text the number on your order ending in {phoneLast4}.
               </p>
