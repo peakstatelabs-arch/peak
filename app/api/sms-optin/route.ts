@@ -8,7 +8,11 @@ import {
   ageFromDob,
   type SmsOptInSource,
 } from "@/app/lib/smsOptInCopy";
-import { fetchCheckoutContact } from "@/app/lib/smsOptIn";
+import {
+  fetchCheckoutContact,
+  firstNameOf,
+  isCompleteContact,
+} from "@/app/lib/smsOptIn";
 
 export const runtime = "nodejs";
 
@@ -26,8 +30,8 @@ function str(value: unknown): string {
 }
 
 // Normalize a phone to E.164 (e.g. "(515) 802-4949" -> "+15158024949").
-// Bare 10-digit numbers are treated as US. Used for both the Stripe checkout
-// phone (Payment Links can return it formatted) and the manual fallback field.
+// Bare 10-digit numbers are treated as US. Stripe Payment Links can return the
+// checkout phone formatted.
 function normalizePhone(raw: string): string | null {
   const digits = raw.replace(/\D/g, "");
   if (raw.trim().startsWith("+") && digits.length >= 8 && digits.length <= 15) {
@@ -77,27 +81,38 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Prefer the phone the customer already gave Stripe at checkout. The client
-  // never supplies it in that case, so it can't be spoofed.
+  // Name, email and phone always come from the customer's Stripe checkout —
+  // never from the browser — and TextMagic only gets complete contacts.
   const sessionId = str(body.sessionId);
-  const contact = sessionId ? await fetchCheckoutContact(sessionId, source) : null;
+  if (!sessionId) {
+    return NextResponse.json(
+      { error: "We couldn't find your order. Please contact support." },
+      { status: 400 },
+    );
+  }
+  const contact = await fetchCheckoutContact(sessionId, source);
+  if (!isCompleteContact(contact)) {
+    console.error(
+      "SMS opt-in blocked: incomplete Stripe contact",
+      JSON.stringify({
+        source,
+        session_id: sessionId,
+        found: Boolean(contact),
+        has_name: Boolean(firstNameOf(contact?.name)),
+        has_email: Boolean(contact?.email),
+        has_phone: Boolean(contact?.phone),
+      }),
+    );
+    return NextResponse.json(
+      { error: "Something went wrong. Please try again." },
+      { status: 502 },
+    );
+  }
 
-  const stripePhone = contact?.phone?.trim() ?? "";
   // If a Stripe phone can't be normalized, keep it as-is rather than lose the
   // opt-in.
-  let phone = stripePhone ? normalizePhone(stripePhone) ?? stripePhone : "";
-  let phoneSource = "stripe_checkout";
-  if (!phone) {
-    const entered = normalizePhone(str(body.phone));
-    if (!entered) {
-      return NextResponse.json(
-        { error: "Please enter a valid mobile number.", needsPhone: true },
-        { status: 400 },
-      );
-    }
-    phone = entered;
-    phoneSource = "entered_on_thankyou_page";
-  }
+  const phone = normalizePhone(contact.phone) ?? contact.phone.trim();
+  const phoneSource = "stripe_checkout";
 
   const record = {
     event: "sms_support_opt_in",
@@ -106,15 +121,15 @@ export async function POST(req: NextRequest) {
     source_page: SMS_OPT_IN_SOURCES[source],
     phone,
     phone_source: phoneSource,
-    email: contact?.email ?? "",
-    name: contact?.name ?? "",
-    stripe_checkout_session_id: contact?.sessionId ?? sessionId,
-    stripe_customer_id: contact?.customerId ?? "",
-    stripe_payment_intent_id: contact?.paymentIntentId ?? "",
-    order_total: contact?.amountTotalCents != null
+    email: contact.email.trim(),
+    name: contact.name.trim(),
+    stripe_checkout_session_id: contact.sessionId,
+    stripe_customer_id: contact.customerId ?? "",
+    stripe_payment_intent_id: contact.paymentIntentId ?? "",
+    order_total: contact.amountTotalCents != null
       ? (contact.amountTotalCents / 100).toFixed(2)
       : "",
-    currency: contact?.currency ?? "",
+    currency: contact.currency ?? "",
     consent_text: SMS_CONSENT_TEXT,
     consent_checkbox_checked: true,
     consent_checkbox_text: SMS_CHECKBOX_TEXT,
@@ -134,7 +149,7 @@ export async function POST(req: NextRequest) {
 
   // Zapier only gets the fields it needs to text the customer.
   const zapierPayload = {
-    first_name: contact?.name?.trim().split(/\s+/)[0] ?? "",
+    first_name: firstNameOf(contact.name),
     email: record.email,
     phone: record.phone,
     source: record.source,
