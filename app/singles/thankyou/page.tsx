@@ -29,6 +29,8 @@ type OrderLine = {
 type OrderSummary = {
   lines: OrderLine[];
   subtotalCents: number;
+  discountCents: number;
+  discountLabel?: string;
   shippingCents: number;
   totalCents: number;
   currency: string;
@@ -54,6 +56,7 @@ async function fetchOrder(sessionId: string): Promise<OrderSummary | null> {
         "line_items",
         "line_items.data.price",
         "collected_information",
+        "total_details.breakdown",
       ],
     });
 
@@ -73,9 +76,17 @@ async function fetchOrder(sessionId: string): Promise<OrderSummary | null> {
       lines.push({
         name: li.description ?? "Peak State Labs vial",
         quantity: li.quantity ?? 1,
-        amountCents: li.amount_total ?? 0,
+        // Regular price before discounts, so each line matches the Stripe
+        // receipt; the discount is shown as its own row below.
+        amountCents: li.amount_subtotal ?? 0,
       });
     }
+
+    const discountCents = session.total_details?.amount_discount ?? 0;
+    const discountLabel =
+      discountCents > 0
+        ? await discountName(stripe, session.total_details?.breakdown?.discounts)
+        : undefined;
 
     const shipping = session.collected_information?.shipping_details;
     const address = shipping?.address;
@@ -83,6 +94,8 @@ async function fetchOrder(sessionId: string): Promise<OrderSummary | null> {
     return {
       lines,
       subtotalCents: session.amount_subtotal ?? 0,
+      discountCents,
+      discountLabel,
       shippingCents:
         (session.total_details?.amount_shipping ?? 0) as number,
       totalCents: session.amount_total ?? 0,
@@ -102,11 +115,47 @@ async function fetchOrder(sessionId: string): Promise<OrderSummary | null> {
   }
 }
 
+/**
+ * Customer-facing name of the discount(s) on a session, e.g. "BULK10" or the
+ * promo code they typed. Falls back to undefined (shown as "Discount") if
+ * Stripe can't tell us.
+ */
+async function discountName(
+  stripe: Stripe,
+  discounts?: Stripe.Checkout.Session.TotalDetails.Breakdown.Discount[],
+): Promise<string | undefined> {
+  const names: string[] = [];
+  for (const { discount } of discounts ?? []) {
+    try {
+      const promo = discount.promotion_code;
+      if (promo) {
+        const code =
+          typeof promo === "string"
+            ? (await stripe.promotionCodes.retrieve(promo)).code
+            : promo.code;
+        if (code) names.push(code);
+        continue;
+      }
+      const coupon = discount.source?.coupon;
+      if (coupon) {
+        const c =
+          typeof coupon === "string"
+            ? await stripe.coupons.retrieve(coupon)
+            : coupon;
+        names.push(c.name || c.id);
+      }
+    } catch (err) {
+      console.error("singles/thankyou discountName error:", err);
+    }
+  }
+  return names.length ? names.join(", ") : undefined;
+}
+
 function formatUsd(cents: number, currency = "USD"): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(cents / 100);
 }
@@ -232,6 +281,18 @@ export default async function SinglesThankYouPage({
                         {formatUsd(order.subtotalCents, order.currency)}
                       </span>
                     </div>
+                    {order.discountCents > 0 && (
+                      <div className="flex items-center justify-between text-[var(--primary)]/70">
+                        <span>
+                          {order.discountLabel
+                            ? `Discount (${order.discountLabel})`
+                            : "Discount"}
+                        </span>
+                        <span>
+                          &minus;{formatUsd(order.discountCents, order.currency)}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between text-[var(--primary)]/70">
                       <span>Shipping</span>
                       <span>
