@@ -77,7 +77,7 @@ const faqs = [
   },
   {
     q: "Is my member discount applied?",
-    a: "The two-stack gets 10% off automatically at checkout — no code needed. On a single stack, enter your member code at checkout for the same 10%.",
+    a: "The stack price is already the discount: $46 off one stack and $141 off two, compared with buying each vial separately. Because of that, member codes can't be added on top of a stack.",
   },
   {
     q: "Do I get dosing help?",

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
+import {
+  RECOVERY_STACK_PRICE_IDS,
+  SINGLES_PRICE_IDS,
+  isStackPriceId,
+} from "@/app/singles/cart/priceCatalog";
 import {
   bulkTierForQty,
   maxSameProductQty,
@@ -16,7 +20,10 @@ import {
 
 export const runtime = "nodejs";
 
-const ALLOWED_PRICE_IDS = new Set<string>(Object.values(SINGLES_PRICE_IDS));
+const ALLOWED_PRICE_IDS = new Set<string>([
+  ...Object.values(SINGLES_PRICE_IDS),
+  ...Object.values(RECOVERY_STACK_PRICE_IDS),
+]);
 
 type CartItemInput = { priceId: unknown; quantity: unknown };
 
@@ -194,7 +201,10 @@ export async function POST(req: NextRequest) {
         expires_at: expiresAt,
       };
 
-      const nonSale = cartLines.filter((l) => !isRetaSaleLine(l, retaSale));
+      // Stacks are fixed-price too, so they're left out of the bulk coupon.
+      const nonSale = cartLines.filter(
+        (l) => !isRetaSaleLine(l, retaSale) && !isStackPriceId(l.priceId),
+      );
       const tier = bulkTierForQty(maxSameProductQty(nonSale));
       if (tier && nonSale.length > 0) {
         try {
@@ -222,6 +232,34 @@ export async function POST(req: NextRequest) {
         err instanceof Error ? err.message : "Failed to price sale checkout.";
       console.error("Sale checkout pricing error:", err);
       return NextResponse.json({ error: message }, { status: 502 });
+    }
+  } else if (cartLines.some((l) => isStackPriceId(l.priceId))) {
+    // STACK CART. A FULL REPAIR stack is sold at its fixed stack price: no
+    // customer promo codes, and the bulk tier comes from the other vials
+    // only, as a one-off coupon scoped to those products.
+    sessionParams = { ...baseParams };
+    const others = cartLines.filter((l) => !isStackPriceId(l.priceId));
+    const tier = bulkTierForQty(maxSameProductQty(others));
+    if (tier && others.length > 0) {
+      try {
+        const products = await Promise.all(
+          others.map((l) => productIdForPrice(stripe, l.priceId)),
+        );
+        const coupon = await stripe.coupons.create({
+          percent_off: tier.pct,
+          duration: "once",
+          name: `Bulk discount (${tier.pct}% off)`,
+          applies_to: { products: products.map((p) => p.productId) },
+          max_redemptions: 1,
+          redeem_by: Math.floor(nowMs / 1000) + 24 * 3600,
+        });
+        sessionParams.discounts = [{ coupon: coupon.id }];
+      } catch (err) {
+        console.error(
+          "Could not create scoped bulk coupon for stack cart — charging full price for the other vials.",
+          err,
+        );
+      }
     }
   } else {
     // Bulk discount: driven by the HIGHEST quantity of any single product in

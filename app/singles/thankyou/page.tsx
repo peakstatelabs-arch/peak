@@ -3,7 +3,10 @@ import Stripe from "stripe";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
-import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
+import {
+  RECOVERY_STACK_PRICE_IDS,
+  SINGLES_PRICE_IDS,
+} from "@/app/singles/cart/priceCatalog";
 import { SmsOptIn } from "@/app/components/SmsOptIn";
 import { LegalLinks } from "@/app/components/LegalPage";
 import {
@@ -44,7 +47,10 @@ type OrderSummary = {
   email?: string;
 };
 
-const ALLOWED_PRICE_IDS = new Set<string>(Object.values(SINGLES_PRICE_IDS));
+const ALLOWED_PRICE_IDS = new Set<string>([
+  ...Object.values(SINGLES_PRICE_IDS),
+  ...Object.values(RECOVERY_STACK_PRICE_IDS),
+]);
 
 async function fetchOrder(sessionId: string): Promise<OrderSummary | null> {
   const key = process.env.STRIPE_SECRET_KEY;

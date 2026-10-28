@@ -12,6 +12,7 @@ import { SaleCountdown } from "@/app/components/SaleUrgency";
 import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { CrossSellStrip } from "./CrossSellStrip";
 import { CART_CROSSSELL_SLUGS } from "./crossSell";
+import { isStackPriceId } from "./priceCatalog";
 
 export function CartDrawer() {
   const {
@@ -44,7 +45,7 @@ export function CartDrawer() {
   const retaSale = useSaleStatus().reta;
   const priced = priceCart(lines, retaSale);
   const discountableLines = lines.filter(
-    (l) => priced.saleLineCents[l.priceId] === null,
+    (l) => priced.saleLineCents[l.priceId] === null && !isStackPriceId(l.priceId),
   );
   const bulkMaxQty = maxSameProductQty(discountableLines);
   const bulkTier = bulkTierForQty(bulkMaxQty);
@@ -226,6 +227,7 @@ export function CartDrawer() {
                 nextPct={bulkNext?.pct ?? 0}
                 addForNext={addForNext}
                 productName={topLine?.name}
+                scope={priced.hasStackLines ? "your other vials" : "the whole cart"}
               />
             )}
 
@@ -281,9 +283,11 @@ export function CartDrawer() {
             <p className="text-xs text-[var(--primary)]/55">
               {priced.hasSaleLines
                 ? "Sale prices apply automatically and can\u2019t be combined with other discounts or codes. Shipping and taxes calculated at checkout."
-                : bulkTier
-                  ? "Discount applied automatically at checkout. Shipping and taxes calculated there."
-                  : "Shipping and taxes calculated at checkout."}
+                : priced.hasStackLines
+                  ? "Stack pricing is already discounted and can\u2019t be combined with codes. Shipping and taxes calculated at checkout."
+                  : bulkTier
+                    ? "Discount applied automatically at checkout. Shipping and taxes calculated there."
+                    : "Shipping and taxes calculated at checkout."}
             </p>
             {checkoutError && (
               <p className="text-sm text-red-600 font-medium">{checkoutError}</p>
@@ -428,12 +432,15 @@ function BulkNudge({
   nextPct,
   addForNext,
   productName,
+  scope,
 }: {
   active: boolean;
   pct: number;
   nextPct: number;
   addForNext: number;
   productName?: string;
+  /** What the discount covers — stacks are excluded from it. */
+  scope: string;
 }) {
   const hasNext = nextPct > 0 && addForNext > 0;
   const moreLabel =
@@ -480,11 +487,11 @@ function BulkNudge({
           <span className="font-bold text-[var(--accent-dark)]">
             {nextPct}% off
           </span>{" "}
-          the whole cart.
+          {scope}.
         </p>
       ) : (
         <p className="mt-1 text-xs text-[var(--primary)]/70">
-          That&rsquo;s the biggest discount — applied to your whole cart.
+          That&rsquo;s the biggest discount — applied to {scope}.
         </p>
       )}
     </div>

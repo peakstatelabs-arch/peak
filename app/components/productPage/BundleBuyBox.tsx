@@ -23,6 +23,11 @@ export type BundleTier = {
   lines: { item: BundleItem; quantity: number }[];
   /** Button label after "Add", e.g. "2 Vials" or "the Stack". */
   addLabel: string;
+  /**
+   * For a tier sold at its own fixed price (a stack): what the same vials
+   * cost bought separately. Shown crossed out, and the bulk curve is skipped.
+   */
+  compareAtCents?: number;
 };
 
 /**
@@ -30,10 +35,21 @@ export type BundleTier = {
  * unlocked by the highest quantity of any one product (see bulkDiscount.ts).
  */
 export function bundlePricing(tier: BundleTier) {
-  const full = tier.lines.reduce(
+  const lineCents = tier.lines.reduce(
     (sum, l) => sum + l.item.unitPriceCents * l.quantity,
     0,
   );
+  if (tier.compareAtCents) {
+    const saves = tier.compareAtCents - lineCents;
+    return {
+      full: tier.compareAtCents,
+      discounted: lineCents,
+      live: saves > 0,
+      saves,
+      pct: Math.round((saves / tier.compareAtCents) * 100),
+    };
+  }
+  const full = lineCents;
   const pct = bulkPctForQty(Math.max(...tier.lines.map((l) => l.quantity)));
   const live = BULK_DISCOUNTS_LIVE && pct > 0;
   const discounted = live ? Math.round(full * (1 - pct / 100)) : full;
@@ -237,7 +253,9 @@ export function BundleBuyBox({
 
           {live ? (
             <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
-              Bulk discount applied automatically at checkout — no code needed.
+              {tier.compareAtCents
+                ? `Stack price — you save ${formatUsd(bundlePricing(tier).saves)} vs. buying each vial separately.`
+                : "Bulk discount applied automatically at checkout — no code needed."}
             </p>
           ) : null}
         </div>

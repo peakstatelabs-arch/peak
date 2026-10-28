@@ -1,4 +1,7 @@
-import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
+import {
+  RECOVERY_STACK_PRICE_IDS,
+  SINGLES_PRICE_IDS,
+} from "@/app/singles/cart/priceCatalog";
 import type { BundleItem, BundleTier } from "@/app/components/productPage/BundleBuyBox";
 
 /** Stack name, used in page copy. Change it here. */
@@ -32,10 +35,33 @@ export const RECOVERY_ITEMS: BundleItem[] = [
   },
 ];
 
-// A stack is one vial of each (~5 weeks). It's sold as three ordinary cart
-// lines, so pricing is the normal checkout: the two-stack has 2 of a product
-// and gets the automatic 10% bulk discount; a single stack can still use the
-// member code at checkout.
+/** What one stack (1 vial of each) costs bought as singles. */
+const SINGLES_CENTS_PER_STACK = RECOVERY_ITEMS.reduce(
+  (sum, i) => sum + i.unitPriceCents,
+  0,
+);
+
+// Each stack size is its own Stripe product at a fixed price (one cart line),
+// so it stays outside the bulk discount and member codes. One stack is 1 vial
+// of each (~5 weeks); two stacks are 2 of each (~10 weeks).
+const STACK_ONE: BundleItem = {
+  slug: "full-repair-one",
+  priceId: RECOVERY_STACK_PRICE_IDS.one,
+  name: `${RECOVERY_STACK_NAME} Stack — One Stack`,
+  dose: "1 vial each: BPC-157 + TB-500, KPV, GHK-Cu",
+  unitPriceCents: 24900,
+  image: "/Recovery%20Stack%201.png",
+};
+
+const STACK_TWO: BundleItem = {
+  slug: "full-repair-two",
+  priceId: RECOVERY_STACK_PRICE_IDS.two,
+  name: `${RECOVERY_STACK_NAME} Stack — Two Stacks`,
+  dose: "2 vials each: BPC-157 + TB-500, KPV, GHK-Cu",
+  unitPriceCents: 44900,
+  image: "/Recovery%20Stack%202%20.png",
+};
+
 export const RECOVERY_TIERS: BundleTier[] = [
   {
     id: "1",
@@ -43,7 +69,8 @@ export const RECOVERY_TIERS: BundleTier[] = [
     contents: "1 vial of each (3 vials)",
     supply: "5 weeks",
     images: ["/Recovery%20Stack%201.png"],
-    lines: RECOVERY_ITEMS.map((item) => ({ item, quantity: 1 })),
+    lines: [{ item: STACK_ONE, quantity: 1 }],
+    compareAtCents: SINGLES_CENTS_PER_STACK,
     addLabel: "the Stack",
   },
   {
@@ -53,7 +80,8 @@ export const RECOVERY_TIERS: BundleTier[] = [
     supply: "10 weeks",
     images: ["/Recovery%20Stack%202%20.png"],
     highlight: true,
-    lines: RECOVERY_ITEMS.map((item) => ({ item, quantity: 2 })),
+    lines: [{ item: STACK_TWO, quantity: 1 }],
+    compareAtCents: SINGLES_CENTS_PER_STACK * 2,
     addLabel: "2 Stacks",
   },
 ];

@@ -12,3 +12,17 @@ export const SINGLES_PRICE_IDS = {
 } as const;
 
 export type SinglesProductSlug = keyof typeof SINGLES_PRICE_IDS;
+
+// FULL REPAIR recovery stack (/getrecovery). Each is its own Stripe product
+// sold at a fixed stack price: it never takes part in the bulk discount, and
+// member codes don't apply on top of it.
+export const RECOVERY_STACK_PRICE_IDS = {
+  one: "price_1UVfyBB7ajQM0hh3Eve4rmff",
+  two: "price_1UVfymB7ajQM0hh3mkOxGK4f",
+} as const;
+
+const STACK_PRICE_ID_SET = new Set<string>(Object.values(RECOVERY_STACK_PRICE_IDS));
+
+export function isStackPriceId(priceId: string): boolean {
+  return STACK_PRICE_ID_SET.has(priceId);
+}

@@ -6,7 +6,7 @@
 // expire — every check below is driven by the server clock, so nothing needs
 // to be changed by hand when the window closes.
 
-import { SINGLES_PRICE_IDS } from "../singles/cart/priceCatalog";
+import { SINGLES_PRICE_IDS, isStackPriceId } from "../singles/cart/priceCatalog";
 import { bulkTierForQty, maxSameProductQty } from "./bulkDiscount";
 
 export const SALE = {
@@ -88,6 +88,8 @@ export type PricedCart = {
   /** Charged amount per line, keyed by priceId (null = not a sale line). */
   saleLineCents: Record<string, number | null>;
   hasSaleLines: boolean;
+  /** A FULL REPAIR stack is in the cart (fixed price, no codes). */
+  hasStackLines: boolean;
   /** Everything at list price. */
   subtotalCents: number;
   /** List price minus sale price on sale lines. */
@@ -121,12 +123,17 @@ export function priceCart(lines: PriceLineInput[], retaSale: boolean): PricedCar
   let saleSavingsCents = 0;
   let nonSaleListCents = 0;
   let saleChargedCents = 0;
+  let stackCents = 0;
   const nonSale: PriceLineInput[] = [];
 
   for (const l of lines) {
     const list = l.unitPriceCents * l.quantity;
     subtotalCents += list;
-    if (isRetaSaleLine(l, retaSale)) {
+    if (isStackPriceId(l.priceId)) {
+      // Stacks are already discounted: fixed price, outside the bulk pool.
+      saleLineCents[l.priceId] = null;
+      stackCents += list;
+    } else if (isRetaSaleLine(l, retaSale)) {
       const sale = retaSaleTotalCents(l.quantity)!;
       saleLineCents[l.priceId] = sale;
       saleSavingsCents += list - sale;
@@ -138,7 +145,8 @@ export function priceCart(lines: PriceLineInput[], retaSale: boolean): PricedCar
     }
   }
 
-  const hasSaleLines = nonSale.length !== lines.length;
+  const hasStackLines = stackCents > 0;
+  const hasSaleLines = saleChargedCents > 0;
   const tier = bulkTierForQty(maxSameProductQty(nonSale));
   const bulkPct = tier?.pct ?? 0;
   const bulkDiscountCents = Math.round((nonSaleListCents * bulkPct) / 100);
@@ -146,10 +154,11 @@ export function priceCart(lines: PriceLineInput[], retaSale: boolean): PricedCar
   return {
     saleLineCents,
     hasSaleLines,
+    hasStackLines,
     subtotalCents,
     saleSavingsCents,
     bulkPct,
     bulkDiscountCents,
-    totalCents: saleChargedCents + nonSaleListCents - bulkDiscountCents,
+    totalCents: saleChargedCents + stackCents + nonSaleListCents - bulkDiscountCents,
   };
 }
