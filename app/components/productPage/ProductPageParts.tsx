@@ -188,7 +188,7 @@ export function CoaSection({
               Tested, not trusted
             </p>
             <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-              Every batch, third-party verified
+              Every Batch, Third-Party Verified
             </h2>
             <p className="mt-4 text-lg text-[var(--primary)]/70">{intro}</p>
           </div>
@@ -228,7 +228,7 @@ export function CoaSection({
                   rel="noopener noreferrer"
                   className="underline hover:text-[var(--accent-dark)]"
                 >
-                  View the full {r.product} purity test →
+                  View The Full {r.product} Purity Test →
                 </a>
               </p>
             </div>
@@ -252,7 +252,7 @@ export function TestimonialsSection({
         <div className="max-w-5xl mx-auto">
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-              Real people, real check-ins
+              Real People, Real Check-Ins
             </h2>
             <p className="mt-4 text-lg text-[var(--primary)]/70 max-w-2xl mx-auto">
               {intro}
@@ -302,7 +302,7 @@ export function TestimonialsSection({
               href="/reviews"
               className="text-sm font-semibold text-[var(--primary)]/70 underline hover:text-[var(--accent-dark)]"
             >
-              Read all client reviews →
+              Read All Client Reviews →
             </a>
           </div>
         </div>
@@ -317,7 +317,7 @@ export function FaqSection({ faqs }: { faqs: { q: string; a: string }[] }) {
       <Container>
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-center">
-            Questions, answered
+            Questions, Answered
           </h2>
           <div className="mt-8 space-y-3">
             {faqs.map((f) => (

@@ -100,7 +100,7 @@ export default function GetRecoveryPage() {
   return (
     <CartProvider>
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
-        <ProductHeader page="getrecovery" ctaLabel="Get the Stack" />
+        <ProductHeader page="getrecovery" ctaLabel="Get The Stack" />
 
         <main>
           {/* ── Hero ─────────────────────────────────────────────── */}
@@ -122,15 +122,15 @@ export default function GetRecoveryPage() {
                   </div>
 
                   <h1 className="mt-6 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                    Bounce back faster.
+                    Bounce Back Faster.
                     <span className="block text-[var(--accent-dark)]">
-                      Age on your own terms.
+                      Age On Your Own Terms.
                     </span>
                   </h1>
                   <p className="mt-6 text-lg text-[var(--primary)]/70 max-w-xl">
-                    Three repair peptides in one stack — for the joints that
-                    ache, the gut that&rsquo;s off, and the skin that shows it.
-                    Recover like you used to, and look like it.
+                    Three Repair Peptides In One Stack — For The Joints That
+                    Ache, The Gut That&rsquo;s Off, And The Skin That Shows It.
+                    Recover Like You Used To, And Look Like It.
                   </p>
                 </div>
 
@@ -161,7 +161,7 @@ export default function GetRecoveryPage() {
                     href="#buy"
                     className="btn-primary inline-flex h-14 items-center justify-center rounded-2xl px-8 text-lg font-semibold"
                   >
-                    Get the {RECOVERY_STACK_NAME} Stack
+                    Get The {RECOVERY_STACK_NAME} Stack
                   </a>
                   <HeroProof>
                     <span className="text-[var(--accent-dark)] font-extrabold">
@@ -185,7 +185,7 @@ export default function GetRecoveryPage() {
                     Three peptides, three jobs
                   </p>
                   <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-                    Recovery isn&rsquo;t one problem. So it isn&rsquo;t one peptide.
+                    Recovery Isn&rsquo;t One Problem. So It Isn&rsquo;t One Peptide.
                   </h2>
                   <p className="mt-6 text-lg text-[var(--primary)]/75 leading-relaxed">
                     Slow recovery shows up in your joints, your gut and your skin
@@ -233,7 +233,7 @@ export default function GetRecoveryPage() {
           </Section>
 
           <TimelineSection
-            title="What a cycle tends to look like"
+            title="What A Cycle Tends To Look Like"
             note="Commonly reported patterns from clients and research protocols. Individual response varies — these are not promises."
             rows={[
               {
@@ -312,9 +312,9 @@ export default function GetRecoveryPage() {
           <FaqSection faqs={faqs} />
 
           <FinalCta
-            title="Start recovering today"
+            title="Start Recovering Today"
             body="Three lab-tested repair peptides, a real coach in your corner, and a guarantee behind every vial. Just add to cart."
-            ctaLabel="Get the Stack"
+            ctaLabel="Get The Stack"
           />
         </main>
 

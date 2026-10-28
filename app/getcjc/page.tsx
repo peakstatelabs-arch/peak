@@ -94,15 +94,15 @@ export default function GetCjcPage() {
                   </div>
 
                   <h1 className="mt-6 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                    Build lean muscle.
+                    Build Lean Muscle.
                     <span className="block text-[var(--accent-dark)]">
-                      Wake up actually recovered.
+                      Wake Up Actually Recovered.
                     </span>
                   </h1>
                   <p className="mt-6 text-lg text-[var(--primary)]/70 max-w-xl">
-                    CJC-1295 + Ipamorelin amplifies your body&rsquo;s natural
-                    growth hormone pulses — the signal behind deeper sleep,
-                    faster recovery and lean muscle that actually shows up.
+                    CJC-1295 + Ipamorelin Amplifies Your Body&rsquo;s Natural
+                    Growth Hormone Pulses — The Signal Behind Deeper Sleep,
+                    Faster Recovery And Lean Muscle That Actually Shows Up.
                   </p>
                 </div>
 
@@ -153,7 +153,7 @@ export default function GetCjcPage() {
                   Why the gym stopped paying you back
                 </p>
                 <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-                  You&rsquo;re not training wrong. You&rsquo;re recovering slow.
+                  You&rsquo;re Not Training Wrong. You&rsquo;re Recovering Slow.
                 </h2>
                 <p className="mt-6 text-lg text-[var(--primary)]/75 leading-relaxed">
                   Muscle is built while you sleep, not while you lift. As growth
@@ -175,7 +175,7 @@ export default function GetCjcPage() {
           </Section>
 
           <TimelineSection
-            title="What a cycle tends to look like"
+            title="What A Cycle Tends To Look Like"
             note="Commonly reported patterns from clients and research protocols. Individual response varies — these are not promises."
             rows={[
               {
@@ -243,7 +243,7 @@ export default function GetCjcPage() {
             <Container>
               <div className="max-w-3xl mx-auto text-center">
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                  Want to lose fat while you build?
+                  Want To Lose Fat While You Build?
                 </h2>
                 <p className="mt-4 text-lg text-[var(--primary)]/70">
                   The POWER CUT
@@ -258,7 +258,7 @@ export default function GetCjcPage() {
                   rel="noopener noreferrer"
                   className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-6 text-base font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)]"
                 >
-                  See the full stack →
+                  See The Full Stack →
                 </a>
               </div>
             </Container>
@@ -267,7 +267,7 @@ export default function GetCjcPage() {
           <FaqSection faqs={faqs} />
 
           <FinalCta
-            title="Start building today"
+            title="Start Building Today"
             body="Lab-tested CJC-1295 + Ipamorelin, a real coach in your corner, and a guarantee behind every vial. Just add to cart."
             ctaLabel="Get CJC + Ipa"
           />

@@ -215,16 +215,16 @@ export default function GetRetaPage() {
                   </div>
 
                   <h1 className="mt-6 text-balance text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                    Lose the weight.
+                    Lose The Weight.
                     <span className="block text-[var(--accent-dark)]">
-                      Keep the life you actually want.
+                      Keep The Life You Actually Want.
                     </span>
                   </h1>
                   <p className="mt-6 text-lg text-[var(--primary)]/70 max-w-xl">
-                    Retatrutide helps quiet food noise, control appetite, support
-                    a faster metabolism and calm the inflammation that comes with
-                    carrying extra weight — so getting leaner doesn’t have to
-                    consume your entire life.
+                    Retatrutide Helps Quiet Food Noise, Control Appetite, Support
+                    A Faster Metabolism And Calm The Inflammation That Comes With
+                    Carrying Extra Weight — So Getting Leaner Doesn’t Have To
+                    Consume Your Entire Life.
                   </p>
                 </div>
 
@@ -305,7 +305,7 @@ export default function GetRetaPage() {
                   The reason nothing has stuck
                 </p>
                 <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-                  You don’t need more willpower. You need less food noise.
+                  You Don’t Need More Willpower. You Need Less Food Noise.
                 </h2>
                 <p className="mt-6 text-lg text-[var(--primary)]/75 leading-relaxed">
                   You already know what to eat. You know you should stop when
@@ -331,7 +331,7 @@ export default function GetRetaPage() {
             <Container>
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-center">
-                  What a cycle tends to look like
+                  What A Cycle Tends To Look Like
                 </h2>
                 <p className="mt-4 text-center text-[var(--primary)]/70">
                   Group-level ranges from published trials. Individual response
@@ -388,7 +388,7 @@ export default function GetRetaPage() {
                     Tested, not trusted
                   </p>
                   <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-                    Every batch, third-party verified
+                    Every Batch, Third-Party Verified
                   </h2>
                   <p className="mt-4 text-lg text-[var(--primary)]/70">
                     This is the actual certificate of analysis for the current
@@ -421,7 +421,7 @@ export default function GetRetaPage() {
                     rel="noopener noreferrer"
                     className="underline hover:text-[var(--accent-dark)]"
                   >
-                    View all purity tests →
+                    View All Purity Tests →
                   </a>
                 </p>
               </div>
@@ -434,7 +434,7 @@ export default function GetRetaPage() {
               <div className="max-w-5xl mx-auto">
                 <div className="text-center">
                   <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                    Real people, real numbers
+                    Real People, Real Numbers
                   </h2>
                   <p className="mt-4 text-lg text-[var(--primary)]/70 max-w-2xl mx-auto">
                     Check-ins from Peak State clients running retatrutide — most
@@ -512,7 +512,7 @@ export default function GetRetaPage() {
                     href="/reviews"
                     className="text-sm font-semibold text-[var(--primary)]/70 underline hover:text-[var(--accent-dark)]"
                   >
-                    Read all client reviews →
+                    Read All Client Reviews →
                   </a>
                 </div>
               </div>
@@ -532,7 +532,7 @@ export default function GetRetaPage() {
               <div className="max-w-5xl mx-auto">
                 <div className="text-center">
                   <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                    Reta solo, or the full system?
+                    Reta Solo, Or The Full System?
                   </h2>
                   <p className="mt-4 text-lg text-[var(--primary)]/70 max-w-2xl mx-auto">
                     Most people start with reta. Here&rsquo;s when the full POWER
@@ -549,7 +549,7 @@ export default function GetRetaPage() {
                       Start here
                     </span>
                     <h3 className="mt-4 text-2xl font-bold text-[var(--primary)]">
-                      Retatrutide, solo
+                      Retatrutide, Solo
                     </h3>
                     <p className="mt-1 text-3xl font-extrabold text-[var(--primary)]">
                       <SalePriceInline
@@ -595,7 +595,7 @@ export default function GetRetaPage() {
                     </span>
                     <h3 className="mt-4 text-2xl font-bold text-[var(--primary)]">
                       The POWER CUT
-                      <span className="text-[0.6em] align-super">™</span> stack
+                      <span className="text-[0.6em] align-super">™</span> Stack
                     </h3>
                     <p className="mt-1 text-3xl font-extrabold text-[var(--primary)]">
                       <SalePriceInline
@@ -632,7 +632,7 @@ export default function GetRetaPage() {
                       rel="noopener noreferrer"
                       className="mt-6 inline-flex h-12 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-6 text-base font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)] hover:bg-[var(--muted)]"
                     >
-                      See the full stack →
+                      See The Full Stack →
                     </a>
                   </div>
                 </div>
@@ -646,7 +646,7 @@ export default function GetRetaPage() {
               <div className="max-w-5xl mx-auto">
                 <div className="text-center">
                   <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                    Add to your protocol
+                    Add To Your Protocol
                   </h2>
                   <p className="mt-4 text-lg text-[var(--primary)]/70">
                     The rest of the single-vial catalog — same lab-tested purity,
@@ -693,7 +693,7 @@ export default function GetRetaPage() {
                     href="/singles"
                     className="inline-flex h-12 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-8 text-base font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)]"
                   >
-                    Browse the full singles catalog →
+                    Browse The Full Singles Catalog →
                   </a>
                 </div>
               </div>
@@ -705,7 +705,7 @@ export default function GetRetaPage() {
             <Container>
               <div className="max-w-3xl mx-auto">
                 <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-center">
-                  Questions, answered
+                  Questions, Answered
                 </h2>
                 <div className="mt-8 space-y-3">
                   {faqs.map((f) => (
@@ -750,7 +750,7 @@ export default function GetRetaPage() {
                   <span>IN STOCK • SHIPS IN 24 HRS</span>
                 </div>
                 <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-                  Start your cycle today
+                  Start Your Cycle Today
                 </h2>
                 <p className="mt-6 text-lg text-white/80">
                   Lab-tested retatrutide, a real coach in your corner, and a
