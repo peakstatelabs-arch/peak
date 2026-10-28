@@ -32,14 +32,6 @@ export const RECOVERY_ITEMS: BundleItem[] = [
   },
 ];
 
-// Transparent-background shots for the buy box (the cart keeps the
-// catalog images).
-const STACK_IMAGES = [
-  "/BPC%20Tb%20Product%20Image%20Transparent%202.png",
-  "/kpv-product-transparent.png",
-  "/GHKCU.png",
-];
-
 // A stack is one vial of each (~5 weeks). It's sold as three ordinary cart
 // lines, so pricing is the normal checkout: the two-stack has 2 of a product
 // and gets the automatic 10% bulk discount; a single stack can still use the
@@ -50,7 +42,7 @@ export const RECOVERY_TIERS: BundleTier[] = [
     label: "One Stack",
     contents: "1 vial of each (3 vials)",
     supply: "5 weeks",
-    images: STACK_IMAGES,
+    images: ["/Recovery%20Stack%201.png"],
     lines: RECOVERY_ITEMS.map((item) => ({ item, quantity: 1 })),
     addLabel: "the Stack",
   },
@@ -59,7 +51,7 @@ export const RECOVERY_TIERS: BundleTier[] = [
     label: "Two Stacks",
     contents: "2 vials of each (6 vials)",
     supply: "10 weeks",
-    images: STACK_IMAGES,
+    images: ["/Recovery%20Stack%202%20.png"],
     highlight: true,
     lines: RECOVERY_ITEMS.map((item) => ({ item, quantity: 2 })),
     addLabel: "2 Stacks",

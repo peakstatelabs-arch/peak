@@ -135,24 +135,21 @@ export default function GetRecoveryPage() {
                 </div>
 
                 <div className="order-2 flex items-center justify-center lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
-                  <div className="relative mx-auto w-full max-w-sm sm:max-w-md">
-                    {/* The vial shots have white backgrounds, so they sit
-                        together on one white card. */}
-                    <div className="grid grid-cols-3 gap-2 rounded-3xl border border-[var(--border)] bg-white p-4 shadow-xl sm:gap-4 sm:p-6">
-                      {pillars.map((p) => (
-                        <figure key={p.name} className="text-center">
-                          <img
-                            src={p.image}
-                            alt={`${p.name} ${p.dose} research vial`}
-                            className="aspect-square w-full object-contain"
-                          />
-                          <figcaption className="mt-1 text-[11px] font-bold leading-tight text-[var(--primary)]/70 sm:text-xs">
-                            {p.name}
-                          </figcaption>
-                        </figure>
-                      ))}
-                    </div>
+                  <div className="relative mx-auto w-full max-w-[280px] sm:max-w-sm">
+                    <img
+                      src="/recovery-stack-hero-trimmed.png"
+                      alt={`${RECOVERY_STACK_NAME} recovery stack — BPC-157 + TB-500, KPV and GHK-Cu research vials`}
+                      className="w-full drop-shadow-2xl"
+                    />
                     <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[var(--accent)]/30 to-[var(--accent)]/10 blur-3xl rounded-full scale-90" />
+                    <div className="absolute -bottom-2 left-0 rounded-2xl bg-white/90 backdrop-blur border border-[var(--border)] px-4 py-3 shadow-lg">
+                      <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
+                        COA Verified
+                      </p>
+                      <p className="text-sm font-bold text-[var(--primary)]">
+                        99%+ purity
+                      </p>
+                    </div>
                   </div>
                 </div>
 
