@@ -1,7 +1,8 @@
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { SiteFooter } from "@/app/components/SiteFooter";
 import { AddToCartButton } from "@/app/components/AddToCartButton";
-import { products, formatPrice } from "@/app/lib/products";
+import { BundleCard } from "@/app/components/BundleCard";
+import { standaloneProducts, bundles, formatPrice } from "@/app/lib/products";
 
 export default function Page() {
   return (
@@ -34,7 +35,7 @@ export default function Page() {
             </div>
 
             <div className="product-grid">
-              {products.map((product) => (
+              {standaloneProducts.map((product) => (
                 <div className="product-card" key={product.id}>
                   <span className="product-card__tag">
                     <span className="product-card__tag-dot" />
@@ -51,6 +52,12 @@ export default function Page() {
                 </div>
               ))}
             </div>
+
+            {bundles.map((bundle) => (
+              <div className="bundle-section" key={bundle.bundleId}>
+                <BundleCard bundle={bundle} />
+              </div>
+            ))}
           </div>
         </section>
       </main>

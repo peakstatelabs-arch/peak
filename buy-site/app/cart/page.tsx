@@ -72,7 +72,12 @@ export default function CartPage() {
                   {lineItems.map((item) => (
                     <div className="cart-item" key={item.productId}>
                       <div className="cart-item__info">
-                        <h3>{item.product.name}</h3>
+                        <h3>
+                          {item.product.name}
+                          {item.product.variantLabel
+                            ? ` — ${item.product.variantLabel}`
+                            : ""}
+                        </h3>
                         <p>{formatPrice(item.product.price)} each</p>
                       </div>
                       <div className="cart-item__qty">

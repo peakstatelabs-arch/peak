@@ -5,6 +5,10 @@ export type Product = {
   description: string;
   price: number;
   priceId: string;
+  /** Groups variant products (e.g. different stack sizes) under one featured card. */
+  bundleId?: string;
+  /** Shown as the option label when part of a bundle, e.g. "One Stack". */
+  variantLabel?: string;
 };
 
 export const products: Product[] = [
@@ -62,7 +66,58 @@ export const products: Product[] = [
     price: 6500,
     priceId: "price_1U6ds5B7ajQM0hh3C6JAi8AC",
   },
+  {
+    id: "full-repair-one",
+    name: "The Full Repair",
+    tag: "Full Recovery",
+    description:
+      "A full recovery stack for optimizing skin health and slowing the visible signs of aging.",
+    price: 24900,
+    priceId: "price_1UVfyBB7ajQM0hh3Eve4rmff",
+    bundleId: "full-repair",
+    variantLabel: "One Stack",
+  },
+  {
+    id: "full-repair-two",
+    name: "The Full Repair",
+    tag: "Full Recovery",
+    description:
+      "A full recovery stack for optimizing skin health and slowing the visible signs of aging.",
+    price: 44900,
+    priceId: "price_1UVfymB7ajQM0hh3mkOxGK4f",
+    bundleId: "full-repair",
+    variantLabel: "Two Stacks",
+  },
 ];
+
+export const standaloneProducts: Product[] = products.filter(
+  (product) => !product.bundleId,
+);
+
+export type Bundle = {
+  bundleId: string;
+  name: string;
+  tag: string;
+  description: string;
+  variants: Product[];
+};
+
+export const bundles: Bundle[] = (() => {
+  const grouped = new Map<string, Product[]>();
+  for (const product of products) {
+    if (!product.bundleId) continue;
+    const variants = grouped.get(product.bundleId) ?? [];
+    variants.push(product);
+    grouped.set(product.bundleId, variants);
+  }
+  return Array.from(grouped.entries()).map(([bundleId, variants]) => ({
+    bundleId,
+    name: variants[0].name,
+    tag: variants[0].tag,
+    description: variants[0].description,
+    variants,
+  }));
+})();
 
 export function getProduct(id: string): Product | undefined {
   return products.find((product) => product.id === id);
