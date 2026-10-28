@@ -8,6 +8,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { combineStacks } from "./stackItems";
 
 export type CartLine = {
   slug: string;
@@ -85,7 +86,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // flips true — see ViewCartButton badge and CartDrawer contents.
     const stored = readStoredLines();
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot rehydration from localStorage after mount; pairs with `hydrated` to avoid SSR mismatch
-    if (stored.length > 0) setLines(stored);
+    if (stored.length > 0) setLines(combineStacks(stored, MAX_QTY_PER_LINE));
     setHydrated(true);
   }, []);
 
@@ -104,7 +105,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       setLines((prev) => {
         const existing = prev.find((l) => l.priceId === item.priceId);
         if (existing) {
-          return prev.map((l) =>
+          const next = prev.map((l) =>
             l.priceId === item.priceId
               ? {
                   ...l,
@@ -115,11 +116,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 }
               : l,
           );
+          return combineStacks(next, MAX_QTY_PER_LINE);
         }
-        return [
-          ...prev,
-          { ...item, quantity: Math.min(MAX_QTY_PER_LINE, Math.max(1, quantity)) },
-        ];
+        return combineStacks(
+          [
+            ...prev,
+            { ...item, quantity: Math.min(MAX_QTY_PER_LINE, Math.max(1, quantity)) },
+          ],
+          MAX_QTY_PER_LINE,
+        );
       });
     },
     [],
@@ -130,10 +135,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const q = Math.floor(quantity);
       setLines((prev) => {
         if (q <= 0) return prev.filter((l) => l.priceId !== priceId);
-        return prev.map((l) =>
-          l.priceId === priceId
-            ? { ...l, quantity: Math.min(MAX_QTY_PER_LINE, q) }
-            : l,
+        return combineStacks(
+          prev.map((l) =>
+            l.priceId === priceId
+              ? { ...l, quantity: Math.min(MAX_QTY_PER_LINE, q) }
+              : l,
+          ),
+          MAX_QTY_PER_LINE,
         );
       });
     },

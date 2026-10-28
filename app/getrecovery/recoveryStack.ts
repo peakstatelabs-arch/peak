@@ -1,11 +1,12 @@
+import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
 import {
-  RECOVERY_STACK_PRICE_IDS,
-  SINGLES_PRICE_IDS,
-} from "@/app/singles/cart/priceCatalog";
+  RECOVERY_STACK_NAME,
+  STACK_ONE,
+  STACK_TWO,
+} from "@/app/singles/cart/stackItems";
 import type { BundleItem, BundleTier } from "@/app/components/productPage/BundleBuyBox";
 
-/** Stack name, used in page copy. Change it here. */
-export const RECOVERY_STACK_NAME = "FULL REPAIR";
+export { RECOVERY_STACK_NAME };
 
 // The three vials in the stack (mirror the Stripe Prices + /singles catalog).
 export const RECOVERY_ITEMS: BundleItem[] = [
@@ -43,24 +44,8 @@ const SINGLES_CENTS_PER_STACK = RECOVERY_ITEMS.reduce(
 
 // Each stack size is its own Stripe product at a fixed price (one cart line),
 // so it stays outside the bulk discount and member codes. One stack is 1 vial
-// of each (~5 weeks); two stacks are 2 of each (~10 weeks).
-const STACK_ONE: BundleItem = {
-  slug: "full-repair-one",
-  priceId: RECOVERY_STACK_PRICE_IDS.one,
-  name: `${RECOVERY_STACK_NAME} Stack — One Stack`,
-  dose: "1 vial each: BPC-157 + TB-500, KPV, GHK-Cu",
-  unitPriceCents: 24900,
-  image: "/Recovery%20Stack%201.png",
-};
-
-const STACK_TWO: BundleItem = {
-  slug: "full-repair-two",
-  priceId: RECOVERY_STACK_PRICE_IDS.two,
-  name: `${RECOVERY_STACK_NAME} Stack — Two Stacks`,
-  dose: "2 vials each: BPC-157 + TB-500, KPV, GHK-Cu",
-  unitPriceCents: 44900,
-  image: "/Recovery%20Stack%202%20.png",
-};
+// of each (~5 weeks); two stacks are 2 of each (~10 weeks). The cart turns
+// two One Stacks into a Two Stacks (see app/singles/cart/stackItems.ts).
 
 export const RECOVERY_TIERS: BundleTier[] = [
   {
