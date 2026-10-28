@@ -42,14 +42,14 @@ const pillars = [
     name: "BPC-157 + TB-500",
     dose: "20mg blend",
     role: "The Shield",
-    image: "/bpc-tb-product.png",
+    image: "/BPC%20Tb%20Product%20Image%20Transparent%202.png",
     body: "Local + systemic repair for joints, tendons and connective tissue. Helps calm the inflammatory drag that keeps old injuries nagging.",
   },
   {
     name: "KPV",
     dose: "10mg",
     role: "The Regulator",
-    image: "/kpv-product.png",
+    image: "/kpv-product-transparent.png",
     body: "Anti-inflammatory signaling that supports gut and skin health and a balanced immune response — recovery from the inside out.",
   },
   {

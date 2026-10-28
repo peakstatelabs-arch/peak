@@ -32,7 +32,13 @@ export const RECOVERY_ITEMS: BundleItem[] = [
   },
 ];
 
-const STACK_IMAGES = RECOVERY_ITEMS.map((i) => i.image!);
+// Transparent-background shots for the buy box (the cart keeps the
+// catalog images).
+const STACK_IMAGES = [
+  "/BPC%20Tb%20Product%20Image%20Transparent%202.png",
+  "/kpv-product-transparent.png",
+  "/GHKCU.png",
+];
 
 // A stack is one vial of each (~5 weeks). It's sold as three ordinary cart
 // lines, so pricing is the normal checkout: the two-stack has 2 of a product
