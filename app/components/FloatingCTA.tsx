@@ -9,6 +9,7 @@ const SUPPRESSED_PATHS = [
   "/research-access",
   "/reta-access",
   "/signup",
+  "/welcome",
   "/bridge",
   "/transitionguide",
   "/creator",

@@ -15,6 +15,8 @@ const OPTIONS: {
   label: string;
   product: string;
   href: string;
+  /** Label on the slide-up button once this answer is picked. */
+  cta: string;
 }[] = [
   {
     key: "powercut",
@@ -22,6 +24,7 @@ const OPTIONS: {
     label: "Burn Fat + Build Lean Muscle + Recover Faster",
     product: "POWER CUT™ Stack",
     href: "/",
+    cta: "Build My POWER CUT™ Protocol",
   },
   {
     key: "fat-loss",
@@ -29,6 +32,7 @@ const OPTIONS: {
     label: "Fat Loss + Reduce Inflammation",
     product: "Retatrutide",
     href: "/getreta",
+    cta: "Start My Retatrutide Protocol",
   },
   {
     key: "muscle",
@@ -36,6 +40,7 @@ const OPTIONS: {
     label: "Build Lean Muscle",
     product: "CJC-1295 + Ipamorelin",
     href: "/getcjc",
+    cta: "Start My Muscle Protocol",
   },
   {
     key: "recovery",
@@ -43,6 +48,7 @@ const OPTIONS: {
     label: "Recover Faster + Anti-Aging",
     product: `${RECOVERY_STACK_NAME} Recovery Stack`,
     href: "/getrecovery",
+    cta: `Build My ${RECOVERY_STACK_NAME} Protocol`,
   },
 ];
 
@@ -60,21 +66,34 @@ function readFirstName(): string | null {
 export function WelcomeQuiz() {
   const firstName = useSyncExternalStore(subscribeNoop, readFirstName, () => null);
   const [selected, setSelected] = useState<Goal | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const choice = OPTIONS.find((o) => o.key === selected) ?? null;
 
+  // Picking an answer only selects it (and can be changed); the slide-up
+  // button is what sends them on.
   function choose(option: (typeof OPTIONS)[number]) {
-    if (selected) return;
+    if (submitting) return;
     setSelected(option.key);
+    try {
+      posthog.capture("welcome_quiz_selected", { goal: option.key });
+    } catch {
+      // Analytics must never break the quiz.
+    }
+  }
+
+  function submit() {
+    if (!choice || submitting) return;
+    setSubmitting(true);
     try {
       posthog.capture(
         "welcome_quiz_answered",
-        { goal: option.key, destination: option.href },
+        { goal: choice.key, destination: choice.href },
         { send_instantly: true },
       );
     } catch {
       // Never let analytics block the redirect.
     }
-    // Brief beat so the tap visibly registers before the page changes.
-    window.setTimeout(() => window.location.assign(option.href), 250);
+    window.location.assign(choice.href);
   }
 
   return (
@@ -88,7 +107,8 @@ export function WelcomeQuiz() {
         </div>
       </header>
 
-      <main className="relative overflow-hidden gradient-hero px-4 py-10 sm:py-16">
+      {/* Bottom padding keeps the skip link clear of the slide-up button. */}
+      <main className="relative overflow-hidden gradient-hero px-4 pt-10 pb-32 sm:pt-16">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
         </div>
@@ -114,8 +134,8 @@ export function WelcomeQuiz() {
                   key={o.key}
                   type="button"
                   onClick={() => choose(o)}
-                  disabled={selected !== null && !isSelected}
-                  className={`group flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all disabled:opacity-50 ${
+                  aria-pressed={isSelected}
+                  className={`group flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${
                     isSelected
                       ? "border-[var(--accent)] bg-[var(--accent)]/[0.08] ring-1 ring-[var(--accent)]/40"
                       : "border-[var(--border)] bg-white hover:border-[var(--accent)]/60 hover:bg-[var(--accent)]/[0.04]"
@@ -157,6 +177,27 @@ export function WelcomeQuiz() {
           </p>
         </div>
       </main>
+
+      {/* Slide-up submit bar — hidden until an answer is picked. */}
+      <div
+        aria-hidden={!choice}
+        className={`fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border)] bg-white/95 backdrop-blur px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out ${
+          choice ? "translate-y-0" : "pointer-events-none translate-y-full"
+        }`}
+      >
+        <div className="mx-auto w-full max-w-xl">
+          <button
+            type="button"
+            onClick={submit}
+            disabled={!choice || submitting}
+            tabIndex={choice ? 0 : -1}
+            className="btn-primary inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl px-6 text-lg font-semibold disabled:opacity-70"
+          >
+            {submitting ? "Loading your protocol…" : choice?.cta ?? ""}
+            {!submitting && <span aria-hidden="true">→</span>}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
