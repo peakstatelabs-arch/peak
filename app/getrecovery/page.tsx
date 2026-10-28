@@ -136,9 +136,9 @@ export default function GetRecoveryPage() {
                 </div>
 
                 <div className="order-2 flex items-center justify-center lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-center">
-                  <div className="relative mx-auto w-full max-w-[280px] sm:max-w-sm">
+                  <div className="relative mx-auto w-full max-w-[300px] sm:max-w-md">
                     <img
-                      src="/recovery-stack-hero-trimmed.png"
+                      src="/recovery-stack-hero.png"
                       alt={`${RECOVERY_STACK_NAME} recovery stack — BPC-157 + TB-500, KPV and GHK-Cu research vials`}
                       className="w-full drop-shadow-2xl"
                     />
