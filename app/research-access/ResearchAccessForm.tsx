@@ -5,6 +5,7 @@ import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
 import { acknowledgeDisclaimer } from "@/app/lib/disclaimer";
 import { TrackedLink } from "@/app/components/TrackedLink";
+import { useWelcomeDestination } from "@/app/lib/welcomeExperiment";
 import { MEMBER_DISCOUNT_CODE, SHOP_URL } from "./constants";
 
 type Tab = "create" | "signin";
@@ -50,6 +51,10 @@ export function ResearchAccessForm() {
   const [unlocked, setUnlocked] = useState<Tab | null>(null);
   const [unlockedEmail, setUnlockedEmail] = useState("");
   const [copied, setCopied] = useState(false);
+  // New accounts are split between the homepage and the /welcome quiz;
+  // sign-ins always go to the homepage.
+  const { href: continueHref, variant: welcomeVariant } =
+    useWelcomeDestination(unlocked);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const members = useSyncExternalStore(
@@ -226,9 +231,9 @@ export function ResearchAccessForm() {
         </p>
 
         <TrackedLink
-          href={SHOP_URL}
+          href={continueHref}
           event="research_access_continue"
-          eventProperties={{ method: unlocked }}
+          eventProperties={{ method: unlocked, welcome_variant: welcomeVariant }}
           className="btn-primary mt-6 inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold"
         >
           Continue to shop <span aria-hidden="true" className="ml-2">→</span>
