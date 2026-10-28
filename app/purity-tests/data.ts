@@ -33,7 +33,7 @@ export const PURITY_TESTS: Record<string, PurityTest> = {
     amount: "20mg Blend",
     title: "BPC-157 + TB-500 20mg Blend Lab Report",
     images: [
-      "/BPC Lab Report 2 Page 1.png",
+      "/BPCTB Lab Report Update.png",
       "/BPC Lab Report 2 Page 2.png",
       "/BPC Lab Report 2 Page 3.png",
     ],
