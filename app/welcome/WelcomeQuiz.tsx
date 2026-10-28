@@ -19,7 +19,7 @@ const OPTIONS: {
   {
     key: "powercut",
     emoji: "⚡",
-    label: "Burn Fat + Build Muscle + Recover Faster",
+    label: "Burn Fat + Build Lean Muscle + Recover Faster",
     product: "POWER CUT™ Stack",
     href: "/",
   },
