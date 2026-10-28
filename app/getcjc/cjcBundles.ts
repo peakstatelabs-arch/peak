@@ -13,14 +13,13 @@ export const CJC: BundleItem = {
 
 // Each 10mg vial lasts ~5 weeks. Same product, so the shared bulk-discount
 // curve applies (2 → 10%, 3 → 15%) — see app/lib/bulkDiscount.ts.
-// TODO: swap in 2- and 3-vial mockups once they exist (like /getreta's).
 export const CJC_TIERS: BundleTier[] = [
   {
     id: "1",
     label: "Single Vial",
     contents: "1 × 10mg vial",
     supply: "5 weeks",
-    images: [CJC.image!],
+    images: ["/Peak%20State%20Labs%20Vial%20Mockup.png"],
     lines: [{ item: CJC, quantity: 1 }],
     addLabel: "to Cart",
   },
@@ -29,7 +28,7 @@ export const CJC_TIERS: BundleTier[] = [
     label: "Two Vials",
     contents: "2 × 10mg vials",
     supply: "10 weeks",
-    images: [CJC.image!],
+    images: ["/Peak%20State%20Labs%20Twin%20Vials.png"],
     highlight: true,
     lines: [{ item: CJC, quantity: 2 }],
     addLabel: "2 Vials",
@@ -39,7 +38,7 @@ export const CJC_TIERS: BundleTier[] = [
     label: "Full Cycle",
     contents: "3 × 10mg vials",
     supply: "15 weeks",
-    images: [CJC.image!],
+    images: ["/Peak%20State%20Peptide%20Vial%20Trio.png"],
     lines: [{ item: CJC, quantity: 3 }],
     addLabel: "3 Vials",
   },
