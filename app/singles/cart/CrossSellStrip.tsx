@@ -9,9 +9,15 @@ type Props = {
   slugs: string[];
   /** "cart" = rows inside the cart drawer; "buybox" = compact cards on a page. */
   variant: "cart" | "buybox";
+  /** Buy-box heading. */
+  heading?: string;
 };
 
-export function CrossSellStrip({ slugs, variant }: Props) {
+export function CrossSellStrip({
+  slugs,
+  variant,
+  heading = "Pairs well with reta",
+}: Props) {
   const { lines, addItem, openCart } = useCart();
   const inCart = new Set(lines.map((l) => l.priceId));
   const items = slugs
@@ -78,7 +84,7 @@ export function CrossSellStrip({ slugs, variant }: Props) {
     return (
       <div className="mt-5">
         <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]/50">
-          Pairs well with reta
+          {heading}
         </p>
         <div className="mt-2.5 grid grid-cols-2 gap-2.5">
           {items.map((i) => (
