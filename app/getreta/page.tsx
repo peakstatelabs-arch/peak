@@ -221,8 +221,9 @@ export default function GetRetaPage() {
                     </span>
                   </h1>
                   <p className="mt-6 text-lg text-[var(--primary)]/70 max-w-xl">
-                    Retatrutide helps quiet food noise, control appetite and
-                    support a faster metabolism so getting leaner doesn’t have to
+                    Retatrutide helps quiet food noise, control appetite, support
+                    a faster metabolism and calm the inflammation that comes with
+                    carrying extra weight — so getting leaner doesn’t have to
                     consume your entire life.
                   </p>
                 </div>
