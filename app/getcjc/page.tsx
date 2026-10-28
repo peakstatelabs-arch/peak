@@ -198,17 +198,12 @@ export default function GetCjcPage() {
           />
 
           <CoaSection
-            intro="This is the actual certificate of analysis for the current CJC-1295 + Ipamorelin lot — identity confirmed, purity 99%+. A copy ships in every box."
-            reports={[
-              {
-                product: "CJC-1295 + Ipamorelin",
-                href: "/purity-tests/cjc-ipa",
-                images: [
-                  { src: "/CJC%20Lab%20Report%202%20Page%201.png", label: "Page 1" },
-                  { src: "/CJC%20Lab%20Report%202%20Page%202.png", label: "Page 2" },
-                ],
-              },
+            intro="Every lot is third-party tested for identity and purity before it ships — and a copy of the certificate comes in every box."
+            results={[
+              { product: "CJC-1295 + Ipamorelin", dose: "10mg blend", purity: "99.68%" },
             ]}
+            href="/purity-tests/cjc-ipa"
+            buttonLabel="View The Lab Report"
           />
 
           <TestimonialsSection

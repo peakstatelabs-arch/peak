@@ -170,19 +170,32 @@ export function TimelineSection({
   );
 }
 
-export type CoaImage = { src: string; label: string };
+export type CoaResult = {
+  product: string;
+  dose: string;
+  /** HPLC purity as printed on the current lot's COA, e.g. "99.87%". */
+  purity: string;
+};
 
+/**
+ * Compact lab-proof section: one PASS row per compound, then a button to the
+ * full reports (new tab, so the shopper keeps their place on the page).
+ */
 export function CoaSection({
   intro,
-  reports,
+  results,
+  href,
+  buttonLabel = "View All Lab Reports",
 }: {
   intro: string;
-  reports: { product: string; href: string; images: CoaImage[] }[];
+  results: CoaResult[];
+  href: string;
+  buttonLabel?: string;
 }) {
   return (
     <Section className="bg-[var(--muted)]">
       <Container>
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <div className="text-center">
             <p className="text-sm font-bold uppercase tracking-wider text-[var(--accent-dark)]">
               Tested, not trusted
@@ -192,47 +205,54 @@ export function CoaSection({
             </h2>
             <p className="mt-4 text-lg text-[var(--primary)]/70">{intro}</p>
           </div>
-          {reports.map((r) => (
-            <div key={r.product} className="mt-8">
-              {reports.length > 1 ? (
-                <h3 className="text-center text-lg font-bold text-[var(--primary)]">
-                  {r.product}
-                </h3>
-              ) : null}
-              <div
-                className={`mt-4 grid gap-6 ${
-                  r.images.length > 1 ? "sm:grid-cols-2" : "max-w-md mx-auto"
-                }`}
+
+          <ul className="mx-auto mt-8 max-w-xl space-y-3">
+            {results.map((r) => (
+              <li
+                key={r.product}
+                className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white px-4 py-3.5 shadow-sm"
               >
-                {r.images.map((c) => (
-                  <figure
-                    key={c.src}
-                    className="rounded-2xl border border-[var(--border)] bg-white p-3 shadow-sm"
+                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                    aria-hidden="true"
                   >
-                    <img
-                      src={c.src}
-                      alt={`${r.product} certificate of analysis — ${c.label}`}
-                      className="w-full rounded-xl border border-[var(--border)]"
-                      loading="lazy"
-                    />
-                    <figcaption className="mt-3 text-center text-sm font-semibold text-[var(--primary)]/70">
-                      {c.label}
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-              <p className="mt-4 text-center text-sm text-[var(--primary)]/55">
-                <a
-                  href={r.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-[var(--accent-dark)]"
-                >
-                  View The Full {r.product} Purity Test →
-                </a>
-              </p>
-            </div>
-          ))}
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-bold text-[var(--primary)]">
+                    {r.product}
+                  </span>
+                  <span className="block text-xs font-medium text-[var(--primary)]/55">
+                    {r.dose} · {r.purity} purity (HPLC)
+                  </span>
+                </span>
+                <span className="flex-shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-extrabold tracking-wider text-emerald-700">
+                  PASS
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8 text-center">
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary inline-flex h-12 items-center justify-center gap-2 rounded-2xl px-8 text-base font-semibold"
+            >
+              {buttonLabel} <span aria-hidden="true">→</span>
+            </a>
+            <p className="mt-3 text-xs text-[var(--primary)]/55">
+              Full certificates of analysis from ILS Laboratories · opens in a
+              new tab
+            </p>
+          </div>
         </div>
       </Container>
     </Section>

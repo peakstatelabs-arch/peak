@@ -249,33 +249,13 @@ export default function GetRecoveryPage() {
           />
 
           <CoaSection
-            intro="The actual certificates of analysis for the current lots of all three peptides — identity confirmed, purity 99%+. Copies ship in every box."
-            reports={[
-              {
-                product: "BPC-157 + TB-500",
-                href: "/purity-tests/bpc-tb",
-                images: [
-                  { src: "/BPC%20Lab%20Report%202%20Page%201.png", label: "Page 1" },
-                  { src: "/BPC%20Lab%20Report%202%20Page%202.png", label: "Page 2" },
-                ],
-              },
-              {
-                product: "KPV",
-                href: "/purity-tests/kpv",
-                images: [
-                  { src: "/KPV%201.png", label: "Page 1" },
-                  { src: "/KPV%202.png", label: "Page 2" },
-                ],
-              },
-              {
-                product: "GHK-Cu",
-                href: "/purity-tests/ghkcu",
-                images: [
-                  { src: "/GHKCU%20Lab%20Report/1.png", label: "Page 1" },
-                  { src: "/GHKCU%20Lab%20Report/2.png", label: "Page 2" },
-                ],
-              },
+            intro="Every lot of all three peptides is third-party tested for identity and purity before it ships — and copies of the certificates come in every box."
+            results={[
+              { product: "BPC-157 + TB-500", dose: "20mg blend", purity: "99.67%" },
+              { product: "KPV", dose: "10mg", purity: "99.36%" },
+              { product: "GHK-Cu", dose: "50mg", purity: "99.95%" },
             ]}
+            href="/getrecovery/lab-reports"
           />
 
           <TestimonialsSection

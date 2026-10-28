@@ -12,6 +12,7 @@ import { RetaBuy } from "./RetaBuy";
 import { saleStatus } from "@/app/lib/sale";
 import { SalePriceInline } from "@/app/components/SalePrice";
 import { SaleBar } from "@/app/components/SaleUrgency";
+import { CoaSection } from "@/app/components/productPage/ProductPageParts";
 
 // Re-render often so the server-evaluated sale state flips soon after expiry.
 export const revalidate = 60;
@@ -22,12 +23,6 @@ export const metadata: Metadata = {
     "Retatrutide (LY-3437943) 20mg — the GLP-1 / GIP / glucagon triple agonist. Third-party COA, 99%+ purity, discreet shipping, 1-on-1 coaching included. Single vials and full-cycle bundles.",
   alternates: { canonical: "/getreta" },
 };
-
-// COA scans (filenames contain spaces — encode for the URL).
-const RETA_COA = [
-  { src: "/Reta%20Lab%20Report%202%20Page%201.png", label: "Identity & purity" },
-  { src: "/Reta%20Lab%20Report%202%20Page%202.png", label: "Mass spec / HPLC" },
-];
 
 // Curated reta-relevant testimonials (fat loss + food noise — retatrutide's
 // signature effects). These are Peak State client results; most ran reta as
@@ -380,53 +375,14 @@ export default function GetRetaPage() {
           </Section>
 
           {/* ── Proof: COA ───────────────────────────────────────── */}
-          <Section className="bg-[var(--muted)]">
-            <Container>
-              <div className="max-w-4xl mx-auto">
-                <div className="text-center">
-                  <p className="text-sm font-bold uppercase tracking-wider text-[var(--accent-dark)]">
-                    Tested, not trusted
-                  </p>
-                  <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
-                    Every Batch, Third-Party Verified
-                  </h2>
-                  <p className="mt-4 text-lg text-[var(--primary)]/70">
-                    This is the actual certificate of analysis for the current
-                    retatrutide lot — identity confirmed, purity 99%+. A copy
-                    ships in every box.
-                  </p>
-                </div>
-                <div className="mt-8 grid sm:grid-cols-2 gap-6">
-                  {RETA_COA.map((c) => (
-                    <figure
-                      key={c.src}
-                      className="rounded-2xl border border-[var(--border)] bg-white p-3 shadow-sm"
-                    >
-                      <img
-                        src={c.src}
-                        alt={`Retatrutide certificate of analysis — ${c.label}`}
-                        className="w-full rounded-xl border border-[var(--border)]"
-                        loading="lazy"
-                      />
-                      <figcaption className="mt-3 text-center text-sm font-semibold text-[var(--primary)]/70">
-                        {c.label}
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
-                <p className="mt-6 text-center text-sm text-[var(--primary)]/55">
-                  <a
-                    href="/purity-tests/reta"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline hover:text-[var(--accent-dark)]"
-                  >
-                    View All Purity Tests →
-                  </a>
-                </p>
-              </div>
-            </Container>
-          </Section>
+          <CoaSection
+            intro="Every lot is third-party tested for identity and purity before it ships — and a copy of the certificate comes in every box."
+            results={[
+              { product: "Retatrutide", dose: "20mg", purity: "99.65%" },
+            ]}
+            href="/purity-tests/reta"
+            buttonLabel="View The Lab Report"
+          />
 
           {/* ── Proof: testimonials + photos ─────────────────────── */}
           <Section className="bg-white">
