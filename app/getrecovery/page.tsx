@@ -289,7 +289,7 @@ export default function GetRecoveryPage() {
 
           <SinglesOffer
             products={pillars.map((p) => p.name)}
-            commitment={`Zero commitment to the ${RECOVERY_STACK_NAME} stack.`}
+            body={`Dip your toe in with a single peptide. Same lab-tested 99%+ purity. Same protocol guidance. Zero commitment to the ${RECOVERY_STACK_NAME} stack.`}
             footnote="Same batch documentation. Same purity tests. Upgrade to the full stack anytime."
             source="getrecovery_singles_offer"
           />

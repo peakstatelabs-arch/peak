@@ -468,18 +468,23 @@ export function ProductFooter({
 }
 
 /**
- * "Not ready for the full stack?" card, matching the homepage's singles
- * offer: a chip per vial and a button to /singles.
+ * Singles-catalog card styled like the homepage's "Start With A Single Vial"
+ * offer: a chip per vial and a button to /singles. Wording is per page.
  */
 export function SinglesOffer({
+  eyebrow = "NOT READY FOR THE FULL STACK?",
+  title = "Start With A Single Vial",
+  body,
   products,
-  commitment,
+  buttonLabel = "Shop Single Vials",
   footnote,
   source,
 }: {
+  eyebrow?: string;
+  title?: string;
+  body: string;
   products: string[];
-  /** Ends the paragraph, e.g. "Zero commitment to the full 10-week system." */
-  commitment: string;
+  buttonLabel?: string;
   footnote: string;
   /** Analytics source for the shop_singles_click event. */
   source: string;
@@ -503,16 +508,15 @@ export function SinglesOffer({
             <div className="relative text-center">
               <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-wider text-[var(--accent)]">
                 <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-                <span>NOT READY FOR THE FULL STACK?</span>
+                <span>{eyebrow}</span>
               </div>
 
               <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-balance">
-                Start With A Single Vial
+                {title}
               </h2>
 
               <p className="mt-5 text-base sm:text-lg text-white/80 max-w-2xl mx-auto">
-                Dip your toe in with a single peptide. Same lab-tested 99%+
-                purity. Same protocol guidance. {commitment}
+                {body}
               </p>
 
               <div
@@ -556,7 +560,7 @@ export function SinglesOffer({
                 event="shop_singles_click"
                 eventProperties={{ source }}
               >
-                Shop Single Vials
+                {buttonLabel}
                 <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>

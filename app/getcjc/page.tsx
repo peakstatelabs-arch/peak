@@ -269,8 +269,11 @@ export default function GetCjcPage() {
               "KPV",
               "NAD+",
             ]}
-            commitment="Zero commitment to the full 10-week system."
-            footnote="Same batch documentation. Same purity tests. Upgrade to a full stack anytime."
+            eyebrow="BUILD YOUR OWN STACK"
+            title="Pair It With What You Need"
+            body="Add fat loss, recovery or anti-aging support to your CJC-1295 + Ipamorelin. Same lab-tested 99%+ purity. Same 1-on-1 coaching. Mix and match any vial."
+            buttonLabel="Shop The Full Catalog"
+            footnote="Every vial ships with its batch documentation and purity test."
             source="getcjc_singles_offer"
           />
 
