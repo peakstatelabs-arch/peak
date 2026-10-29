@@ -14,10 +14,10 @@ type Method = "create" | "signin";
 // 2026-09-13 and grows by 33 each calendar day (UTC), never resetting.
 // Kept in step with /research-access and /reta-access.
 const MEMBERS_ANCHOR_MS = Date.UTC(2026, 8, 13); // Sep 13, 2026 (month is 0-based)
-const MEMBERS_BASE = 6124;
+export const MEMBERS_BASE = 6124;
 const MEMBERS_PER_DAY = 33;
 
-function memberCount(now = Date.now()): number {
+export function memberCount(now = Date.now()): number {
   const days = Math.max(0, Math.floor((now - MEMBERS_ANCHOR_MS) / 86_400_000));
   return MEMBERS_BASE + days * MEMBERS_PER_DAY;
 }
@@ -27,6 +27,11 @@ function memberCount(now = Date.now()): number {
 // on the client — no hydration mismatch.
 const subscribeNoop = () => () => {};
 const getServerMemberCount = () => null;
+
+/** Live member count on the client; null during the server render. */
+export function useMemberCount(): number | null {
+  return useSyncExternalStore(subscribeNoop, memberCount, getServerMemberCount);
+}
 
 /** Fire-and-forget PostHog capture that never breaks the form. */
 function track(event: string, props?: Record<string, string>) {
@@ -42,7 +47,12 @@ function track(event: string, props?: Record<string, string>) {
  * catalog — creating an account (or signing in) is the only path forward.
  * Create-account first, with a small "Already a member? Sign in" link.
  */
-export function SignupForm() {
+export function SignupForm({
+  bare = false,
+}: {
+  /** Drop the card frame when the form already sits in a sheet. */
+  bare?: boolean;
+} = {}) {
   const [view, setView] = useState<Method>("create");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -60,11 +70,7 @@ export function SignupForm() {
     useWelcomeDestination(unlocked);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const members = useSyncExternalStore(
-    subscribeNoop,
-    memberCount,
-    getServerMemberCount
-  );
+  const members = useMemberCount();
 
   // The success card is much shorter than the form, so bring it into view.
   useEffect(() => {
@@ -156,8 +162,9 @@ export function SignupForm() {
   const inputClass =
     "mt-2 w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white";
   const labelClass = "block text-sm font-bold text-[var(--primary)]";
-  const cardClass =
-    "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
+  const cardClass = bare
+    ? "px-2 pb-2"
+    : "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
 
   if (unlocked) {
     return (
@@ -291,19 +298,8 @@ export function SignupForm() {
           />
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--muted)] p-5">
-          <h3 className="text-base font-bold text-[var(--primary)]">
-            Research Use Only
-          </h3>
-          <p className="mt-2 text-sm text-[var(--primary)]/70 leading-relaxed">
-            By using this site, you acknowledge that all products and
-            information are provided for research purposes only and are not
-            intended for human consumption or medical use.
-          </p>
-          <p className="mt-2 text-sm text-[var(--primary)]/70 leading-relaxed">
-            You must be 21 years of age or older to use this website.
-          </p>
-          <label className="mt-4 flex items-start gap-3 cursor-pointer">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--muted)] px-4 py-3.5">
+          <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={agreed}
@@ -311,14 +307,28 @@ export function SignupForm() {
                 setAgreed(e.target.checked);
                 setError(null);
               }}
-              className="mt-1 h-4 w-4 flex-shrink-0 rounded border-[var(--border)] accent-[var(--accent-dark)]"
+              className="mt-0.5 h-5 w-5 flex-shrink-0 rounded border-[var(--border)] accent-[var(--accent-dark)]"
             />
-            <span className="text-sm font-bold text-[var(--primary)] leading-snug">
-              {view === "signin"
-                ? "By signing in you agree to the research-only terms above."
-                : "By creating an account you agree to the research-only terms above."}
+            <span className="text-sm font-semibold text-[var(--primary)] leading-snug">
+              I&rsquo;m 21+ and agree to the research-use-only terms.
             </span>
           </label>
+          <details className="mt-2 pl-8 text-xs text-[var(--primary)]/60">
+            <summary className="cursor-pointer font-semibold text-[var(--accent-dark)]">
+              Read full terms
+            </summary>
+            <p className="mt-2 leading-relaxed">
+              By using this site, you acknowledge that all products and
+              information are provided for research purposes only and are not
+              intended for human consumption or medical use.
+            </p>
+            <p className="mt-2 leading-relaxed">
+              You must be 21 years of age or older to use this website.{" "}
+              {view === "signin"
+                ? "By signing in you agree to these research-only terms."
+                : "By creating an account you agree to these research-only terms."}
+            </p>
+          </details>
         </div>
 
         {error && (

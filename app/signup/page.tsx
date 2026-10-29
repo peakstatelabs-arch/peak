@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Container } from "@/app/components/Container";
-import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
-import { SignupForm } from "./SignupForm";
+import { SignupLanding, type SignupReview } from "./SignupLanding";
+import { reviews } from "@/content/reviews";
 
 export const metadata: Metadata = {
   title: `Peak State Labs — Get 10% Off`,
@@ -12,105 +12,21 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const stats: { value: string; label: string }[] = [
-  { value: "99%+", label: "Purity Standard" },
-  { value: "COA", label: "Third-Party Tested" },
-  { value: "6", label: "Research Compounds" },
-];
+// The one review on the page — shown as a card (text only, no screenshot).
+const featured = reviews.find((r) => r.id === "anon-208");
+const review: SignupReview | null = featured?.quote
+  ? {
+      name: featured.name,
+      initial: featured.initial,
+      quote: featured.quote,
+      stats: featured.stats ?? [],
+    }
+  : null;
 
 export default function SignupPage() {
   return (
     <div className="min-h-screen bg-white text-[var(--primary)]">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
-        <Container className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-lg">
-            <img
-              src="/logo.png"
-              alt="Peak State Labs Logo"
-              className="h-7 w-7 rounded-lg"
-            />
-            <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-          </div>
-        </Container>
-      </header>
-
-      <main>
-        {/* Hero */}
-        <Section className="relative overflow-clip gradient-hero !pt-8 !pb-12 sm:!pt-12 sm:!pb-16">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
-            <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
-          </div>
-
-          <Container className="relative">
-            {/* Value prop */}
-            <div className="max-w-2xl mx-auto text-center">
-              {/* Brand lockup */}
-              <div className="flex justify-center">
-                <div className="inline-flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white/70 px-5 py-3 shadow-sm animate-fade-in">
-                  <img
-                    src="/logo.png"
-                    alt="Peak State Labs Logo"
-                    className="h-8 w-8 rounded-lg"
-                  />
-                  <span className="text-xl font-bold tracking-tight">
-                    {siteCopy.brand.name}
-                  </span>
-                </div>
-              </div>
-
-              {/* Eyebrow */}
-              <div className="mt-6 flex justify-center">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-[0.18em] text-[var(--accent-dark)]">
-                  <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-                  <span>MEMBERS SAVE 10%</span>
-                </div>
-              </div>
-
-              {/* Headline */}
-              <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-balance animate-fade-in-up">
-                Get 10% Off Your Order
-              </h1>
-
-              <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed text-balance">
-                Create a free account to unlock the full catalog — and get
-                your 10% code instantly.
-              </p>
-            </div>
-
-            {/* Account form — placed first so the ask is above the fold */}
-            <div className="max-w-md mx-auto mt-8 text-left">
-              <SignupForm />
-            </div>
-
-            {/* Trust info — below the form as supporting reinforcement */}
-            <div className="max-w-2xl mx-auto mt-10 text-center">
-              {/* Stat cards */}
-              <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                {stats.map((s) => (
-                  <div
-                    key={s.label}
-                    className="rounded-2xl border border-[var(--border)] bg-white/80 px-3 py-4 sm:px-4 sm:py-5 shadow-sm"
-                  >
-                    <div className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--primary)]">
-                      {s.value}
-                    </div>
-                    <div className="mt-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[var(--primary)]/60 leading-tight">
-                      {s.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <p className="max-w-md mx-auto mt-6 text-center text-xs text-[var(--primary)]/50 leading-relaxed">
-              Materials are supplied strictly for laboratory research and
-              non-human use. You must be 21 or older to create an account.
-            </p>
-          </Container>
-        </Section>
-      </main>
+      <SignupLanding review={review} />
 
       {/* Footer */}
       <footer className="bg-[var(--primary)] text-white">
