@@ -84,7 +84,7 @@ export function BundleBuyBox({
   const { addItem, openCart } = useCart();
   const [selected, setSelected] = useState(defaultTierId);
   const tier = tiers.find((t) => t.id === selected) ?? tiers[0];
-  const { discounted, live } = bundlePricing(tier);
+  const { discounted, live, saves, pct } = bundlePricing(tier);
 
   function handleAdd() {
     for (const { item, quantity } of tier.lines) {
@@ -251,11 +251,29 @@ export function BundleBuyBox({
             Add {tier.addLabel} — {formatUsd(discounted)}
           </button>
 
-          {live ? (
+          {live && tier.compareAtCents ? (
+            // Stacks can't take the 10% member code, so say up front that
+            // the stack price already beats it.
+            <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3.5 py-2.5 text-left">
+              <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white">
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3.5} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <div>
+                <p className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700">
+                  Member pricing built in
+                </p>
+                <p className="mt-0.5 text-xs font-semibold text-emerald-800/80 leading-snug">
+                  You save {pct}% ({formatUsd(saves)}) —{" "}
+                  {pct >= 20 ? "more than double" : "more than"} your 10% member
+                  code. No code needed.
+                </p>
+              </div>
+            </div>
+          ) : live ? (
             <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
-              {tier.compareAtCents
-                ? `Stack price — you save ${formatUsd(bundlePricing(tier).saves)} vs. buying each vial separately.`
-                : "Bulk discount applied automatically at checkout — no code needed."}
+              Bulk discount applied automatically at checkout — no code needed.
             </p>
           ) : null}
         </div>
