@@ -11,6 +11,7 @@ import {
   HeroProof,
   ProductFooter,
   ProductHeader,
+  SinglesOffer,
   StockPill,
   TestimonialsSection,
   TimelineSection,
@@ -258,6 +259,20 @@ export default function GetCjcPage() {
               </div>
             </Container>
           </Section>
+
+          <SinglesOffer
+            products={[
+              "Retatrutide",
+              "CJC-1295 + Ipamorelin",
+              "BPC-157 + TB-500",
+              "GHK-Cu",
+              "KPV",
+              "NAD+",
+            ]}
+            commitment="Zero commitment to the full 10-week system."
+            footnote="Same batch documentation. Same purity tests. Upgrade to a full stack anytime."
+            source="getcjc_singles_offer"
+          />
 
           <FaqSection faqs={faqs} />
 

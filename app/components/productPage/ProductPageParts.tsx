@@ -10,6 +10,7 @@ import { reviews, type Review } from "@/content/reviews";
 import { MemberBanner } from "@/app/components/member/MemberBanner";
 import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
+import { TrackedLink } from "@/app/components/TrackedLink";
 
 /** Look up testimonials by id, showing each reviewer name only once. */
 export function pickReviews(ids: string[]): Review[] {
@@ -463,5 +464,109 @@ export function ProductFooter({
         </div>
       </Container>
     </footer>
+  );
+}
+
+/**
+ * "Not ready for the full stack?" card, matching the homepage's singles
+ * offer: a chip per vial and a button to /singles.
+ */
+export function SinglesOffer({
+  products,
+  commitment,
+  footnote,
+  source,
+}: {
+  products: string[];
+  /** Ends the paragraph, e.g. "Zero commitment to the full 10-week system." */
+  commitment: string;
+  footnote: string;
+  /** Analytics source for the shop_singles_click event. */
+  source: string;
+}) {
+  const check = (
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+  );
+  return (
+    <Section className="bg-white relative overflow-hidden !pt-8 sm:!pt-12 !pb-8 sm:!pb-12">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-20 left-[-10%] h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl" />
+        <div className="absolute bottom-0 right-[-10%] h-72 w-72 rounded-full bg-[var(--accent)]/15 blur-3xl" />
+      </div>
+
+      <Container className="relative">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] p-8 sm:p-12 text-white shadow-2xl">
+            <div className="pointer-events-none absolute -top-16 -right-16 w-72 h-72 rounded-full bg-[var(--accent)]/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -left-16 w-72 h-72 rounded-full bg-[var(--accent)]/10 blur-3xl" />
+
+            <div className="relative text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-wider text-[var(--accent)]">
+                <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
+                <span>NOT READY FOR THE FULL STACK?</span>
+              </div>
+
+              <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-balance">
+                Start With A Single Vial
+              </h2>
+
+              <p className="mt-5 text-base sm:text-lg text-white/80 max-w-2xl mx-auto">
+                Dip your toe in with a single peptide. Same lab-tested 99%+
+                purity. Same protocol guidance. {commitment}
+              </p>
+
+              <div
+                className={`mt-8 mx-auto grid max-w-3xl gap-3 sm:grid-cols-3 ${
+                  products.length > 3 ? "grid-cols-2" : "grid-cols-1"
+                }`}
+              >
+                {products.map((name) => (
+                  <span
+                    key={name}
+                    className="flex h-full w-full items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 backdrop-blur px-4 py-2.5 text-center text-sm font-semibold text-balance"
+                  >
+                    <svg
+                      className="w-4 h-4 text-[var(--accent)] flex-shrink-0"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                    >
+                      {check}
+                    </svg>
+                    {name}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/80">
+                {["Free shipping", "No minimum order"].map((t) => (
+                  <span key={t} className="inline-flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      {check}
+                    </svg>
+                    {t}
+                  </span>
+                ))}
+              </div>
+
+              <TrackedLink
+                href="/singles"
+                className="btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold mt-8"
+                event="shop_singles_click"
+                eventProperties={{ source }}
+              >
+                Shop Single Vials
+                <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </TrackedLink>
+
+              <p className="mt-4 text-xs text-white/60">{footnote}</p>
+            </div>
+          </div>
+        </div>
+      </Container>
+    </Section>
   );
 }
