@@ -161,7 +161,7 @@ export function SignupForm({
 
   // In the sheet on phones the form must fit above the keyboard, so labels
   // become placeholders (still read out to screen readers).
-  const inputClass = `${bare ? "mt-0 sm:mt-2" : "mt-2"} w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white`;
+  const inputClass = `${bare ? "mt-0 sm:mt-2 sm:placeholder:text-transparent" : "mt-2"} w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white`;
   const labelClass = bare
     ? "sr-only sm:not-sr-only sm:block sm:text-sm sm:font-bold sm:text-[var(--primary)]"
     : "block text-sm font-bold text-[var(--primary)]";

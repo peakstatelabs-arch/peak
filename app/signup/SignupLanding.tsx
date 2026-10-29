@@ -234,27 +234,39 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
             open ? "translate-y-0" : "translate-y-6 sm:translate-y-8"
           }`}
         >
-          {/* Title bar — everything sits at the top so the phone keyboard
-              (bottom ~45% of the screen) never covers the form. */}
-          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-[var(--border)] bg-white/95 backdrop-blur px-5 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] sm:py-3">
-            <div>
-              <p className="text-lg font-bold tracking-tight text-[var(--primary)]">
-                Get your 10% code
-              </p>
-              <p className="text-xs font-semibold text-[var(--primary)]/55">
-                Join {(members ?? MEMBERS_BASE).toLocaleString("en-US")} verified members
-              </p>
+          {/* Brand band — kept compact so name, email, checkbox and button
+              still sit above the phone keyboard (bottom ~45% of the screen). */}
+          <div className="sticky top-0 z-10 overflow-hidden bg-gradient-to-br from-[var(--primary)] to-[var(--primary-light)] px-5 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] text-white sm:rounded-t-3xl sm:pt-4">
+            <div className="pointer-events-none absolute -top-10 -right-8 h-32 w-32 rounded-full bg-[var(--accent)]/30 blur-2xl" />
+            <div className="pointer-events-none absolute -bottom-12 left-10 h-24 w-24 rounded-full bg-[var(--accent)]/15 blur-2xl" />
+            <div className="relative flex items-center">
+              <span className="flex items-center gap-2">
+                <img src="/logo.png" alt="" className="h-6 w-6 rounded-md" />
+                <span className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/80">
+                  {siteCopy.brand.name}
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={closeForm}
+                className="absolute -right-2 -top-2 flex h-10 w-10 items-center justify-center rounded-full text-white/70 hover:bg-white/10 hover:text-white"
+                aria-label="Close"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={closeForm}
-              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-[var(--primary)]/60 hover:bg-[var(--muted)]"
-              aria-label="Close"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <p className="relative mt-1.5 text-[26px] font-bold leading-none tracking-tight">
+              Unlock <span className="text-[var(--accent)]">10% Off</span>
+            </p>
+            <p className="relative mt-2 flex items-center gap-2 text-xs font-semibold text-white/75">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent)]" />
+              </span>
+              {(members ?? MEMBERS_BASE).toLocaleString("en-US")} members already in
+            </p>
           </div>
           <div className="px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pt-4 sm:pb-5">
             <SignupForm bare />
