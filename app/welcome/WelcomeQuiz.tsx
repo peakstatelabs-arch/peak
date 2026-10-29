@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import posthog from "posthog-js";
 import { readClientContact, safeFirstName } from "@/app/lib/clientContact";
 import { TrackedLink } from "@/app/components/TrackedLink";
+import { useOnPageRestore } from "@/app/lib/useOnPageRestore";
 import { RECOVERY_STACK_NAME } from "@/app/getrecovery/recoveryStack";
 
 type Goal = "powercut" | "fat-loss" | "muscle" | "recovery";
@@ -67,6 +68,9 @@ export function WelcomeQuiz() {
   const firstName = useSyncExternalStore(subscribeNoop, readFirstName, () => null);
   const [selected, setSelected] = useState<Goal | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Tapping Back from the product page restores this page as it was left:
+  // unlock the button so they can pick again.
+  useOnPageRestore(useCallback(() => setSubmitting(false), []));
   const choice = OPTIONS.find((o) => o.key === selected) ?? null;
 
   // Picking an answer only selects it (and can be changed); the slide-up

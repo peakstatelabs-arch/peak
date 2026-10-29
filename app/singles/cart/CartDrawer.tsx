@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatUsd, useCart, type CartLine } from "./CartContext";
 import {
   bulkTierForQty,
@@ -13,6 +13,7 @@ import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { CrossSellStrip } from "./CrossSellStrip";
 import { CART_CROSSSELL_SLUGS } from "./crossSell";
 import { isStackPriceId } from "./priceCatalog";
+import { useOnPageRestore } from "@/app/lib/useOnPageRestore";
 
 export function CartDrawer() {
   const {
@@ -31,6 +32,9 @@ export function CartDrawer() {
   const lines = hydrated ? allLines : [];
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Tapping Back from Stripe restores this page as it was left: unlock the
+  // Checkout button so they can try again.
+  useOnPageRestore(useCallback(() => setSubmitting(false), []));
 
   // When the cart mixes in-stock vials with pre-orders, the order ships in
   // two waves: in-stock now, pre-orders on their release date. Surface that
