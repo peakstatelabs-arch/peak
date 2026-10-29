@@ -380,7 +380,7 @@ export default function GetRetaPage() {
             results={[
               { product: "Retatrutide", dose: "20mg", purity: "99.65%" },
             ]}
-            href="/purity-tests/reta"
+            href="/purity-tests/reta?from=getreta"
             buttonLabel="View The Lab Report"
           />
 

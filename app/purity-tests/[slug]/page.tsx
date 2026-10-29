@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/app/components/Container";
 import { siteCopy } from "@/content/siteCopy";
 import { PURITY_TESTS } from "../data";
+import { SourceBackLink } from "@/app/components/SourceBackLink";
 
 export function generateStaticParams() {
   return Object.keys(PURITY_TESTS).map((slug) => ({ slug }));
@@ -51,12 +52,7 @@ export default async function PurityTestPage({
             />
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
           </a>
-          <a
-            href="/"
-            className="text-sm font-medium text-[var(--primary)]/70 hover:text-[var(--primary)] transition-colors"
-          >
-            ← Back to POWER CUT™
-          </a>
+          <SourceBackLink />
         </Container>
       </header>
 

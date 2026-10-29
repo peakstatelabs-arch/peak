@@ -203,7 +203,7 @@ export default function GetCjcPage() {
             results={[
               { product: "CJC-1295 + Ipamorelin", dose: "10mg blend", purity: "99.68%" },
             ]}
-            href="/purity-tests/cjc-ipa"
+            href="/purity-tests/cjc-ipa?from=getcjc"
             buttonLabel="View The Lab Report"
           />
 

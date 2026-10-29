@@ -3,8 +3,9 @@
 import { useSyncExternalStore } from "react";
 import { RECOVERY_STACK_NAME } from "@/app/singles/cart/stackItems";
 
-// Product pages link here as /singles?from=<page>, so the header can send
-// shoppers back where they came from. Anything else goes to POWER CUT.
+// Product pages link to /singles and /purity-tests as ?from=<page>, so the
+// header can send shoppers back where they came from. Anything else goes to
+// POWER CUT.
 const BACK_TARGETS: Record<string, { href: string; label: string }> = {
   getcjc: { href: "/getcjc", label: "Back to CJC-1295 + Ipamorelin" },
   getreta: { href: "/getreta", label: "Back to Retatrutide" },
@@ -23,7 +24,7 @@ function readFrom(): string | null {
   }
 }
 
-export function SinglesBackLink() {
+export function SourceBackLink() {
   const from = useSyncExternalStore(subscribeNoop, readFrom, () => null);
   const target = (from && BACK_TARGETS[from]) || DEFAULT_TARGET;
   return (

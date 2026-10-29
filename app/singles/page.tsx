@@ -6,7 +6,7 @@ import { CartProvider } from "./cart/CartContext";
 import { CartDrawer } from "./cart/CartDrawer";
 import { ViewCartButton } from "./cart/ViewCartButton";
 import { AddToCartButton } from "./cart/AddToCartButton";
-import { SinglesBackLink } from "./BackLink";
+import { SourceBackLink } from "@/app/components/SourceBackLink";
 import { SINGLES_PRICE_IDS, type SinglesProductSlug } from "./cart/priceCatalog";
 import { BULK_DISCOUNTS_LIVE, BULK_TIERS } from "@/app/lib/bulkDiscount";
 import { saleStatus } from "@/app/lib/sale";
@@ -222,7 +222,7 @@ export default function SinglesCatalog() {
               <span className="hidden sm:inline">{siteCopy.brand.name}</span>
             </a>
             <div className="flex items-center gap-4 sm:gap-6">
-              <SinglesBackLink />
+              <SourceBackLink />
               <ViewCartButton variant="header" />
             </div>
           </Container>
