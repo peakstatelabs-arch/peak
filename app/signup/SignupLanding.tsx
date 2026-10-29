@@ -122,7 +122,9 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
                 Get 10% Off Your First Order
               </h1>
               <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed text-balance">
-                Create your free account and your code appears instantly.
+                Create your free account for members-only access to our full
+                research catalog, 1-on-1 coaching and 10% off your first order.
+                Your code appears instantly.
               </p>
 
               <div className="mt-8">
@@ -257,15 +259,19 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
                 </svg>
               </button>
             </div>
-            <p className="relative mt-1.5 text-[26px] font-bold leading-none tracking-tight">
-              Unlock <span className="text-[var(--accent)]">10% Off</span>
+            <p className="relative mt-1 text-[26px] font-bold leading-none tracking-tight">
+              Unlock{" "}
+              <span className="inline-block rounded-full border-2 border-[var(--accent)] bg-[var(--accent)]/15 px-2.5 py-0">
+                10% Off
+              </span>
             </p>
-            <p className="relative mt-2 flex items-center gap-2 text-xs font-semibold text-white/75">
+            <p className="relative mt-1.5 flex items-center gap-2 text-xs font-semibold text-white/75">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75 animate-ping" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent)]" />
               </span>
-              {(members ?? MEMBERS_BASE).toLocaleString("en-US")} members already in
+              Full catalog + your code ·{" "}
+              {(members ?? MEMBERS_BASE).toLocaleString("en-US")} members in
             </p>
           </div>
           <div className="px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pt-4 sm:pb-5">
