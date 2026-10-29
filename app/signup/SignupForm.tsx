@@ -159,9 +159,12 @@ export function SignupForm({
     setUnlocked(method);
   }
 
-  const inputClass =
-    "mt-2 w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white";
-  const labelClass = "block text-sm font-bold text-[var(--primary)]";
+  // In the sheet on phones the form must fit above the keyboard, so labels
+  // become placeholders (still read out to screen readers).
+  const inputClass = `${bare ? "mt-0 sm:mt-2" : "mt-2"} w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white`;
+  const labelClass = bare
+    ? "sr-only sm:not-sr-only sm:block sm:text-sm sm:font-bold sm:text-[var(--primary)]"
+    : "block text-sm font-bold text-[var(--primary)]";
   const cardClass = bare
     ? "px-2 pb-2"
     : "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
@@ -225,7 +228,8 @@ export function SignupForm({
 
   return (
     <div ref={cardRef} className={cardClass}>
-      {view === "create" ? (
+      {/* In the sheet, its title takes this line's place to keep the form short. */}
+      {bare && view === "create" ? null : view === "create" ? (
         /* Social proof */
         /* Space is always reserved; the line fades in once the live count is known. */
         <div
@@ -259,7 +263,10 @@ export function SignupForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className={bare ? "space-y-3 sm:mt-1 sm:space-y-5" : "mt-6 space-y-5"}
+      >
         <div>
           <label htmlFor="signup-name" className={labelClass}>
             Name
@@ -269,6 +276,7 @@ export function SignupForm({
             name="name"
             type="text"
             autoComplete="name"
+            placeholder={bare ? "Name" : undefined}
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -288,6 +296,7 @@ export function SignupForm({
             name="email"
             type="email"
             autoComplete="email"
+            placeholder={bare ? "Email" : undefined}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -298,7 +307,7 @@ export function SignupForm({
           />
         </div>
 
-        <div className="rounded-2xl border border-[var(--border)] bg-[var(--muted)] px-4 py-3.5">
+        <div className={`rounded-2xl border border-[var(--border)] bg-[var(--muted)] px-4 ${bare ? "py-3" : "py-3.5"}`}>
           <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -313,7 +322,7 @@ export function SignupForm({
               I&rsquo;m 21+ and agree to the research-use-only terms.
             </span>
           </label>
-          <details className="mt-2 pl-8 text-xs text-[var(--primary)]/60">
+          <details className={`${bare ? "mt-1" : "mt-2"} pl-8 text-xs text-[var(--primary)]/60`}>
             <summary className="cursor-pointer font-semibold text-[var(--accent-dark)]">
               Read full terms
             </summary>

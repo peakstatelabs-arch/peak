@@ -50,12 +50,15 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
   const [open, setOpen] = useState(false);
   const members = useMemberCount();
 
-  // flushSync so the sheet is interactive before we focus the first field —
-  // focusing inside the tap is what lets phones raise the keyboard.
+  // On desktop, put the cursor in Name (flushSync so the dialog is
+  // interactive first). On phones, don't: an instant keyboard would cover the
+  // form — they see the whole (short) form, then tap Name themselves.
   const openForm = useCallback((placement: string) => {
     track("signup_page_cta_clicked", { placement });
     flushSync(() => setOpen(true));
-    document.getElementById("signup-name")?.focus({ preventScroll: true });
+    if (window.matchMedia("(min-width: 640px)").matches) {
+      document.getElementById("signup-name")?.focus({ preventScroll: true });
+    }
   }, []);
 
   const closeForm = useCallback(() => {
@@ -84,7 +87,7 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
     <>
       {/* Header — the logo opens the form (visitors tap it expecting to get in) */}
       <header className="sticky top-0 z-40 border-b border-[var(--border)] glass">
-        <Container className="flex h-16 items-center justify-between">
+        <Container className="flex h-16 items-center">
           <button
             type="button"
             onClick={() => openForm("header_logo")}
@@ -93,13 +96,6 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
           >
             <img src="/logo.png" alt="" className="h-7 w-7 rounded-lg" />
             <span>{siteCopy.brand.name}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => openForm("header_button")}
-            className="btn-primary inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-semibold"
-          >
-            Get Access
           </button>
         </Container>
       </header>
@@ -217,7 +213,7 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
 
       {/* ── The form, in a sheet: bottom sheet on phones, centered on desktop ── */}
       <div
-        className={`fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-6 transition-opacity duration-200 ${
+        className={`fixed inset-0 z-50 flex items-start justify-center sm:items-center sm:p-6 transition-opacity duration-200 ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         aria-hidden={!open}
@@ -234,16 +230,25 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
           role="dialog"
           aria-modal="true"
           aria-label="Create your free account"
-          className={`relative w-full max-w-md max-h-[92dvh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-white shadow-2xl transition-transform duration-300 ease-out ${
-            open ? "translate-y-0" : "translate-y-full sm:translate-y-8"
+          className={`relative h-[100dvh] w-full overflow-y-auto overscroll-contain bg-white sm:h-auto sm:max-h-[92dvh] sm:max-w-md sm:rounded-3xl sm:shadow-2xl transition-transform duration-300 ease-out ${
+            open ? "translate-y-0" : "translate-y-6 sm:translate-y-8"
           }`}
         >
-          <div className="sticky top-0 z-10 flex items-center justify-between bg-white/95 backdrop-blur px-5 pt-4 pb-2">
-            <span className="mx-auto h-1.5 w-12 rounded-full bg-[var(--border)] sm:hidden" aria-hidden="true" />
+          {/* Title bar — everything sits at the top so the phone keyboard
+              (bottom ~45% of the screen) never covers the form. */}
+          <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-[var(--border)] bg-white/95 backdrop-blur px-5 py-2 pt-[max(0.5rem,env(safe-area-inset-top))] sm:py-3">
+            <div>
+              <p className="text-lg font-bold tracking-tight text-[var(--primary)]">
+                Get your 10% code
+              </p>
+              <p className="text-xs font-semibold text-[var(--primary)]/55">
+                Join {(members ?? MEMBERS_BASE).toLocaleString("en-US")} verified members
+              </p>
+            </div>
             <button
               type="button"
               onClick={closeForm}
-              className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full text-[var(--primary)]/60 hover:bg-[var(--muted)]"
+              className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-[var(--primary)]/60 hover:bg-[var(--muted)]"
               aria-label="Close"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
@@ -251,7 +256,7 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
               </svg>
             </button>
           </div>
-          <div className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pb-5">
+          <div className="px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pt-4 sm:pb-5">
             <SignupForm bare />
           </div>
         </div>
