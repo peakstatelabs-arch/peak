@@ -479,6 +479,7 @@ export function SinglesOffer({
   buttonLabel = "Shop Single Vials",
   footnote,
   source,
+  from,
 }: {
   eyebrow?: string;
   title?: string;
@@ -488,6 +489,8 @@ export function SinglesOffer({
   footnote: string;
   /** Analytics source for the shop_singles_click event. */
   source: string;
+  /** This page's id, so /singles can link back to it (see singles/BackLink). */
+  from: string;
 }) {
   const check = (
     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -555,7 +558,7 @@ export function SinglesOffer({
               </div>
 
               <TrackedLink
-                href="/singles"
+                href={`/singles?from=${from}`}
                 className="btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold mt-8"
                 event="shop_singles_click"
                 eventProperties={{ source }}

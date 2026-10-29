@@ -614,7 +614,7 @@ export default function GetRetaPage() {
                   {otherSingles.map((p) => (
                     <a
                       key={p.name}
-                      href="/singles"
+                      href="/singles?from=getreta"
                       className="group flex flex-col rounded-2xl border border-[var(--border)] bg-white p-4 card-hover"
                     >
                       <div className="aspect-square w-full overflow-hidden rounded-xl bg-white border border-[var(--border)] flex items-center justify-center">
@@ -646,7 +646,7 @@ export default function GetRetaPage() {
 
                 <div className="mt-8 text-center">
                   <a
-                    href="/singles"
+                    href="/singles?from=getreta"
                     className="inline-flex h-12 items-center justify-center rounded-2xl border-2 border-[var(--border)] bg-white px-8 text-base font-semibold text-[var(--primary)] transition-all hover:border-[var(--accent)]"
                   >
                     Browse The Full Singles Catalog →
@@ -758,7 +758,7 @@ export default function GetRetaPage() {
                     Research overview
                   </a>
                   <a
-                    href="/singles"
+                    href="/singles?from=getreta"
                     className="text-white/70 hover:text-white transition-colors"
                   >
                     Singles catalog

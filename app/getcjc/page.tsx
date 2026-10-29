@@ -275,6 +275,7 @@ export default function GetCjcPage() {
             buttonLabel="Shop The Full Catalog"
             footnote="Every vial ships with its batch documentation and purity test."
             source="getcjc_singles_offer"
+            from="getcjc"
           />
 
           <FaqSection faqs={faqs} />
@@ -289,7 +290,7 @@ export default function GetCjcPage() {
         <ProductFooter
           links={[
             { href: "/cjcblend", label: "Research overview" },
-            { href: "/singles", label: "Singles catalog" },
+            { href: "/singles?from=getcjc", label: "Singles catalog" },
             { href: "/reviews", label: "Reviews" },
             { href: "/", label: "POWER CUT™" },
           ]}

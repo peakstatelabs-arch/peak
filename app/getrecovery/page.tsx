@@ -292,6 +292,7 @@ export default function GetRecoveryPage() {
             body={`Dip your toe in with a single peptide. Same lab-tested 99%+ purity. Same protocol guidance. Zero commitment to the ${RECOVERY_STACK_NAME} stack.`}
             footnote="Same batch documentation. Same purity tests. Upgrade to the full stack anytime."
             source="getrecovery_singles_offer"
+            from="getrecovery"
           />
 
           <FaqSection faqs={faqs} />
@@ -306,7 +307,7 @@ export default function GetRecoveryPage() {
         <ProductFooter
           links={[
             { href: "/bpcblend", label: "BPC-157 + TB-500 research" },
-            { href: "/singles", label: "Singles catalog" },
+            { href: "/singles?from=getrecovery", label: "Singles catalog" },
             { href: "/reviews", label: "Reviews" },
             { href: "/", label: "POWER CUT™" },
           ]}
