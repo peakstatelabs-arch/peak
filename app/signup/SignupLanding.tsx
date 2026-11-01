@@ -107,7 +107,7 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
             <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-[var(--accent)]/10 blur-3xl" />
             <div className="absolute top-1/2 left-[-10%] h-80 w-80 rounded-full bg-[var(--accent)]/5 blur-3xl" />
           </div>
-          <Container className="relative py-12 sm:py-20">
+          <Container className="relative pt-12 pb-6 sm:pt-20 sm:pb-8">
             <div className="max-w-xl mx-auto text-center">
               <button
                 type="button"
@@ -150,7 +150,7 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
 
         {/* ── For people who scroll before deciding ─────────────── */}
         <section className="bg-white">
-          <Container className="py-12 sm:py-16">
+          <Container className="pb-12 sm:pb-16">
             <div className="max-w-xl mx-auto">
               <ul className="space-y-3">
                 {TRUST_POINTS.map((t) => (
