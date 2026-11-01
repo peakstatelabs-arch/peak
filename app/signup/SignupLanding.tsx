@@ -119,11 +119,14 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
               </button>
 
               <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-balance">
-                Get 10% Off Your First Order
+                Get Access To The Full Peptide Catalog
               </h1>
-              <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed text-balance">
-                Create your free account for members-only access to our full
-                research peptide catalog.
+              <p className="mt-4 text-xl sm:text-2xl font-bold tracking-tight text-[var(--accent-dark)]">
+                + 10% Off Your First Order
+              </p>
+              <p className="mt-4 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed text-balance">
+                Create a free account in 10 seconds — your code appears
+                instantly.
               </p>
 
               <div className="mt-8">
@@ -138,7 +141,7 @@ export function SignupLanding({ review }: { review: SignupReview | null }) {
                 >
                   <span className="text-[var(--accent-dark)]">✓</span> Join{" "}
                   {(members ?? MEMBERS_BASE).toLocaleString("en-US")} verified
-                  members · Free · 10 seconds
+                  members
                 </p>
               </div>
             </div>
