@@ -13,9 +13,9 @@ export const metadata: Metadata = {
 
 // The three compounds in the stack, with the purity printed on each COA.
 const REPORTS = [
-  { slug: "bpc-tb", purity: "99.67%" },
+  { slug: "bpc-tb", purity: "99.68%" },
   { slug: "kpv", purity: "99.36%" },
-  { slug: "ghkcu", purity: "99.95%" },
+  { slug: "ghkcu", purity: "99.94%" },
 ].map((r) => ({ ...r, test: PURITY_TESTS[r.slug] }));
 
 export default function RecoveryLabReportsPage() {

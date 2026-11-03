@@ -252,9 +252,9 @@ export default function GetRecoveryPage() {
           <CoaSection
             intro="Every lot of all three peptides is third-party tested for identity and purity before it ships — and copies of the certificates come in every box."
             results={[
-              { product: "BPC-157 + TB-500", dose: "20mg blend", purity: "99.67%" },
+              { product: "BPC-157 + TB-500", dose: "20mg blend", purity: "99.68%" },
               { product: "KPV", dose: "10mg", purity: "99.36%" },
-              { product: "GHK-Cu", dose: "50mg", purity: "99.95%" },
+              { product: "GHK-Cu", dose: "50mg", purity: "99.94%" },
             ]}
             href="/getrecovery/lab-reports"
           />

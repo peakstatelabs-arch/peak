@@ -378,7 +378,7 @@ export default function GetRetaPage() {
           <CoaSection
             intro="Every lot is third-party tested for identity and purity before it ships — and a copy of the certificate comes in every box."
             results={[
-              { product: "Retatrutide", dose: "20mg", purity: "99.65%" },
+              { product: "Retatrutide", dose: "20mg", purity: "99.93%" },
             ]}
             href="/purity-tests/reta?from=getreta"
             buttonLabel="View The Lab Report"

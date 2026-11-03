@@ -201,7 +201,7 @@ export default function GetCjcPage() {
           <CoaSection
             intro="Every lot is third-party tested for identity and purity before it ships — and a copy of the certificate comes in every box."
             results={[
-              { product: "CJC-1295 + Ipamorelin", dose: "10mg blend", purity: "99.68%" },
+              { product: "CJC-1295 + Ipamorelin", dose: "10mg blend", purity: "99.12%" },
             ]}
             href="/purity-tests/cjc-ipa?from=getcjc"
             buttonLabel="View The Lab Report"

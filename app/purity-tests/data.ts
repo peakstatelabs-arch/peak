@@ -13,8 +13,8 @@ export const PURITY_TESTS: Record<string, PurityTest> = {
     amount: "20mg",
     title: "Retatrutide 20mg Lab Report",
     images: [
-      "/Reta Lab Report 2 Page 1.png",
-      "/Reta Lab Report 2 Page 2.png",
+      "/RETA NEW1.png",
+      "/RETA NEW2.png",
     ],
   },
   "cjc-ipa": {
@@ -23,8 +23,8 @@ export const PURITY_TESTS: Record<string, PurityTest> = {
     amount: "10mg Blend",
     title: "CJC-1295 + Ipamorelin 10mg Blend Lab Report",
     images: [
-      "/CJC Lab Report 2 Page 1.png",
-      "/CJC Lab Report 2 Page 2.png",
+      "/CJC NEW1.png",
+      "/CJC NEW2.png",
     ],
   },
   "bpc-tb": {
@@ -33,9 +33,8 @@ export const PURITY_TESTS: Record<string, PurityTest> = {
     amount: "20mg Blend",
     title: "BPC-157 + TB-500 20mg Blend Lab Report",
     images: [
-      "/BPCTB Lab Report Update.png",
-      "/BPC Lab Report 2 Page 2.png",
-      "/BPC Lab Report 2 Page 3.png",
+      "/BPC NEW1.png",
+      "/BPC NEW2.png",
     ],
   },
   ghkcu: {
@@ -44,8 +43,8 @@ export const PURITY_TESTS: Record<string, PurityTest> = {
     amount: "50mg",
     title: "GHK-Cu 50mg Lab Report",
     images: [
-      "/GHKCU Lab Report/1.png",
-      "/GHKCU Lab Report/2.png",
+      "/GHKCU NEW1.png",
+      "/GHCKU NEW2.png",
     ],
   },
   kpv: {
@@ -54,8 +53,8 @@ export const PURITY_TESTS: Record<string, PurityTest> = {
     amount: "10mg",
     title: "KPV 10mg Lab Report",
     images: [
-      "/KPV 1.png",
-      "/KPV 2.png",
+      "/KPV NEW1.png",
+      "/KPV NEW2.png",
     ],
   },
   nad: {
@@ -64,8 +63,8 @@ export const PURITY_TESTS: Record<string, PurityTest> = {
     amount: "500mg",
     title: "NAD+ 500mg Lab Report",
     images: [
-      "/NAD 1.png",
-      "/NAD 2.png",
+      "/NAD NEW1.png",
+      "/NAD NEW2.png",
     ],
   },
 };
