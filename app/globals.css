@@ -416,3 +416,12 @@ details[open] summary .faq-icon {
 .paypal-add-to-cart-host paypal-add-to-cart-button p {
   display: none !important;
 }
+
+/* /signup: brief glow on the form after tapping the logo (ScrollToForm). */
+@keyframes signup-form-flash {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(120, 220, 229, 0); }
+  30% { box-shadow: 0 0 0 6px rgba(120, 220, 229, 0.55); }
+}
+.signup-form-flash {
+  animation: signup-form-flash 1.4s ease-out 0.3s;
+}

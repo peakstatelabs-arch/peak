@@ -3,6 +3,7 @@ import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { SignupForm } from "./SignupForm";
+import { SIGNUP_FORM_ID, ScrollToForm } from "./ScrollToForm";
 
 export const metadata: Metadata = {
   title: `Peak State Labs — Get 10% Off`,
@@ -24,14 +25,17 @@ export default function SignupPage() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
         <Container className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-lg">
+          <ScrollToForm
+            placement="header_logo"
+            className="flex items-center gap-2 font-bold text-lg"
+          >
             <img
               src="/logo.png"
               alt="Peak State Labs Logo"
               className="h-7 w-7 rounded-lg"
             />
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-          </div>
+          </ScrollToForm>
         </Container>
       </header>
 
@@ -48,7 +52,10 @@ export default function SignupPage() {
             <div className="max-w-2xl mx-auto text-center">
               {/* Brand lockup */}
               <div className="flex justify-center">
-                <div className="inline-flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white/70 px-5 py-3 shadow-sm animate-fade-in">
+                <ScrollToForm
+                  placement="hero_badge"
+                  className="inline-flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-white/70 px-5 py-3 shadow-sm animate-fade-in"
+                >
                   <img
                     src="/logo.png"
                     alt="Peak State Labs Logo"
@@ -57,7 +64,7 @@ export default function SignupPage() {
                   <span className="text-xl font-bold tracking-tight">
                     {siteCopy.brand.name}
                   </span>
-                </div>
+                </ScrollToForm>
               </div>
 
               {/* Eyebrow */}
@@ -70,17 +77,22 @@ export default function SignupPage() {
 
               {/* Headline */}
               <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] text-balance animate-fade-in-up">
-                Get 10% Off Your Order
+                Get Access To The Full Peptide Catalog
               </h1>
-
-              <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed text-balance">
-                Create a free account to unlock the full catalog — and get
-                your 10% code instantly.
+              <p className="mt-4 text-xl sm:text-2xl font-bold tracking-tight text-[var(--accent-dark)]">
+                + 10% Off Your First Order
+              </p>
+              <p className="mt-4 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed text-balance">
+                Create a free account in 10 seconds — your code appears
+                instantly.
               </p>
             </div>
 
             {/* Account form — placed first so the ask is above the fold */}
-            <div className="max-w-md mx-auto mt-8 text-left">
+            <div
+              id={SIGNUP_FORM_ID}
+              className="max-w-md mx-auto mt-8 scroll-mt-20 rounded-3xl text-left"
+            >
               <SignupForm />
             </div>
 
