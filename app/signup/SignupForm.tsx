@@ -14,10 +14,10 @@ type Method = "create" | "signin";
 // 2026-09-13 and grows by 33 each calendar day (UTC), never resetting.
 // Kept in step with /research-access and /reta-access.
 const MEMBERS_ANCHOR_MS = Date.UTC(2026, 8, 13); // Sep 13, 2026 (month is 0-based)
-export const MEMBERS_BASE = 6124;
+const MEMBERS_BASE = 6124;
 const MEMBERS_PER_DAY = 33;
 
-export function memberCount(now = Date.now()): number {
+function memberCount(now = Date.now()): number {
   const days = Math.max(0, Math.floor((now - MEMBERS_ANCHOR_MS) / 86_400_000));
   return MEMBERS_BASE + days * MEMBERS_PER_DAY;
 }
@@ -27,11 +27,6 @@ export function memberCount(now = Date.now()): number {
 // on the client — no hydration mismatch.
 const subscribeNoop = () => () => {};
 const getServerMemberCount = () => null;
-
-/** Live member count on the client; null during the server render. */
-export function useMemberCount(): number | null {
-  return useSyncExternalStore(subscribeNoop, memberCount, getServerMemberCount);
-}
 
 /** Fire-and-forget PostHog capture that never breaks the form. */
 function track(event: string, props?: Record<string, string>) {
@@ -47,12 +42,7 @@ function track(event: string, props?: Record<string, string>) {
  * catalog — creating an account (or signing in) is the only path forward.
  * Create-account first, with a small "Already a member? Sign in" link.
  */
-export function SignupForm({
-  bare = false,
-}: {
-  /** Drop the card frame when the form already sits in a sheet. */
-  bare?: boolean;
-} = {}) {
+export function SignupForm() {
   const [view, setView] = useState<Method>("create");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -70,7 +60,11 @@ export function SignupForm({
     useWelcomeDestination(unlocked);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const members = useMemberCount();
+  const members = useSyncExternalStore(
+    subscribeNoop,
+    memberCount,
+    getServerMemberCount
+  );
 
   // The success card is much shorter than the form, so bring it into view.
   useEffect(() => {
@@ -159,15 +153,11 @@ export function SignupForm({
     setUnlocked(method);
   }
 
-  // In the sheet on phones the form must fit above the keyboard, so labels
-  // become placeholders (still read out to screen readers).
-  const inputClass = `${bare ? "mt-0 sm:mt-2 sm:placeholder:text-transparent" : "mt-2"} w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white`;
-  const labelClass = bare
-    ? "sr-only sm:not-sr-only sm:block sm:text-sm sm:font-bold sm:text-[var(--primary)]"
-    : "block text-sm font-bold text-[var(--primary)]";
-  const cardClass = bare
-    ? "px-2 pb-2"
-    : "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
+  const inputClass =
+    "mt-2 w-full h-12 rounded-xl border border-[var(--border)] bg-[var(--muted)] px-4 text-base text-[var(--primary)] outline-none transition-colors focus:border-[var(--accent)] focus:bg-white";
+  const labelClass = "block text-sm font-bold text-[var(--primary)]";
+  const cardClass =
+    "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
 
   if (unlocked) {
     return (
@@ -228,8 +218,7 @@ export function SignupForm({
 
   return (
     <div ref={cardRef} className={cardClass}>
-      {/* In the sheet, its title takes this line's place to keep the form short. */}
-      {bare && view === "create" ? null : view === "create" ? (
+      {view === "create" ? (
         /* Social proof */
         /* Space is always reserved; the line fades in once the live count is known. */
         <div
@@ -263,10 +252,7 @@ export function SignupForm({
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className={bare ? "space-y-3 sm:mt-1 sm:space-y-5" : "mt-6 space-y-5"}
-      >
+      <form onSubmit={handleSubmit} className="mt-6 space-y-5">
         <div>
           <label htmlFor="signup-name" className={labelClass}>
             Name
@@ -276,7 +262,6 @@ export function SignupForm({
             name="name"
             type="text"
             autoComplete="name"
-            placeholder={bare ? "Name" : undefined}
             value={name}
             onChange={(e) => {
               setName(e.target.value);
@@ -296,7 +281,6 @@ export function SignupForm({
             name="email"
             type="email"
             autoComplete="email"
-            placeholder={bare ? "Email" : undefined}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -307,8 +291,19 @@ export function SignupForm({
           />
         </div>
 
-        <div className={`rounded-2xl border border-[var(--border)] bg-[var(--muted)] px-4 ${bare ? "py-3" : "py-3.5"}`}>
-          <label className="flex items-start gap-3 cursor-pointer">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--muted)] p-5">
+          <h3 className="text-base font-bold text-[var(--primary)]">
+            Research Use Only
+          </h3>
+          <p className="mt-2 text-sm text-[var(--primary)]/70 leading-relaxed">
+            By using this site, you acknowledge that all products and
+            information are provided for research purposes only and are not
+            intended for human consumption or medical use.
+          </p>
+          <p className="mt-2 text-sm text-[var(--primary)]/70 leading-relaxed">
+            You must be 21 years of age or older to use this website.
+          </p>
+          <label className="mt-4 flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={agreed}
@@ -316,28 +311,14 @@ export function SignupForm({
                 setAgreed(e.target.checked);
                 setError(null);
               }}
-              className="mt-0.5 h-5 w-5 flex-shrink-0 rounded border-[var(--border)] accent-[var(--accent-dark)]"
+              className="mt-1 h-4 w-4 flex-shrink-0 rounded border-[var(--border)] accent-[var(--accent-dark)]"
             />
-            <span className="text-sm font-semibold text-[var(--primary)] leading-snug">
-              I&rsquo;m 21+ and agree to the research-use-only terms.
+            <span className="text-sm font-bold text-[var(--primary)] leading-snug">
+              {view === "signin"
+                ? "By signing in you agree to the research-only terms above."
+                : "By creating an account you agree to the research-only terms above."}
             </span>
           </label>
-          <details className={`${bare ? "mt-1" : "mt-2"} pl-8 text-xs text-[var(--primary)]/60`}>
-            <summary className="cursor-pointer font-semibold text-[var(--accent-dark)]">
-              Read full terms
-            </summary>
-            <p className="mt-2 leading-relaxed">
-              By using this site, you acknowledge that all products and
-              information are provided for research purposes only and are not
-              intended for human consumption or medical use.
-            </p>
-            <p className="mt-2 leading-relaxed">
-              You must be 21 years of age or older to use this website.{" "}
-              {view === "signin"
-                ? "By signing in you agree to these research-only terms."
-                : "By creating an account you agree to these research-only terms."}
-            </p>
-          </details>
         </div>
 
         {error && (
