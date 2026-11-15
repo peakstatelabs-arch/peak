@@ -9,7 +9,7 @@ function getCookie(name: string): string | null {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
-const SUPPRESSED_PATHS = ["/thankyou", "/structured-peptides", "/bridge", "/research-access", "/reta-access", "/signup", "/powercut", "/creator", "/creator/apply", "/creator/success", "/privacy", "/sms-terms"];
+const SUPPRESSED_PATHS = ["/thankyou", "/structured-peptides", "/bridge", "/research-access", "/reta-access", "/signup", "/powercut", "/creator", "/creator/apply", "/creator/success", "/privacy", "/sms-terms", "/freeretaguide"];
 
 export function DisclaimerModal() {
   const [visible, setVisible] = useState(false);

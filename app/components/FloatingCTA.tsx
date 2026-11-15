@@ -12,6 +12,7 @@ const SUPPRESSED_PATHS = [
   "/welcome",
   "/bridge",
   "/transitionguide",
+  "/freeretaguide",
   "/creator",
   "/creator/apply",
   "/creator/success",
