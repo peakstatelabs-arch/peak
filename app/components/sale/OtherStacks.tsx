@@ -13,25 +13,30 @@ import {
 export function OtherStacks({
   current,
   title = "Explore Every Black Friday Stack",
+  hidePowerCut = false,
 }: {
   current?: StackSlug;
   title?: string;
+  hidePowerCut?: boolean;
 }) {
   const pcPct = Math.round(
     ((POWERCUT_VALUE_CENTS.single - POWERCUT_SALE.single.saleCents) /
       POWERCUT_VALUE_CENTS.single) *
       100,
   );
-  const cards = [
+  const pcCard = [
     {
       key: "powercut",
       name: "POWER CUT™",
       tagline: "Burn fat and build lean muscle — the full recomposition.",
-      href: "/?pc=1#pricing",
+      href: "/powercutsale",
       image: "/power-cut-stack.webp",
       from: POWERCUT_SALE.single.saleCents,
       pct: pcPct,
     },
+  ];
+  const cards = [
+    ...(hidePowerCut ? [] : pcCard),
     ...STACK_ORDER.filter((s) => s !== current).map((s) => {
       const st = STACKS[s];
       const p = stackFromPrice(st);

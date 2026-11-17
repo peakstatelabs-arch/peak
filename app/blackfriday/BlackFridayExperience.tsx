@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 import posthog from "posthog-js";
-import { formatUsd } from "@/app/lib/money";
-import {
-  POWERCUT_SALE,
-  POWERCUT_VALUE_CENTS,
-  SALE_NAME,
-  withPromoCode,
-} from "@/app/lib/sale";
+import { SALE_NAME } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { SaleCountdown } from "@/app/components/SaleUrgency";
 import {
@@ -26,8 +20,6 @@ import {
 } from "@/app/lib/bfStacks";
 import { useMembersGate } from "@/app/components/sale/MembersGate";
 
-type PcTier = { id: string; name: string; subtitle: string; stripeUrl: string };
-
 function track(event: string, props?: Record<string, unknown>) {
   try {
     posthog.capture(event, props);
@@ -38,11 +30,9 @@ function track(event: string, props?: Record<string, unknown>) {
 
 export function BlackFridayExperience({
   initialSale,
-  powerCutTiers,
   startQuiz,
 }: {
   initialSale: SaleStatus;
-  powerCutTiers: PcTier[];
   startQuiz: boolean;
 }) {
   const sale = useSaleStatus(initialSale);
@@ -95,13 +85,10 @@ export function BlackFridayExperience({
         } catch {
           // ignore
         }
-        setResult(r);
-        setStep("result");
-      } else {
-        setResult(r);
-        setStep("result");
-        window.location.assign(quizResultHref(r));
       }
+      setResult(r);
+      setStep("result");
+      window.location.assign(quizResultHref(r));
     });
   }
 
@@ -186,9 +173,8 @@ export function BlackFridayExperience({
                   </p>
                 </div>
               ))}
-              {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- full page load so middleware serves the regular homepage */}
               <a
-                href="/?pc=1#pricing"
+                href="/powercutsale"
                 className="rounded-2xl bg-[var(--accent)] px-3 py-4 text-center text-[#0b0f1a] transition-transform hover:scale-[1.02]"
               >
                 <p className="text-xs font-extrabold uppercase tracking-wider">POWER CUT&trade;</p>
@@ -286,23 +272,15 @@ export function BlackFridayExperience({
         </div>
       )}
 
-      {step === "result" && result?.kind === "stack" && (
+      {step === "result" && result && (
         <div className={`relative ${shell} py-24 text-center`}>
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-white/20 border-t-[var(--accent)]" />
           <p className="mt-6 text-2xl font-black">
-            Building your {STACKS[result.slug].name} stack&hellip;
+            Building your{" "}
+            {result.kind === "powercut" ? "POWER CUT\u2122" : STACKS[result.slug].name}{" "}
+            stack&hellip;
           </p>
         </div>
-      )}
-
-      {step === "result" && result?.kind === "powercut" && (
-        <PowerCutResult
-          tier={result.tier}
-          addon={result.addon}
-          tiers={powerCutTiers}
-          saleName={saleName}
-          live={sale.live}
-        />
       )}
     </div>
   );
@@ -333,81 +311,5 @@ function BackLink({ onClick }: { onClick: () => void }) {
     >
       ← Back
     </button>
-  );
-}
-
-const PC_IDS = ["single", "double", "triple"] as const;
-
-function PowerCutResult({
-  tier,
-  addon,
-  tiers,
-  saleName,
-  live,
-}: {
-  tier: 1 | 2 | 3;
-  addon: AddonKey | null;
-  tiers: PcTier[];
-  saleName: string;
-  live: boolean;
-}) {
-  const id = PC_IDS[tier - 1];
-  const t = tiers.find((x) => x.id === id) ?? tiers[0];
-  const ps = POWERCUT_SALE[id];
-  const value = POWERCUT_VALUE_CENTS[id];
-  const href = live ? withPromoCode(t.stripeUrl, ps.code) : t.stripeUrl;
-  const saved = value - ps.saleCents;
-
-  return (
-    <div className="relative mx-auto w-full max-w-2xl px-4 py-10 sm:py-16">
-      <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--accent)]">
-        ✓ Built from your answers
-      </p>
-      <h2 className="mt-3 text-4xl sm:text-5xl font-black tracking-tight">
-        Your stack: POWER CUT&trade;
-      </h2>
-      <p className="mt-3 text-lg text-white/75">
-        Burn fat and build lean muscle at the same time — Retatrutide,
-        CJC-1295 + Ipamorelin and BPC-157 + TB-500 in one 10-week system.
-      </p>
-      <div className="mt-6 rounded-3xl border-2 border-[var(--accent)] bg-white/5 p-6">
-        <p className="text-sm font-bold uppercase tracking-wider text-white/60">{t.name}</p>
-        <p className="mt-1 text-base text-white/80">{t.subtitle}</p>
-        <div className="mt-4 flex flex-wrap items-baseline gap-x-3">
-          <span className="text-5xl font-black tabular-nums">{formatUsd(ps.saleCents)}</span>
-          <span className="text-lg font-semibold text-white/40 line-through tabular-nums">
-            {formatUsd(value)}
-          </span>
-        </div>
-        <p className="mt-2 inline-flex rounded-full bg-emerald-400/20 px-3 py-1 text-sm font-extrabold text-emerald-300">
-          You save {formatUsd(saved)} ({Math.round((saved / value) * 100)}% off) · {saleName} price
-        </p>
-        <a
-          href={href}
-          data-rewardful
-          onClick={() => track("bf_quiz_powercut_checkout", { tier: id })}
-          className="mt-6 flex h-16 items-center justify-center rounded-2xl bg-[var(--accent)] px-6 text-xl font-black uppercase tracking-wide text-[#0b0f1a] hover:opacity-90"
-        >
-          Claim my POWER CUT&trade; →
-        </a>
-        <p className="mt-2 text-center text-xs text-white/50">
-          Code {ps.code} is applied for you at checkout.
-        </p>
-        {addon && (
-          <p className="mt-4 rounded-xl bg-white/5 px-4 py-3 text-sm text-white/80">
-            {ADDONS[addon].emoji} Want {ADDONS[addon].label.toLowerCase()} too?
-            Right after checkout you can add it to your stack at{" "}
-            <strong className="text-[var(--accent)]">40% off</strong>.
-          </p>
-        )}
-      </div>
-      {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- full page load so middleware serves the sale page */}
-      <a
-        href="/?pc=1#pricing"
-        className="mt-6 inline-block text-sm font-semibold text-white/60 underline underline-offset-4 hover:text-white"
-      >
-        Compare all POWER CUT&trade; options
-      </a>
-    </div>
   );
 }

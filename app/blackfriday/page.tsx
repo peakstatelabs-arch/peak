@@ -23,19 +23,12 @@ export default async function BlackFridayPage({
 }) {
   const initialSale = await getSaleStatus();
   const sp = await searchParams;
-  const powerCutTiers = siteCopy.pricing.tiers.map((t) => ({
-    id: t.id,
-    name: t.name,
-    subtitle: t.subtitle,
-    stripeUrl: t.stripeUrl,
-  }));
   return (
     <CartProvider>
       <div className="min-h-screen bg-[#0b0f1a]">
         <SaleHeader initialSale={initialSale} />
         <BlackFridayExperience
           initialSale={initialSale}
-          powerCutTiers={powerCutTiers}
           startQuiz={sp.quiz === "1"}
         />
         <footer className="bg-[#0b0f1a] px-4 pb-10 text-center text-xs text-white/40">

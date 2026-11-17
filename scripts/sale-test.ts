@@ -296,6 +296,7 @@ await t("quiz routing", () => {
   assert.deepEqual(bf.addonProducts("gut", bf.STACKS.shred.items), ["kpv", "bpc-tb500"]);
   assert.deepEqual(bf.addonProducts("gut", bf.STACKS.build.items), ["kpv"]);
   assert.equal(bf.quizResultHref(q("fat", 2, "skin")), "/shred?quiz=1&sets=2&addon=skin");
+  assert.equal(bf.quizResultHref(q("both", 3, "gut")), "/powercutsale?quiz=1&tier=3&addon=gut");
 });
 
 await t("next-step nudges pick the cheapest upgrade", () => {

@@ -144,6 +144,7 @@ const OWN_BAR_PREFIXES = [
   "/foreverstrong",
   "/limitlessplus",
   "/buildyourstack",
+  "/powercutsale",
   "/sale-over",
   "/creator",
 ];

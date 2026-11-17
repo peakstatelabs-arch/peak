@@ -408,7 +408,11 @@ export function resolveQuiz(goal: Goal, size: number | null, extra: AddonKey | n
 
 /** Where a quiz result lands. */
 export function quizResultHref(r: QuizResult): string {
-  if (r.kind === "powercut") return `/?pc=1#pricing`;
+  if (r.kind === "powercut") {
+    const q = new URLSearchParams({ quiz: "1", tier: String(r.tier) });
+    if (r.addon) q.set("addon", r.addon);
+    return `/powercutsale?${q.toString()}`;
+  }
   const q = new URLSearchParams({ quiz: "1" });
   if (r.sets) q.set("sets", String(r.sets));
   if (r.addon) q.set("addon", r.addon);

@@ -21,6 +21,7 @@ const SALE_ONLY_PATHS = new Set([
   "/foreverstrong",
   "/limitlessplus",
   "/buildyourstack",
+  "/powercutsale",
 ]);
 
 const STRUCTURED_PEPTIDES_HOSTS = new Set([
