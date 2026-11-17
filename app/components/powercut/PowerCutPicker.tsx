@@ -10,7 +10,7 @@ import {
   withPromoCode,
 } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
-import { ADDONS, PRODUCT_CUTOUT, SHORT_NAME, type AddonKey } from "@/app/lib/bfStacks";
+import { ADDONS, PRODUCT_CUTOUT, type AddonKey } from "@/app/lib/bfStacks";
 
 export type PcTier = {
   id: string;
@@ -23,6 +23,12 @@ export type PcTier = {
 const IDS = ["single", "double", "triple"] as const;
 const COUNT = ["One", "Two", "Three"];
 const PEPTIDES = ["retatrutide", "cjc-ipamorelin", "bpc-tb500"] as const;
+// Each name on at most two lines in the narrow tiles.
+const NAME_LINES: Record<(typeof PEPTIDES)[number], string[]> = {
+  retatrutide: ["Retatrutide"],
+  "cjc-ipamorelin": ["CJC-1295/", "Ipamorelin Blend"],
+  "bpc-tb500": ["BPC-157/", "TB-500 Blend"],
+};
 const DOSE: Record<(typeof PEPTIDES)[number], string> = {
   retatrutide: "20mg",
   "cjc-ipamorelin": "10mg",
@@ -119,13 +125,17 @@ export function PowerCutPicker({
       {/* What's inside: the three peptides, how many vials, how long */}
       <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
         {PEPTIDES.map((slug) => (
-          <div key={slug} className="rounded-2xl border border-white/10 bg-white/5 p-3 text-center">
+          <div key={slug} className="rounded-2xl border border-white/10 bg-white/5 px-1.5 py-3 text-center">
             <img src={PRODUCT_CUTOUT[slug]} alt="" aria-hidden="true" className="mx-auto h-16 sm:h-20 w-auto object-contain" />
             <p className="mt-2 text-lg font-black text-[var(--accent)]">
               {tier * 2} vials
             </p>
-            <p className="text-[11px] sm:text-xs font-bold leading-tight text-white">
-              {SHORT_NAME[slug]}
+            <p className="text-[10.5px] sm:text-xs font-bold leading-tight tracking-tight text-white">
+              {NAME_LINES[slug].map((line) => (
+                <span key={line} className="block whitespace-nowrap">
+                  {line}
+                </span>
+              ))}
             </p>
             <p className="text-[11px] text-white/50">{DOSE[slug]}</p>
           </div>

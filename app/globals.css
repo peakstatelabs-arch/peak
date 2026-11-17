@@ -425,3 +425,54 @@ details[open] summary .faq-icon {
 .signup-form-flash {
   animation: signup-form-flash 1.4s ease-out 0.3s;
 }
+
+/* ── Black Friday dark theme ───────────────────────────────────────────────
+   Wrap light-theme sections (e.g. the shared POWER CUT™ homepage sections on
+   /powercutsale) in .bf-dark to re-skin them without touching their markup:
+   the theme variables flip to dark, and the few hard-coded light classes
+   are remapped. */
+.bf-dark {
+  --primary: #e6f4f6;
+  --primary-light: #ffffff;
+  --muted: #0f1626;
+  --muted-dark: #162036;
+  --border: rgba(255, 255, 255, 0.12);
+  --background: #0b0f1a;
+  --foreground: #e6f4f6;
+  background: #0b0f1a;
+  color: #e6f4f6;
+}
+.bf-dark .bg-white,
+.bf-dark [class*="bg-white/"] {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+.bf-dark section.bg-white {
+  background-color: #0b0f1a;
+}
+.bf-dark .bg-\[var\(--primary\)\] {
+  background-color: #13203a;
+}
+.bf-dark .from-\[var\(--primary\)\] {
+  --tw-gradient-from: #13203a;
+}
+.bf-dark .to-\[var\(--primary-light\)\] {
+  --tw-gradient-to: #1c3563;
+}
+/* Teal surfaces keep dark text. */
+.bf-dark .bg-\[var\(--accent\)\],
+.bf-dark .btn-accent {
+  --primary: #0b0f1a;
+}
+.bf-dark .btn-primary {
+  background: var(--accent);
+  color: #0b0f1a;
+}
+.bf-dark .btn-primary:hover {
+  background: var(--accent-dark);
+  box-shadow: 0 10px 30px rgba(120, 220, 229, 0.25);
+}
+.bf-dark input,
+.bf-dark select {
+  color: #e6f4f6;
+  background-color: rgba(255, 255, 255, 0.06);
+}
