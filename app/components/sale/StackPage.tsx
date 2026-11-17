@@ -58,6 +58,11 @@ export async function StackPage({
   const initialSale = await getSaleStatus();
   const saleName = SALE_NAME[initialSale.phase];
 
+  const heroSets =
+    Number.isFinite(setsParam) && stack.sizes.some((s) => s.sets === setsParam)
+      ? setsParam
+      : stack.defaultSets;
+  const heroImage = stack.heroBySets?.[heroSets] ?? stack.hero;
   const best = priceLines(linesFor(stack.items, stack.sizes[stack.sizes.length - 1].sets));
   const from = priceLines(linesFor(stack.items, stack.sizes[0].sets));
 
@@ -138,7 +143,7 @@ export async function StackPage({
                 </div>
                 <div className="relative mx-auto w-full max-w-[320px] sm:max-w-md">
                   <img
-                    src={stack.hero}
+                    src={heroImage}
                     alt={`${stack.name} stack — ${stack.items.map((i) => SHORT_NAME[i]).join(", ")}`}
                     className="relative w-full drop-shadow-2xl"
                   />

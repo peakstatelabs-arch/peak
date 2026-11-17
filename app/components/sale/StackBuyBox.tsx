@@ -269,7 +269,9 @@ export function StackBuyBox({
             onClick={() => guard(addToCart)}
             className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-bold py-4 px-6 hover:bg-[var(--primary)]/90 transition-colors"
           >
-            Add {stack.name} {size.label} — {formatUsd(total.price)}
+            Add {stack.name}
+            {withAddon && addon && extra.length > 0 ? ` + ${ADDONS[addon].tag}` : ""} ·{" "}
+            {total.vials} vial{total.vials === 1 ? "" : "s"} — {formatUsd(total.price)}
           </button>
           <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
             Sale price applied automatically at checkout. No code needed.

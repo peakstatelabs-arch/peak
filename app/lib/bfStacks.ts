@@ -59,6 +59,8 @@ export type StackDef = {
   sizes: StackSize[];
   defaultSets: number;
   hero: string;
+  /** Header photo per stack size (transparent); falls back to `hero`. */
+  heroBySets?: Partial<Record<number, string>>;
   headline: [string, string];
   sub: string;
   roles: Partial<Record<ProductSlug, { role: string; body: string }>>;
@@ -80,7 +82,12 @@ export const STACKS: Record<StackSlug, StackDef> = {
       { sets: 3, label: "3 Vials", supply: "18–24 weeks", image: "/reta%20mockup%203.png" },
     ],
     defaultSets: 2,
-    hero: "/bf/shred-hero.webp",
+    hero: "/bf/shred-1-hero.webp",
+    heroBySets: {
+      1: "/bf/shred-1-hero.webp",
+      2: "/bf/shred-2-hero.webp",
+      3: "/bf/shred-3-hero.webp",
+    },
     headline: ["Melt The Fat.", "Silence The Food Noise."],
     sub: "The triple-agonist that turns appetite down and burn up — at the lowest price we've ever offered. Stock up for the whole cut.",
     roles: {
@@ -108,6 +115,10 @@ export const STACKS: Record<StackSlug, StackDef> = {
     ],
     defaultSets: 2,
     hero: "/bf/build-hero.webp",
+    heroBySets: {
+      2: P(2, "build"),
+      3: P(3, "build"),
+    },
     headline: ["Build Lean Muscle.", "Recover Faster Than Ever."],
     sub: "Amplify your natural growth-hormone pulse and bulletproof your joints — so you can train harder, more often, and actually keep the gains.",
     roles: {
@@ -138,7 +149,10 @@ export const STACKS: Record<StackSlug, StackDef> = {
       { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "radiance") },
     ],
     defaultSets: 2,
-    hero: "/recovery-stack-hero.webp",
+    hero: "/recovery-stack-hero.png",
+    heroBySets: {
+      3: P(3, "radiance"),
+    },
     headline: ["Glow From The Inside Out.", "Skin, Gut & Recovery."],
     sub: "Three repair peptides for radiant, firmer-looking skin, a calmer gut and a body that bounces back. The glow-up stack — at our biggest discount ever.",
     roles: {
@@ -174,6 +188,10 @@ export const STACKS: Record<StackSlug, StackDef> = {
     ],
     defaultSets: 2,
     hero: "/bf/limitless-hero.webp",
+    heroBySets: {
+      2: P(2, "limitless"),
+      3: P(3, "limitless"),
+    },
     headline: ["Limitless Energy.", "Laser-Sharp Focus."],
     sub: "Refuel your cells at the source and recover like a machine. Ditch the afternoon crash and the brain fog for good.",
     roles: {
@@ -205,6 +223,9 @@ export const STACKS: Record<StackSlug, StackDef> = {
     ],
     defaultSets: 2,
     hero: "/bf/foreverstrong-hero.webp",
+    heroBySets: {
+      2: P(2, "foreverstrong"),
+    },
     headline: ["Get Strong.", "Stay Strong. Forever."],
     sub: "Build lean muscle, bulletproof your joints and fix your gut from the inside out. The longevity stack for people who plan to stay strong for decades.",
     roles: {
@@ -240,6 +261,10 @@ export const STACKS: Record<StackSlug, StackDef> = {
     ],
     defaultSets: 2,
     hero: "/bf/limitlessplus-hero.webp",
+    heroBySets: {
+      2: P(2, "limitlessplus"),
+      3: P(3, "limitlessplus"),
+    },
     headline: ["Limitless Energy.", "A Gut That Keeps Up."],
     sub: "Cellular energy, sharp focus and a calm, healthy gut — because you can't feel limitless when your gut is holding you back.",
     roles: {
@@ -278,14 +303,15 @@ export type AddonKey = "lean" | "muscle" | "skin" | "gut" | "energy";
 
 export const ADDONS: Record<
   AddonKey,
-  { label: string; products: ProductSlug[]; emoji: string }
+  { label: string; tag: string; products: ProductSlug[]; emoji: string }
 > = {
-  lean: { label: "Getting leaner and more defined", products: ["retatrutide"], emoji: "🔥" },
-  muscle: { label: "Strength and muscle tone", products: ["cjc-ipamorelin"], emoji: "💪" },
-  skin: { label: "Radiant, glowing skin", products: ["ghk-cu"], emoji: "✨" },
-  gut: { label: "Gut health and recovery", products: ["kpv", "bpc-tb500"], emoji: "🌿" },
-  energy: { label: "Energy, focus and drive", products: ["nad"], emoji: "⚡" },
+  lean: { label: "Getting leaner and more defined", tag: "LEAN", products: ["retatrutide"], emoji: "🔥" },
+  muscle: { label: "Strength and muscle tone", tag: "MUSCLE TONE", products: ["cjc-ipamorelin"], emoji: "💪" },
+  skin: { label: "Radiant, glowing skin", tag: "GLOW", products: ["ghk-cu"], emoji: "✨" },
+  gut: { label: "Gut health and recovery", tag: "GUT & RECOVERY", products: ["kpv", "bpc-tb500"], emoji: "🌿" },
+  energy: { label: "Energy, focus and drive", tag: "ENERGY", products: ["nad"], emoji: "⚡" },
 };
+
 
 /**
  * How long `vials` of a product last: 1 vial = 5 weeks for everything except
@@ -294,7 +320,7 @@ export const ADDONS: Record<
 export function supplyFor(slug: ProductSlug, vials: number): string {
   return slug === "retatrutide"
     ? `${6 * vials}–${8 * vials} weeks`
-    : `${5 * vials} week${vials === 1 ? "" : "s"}`;
+    : `${5 * vials} weeks`;
 }
 
 export function isAddonKey(v: unknown): v is AddonKey {

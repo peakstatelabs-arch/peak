@@ -307,6 +307,25 @@ await t("next-step nudges pick the cheapest upgrade", () => {
   assert.equal(n([[R, 3], [GHK, 2]]), null);           // already at the top
 });
 
+await t("every stack image exists in /public", async () => {
+  const { existsSync } = await import("node:fs");
+  const paths = new Set<string>();
+  for (const st of Object.values(bf.STACKS)) {
+    paths.add(st.hero);
+    for (const sz of st.sizes) paths.add(sz.image);
+    for (const h of Object.values(st.heroBySets ?? {})) if (h) paths.add(h);
+  }
+  for (const p of paths) {
+    assert.ok(existsSync(`public${decodeURIComponent(p)}`), `missing ${p}`);
+  }
+});
+
+await t("weeks of supply read correctly", () => {
+  assert.equal(bf.supplyFor("kpv", 1), "5 weeks");
+  assert.equal(bf.supplyFor("kpv", 2), "10 weeks");
+  assert.equal(bf.supplyFor("retatrutide", 2), "12–16 weeks");
+});
+
 await t("SHRED 1 vial + add-on reaches 30%", () => {
   const p = bf.priceLines(bf.linesFor(bf.STACKS.shred.items, 1, ["ghk-cu"]));
   assert.equal(p.pct, 30);
