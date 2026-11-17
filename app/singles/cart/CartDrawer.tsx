@@ -7,7 +7,7 @@ import {
   maxSameProductQty,
   nextBulkTier,
 } from "@/app/lib/bulkDiscount";
-import { SALE_NAME, priceCart } from "@/app/lib/sale";
+import { SALE_NAME, nextStepAction, priceCart, type NextStep } from "@/app/lib/sale";
 import { SaleCountdown } from "@/app/components/SaleUrgency";
 import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { CrossSellStrip } from "./CrossSellStrip";
@@ -372,7 +372,7 @@ function SaleCartNote({
   saleName: string;
   pct: number;
   savingsCents: number;
-  next: { pct: number; addVials: number } | null;
+  next: NextStep | null;
 }) {
   return (
     <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
@@ -396,8 +396,7 @@ function SaleCartNote({
       )}
       {next && (
         <p className="mt-1 text-xs font-semibold text-[var(--primary)]/80">
-          Add {next.addVials} more vial{next.addVials === 1 ? "" : "s"} (any
-          product) to unlock{" "}
+          {nextStepAction(next)} to unlock{" "}
           <span className="font-extrabold text-emerald-700">{next.pct}% off</span>{" "}
           your whole cart.
         </p>

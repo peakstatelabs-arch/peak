@@ -110,7 +110,7 @@ export function BlackFridayExperience({
     "w-full rounded-2xl border-2 border-white/15 bg-white/5 px-5 py-4 text-left text-white transition-all hover:border-[var(--accent)] hover:bg-white/10";
 
   return (
-    <div className="relative overflow-hidden bg-[#0b0f1a] text-white min-h-[calc(100vh-7rem)]">
+    <div data-bf-landing className="relative overflow-hidden bg-[#0b0f1a] text-white min-h-[calc(100vh-7rem)]">
       {modal}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 right-[-10%] h-[32rem] w-[32rem] rounded-full bg-[var(--accent)]/20 blur-3xl" />
@@ -167,25 +167,40 @@ export function BlackFridayExperience({
               alt="Peak State Labs research peptide stacks"
               className="mx-auto -mt-2 mb-8 w-full max-w-2xl drop-shadow-2xl"
             />
-            <div className="grid gap-3 sm:grid-cols-3">
+            <p className="text-center text-xs font-extrabold uppercase tracking-[0.2em] text-white/60">
+              How the savings stack up
+            </p>
+            <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
               {[
-                { v: "2 vials", p: "30% off" },
-                { v: "4 vials", p: "35% off" },
-                { v: "6+ vials", p: "40% off" },
+                { v: "2 vials", p: "30%" },
+                { v: "4 vials", p: "35%" },
+                { v: "6+ vials", p: "40%" },
               ].map((t) => (
                 <div
                   key={t.v}
-                  className="rounded-2xl border border-white/10 bg-white/5 px-5 py-5 text-center"
+                  className="rounded-2xl border border-white/10 bg-white/5 px-3 py-4 text-center"
                 >
-                  <p className="text-sm font-bold uppercase tracking-wider text-white/60">{t.v}</p>
-                  <p className="mt-1 text-4xl font-black text-[var(--accent)]">{t.p}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-white/60">{t.v}</p>
+                  <p className="mt-1 text-3xl font-black text-[var(--accent)]">
+                    {t.p} <span className="text-base font-extrabold">off</span>
+                  </p>
                 </div>
               ))}
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- full page load so middleware serves the regular homepage */}
+              <a
+                href="/?pc=1#pricing"
+                className="rounded-2xl bg-[var(--accent)] px-3 py-4 text-center text-[#0b0f1a] transition-transform hover:scale-[1.02]"
+              >
+                <p className="text-xs font-extrabold uppercase tracking-wider">POWER CUT&trade;</p>
+                <p className="mt-1 text-3xl font-black">
+                  60% <span className="text-base font-extrabold">off</span>
+                </p>
+                <p className="text-[11px] font-bold">up to · see deal →</p>
+              </a>
             </div>
             <p className="mt-4 text-center text-sm text-white/60">
-              Every vial counts toward your discount — mix any products and
-              stacks. POWER CUT&trade; is up to 61% off. A single Retatrutide
-              vial is 20% off.
+              Every vial counts — mix any products and stacks. Retatrutide on
+              its own: 1 vial 20% off · 2 vials 30% off · 3 vials 40% off.
             </p>
           </div>
         </div>

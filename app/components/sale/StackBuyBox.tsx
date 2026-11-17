@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useCart } from "@/app/singles/cart/CartContext";
 import { CrossSellStrip } from "@/app/singles/cart/CrossSellStrip";
 import { formatUsd } from "@/app/lib/money";
-import { nextLadderStep, SALE_NAME } from "@/app/lib/sale";
+import { nextSaleStep, nextStepAction, SALE_NAME } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import {
   ADDONS,
+  IS_BLEND,
   SHORT_NAME,
   STACKS,
   addonProducts,
@@ -50,7 +51,9 @@ export function StackBuyBox({
   const size = stack.sizes.find((s) => s.sets === sets) ?? stack.sizes[0];
   const lines: Line[] = linesFor(stack.items, sets, withAddon ? extra : []);
   const total = priceLines(lines, sale.live);
-  const next = sale.live ? nextLadderStep(total.vials) : null;
+  const next = sale.live
+    ? nextSaleStep(lines.map((l) => ({ priceId: product(l.slug).priceId, quantity: l.quantity })))
+    : null;
   const addonPrice = priceLines(linesFor([], sets, extra), false).full;
 
   function addToCart() {
@@ -145,7 +148,7 @@ export function StackBuyBox({
                       {s.label}
                     </span>
                     <span className="mt-0.5 block text-xs font-medium text-[var(--primary)]/55">
-                      {p.vials} vials · ~{s.supply}
+                      {p.vials} vial{p.vials === 1 ? "" : "s"} · ~{s.supply}
                     </span>
                   </div>
                   <div className="flex flex-shrink-0 flex-col items-end text-right sm:mt-3 sm:items-start sm:text-left">
@@ -180,13 +183,27 @@ export function StackBuyBox({
               />
               <span className="flex-1">
                 <span className="block text-sm font-extrabold text-[var(--primary)]">
-                  {ADDONS[addon].emoji} Add {extra.map((e) => SHORT_NAME[e]).join(" + ")}{" "}
-                  ×{sets}
+                  {ADDONS[addon].emoji} Add for {ADDONS[addon].label.toLowerCase()}:
                 </span>
-                <span className="block text-xs font-medium text-[var(--primary)]/65">
-                  For {ADDONS[addon].label.toLowerCase()} · {formatUsd(addonPrice)}{" "}
-                  before discount, and it pushes your whole order to a bigger
-                  discount.
+                <span className="mt-1.5 block space-y-1">
+                  {extra.map((e) => (
+                    <span key={e} className="block text-sm text-[var(--primary)]">
+                      <span className="mr-1.5 inline-block rounded-md bg-[var(--primary)] px-1.5 py-0.5 text-xs font-extrabold text-white">
+                        {sets} vial{sets === 1 ? "" : "s"}
+                      </span>
+                      <span className="font-bold">{SHORT_NAME[e]}</span>{" "}
+                      <span className="text-[var(--primary)]/60">({product(e).dose.replace(/ blend$/i, "")})</span>
+                      {IS_BLEND[e] && (
+                        <span className="block pl-0.5 text-xs font-semibold text-[var(--accent-dark)]">
+                          {IS_BLEND[e]}
+                        </span>
+                      )}
+                    </span>
+                  ))}
+                </span>
+                <span className="mt-1.5 block text-xs font-medium text-[var(--primary)]/65">
+                  {formatUsd(addonPrice)} before discount — and it pushes your
+                  whole order to a bigger discount.
                 </span>
               </span>
             </label>
@@ -214,8 +231,7 @@ export function StackBuyBox({
             )}
             {next && (
               <p className="mt-1 text-xs text-white/70">
-                Add {next.addVials} more vial{next.addVials === 1 ? "" : "s"} of
-                anything to unlock {next.pct}% off your whole cart.
+                {nextStepAction(next)} to unlock {next.pct}% off your whole cart.
               </p>
             )}
           </div>

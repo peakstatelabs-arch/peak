@@ -88,6 +88,12 @@ export const LADDER: { minVials: number; pct: number }[] = [
 ];
 /** One Reta vial on its own (nothing else in the cart). */
 export const LONE_RETA_PCT = 20;
+/** Retatrutide quantity tiers: 1 → 20%, 2 → 30%, 3+ → 40% (whole cart). */
+export const RETA_TIERS: { minQty: number; pct: number }[] = [
+  { minQty: 1, pct: LONE_RETA_PCT },
+  { minQty: 2, pct: 30 },
+  { minQty: 3, pct: 40 },
+];
 /** Add-ons bought after a POWER CUT™ (already 6 vials) get the top tier. */
 export const POWERCUT_ADDON_PCT = 40;
 
@@ -109,15 +115,63 @@ export function nextLadderStep(vials: number): { pct: number; addVials: number }
 
 type QtyLine = { priceId: string; quantity: number };
 
-/** Sale percent for a set of (non-stack) lines. */
+function retaPct(retaQty: number): number {
+  let pct = 0;
+  for (const t of RETA_TIERS) if (retaQty >= t.minQty) pct = t.pct;
+  return pct;
+}
+
+const retaQtyOf = (lines: QtyLine[]) =>
+  lines.reduce((n, l) => n + (l.priceId === RETA_PRICE_ID ? l.quantity : 0), 0);
+
+/**
+ * Sale percent for a set of (non-stack) lines: the better of the vial ladder
+ * (2 → 30%, 4 → 35%, 6+ → 40%) and the Retatrutide tier (1 → 20%, 2 → 30%,
+ * 3+ → 40%), applied to the whole cart.
+ */
 export function salePctForLines(lines: QtyLine[], powerCutAddon = false): number {
   const vials = lines.reduce((n, l) => n + l.quantity, 0);
   if (vials === 0) return 0;
   if (powerCutAddon) return POWERCUT_ADDON_PCT;
-  if (vials === 1 && lines.some((l) => l.priceId === RETA_PRICE_ID)) {
-    return LONE_RETA_PCT;
+  return Math.max(ladderPct(vials), retaPct(retaQtyOf(lines)));
+}
+
+export type NextStep = { pct: number; addVials: number; reta: boolean };
+
+/** "Add 1 more Retatrutide vial" / "Add 2 more vials of anything". */
+export function nextStepAction(n: NextStep): string {
+  const s = n.addVials === 1 ? "" : "s";
+  return n.reta
+    ? `Add ${n.addVials} more Retatrutide vial${s}`
+    : `Add ${n.addVials} more vial${s} of anything`;
+}
+
+/**
+ * The cheapest next step up from these lines: N more vials of anything, or
+ * (when Reta is in the cart) N more Retatrutide vials. Fewest vials wins;
+ * on a tie, the bigger discount.
+ */
+export function nextSaleStep(lines: QtyLine[]): NextStep | null {
+  const current = salePctForLines(lines);
+  const vials = lines.reduce((n, l) => n + l.quantity, 0);
+  const options: NextStep[] = [];
+  for (const t of LADDER) {
+    if (vials < t.minVials && t.pct > current) {
+      options.push({ pct: t.pct, addVials: t.minVials - vials, reta: false });
+      break;
+    }
   }
-  return ladderPct(vials);
+  const retaQty = retaQtyOf(lines);
+  if (retaQty > 0) {
+    for (const t of RETA_TIERS) {
+      if (retaQty < t.minQty && t.pct > current) {
+        options.push({ pct: t.pct, addVials: t.minQty - retaQty, reta: true });
+        break;
+      }
+    }
+  }
+  options.sort((a, b) => a.addVials - b.addVials || b.pct - a.pct);
+  return options[0] ?? null;
 }
 
 /** Price of `listCents` at `pct` off, rounded to the cent. */
@@ -165,13 +219,14 @@ export type PricedCart = {
   pct: number;
   discountCents: number;
   totalCents: number;
-  /** Sale only: the next ladder step, to nudge toward. */
-  next: { pct: number; addVials: number } | null;
+  /** Sale only: the next discount step, to nudge toward. */
+  next: NextStep | null;
 };
 
 /**
- * Sale live: every vial counts toward the ladder (2 → 30%, 4 → 35%, 6+ → 40%,
- * a lone Reta vial 20%), applied to the whole cart except fixed-price stacks.
+ * Sale live: every vial counts toward the ladder (2 → 30%, 4 → 35%, 6+ → 40%)
+ * or the Retatrutide tier (1 → 20%, 2 → 30%, 3+ → 40%), whichever is better,
+ * applied to the whole cart except fixed-price stacks.
  * Otherwise: the normal bulk discount (highest single-product quantity).
  */
 export function priceCart(
@@ -209,6 +264,6 @@ export function priceCart(
     pct,
     discountCents,
     totalCents: subtotalCents - discountCents,
-    next: saleLive && !powerCutAddon ? nextLadderStep(saleVials) : null,
+    next: saleLive && !powerCutAddon ? nextSaleStep(discountable) : null,
   };
 }

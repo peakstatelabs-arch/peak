@@ -97,7 +97,11 @@ function loadCalScript() {
 
 export function FloatingCTA() {
   const pathname = usePathname();
-  const suppressed = SUPPRESSED_PATHS.includes(pathname ?? "");
+  // The Black Friday landing is served at "/" during the sale, so detect it by
+  // its marker rather than the path (the regular homepage keeps the button).
+  const [onSaleLanding, setOnSaleLanding] = useState(false);
+  const suppressed =
+    SUPPRESSED_PATHS.includes(pathname ?? "") || onSaleLanding;
 
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -106,7 +110,10 @@ export function FloatingCTA() {
 
   // Delay mount so it doesn't affect first paint
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 800);
+    const t = setTimeout(() => {
+      setOnSaleLanding(!!document.querySelector("[data-bf-landing]"));
+      setMounted(true);
+    }, 800);
     return () => clearTimeout(t);
   }, []);
 

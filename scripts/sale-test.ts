@@ -155,13 +155,16 @@ await t("preview cookie: only with the right secret", () => {
 });
 
 // ── The ladder ──────────────────────────────────────────────────────────────
-await t("ladder: 1 Reta alone 20%, other singles 0%, 2→30, 4→35, 6+→40", () => {
+await t("ladder: Reta 1→20/2→30/3→40, other singles 0%, 2→30, 4→35, 6+→40", () => {
   const p = (lines: Item[]) => sale.salePctForLines(lines.map(([priceId, quantity]) => ({ priceId, quantity })));
   assert.equal(p([[R, 1]]), 20);
   assert.equal(p([[CJC, 1]]), 0);
   assert.equal(p([[R, 2]]), 30);
   assert.equal(p([[R, 1], [CJC, 1]]), 30);
   assert.equal(p([[BPC, 3]]), 30);
+  assert.equal(p([[R, 3]]), 40);                     // Reta 3+ tier
+  assert.equal(p([[R, 3], [GHK, 1]]), 40);           // better of ladder (35) and Reta (40)
+  assert.equal(p([[R, 2], [GHK, 1]]), 30);
   assert.equal(p([[BPC, 2], [CJC, 2]]), 35);
   assert.equal(p([[NAD, 5]]), 35);
   assert.equal(p([[R, 2], [CJC, 2], [BPC, 2]]), 40);
@@ -176,7 +179,7 @@ await t("checkout during Black Friday: Stripe total = drawer total", async () =>
   assert.equal(r.params.discounts, undefined);
   assert.equal(r.params.allow_promotion_codes, true);
   await sameAsDrawer([[R, 2]], BF, 30100);
-  await sameAsDrawer([[R, 3]], BF, 45150);
+  await sameAsDrawer([[R, 3]], BF, 38700);
   await sameAsDrawer([[R, 1], [CJC, 1]], BF, 22400);
   await sameAsDrawer([[BPC, 1], [CJC, 1]], BF, 17500);              // BUILD 1×
   await sameAsDrawer([[BPC, 2], [CJC, 2]], BF, 32500);              // BUILD 2×
@@ -250,7 +253,7 @@ await t("preview cookie turns the sale on at checkout before Nov 20", async () =
 await t("stack page prices", () => {
   const price = (slug: keyof typeof bf.STACKS, sets: number) =>
     bf.priceLines(bf.linesFor(bf.STACKS[slug].items, sets)).price;
-  assert.deepEqual([1, 2, 3].map((n) => price("shred", n)), [17200, 30100, 45150]);
+  assert.deepEqual([1, 2, 3].map((n) => price("shred", n)), [17200, 30100, 38700]);
   assert.deepEqual([1, 2, 3].map((n) => price("build", n)), [17500, 32500, 45000]);
   assert.deepEqual([1, 2, 3].map((n) => price("radiance", n)), [20650, 35400, 53100]);
   assert.deepEqual([1, 2, 3].map((n) => price("limitless", n)), [19600, 36400, 50400]);
@@ -259,9 +262,9 @@ await t("stack page prices", () => {
   for (const s of Object.values(bf.STACKS)) assert.deepEqual(s.sizes.map((x) => x.sets), [1, 2, 3]);
 });
 
-await t("getreta tiers during the sale: $172 / $301 / $451.50", () => {
+await t("getreta tiers during the sale: $172 / $301 / $387", () => {
   const p = (v: number) => tierPricing(TIERS.find((x) => x.vials === v)!, true);
-  assert.deepEqual([p(1).discounted, p(2).discounted, p(3).discounted], [17200, 30100, 45150]);
+  assert.deepEqual([p(1).discounted, p(2).discounted, p(3).discounted], [17200, 30100, 38700]);
   assert.equal(tierPricing(TIERS[1], false).discounted, 38700);
 });
 
@@ -293,6 +296,15 @@ await t("quiz routing", () => {
   assert.deepEqual(bf.addonProducts("gut", bf.STACKS.shred.items), ["kpv", "bpc-tb500"]);
   assert.deepEqual(bf.addonProducts("gut", bf.STACKS.build.items), ["kpv"]);
   assert.equal(bf.quizResultHref(q("fat", 2, "skin")), "/shred?quiz=1&sets=2&addon=skin");
+});
+
+await t("next-step nudges pick the cheapest upgrade", () => {
+  const n = (lines: Item[]) => sale.nextSaleStep(lines.map(([priceId, quantity]) => ({ priceId, quantity })));
+  assert.deepEqual(n([[R, 2]]), { pct: 40, addVials: 1, reta: true });
+  assert.deepEqual(n([[R, 1]]), { pct: 30, addVials: 1, reta: false });
+  assert.deepEqual(n([[CJC, 2]]), { pct: 35, addVials: 2, reta: false });
+  assert.equal(n([[R, 3]]), null);
+  assert.equal(n([[R, 3], [GHK, 2]]), null);           // already at the top
 });
 
 await t("SHRED 1 vial + add-on reaches 30%", () => {

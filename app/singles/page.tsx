@@ -295,8 +295,8 @@ export default async function SinglesCatalog() {
                     2 vials 30% off · 4 vials 35% off · 6+ vials 40% off
                   </p>
                   <p className="mt-1 text-sm text-white/70">
-                    Every vial in your cart counts. A single Retatrutide vial is
-                    20% off on its own. Applied automatically at checkout.
+                    Every vial in your cart counts. Retatrutide: 1 vial 20% off,
+                    2 vials 30%, 3 vials 40%. Applied automatically at checkout.
                   </p>
                   <a
                     href="/buildyourstack"

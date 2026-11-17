@@ -196,7 +196,7 @@ export function RetaBundlePicker({ selected, onSelect, initialSale }: Props) {
       {live ? (
         <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
           {onSale
-            ? "Sale price applied automatically at checkout — no code needed. Add any other vial to unlock up to 40% off."
+            ? "Sale price applied automatically at checkout — no code needed. 3 vials = 40% off."
             : "Bulk discount applied automatically at checkout — no code needed."}
         </p>
       ) : null}

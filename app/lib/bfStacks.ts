@@ -25,8 +25,8 @@ export const PRODUCT_CUTOUT: Record<ProductSlug, string> = {
 
 export const SHORT_NAME: Record<ProductSlug, string> = {
   retatrutide: "Retatrutide",
-  "cjc-ipamorelin": "CJC-1295 + Ipamorelin",
-  "bpc-tb500": "BPC-157 + TB-500",
+  "cjc-ipamorelin": "CJC-1295/Ipamorelin Blend",
+  "bpc-tb500": "BPC-157/TB-500 Blend",
   "ghk-cu": "GHK-Cu",
   kpv: "KPV",
   nad: "NAD+",
@@ -80,7 +80,7 @@ export const STACKS: Record<StackSlug, StackDef> = {
       { sets: 3, label: "3 Vials", supply: "18–24 weeks", image: "/reta%20mockup%203.png" },
     ],
     defaultSets: 2,
-    hero: "/reta%20mockup%203.png",
+    hero: "/bf/shred-hero.webp",
     headline: ["Melt The Fat.", "Silence The Food Noise."],
     sub: "The triple-agonist that turns appetite down and burn up — at the lowest price we've ever offered. Stock up for the whole cut.",
     roles: {
@@ -285,6 +285,12 @@ export const ADDONS: Record<
   skin: { label: "Radiant, glowing skin", products: ["ghk-cu"], emoji: "✨" },
   gut: { label: "Gut health and recovery", products: ["kpv", "bpc-tb500"], emoji: "🌿" },
   energy: { label: "Energy, focus and drive", products: ["nad"], emoji: "⚡" },
+};
+
+/** Blends hold two peptides in ONE vial — say so wherever it could confuse. */
+export const IS_BLEND: Partial<Record<ProductSlug, string>> = {
+  "bpc-tb500": "BPC-157 and TB-500 together in one vial",
+  "cjc-ipamorelin": "CJC-1295 and Ipamorelin together in one vial",
 };
 
 export function isAddonKey(v: unknown): v is AddonKey {

@@ -17,6 +17,7 @@ import { formatUsd } from "@/app/lib/money";
 import { SALE_NAME } from "@/app/lib/sale";
 import { getSaleStatus } from "@/app/lib/salePhaseServer";
 import {
+  IS_BLEND,
   PRODUCT_CUTOUT,
   SHORT_NAME,
   STACKS,
@@ -67,7 +68,7 @@ export async function StackPage({
     },
     {
       q: `How does the ${saleName} discount work?`,
-      a: "Every vial in your cart counts: 2 vials are 30% off, 4 vials 35% off and 6 or more 40% off — across any mix of products and stacks. A single Retatrutide vial on its own is 20% off. It's applied automatically at checkout.",
+      a: "Every vial in your cart counts: 2 vials are 30% off, 4 vials 35% off and 6 or more 40% off — across any mix of products and stacks. Retatrutide on its own is 20% off for 1 vial, 30% for 2 and 40% for 3 or more. It's applied automatically at checkout.",
     },
     {
       q: "Can I combine it with a discount code?",
@@ -184,6 +185,9 @@ export async function StackPage({
                           </p>
                         )}
                         <h3 className="mt-1 text-xl font-bold text-[var(--primary)]">{SHORT_NAME[i]}</h3>
+                        {IS_BLEND[i] && (
+                          <p className="text-xs font-semibold text-[var(--accent-dark)]">{IS_BLEND[i]}</p>
+                        )}
                         {role && (
                           <p className="mt-3 text-sm text-[var(--primary)]/75 leading-relaxed">{role.body}</p>
                         )}

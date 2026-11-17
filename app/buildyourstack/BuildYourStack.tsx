@@ -2,7 +2,7 @@
 
 import { useCart } from "@/app/singles/cart/CartContext";
 import { formatUsd } from "@/app/lib/money";
-import { LADDER, SALE_NAME, priceCart } from "@/app/lib/sale";
+import { LADDER, SALE_NAME, nextStepAction, priceCart } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import { product, type ProductSlug } from "@/app/lib/bfStacks";
@@ -175,7 +175,7 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
                 </p>
                 {priced.next && (
                   <p className="text-xs text-white/70">
-                    Add {priced.next.addVials} more to unlock {priced.next.pct}% off
+                    {nextStepAction(priced.next)} to unlock {priced.next.pct}% off
                     {sale.live ? ` · ${SALE_NAME[sale.phase]} pricing` : ""}
                   </p>
                 )}
