@@ -17,11 +17,11 @@ import { formatUsd } from "@/app/lib/money";
 import { SALE_NAME } from "@/app/lib/sale";
 import { getSaleStatus } from "@/app/lib/salePhaseServer";
 import {
-  IS_BLEND,
   PRODUCT_CUTOUT,
   SHORT_NAME,
   STACKS,
   isAddonKey,
+  supplyFor,
   priceLines,
   linesFor,
   type StackSlug,
@@ -185,9 +185,9 @@ export async function StackPage({
                           </p>
                         )}
                         <h3 className="mt-1 text-xl font-bold text-[var(--primary)]">{SHORT_NAME[i]}</h3>
-                        {IS_BLEND[i] && (
-                          <p className="text-xs font-semibold text-[var(--accent-dark)]">{IS_BLEND[i]}</p>
-                        )}
+                        <p className="text-xs font-semibold text-[var(--primary)]/55">
+                          1 vial = {supplyFor(i, 1)} supply
+                        </p>
                         {role && (
                           <p className="mt-3 text-sm text-[var(--primary)]/75 leading-relaxed">{role.body}</p>
                         )}

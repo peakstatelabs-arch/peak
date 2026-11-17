@@ -4,17 +4,17 @@ import { useState } from "react";
 import { useCart } from "@/app/singles/cart/CartContext";
 import { CrossSellStrip } from "@/app/singles/cart/CrossSellStrip";
 import { formatUsd } from "@/app/lib/money";
-import { nextSaleStep, nextStepAction, SALE_NAME } from "@/app/lib/sale";
+import { nextSaleStep, nextStepAction, pctOff, SALE_NAME } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import {
   ADDONS,
-  IS_BLEND,
   SHORT_NAME,
   STACKS,
   addonProducts,
   linesFor,
   priceLines,
+  supplyFor,
   product,
   type AddonKey,
   type Line,
@@ -54,7 +54,13 @@ export function StackBuyBox({
   const next = sale.live
     ? nextSaleStep(lines.map((l) => ({ priceId: product(l.slug).priceId, quantity: l.quantity })))
     : null;
-  const addonPrice = priceLines(linesFor([], sets, extra), false).full;
+  // What the add-on really costs: the order with it minus the order without
+  // it (adding vials can also raise the discount on the rest of the stack).
+  const without = priceLines(linesFor(stack.items, sets), sale.live);
+  const withExtra = priceLines(linesFor(stack.items, sets, extra), sale.live);
+  const addonFull = priceLines(linesFor([], sets, extra), false).full;
+  const addsCents = withExtra.price - without.price;
+  const isSingleProduct = stack.items.length === 1;
 
   function addToCart() {
     for (const l of lines) {
@@ -148,7 +154,10 @@ export function StackBuyBox({
                       {s.label}
                     </span>
                     <span className="mt-0.5 block text-xs font-medium text-[var(--primary)]/55">
-                      {p.vials} vial{p.vials === 1 ? "" : "s"} · ~{s.supply}
+                      {isSingleProduct
+                        ? `${s.sets} vial${s.sets === 1 ? "" : "s"}`
+                        : `${s.sets} vial${s.sets === 1 ? "" : "s"} of each`}{" "}
+                      · lasts {s.supply}
                     </span>
                   </div>
                   <div className="flex flex-shrink-0 flex-col items-end text-right sm:mt-3 sm:items-start sm:text-left">
@@ -183,27 +192,46 @@ export function StackBuyBox({
               />
               <span className="flex-1">
                 <span className="block text-sm font-extrabold text-[var(--primary)]">
-                  {ADDONS[addon].emoji} Add for {ADDONS[addon].label.toLowerCase()}:
+                  {ADDONS[addon].emoji} Add for {ADDONS[addon].label.toLowerCase()}
                 </span>
-                <span className="mt-1.5 block space-y-1">
-                  {extra.map((e) => (
-                    <span key={e} className="block text-sm text-[var(--primary)]">
-                      <span className="mr-1.5 inline-block rounded-md bg-[var(--primary)] px-1.5 py-0.5 text-xs font-extrabold text-white">
-                        {sets} vial{sets === 1 ? "" : "s"}
-                      </span>
-                      <span className="font-bold">{SHORT_NAME[e]}</span>{" "}
-                      <span className="text-[var(--primary)]/60">({product(e).dose.replace(/ blend$/i, "")})</span>
-                      {IS_BLEND[e] && (
-                        <span className="block pl-0.5 text-xs font-semibold text-[var(--accent-dark)]">
-                          {IS_BLEND[e]}
+                <span className="block text-xs font-bold text-[var(--accent-dark)]">
+                  Lasts {supplyFor(extra[0], sets)}
+                  {extra.length > 1 ? ` · ${sets} vial${sets === 1 ? "" : "s"} of each` : ""}
+                </span>
+                <span className="mt-2 block space-y-1.5">
+                  {extra.map((e) => {
+                    const full = product(e).priceCents * sets;
+                    return (
+                      <span key={e} className="flex items-baseline justify-between gap-2 text-sm text-[var(--primary)]">
+                        <span>
+                          <span className="mr-1.5 inline-block rounded-md bg-[var(--primary)] px-1.5 py-0.5 text-xs font-extrabold text-white">
+                            {sets} vial{sets === 1 ? "" : "s"}
+                          </span>
+                          <span className="font-bold">{SHORT_NAME[e]}</span>{" "}
+                          <span className="text-[var(--primary)]/60">
+                            ({product(e).dose.replace(/ blend$/i, "")})
+                          </span>
                         </span>
-                      )}
-                    </span>
-                  ))}
+                        <span className="whitespace-nowrap tabular-nums">
+                          {withExtra.pct > 0 && (
+                            <span className="mr-1 text-xs text-[var(--primary)]/40 line-through">
+                              {formatUsd(full)}
+                            </span>
+                          )}
+                          <span className="font-extrabold">{formatUsd(pctOff(full, withExtra.pct))}</span>
+                        </span>
+                      </span>
+                    );
+                  })}
                 </span>
-                <span className="mt-1.5 block text-xs font-medium text-[var(--primary)]/65">
-                  {formatUsd(addonPrice)} before discount — and it pushes your
-                  whole order to a bigger discount.
+                <span className="mt-2.5 block rounded-xl bg-white px-3 py-2 text-sm text-[var(--primary)]">
+                  Normally <span className="line-through">{formatUsd(addonFull)}</span> — adds just{" "}
+                  <span className="font-extrabold text-emerald-700">{formatUsd(addsCents)}</span> to your stack
+                  {withExtra.pct > without.pct && (
+                    <span className="block text-xs font-semibold text-emerald-700">
+                      It also bumps your whole order from {without.pct}% to {withExtra.pct}% off.
+                    </span>
+                  )}
                 </span>
               </span>
             </label>

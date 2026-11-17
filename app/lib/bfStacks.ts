@@ -287,11 +287,15 @@ export const ADDONS: Record<
   energy: { label: "Energy, focus and drive", products: ["nad"], emoji: "⚡" },
 };
 
-/** Blends hold two peptides in ONE vial — say so wherever it could confuse. */
-export const IS_BLEND: Partial<Record<ProductSlug, string>> = {
-  "bpc-tb500": "BPC-157 and TB-500 together in one vial",
-  "cjc-ipamorelin": "CJC-1295 and Ipamorelin together in one vial",
-};
+/**
+ * How long `vials` of a product last: 1 vial = 5 weeks for everything except
+ * Retatrutide (6–8 weeks per vial).
+ */
+export function supplyFor(slug: ProductSlug, vials: number): string {
+  return slug === "retatrutide"
+    ? `${6 * vials}–${8 * vials} weeks`
+    : `${5 * vials} week${vials === 1 ? "" : "s"}`;
+}
 
 export function isAddonKey(v: unknown): v is AddonKey {
   return typeof v === "string" && v in ADDONS;

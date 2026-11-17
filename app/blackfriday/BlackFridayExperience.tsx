@@ -193,9 +193,10 @@ export function BlackFridayExperience({
               >
                 <p className="text-xs font-extrabold uppercase tracking-wider">POWER CUT&trade;</p>
                 <p className="mt-1 text-3xl font-black">
-                  60% <span className="text-base font-extrabold">off</span>
+                  <span className="text-base font-extrabold">Up to </span>60%{" "}
+                  <span className="text-base font-extrabold">off</span>
                 </p>
-                <p className="text-[11px] font-bold">up to · see deal →</p>
+                <p className="text-[11px] font-bold">See the deal →</p>
               </a>
             </div>
             <p className="mt-4 text-center text-sm text-white/60">

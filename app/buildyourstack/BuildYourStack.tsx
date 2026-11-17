@@ -5,7 +5,7 @@ import { formatUsd } from "@/app/lib/money";
 import { LADDER, SALE_NAME, nextStepAction, priceCart } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
-import { product, type ProductSlug } from "@/app/lib/bfStacks";
+import { product, supplyFor, type ProductSlug } from "@/app/lib/bfStacks";
 import { useMembersGate } from "@/app/components/sale/MembersGate";
 
 const ORDER: ProductSlug[] = [
@@ -108,7 +108,7 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
                     </p>
                     <p className="text-lg font-bold text-[var(--primary)] leading-tight">{p.name}</p>
                     <p className="text-sm text-[var(--primary)]/55">
-                      {p.dose} · {p.price}
+                      {p.dose} · {p.price} · {supplyFor(slug, 1)} per vial
                     </p>
                   </div>
                 </div>

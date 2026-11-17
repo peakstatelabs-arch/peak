@@ -11,6 +11,7 @@ import {
   SHORT_NAME,
   isAddonKey,
   product,
+  supplyFor,
   type ProductSlug,
 } from "@/app/lib/bfStacks";
 
@@ -123,7 +124,7 @@ export function PowerCutAddonOffer({
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent)]">{p.label}</p>
                   <p className="font-extrabold">
-                    {SHORT_NAME[p.slug]} <span className="font-medium text-white/60">{prod.dose}</span>
+                    {SHORT_NAME[p.slug]} <span className="font-medium text-white/60">{prod.dose} · {supplyFor(p.slug, 1)} per vial</span>
                   </p>
                   <p className="text-sm tabular-nums">
                     <span className="mr-1.5 text-white/40 line-through">{prod.price}</span>
