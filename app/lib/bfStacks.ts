@@ -65,7 +65,7 @@ export type StackDef = {
   timeline: { week: string; body: string }[];
 };
 
-const P = (n: number, slug: string) => `/bf/${slug}-${n}.png`;
+const P = (n: number, slug: string) => `/bf/${slug}-${n}.webp`;
 
 export const STACKS: Record<StackSlug, StackDef> = {
   shred: {
@@ -107,7 +107,7 @@ export const STACKS: Record<StackSlug, StackDef> = {
       { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "build") },
     ],
     defaultSets: 2,
-    hero: "/bf/build-hero.png",
+    hero: "/bf/build-hero.webp",
     headline: ["Build Lean Muscle.", "Recover Faster Than Ever."],
     sub: "Amplify your natural growth-hormone pulse and bulletproof your joints — so you can train harder, more often, and actually keep the gains.",
     roles: {
@@ -135,9 +135,10 @@ export const STACKS: Record<StackSlug, StackDef> = {
     sizes: [
       { sets: 1, label: "1× Stack", supply: "5 weeks", image: "/Recovery%20Stack%201.png" },
       { sets: 2, label: "2× Stack", supply: "10 weeks", image: "/Recovery%20Stack%202%20.png" },
+      { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "radiance") },
     ],
     defaultSets: 2,
-    hero: "/recovery-stack-hero.png",
+    hero: "/recovery-stack-hero.webp",
     headline: ["Glow From The Inside Out.", "Skin, Gut & Recovery."],
     sub: "Three repair peptides for radiant, firmer-looking skin, a calmer gut and a body that bounces back. The glow-up stack — at our biggest discount ever.",
     roles: {
@@ -169,9 +170,10 @@ export const STACKS: Record<StackSlug, StackDef> = {
     sizes: [
       { sets: 1, label: "1× Stack", supply: "5 weeks", image: P(1, "limitless") },
       { sets: 2, label: "2× Stack", supply: "10 weeks", image: P(2, "limitless") },
+      { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "limitless") },
     ],
     defaultSets: 2,
-    hero: "/bf/limitless-hero.png",
+    hero: "/bf/limitless-hero.webp",
     headline: ["Limitless Energy.", "Laser-Sharp Focus."],
     sub: "Refuel your cells at the source and recover like a machine. Ditch the afternoon crash and the brain fog for good.",
     roles: {
@@ -199,9 +201,10 @@ export const STACKS: Record<StackSlug, StackDef> = {
     sizes: [
       { sets: 1, label: "1× Stack", supply: "5 weeks", image: P(1, "foreverstrong") },
       { sets: 2, label: "2× Stack", supply: "10 weeks", image: P(2, "foreverstrong") },
+      { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "foreverstrong") },
     ],
     defaultSets: 2,
-    hero: "/bf/foreverstrong-hero.png",
+    hero: "/bf/foreverstrong-hero.webp",
     headline: ["Get Strong.", "Stay Strong. Forever."],
     sub: "Build lean muscle, bulletproof your joints and fix your gut from the inside out. The longevity stack for people who plan to stay strong for decades.",
     roles: {
@@ -233,9 +236,10 @@ export const STACKS: Record<StackSlug, StackDef> = {
     sizes: [
       { sets: 1, label: "1× Stack", supply: "5 weeks", image: P(1, "limitlessplus") },
       { sets: 2, label: "2× Stack", supply: "10 weeks", image: P(2, "limitlessplus") },
+      { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "limitlessplus") },
     ],
     defaultSets: 2,
-    hero: "/bf/limitlessplus-hero.png",
+    hero: "/bf/limitlessplus-hero.webp",
     headline: ["Limitless Energy.", "A Gut That Keeps Up."],
     sub: "Cellular energy, sharp focus and a calm, healthy gut — because you can't feel limitless when your gut is holding you back.",
     roles: {
@@ -352,7 +356,7 @@ export function resolveQuiz(goal: Goal, size: number | null, extra: AddonKey | n
       return { kind: "stack", slug: "shred", sets: tier, addon: extra };
     case "muscle":
       if (extra === "lean") return { kind: "powercut", tier, addon: null };
-      if (extra === "gut") return { kind: "stack", slug: "foreverstrong", sets: Math.min(tier, 2), addon: null };
+      if (extra === "gut") return { kind: "stack", slug: "foreverstrong", sets: tier, addon: null };
       return { kind: "stack", slug: "build", sets: tier, addon: extra };
     case "both":
       return { kind: "powercut", tier, addon: extra };

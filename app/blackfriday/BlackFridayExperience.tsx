@@ -163,7 +163,7 @@ export function BlackFridayExperience({
 
           <div className="mx-auto max-w-5xl px-4 pb-16">
             <img
-              src="/bf/bf-hero.png"
+              src="/bf/bf-hero.webp"
               alt="Peak State Labs research peptide stacks"
               className="mx-auto -mt-2 mb-8 w-full max-w-2xl drop-shadow-2xl"
             />

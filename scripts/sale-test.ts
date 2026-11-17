@@ -252,11 +252,11 @@ await t("stack page prices", () => {
     bf.priceLines(bf.linesFor(bf.STACKS[slug].items, sets)).price;
   assert.deepEqual([1, 2, 3].map((n) => price("shred", n)), [17200, 30100, 45150]);
   assert.deepEqual([1, 2, 3].map((n) => price("build", n)), [17500, 32500, 45000]);
-  assert.deepEqual([1, 2].map((n) => price("radiance", n)), [20650, 35400]);
-  assert.deepEqual([1, 2].map((n) => price("limitless", n)), [19600, 36400]);
-  assert.deepEqual([1, 2].map((n) => price("foreverstrong", n)), [22050, 37800]);
-  assert.deepEqual([1, 2].map((n) => price("limitlessplus", n)), [24150, 41400]);
-  assert.deepEqual(bf.STACKS.foreverstrong.sizes.map((s) => s.sets), [1, 2]);
+  assert.deepEqual([1, 2, 3].map((n) => price("radiance", n)), [20650, 35400, 53100]);
+  assert.deepEqual([1, 2, 3].map((n) => price("limitless", n)), [19600, 36400, 50400]);
+  assert.deepEqual([1, 2, 3].map((n) => price("foreverstrong", n)), [22050, 37800, 56700]);
+  assert.deepEqual([1, 2, 3].map((n) => price("limitlessplus", n)), [24150, 41400, 62100]);
+  for (const s of Object.values(bf.STACKS)) assert.deepEqual(s.sizes.map((x) => x.sets), [1, 2, 3]);
 });
 
 await t("getreta tiers during the sale: $172 / $301 / $451.50", () => {
@@ -281,7 +281,7 @@ await t("quiz routing", () => {
   assert.deepEqual(q("fat", 3, "muscle"), { kind: "powercut", tier: 3, addon: null });
   assert.deepEqual(q("fat", 1, "skin"), { kind: "stack", slug: "shred", sets: 1, addon: "skin" });
   assert.deepEqual(q("muscle", 2, "lean"), { kind: "powercut", tier: 2, addon: null });
-  assert.deepEqual(q("muscle", 3, "gut"), { kind: "stack", slug: "foreverstrong", sets: 2, addon: null });
+  assert.deepEqual(q("muscle", 3, "gut"), { kind: "stack", slug: "foreverstrong", sets: 3, addon: null });
   assert.deepEqual(q("muscle", 1, "energy"), { kind: "stack", slug: "build", sets: 1, addon: "energy" });
   assert.deepEqual(q("both", 2, "skin"), { kind: "powercut", tier: 2, addon: "skin" });
   assert.deepEqual(q("glow", null, "lean"), { kind: "stack", slug: "radiance", sets: null, addon: "lean" });
