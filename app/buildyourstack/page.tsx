@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Build Your Own Stack — Black Friday Sale | Peak State Labs",
   description:
-    "Pick any vials and save: 2 vials 30% off, 4 vials 35% off, 6+ vials 40% off.",
+    "Pick any vials and save: 1 vial 20% off, 2 vials 30%, 3 vials 35%, 4+ vials 40%.",
   robots: { index: false },
 };
 

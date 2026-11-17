@@ -97,7 +97,7 @@ export function OtherStacks({
                 Build your own stack
               </span>
               <span className="mt-1 block text-sm text-[var(--primary)]/70">
-                Pick any vials. 2 = 30% off · 4 = 35% · 6+ = 40%
+                Pick any vials. 1 = 20% off · 2 = 30% · 3 = 35% · 4+ = 40%
               </span>
             </span>
           </a>

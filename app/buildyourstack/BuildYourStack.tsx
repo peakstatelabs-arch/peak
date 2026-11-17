@@ -61,7 +61,7 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
     <div className="pb-40">
       {modal}
       <div className="mx-auto max-w-5xl px-4">
-        <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
           {LADDER.map((t) => {
             const reached = sale.live && priced.saleVials >= t.minVials;
             return (
@@ -75,7 +75,7 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
               >
                 <p className="text-xs font-bold uppercase tracking-wider opacity-70">
                   {t.minVials}
-                  {t.minVials === 6 ? "+" : ""} vials
+                  {t.minVials === 4 ? "+" : ""} vial{t.minVials === 1 ? "" : "s"}
                 </p>
                 <p className="text-2xl sm:text-3xl font-black">{t.pct}% off</p>
               </div>
@@ -160,7 +160,7 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
           <div className="min-w-0">
             {priced.saleVials === 0 ? (
               <p className="text-sm sm:text-base font-bold">
-                Add vials to start saving — 2 vials unlocks 30% off.
+                Add a vial to start saving — 1 vial is 20% off, 4+ vials 40% off.
               </p>
             ) : (
               <>

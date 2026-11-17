@@ -285,7 +285,7 @@ export function BundleBuyBox({
           ) : live ? (
             <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
               {saleLive
-                ? "Sale price applied automatically at checkout. Add more vials of anything to unlock up to 40% off."
+                ? "Sale price applied automatically at checkout. 4+ vials of anything = 40% off."
                 : "Bulk discount applied automatically at checkout — no code needed."}
             </p>
           ) : null}

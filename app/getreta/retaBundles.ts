@@ -56,7 +56,7 @@ export const TIERS: Tier[] = [
 
 export function tierPricing(tier: Tier, saleActive = false) {
   const full = tier.vials * RETA.unitPriceCents;
-  // Black Friday: the sale ladder (1 vial alone 20%, 2–3 vials 30%).
+  // Black Friday: the sale ladder (1 vial 20%, 2 → 30%, 3 → 35%).
   if (saleActive) {
     const pct = salePctForLines([{ priceId: RETA.priceId, quantity: tier.vials }]);
     const discounted = pctOff(full, pct);

@@ -159,9 +159,10 @@ export function BlackFridayExperience({
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
               {[
+                { v: "1 vial", p: "20%" },
                 { v: "2 vials", p: "30%" },
-                { v: "4 vials", p: "35%" },
-                { v: "6+ vials", p: "40%" },
+                { v: "3 vials", p: "35%" },
+                { v: "4+ vials", p: "40%" },
               ].map((t) => (
                 <div
                   key={t.v}
@@ -175,7 +176,7 @@ export function BlackFridayExperience({
               ))}
               <a
                 href="/powercutsale"
-                className="rounded-2xl bg-[var(--accent)] px-3 py-4 text-center text-[#0b0f1a] transition-transform hover:scale-[1.02]"
+                className="col-span-2 rounded-2xl bg-[var(--accent)] px-3 py-4 text-center text-[#0b0f1a] transition-transform hover:scale-[1.02] sm:col-span-4"
               >
                 <p className="text-xs font-extrabold uppercase tracking-wider">POWER CUT&trade;</p>
                 <p className="mt-1 text-3xl font-black">
@@ -186,8 +187,8 @@ export function BlackFridayExperience({
               </a>
             </div>
             <p className="mt-4 text-center text-sm text-white/60">
-              Every vial counts — mix any products and stacks. Retatrutide on
-              its own: 1 vial 20% off · 2 vials 30% off · 3 vials 40% off.
+              Every vial counts — mix any products and stacks. The discount
+              applies to your whole order, automatically.
             </p>
           </div>
         </div>

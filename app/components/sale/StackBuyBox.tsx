@@ -102,8 +102,8 @@ export function StackBuyBox({
         </h2>
         <p className="mt-3 text-base sm:text-lg text-[var(--primary)]/75 leading-relaxed">
           {stack.items.map((i) => SHORT_NAME[i]).join(" + ")}. Every vial in
-          your cart counts toward your discount: 2 vials 30% off, 4 vials 35%
-          off, 6+ vials 40% off.
+          your cart counts toward your discount: 1 vial 20% off, 2 vials 30%,
+          3 vials 35%, 4+ vials 40%.
         </p>
       </div>
 

@@ -73,7 +73,7 @@ export async function StackPage({
     },
     {
       q: `How does the ${saleName} discount work?`,
-      a: "Every vial in your cart counts: 2 vials are 30% off, 4 vials 35% off and 6 or more 40% off — across any mix of products and stacks. Retatrutide on its own is 20% off for 1 vial, 30% for 2 and 40% for 3 or more. It's applied automatically at checkout.",
+      a: "Every vial in your cart counts, across any mix of products and stacks: 1 vial is 20% off, 2 vials 30%, 3 vials 35% and 4 or more 40%. It's applied automatically at checkout.",
     },
     {
       q: "Can I combine it with a discount code?",

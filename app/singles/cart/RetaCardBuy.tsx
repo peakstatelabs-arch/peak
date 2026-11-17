@@ -99,7 +99,7 @@ export function RetaCardBuy({ initial, fallback, ...product }: Props) {
         <AddToCartButton {...product} quantity={selected} />
       </div>
       <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
-        Sale price applied automatically at checkout — no code needed. 3 vials = 40% off.
+        Sale price applied automatically at checkout — no code needed. 3 vials 35% · 4+ vials 40% (mix any products).
       </p>
     </div>
   );

@@ -80,20 +80,16 @@ export function resolveSalePhase(
 /** Set when a visitor picks the regular site; "/" then skips the sale page. */
 export const REGULAR_SITE_COOKIE = "ps_regular_site";
 
-// ── The discount ladder (by TOTAL vials in the cart) ────────────────────────
+// ── The discount ladder (by TOTAL vials in the cart, any products) ────────
+// One rule for everything: 1 vial 20% · 2 vials 30% · 3 vials 35% · 4+ 40%.
 export const LADDER: { minVials: number; pct: number }[] = [
+  { minVials: 1, pct: 20 },
   { minVials: 2, pct: 30 },
-  { minVials: 4, pct: 35 },
-  { minVials: 6, pct: 40 },
+  { minVials: 3, pct: 35 },
+  { minVials: 4, pct: 40 },
 ];
-/** One Reta vial on its own (nothing else in the cart). */
-export const LONE_RETA_PCT = 20;
-/** Retatrutide quantity tiers: 1 → 20%, 2 → 30%, 3+ → 40% (whole cart). */
-export const RETA_TIERS: { minQty: number; pct: number }[] = [
-  { minQty: 1, pct: LONE_RETA_PCT },
-  { minQty: 2, pct: 30 },
-  { minQty: 3, pct: 40 },
-];
+/** Shown everywhere the ladder is spelled out. */
+export const LADDER_TEXT = "1 vial 20% · 2 vials 30% · 3 vials 35% · 4+ vials 40%";
 /** Add-ons bought after a POWER CUT™ (already 6 vials) get the top tier. */
 export const POWERCUT_ADDON_PCT = 40;
 
@@ -105,73 +101,30 @@ export function ladderPct(vials: number): number {
   return pct;
 }
 
-/** The next ladder step from `vials`, or null at the top. */
-export function nextLadderStep(vials: number): { pct: number; addVials: number } | null {
-  for (const t of LADDER) {
-    if (vials < t.minVials) return { pct: t.pct, addVials: t.minVials - vials };
-  }
-  return null;
-}
-
 type QtyLine = { priceId: string; quantity: number };
 
-function retaPct(retaQty: number): number {
-  let pct = 0;
-  for (const t of RETA_TIERS) if (retaQty >= t.minQty) pct = t.pct;
-  return pct;
-}
-
-const retaQtyOf = (lines: QtyLine[]) =>
-  lines.reduce((n, l) => n + (l.priceId === RETA_PRICE_ID ? l.quantity : 0), 0);
-
-/**
- * Sale percent for a set of (non-stack) lines: the better of the vial ladder
- * (2 → 30%, 4 → 35%, 6+ → 40%) and the Retatrutide tier (1 → 20%, 2 → 30%,
- * 3+ → 40%), applied to the whole cart.
- */
+/** Sale percent for a set of (non-stack) lines: the ladder on total vials. */
 export function salePctForLines(lines: QtyLine[], powerCutAddon = false): number {
   const vials = lines.reduce((n, l) => n + l.quantity, 0);
   if (vials === 0) return 0;
   if (powerCutAddon) return POWERCUT_ADDON_PCT;
-  return Math.max(ladderPct(vials), retaPct(retaQtyOf(lines)));
+  return ladderPct(vials);
 }
 
-export type NextStep = { pct: number; addVials: number; reta: boolean };
+export type NextStep = { pct: number; addVials: number };
 
-/** "Add 1 more Retatrutide vial" / "Add 2 more vials of anything". */
+/** "Add 1 more vial of anything" / "Add 2 more vials of anything". */
 export function nextStepAction(n: NextStep): string {
-  const s = n.addVials === 1 ? "" : "s";
-  return n.reta
-    ? `Add ${n.addVials} more Retatrutide vial${s}`
-    : `Add ${n.addVials} more vial${s} of anything`;
+  return `Add ${n.addVials} more vial${n.addVials === 1 ? "" : "s"} of anything`;
 }
 
-/**
- * The cheapest next step up from these lines: N more vials of anything, or
- * (when Reta is in the cart) N more Retatrutide vials. Fewest vials wins;
- * on a tie, the bigger discount.
- */
+/** The next ladder step from these lines, or null at the top. */
 export function nextSaleStep(lines: QtyLine[]): NextStep | null {
-  const current = salePctForLines(lines);
   const vials = lines.reduce((n, l) => n + l.quantity, 0);
-  const options: NextStep[] = [];
   for (const t of LADDER) {
-    if (vials < t.minVials && t.pct > current) {
-      options.push({ pct: t.pct, addVials: t.minVials - vials, reta: false });
-      break;
-    }
+    if (vials < t.minVials) return { pct: t.pct, addVials: t.minVials - vials };
   }
-  const retaQty = retaQtyOf(lines);
-  if (retaQty > 0) {
-    for (const t of RETA_TIERS) {
-      if (retaQty < t.minQty && t.pct > current) {
-        options.push({ pct: t.pct, addVials: t.minQty - retaQty, reta: true });
-        break;
-      }
-    }
-  }
-  options.sort((a, b) => a.addVials - b.addVials || b.pct - a.pct);
-  return options[0] ?? null;
+  return null;
 }
 
 /** Price of `listCents` at `pct` off, rounded to the cent. */
@@ -224,9 +177,8 @@ export type PricedCart = {
 };
 
 /**
- * Sale live: every vial counts toward the ladder (2 → 30%, 4 → 35%, 6+ → 40%)
- * or the Retatrutide tier (1 → 20%, 2 → 30%, 3+ → 40%), whichever is better,
- * applied to the whole cart except fixed-price stacks.
+ * Sale live: every vial counts toward the ladder (1 → 20%, 2 → 30%, 3 → 35%,
+ * 4+ → 40%), applied to the whole cart except fixed-price stacks.
  * Otherwise: the normal bulk discount (highest single-product quantity).
  */
 export function priceCart(

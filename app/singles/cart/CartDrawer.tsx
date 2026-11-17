@@ -391,7 +391,7 @@ function SaleCartNote({
         </p>
       ) : (
         <p className="text-sm font-bold text-[var(--primary)]">
-          {saleName} sale: stack 2+ vials to save 30%+
+          {saleName} sale: 1 vial 20% off, up to 40% off with 4+ vials
         </p>
       )}
       {next && (

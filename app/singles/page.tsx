@@ -292,11 +292,11 @@ export default async function SinglesCatalog() {
                     {SALE_NAME[initialSale.phase]} sale — mix &amp; match any vials
                   </p>
                   <p className="mt-2 text-lg sm:text-xl font-extrabold">
-                    2 vials 30% off · 4 vials 35% off · 6+ vials 40% off
+                    1 vial 20% · 2 vials 30% · 3 vials 35% · 4+ vials 40%
                   </p>
                   <p className="mt-1 text-sm text-white/70">
-                    Every vial in your cart counts. Retatrutide: 1 vial 20% off,
-                    2 vials 30%, 3 vials 40%. Applied automatically at checkout.
+                    Every vial in your cart counts, any mix of products. Applied
+                    automatically at checkout.
                   </p>
                   <a
                     href="/buildyourstack"
