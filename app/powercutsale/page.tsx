@@ -80,7 +80,7 @@ export default async function PowerCutSalePage({
               cmp={cmp}
               cmpPriceCents={initialSale.live ? POWERCUT_SALE.single.saleCents : cmp.priceCents}
             />
-            <PowerCutCalculator />
+            <PowerCutCalculator showQuizLink={false} />
             <PowerCutTimeline />
             <LabProof />
           </div>

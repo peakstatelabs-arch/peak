@@ -153,7 +153,7 @@ export function PowerCutSupport() {
   );
 }
 
-export function PowerCutCalculator() {
+export function PowerCutCalculator({ showQuizLink = true }: { showQuizLink?: boolean } = {}) {
   return (
     <>
     {/* Calculator Section */}
@@ -196,6 +196,7 @@ export function PowerCutCalculator() {
             </div>
 
             {/* Companion quiz entry — hand off to the full protocol quiz */}
+            {showQuizLink && (
             <TrackedLink
               href={siteCopy.calculator.quizCtaHref}
               className="group mt-6 flex items-center gap-3 rounded-2xl border border-[var(--accent)]/30 bg-[var(--accent)]/[0.06] p-4 transition-colors hover:bg-[var(--accent)]/[0.12]"
@@ -214,6 +215,7 @@ export function PowerCutCalculator() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </TrackedLink>
+            )}
           </div>
 
           {/* Right Column - Calculator */}
