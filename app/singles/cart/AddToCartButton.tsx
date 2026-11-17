@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useCart, formatUsd } from "./CartContext";
 import { useSaleStatus } from "@/app/lib/useSaleStatus";
-import { RETA_PRICE_ID, retaSaleTotalCents } from "@/app/lib/sale";
+import { pctOff, salePctForLines } from "@/app/lib/sale";
 import { readClientContact } from "@/app/lib/clientContact";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 
@@ -24,9 +24,13 @@ export function AddToCartButton(props: Props) {
   const { addItem, openCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
   const qty = props.quantity ?? 1;
-  const saleActive = useSaleStatus().reta;
+  // Black Friday: show what this many vials cost on their own at sale prices.
+  const saleLive = useSaleStatus().live;
+  const salePct = saleLive
+    ? salePctForLines([{ priceId: props.priceId, quantity: qty }])
+    : 0;
   const salePrice =
-    saleActive && props.priceId === RETA_PRICE_ID ? retaSaleTotalCents(qty) : null;
+    salePct > 0 ? pctOff(props.unitPriceCents * qty, salePct) : null;
 
   function handleClick() {
     addItem(

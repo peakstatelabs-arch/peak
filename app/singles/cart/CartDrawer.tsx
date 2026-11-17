@@ -7,7 +7,7 @@ import {
   maxSameProductQty,
   nextBulkTier,
 } from "@/app/lib/bulkDiscount";
-import { RETA_PRICE_ID, priceCart, retaSaleTotalCents } from "@/app/lib/sale";
+import { SALE_NAME, priceCart } from "@/app/lib/sale";
 import { SaleCountdown } from "@/app/components/SaleUrgency";
 import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { CrossSellStrip } from "./CrossSellStrip";
@@ -44,18 +44,16 @@ export function CartDrawer() {
   const isSplitShipment = inStockLines.length > 0 && preorderLines.length > 0;
 
   // Cart pricing — the same priceCart() the checkout route's rules mirror, so
-  // the preview and Stripe agree. Sale lines are fixed-price and sit outside
-  // the bulk discount; the bulk tier comes from the remaining lines.
-  const retaSale = useSaleStatus().reta;
-  const priced = priceCart(lines, retaSale);
-  const discountableLines = lines.filter(
-    (l) => priced.saleLineCents[l.priceId] === null && !isStackPriceId(l.priceId),
-  );
+  // the preview and Stripe agree. During the sale every vial counts toward
+  // the ladder; otherwise the normal bulk tier applies. Stacks stay outside.
+  const sale = useSaleStatus();
+  const priced = priceCart(lines, sale.live);
+  const discountableLines = lines.filter((l) => !isStackPriceId(l.priceId));
   const bulkMaxQty = maxSameProductQty(discountableLines);
-  const bulkTier = bulkTierForQty(bulkMaxQty);
-  const bulkNext = nextBulkTier(bulkMaxQty);
-  const bulkPct = priced.bulkPct;
-  const bulkDiscountCents = priced.bulkDiscountCents;
+  const bulkTier = sale.live ? null : bulkTierForQty(bulkMaxQty);
+  const bulkNext = sale.live ? null : nextBulkTier(bulkMaxQty);
+  const discountPct = priced.pct;
+  const discountCents = priced.discountCents;
   const estimatedTotalCents = priced.totalCents;
   // The line closest to the next tier — the one we nudge them to add to.
   const topLine = discountableLines.reduce<CartLine | null>(
@@ -196,7 +194,7 @@ export function CartDrawer() {
                   <CartLineRow
                     key={line.priceId}
                     line={line}
-                    saleCents={priced.saleLineCents[line.priceId]}
+                    saleCents={null}
                     onQtyChange={(q) => setQuantity(line.priceId, q)}
                     onRemove={() => removeItem(line.priceId)}
                   />
@@ -216,18 +214,19 @@ export function CartDrawer() {
               />
             )}
 
-            {priced.hasSaleLines && (
+            {sale.live && discountableLines.length > 0 && (
               <SaleCartNote
-                savingsCents={priced.saleSavingsCents}
-                retaLine={lines.find((l) => l.priceId === RETA_PRICE_ID) ?? null}
-                onAddOne={(line) => setQuantity(line.priceId, line.quantity + 1)}
+                saleName={SALE_NAME[sale.phase]}
+                pct={discountPct}
+                savingsCents={discountCents}
+                next={priced.next}
               />
             )}
 
             {(bulkTier || bulkNext) && discountableLines.length > 0 && (
               <BulkNudge
                 active={!!bulkTier}
-                pct={bulkPct}
+                pct={discountPct}
                 nextPct={bulkNext?.pct ?? 0}
                 addForNext={addForNext}
                 productName={topLine?.name}
@@ -235,7 +234,7 @@ export function CartDrawer() {
               />
             )}
 
-            {bulkTier || priced.hasSaleLines ? (
+            {discountCents > 0 ? (
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-semibold text-[var(--primary)]/70">
@@ -245,26 +244,16 @@ export function CartDrawer() {
                     {formatUsd(subtotalCents)}
                   </span>
                 </div>
-                {priced.hasSaleLines && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-semibold text-[var(--accent-dark)]">
-                      Limited-time sale
-                    </span>
-                    <span className="font-bold text-[var(--accent-dark)]">
-                      −{formatUsd(priced.saleSavingsCents)}
-                    </span>
-                  </div>
-                )}
-                {bulkTier && bulkDiscountCents > 0 && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-semibold text-[var(--accent-dark)]">
-                      Bulk discount ({bulkPct}% off)
-                    </span>
-                    <span className="font-bold text-[var(--accent-dark)]">
-                      −{formatUsd(bulkDiscountCents)}
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold text-[var(--accent-dark)]">
+                    {sale.live
+                      ? `${SALE_NAME[sale.phase]} sale (${discountPct}% off)`
+                      : `Bulk discount (${discountPct}% off)`}
+                  </span>
+                  <span className="font-bold text-[var(--accent-dark)]">
+                    −{formatUsd(discountCents)}
+                  </span>
+                </div>
                 <div className="flex items-center justify-between pt-1">
                   <span className="text-sm font-semibold text-[var(--primary)]/70">
                     Estimated total
@@ -285,8 +274,8 @@ export function CartDrawer() {
               </div>
             )}
             <p className="text-xs text-[var(--primary)]/55">
-              {priced.hasSaleLines
-                ? "Sale prices apply automatically and can\u2019t be combined with other discounts or codes. Shipping and taxes calculated at checkout."
+              {sale.live && discountCents > 0
+                ? "Sale pricing applies automatically and can\u2019t be combined with other codes. Shipping and taxes calculated at checkout."
                 : priced.hasStackLines
                   ? "Stack pricing is already discounted and can\u2019t be combined with codes. Shipping and taxes calculated at checkout."
                   : bulkTier
@@ -373,59 +362,50 @@ function lineLabel(line: CartLine): string {
   return line.quantity > 1 ? `${line.name} ×${line.quantity}` : line.name;
 }
 
-/** Savings confirmation, deadline, and a nudge to the next sale tier. */
+/** Sale savings, deadline, and a nudge to the next ladder step. */
 function SaleCartNote({
+  saleName,
+  pct,
   savingsCents,
-  retaLine,
-  onAddOne,
+  next,
 }: {
+  saleName: string;
+  pct: number;
   savingsCents: number;
-  retaLine: CartLine | null;
-  onAddOne: (line: CartLine) => void;
+  next: { pct: number; addVials: number } | null;
 }) {
-  const nextQty = retaLine ? retaLine.quantity + 1 : 0;
-  const nextSale = retaLine ? retaSaleTotalCents(nextQty) : null;
-  const curSale = retaLine ? retaSaleTotalCents(retaLine.quantity) : null;
-  const nudge =
-    retaLine && nextSale !== null && curSale !== null
-      ? {
-          addCents: nextSale - curSale,
-          totalSaveCents: retaLine.unitPriceCents * nextQty - nextSale,
-        }
-      : null;
-
   return (
     <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
-      <p className="flex items-center gap-2 text-sm font-bold text-emerald-700">
-        <svg
-          className="w-4 h-4 flex-shrink-0"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={3}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
-        You&rsquo;re saving {formatUsd(savingsCents)} with the limited-time sale
-      </p>
-      <p className="mt-1 text-xs text-[var(--primary)]/65">
-        Sale ends in <SaleCountdown kind="reta" className="text-[var(--primary)]" />
-      </p>
-      {nudge && retaLine && (
-        <div className="mt-2.5 flex items-center justify-between gap-3 border-t border-emerald-200 pt-2.5">
-          <p className="text-xs font-semibold text-[var(--primary)]/80">
-            Add 1 more vial for just {formatUsd(nudge.addCents)} — save{" "}
-            {formatUsd(nudge.totalSaveCents)} total
-          </p>
-          <button
-            type="button"
-            onClick={() => onAddOne(retaLine)}
-            className="flex-shrink-0 rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-bold text-white hover:bg-[var(--primary)]/90 transition-colors"
+      {pct > 0 ? (
+        <p className="flex items-center gap-2 text-sm font-bold text-emerald-700">
+          <svg
+            className="w-4 h-4 flex-shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={3}
           >
-            Add 1 more
-          </button>
-        </div>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          {pct}% off unlocked — you&rsquo;re saving {formatUsd(savingsCents)}
+        </p>
+      ) : (
+        <p className="text-sm font-bold text-[var(--primary)]">
+          {saleName} sale: stack 2+ vials to save 30%+
+        </p>
       )}
+      {next && (
+        <p className="mt-1 text-xs font-semibold text-[var(--primary)]/80">
+          Add {next.addVials} more vial{next.addVials === 1 ? "" : "s"} (any
+          product) to unlock{" "}
+          <span className="font-extrabold text-emerald-700">{next.pct}% off</span>{" "}
+          your whole cart.
+        </p>
+      )}
+      <p className="mt-1 text-xs text-[var(--primary)]/65">
+        {saleName} pricing ends in{" "}
+        <SaleCountdown className="text-[var(--primary)]" />
+      </p>
     </div>
   );
 }

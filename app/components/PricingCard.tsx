@@ -1,8 +1,13 @@
 "use client";
 
 import { TrackedLink } from "./TrackedLink";
-import { POWERCUT_SALE, withPromoCode, type SaleStatus } from "@/app/lib/sale";
-import { useSaleStatus } from "@/app/lib/useSaleStatus";
+import {
+  POWERCUT_SALE,
+  POWERCUT_VALUE_CENTS,
+  SALE_NAME,
+  withPromoCode,
+} from "@/app/lib/sale";
+import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { formatUsd } from "@/app/singles/cart/CartContext";
 
 interface PricingCardProps {
@@ -48,14 +53,23 @@ export function PricingCard({
   popular,
   initialSale,
 }: PricingCardProps) {
-  // Temporary sale: only the tiers listed in POWERCUT_SALE are discounted. The
-  // discount itself is a Stripe promo code pre-applied on the Payment Link.
-  const saleOn = useSaleStatus(initialSale).powerCut;
-  const ps = saleOn ? POWERCUT_SALE[id] : undefined;
-  const shownPrice = ps ? formatUsd(ps.saleCents) : price;
-  const shownInstallment = ps ? ps.installment : installment;
+  // Black Friday: the discount is a Stripe promo code pre-applied on the
+  // Payment Link (TRANSFORM / TRANSFORM2 / TRANSFORM3).
+  const sale = useSaleStatus(initialSale);
+  const ps = sale.live ? POWERCUT_SALE[id] : undefined;
+  const regularCents = Math.round(Number(price.replace(/[^0-9.]/g, "")) * 100);
+  const chargedCents = ps ? ps.saleCents : regularCents;
+  // Savings vs buying the same vials as singles — shown all year.
+  const valueCents = POWERCUT_VALUE_CENTS[id] ?? 0;
+  const savedCents = valueCents - chargedCents;
+  const savedPct = valueCents > 0 ? Math.round((savedCents / valueCents) * 100) : 0;
+  const stacks = id === "triple" ? 3 : id === "double" ? 2 : 1;
+  const shownPrice = formatUsd(chargedCents);
+  const shownInstallment = ps ? formatUsd(Math.round(ps.saleCents / 4)) : installment;
   const shownPerStack =
-    ps && id === "double" ? `Only $${(ps.saleCents / 200).toFixed(2)} per stack` : perStackPrice;
+    ps && stacks > 1
+      ? `Only ${formatUsd(Math.round(ps.saleCents / stacks))} per stack`
+      : perStackPrice;
   const href = ps ? withPromoCode(stripeUrl, ps.code) : stripeUrl;
 
   return (
@@ -113,11 +127,20 @@ export function PricingCard({
 
         {/* Pricing */}
         <div className="border-t border-[var(--border)] pt-6">
-          <div className="flex items-baseline justify-between mb-1">
-            <span className="text-sm text-[var(--primary)]/50 line-through">
-              Estimated Value: {estimatedValue}
-            </span>
-          </div>
+          {valueCents > 0 ? (
+            <div className="flex items-baseline justify-between mb-1">
+              <span className="text-sm text-[var(--primary)]/50">
+                Bought separately:{" "}
+                <span className="line-through">{formatUsd(valueCents)}</span>
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-baseline justify-between mb-1">
+              <span className="text-sm text-[var(--primary)]/50 line-through">
+                Estimated Value: {estimatedValue}
+              </span>
+            </div>
+          )}
           <div className="flex items-baseline gap-2">
             <span className="text-sm text-[var(--primary)]/60">Your Price:</span>
             {ps && (
@@ -129,14 +152,16 @@ export function PricingCard({
               {shownPrice}
             </span>
           </div>
-          {ps && (
+          {savedCents > 0 && (
             <div className="mt-3">
               <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-sm font-bold text-emerald-700">
-                Save {formatUsd(ps.listCents - ps.saleCents)}
+                You save {formatUsd(savedCents)} ({savedPct}% off)
               </span>
-              <p className="mt-1.5 text-xs text-[var(--primary)]/55">
-                Code {ps.code} auto-applied at checkout
-              </p>
+              {ps && (
+                <p className="mt-1.5 text-xs text-[var(--primary)]/55">
+                  {SALE_NAME[sale.phase]} price · code {ps.code} auto-applied at checkout
+                </p>
+              )}
             </div>
           )}
           {shownPerStack && (

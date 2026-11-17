@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { SaleStatus } from "./sale";
+import type { SalePhase } from "./sale";
+
+export type SaleStatus = { phase: SalePhase; live: boolean };
 
 const POLL_MS = 60_000;
-const OFF: SaleStatus = { reta: false, powerCut: false };
+const OFF: SaleStatus = { phase: "pre", live: false };
 
 // One shared poller for every component on the page.
 let latest: SaleStatus | null = null;
@@ -12,7 +14,7 @@ const listeners = new Set<(s: SaleStatus) => void>();
 let timer: number | undefined;
 
 // Server clock sync for countdowns: offset = server time - browser time.
-type Clock = { offsetMs: number; endsAt: { reta: number; powerCut: number } };
+type Clock = { offsetMs: number; endsAt: number | null };
 let clock: Clock | null = null;
 const clockListeners = new Set<() => void>();
 
@@ -22,10 +24,10 @@ async function refresh() {
     if (!res.ok) return;
     const data = (await res.json()) as SaleStatus & {
       serverNow: number;
-      endsAt: Clock["endsAt"];
+      endsAt: number | null;
     };
     clock = { offsetMs: data.serverNow - Date.now(), endsAt: data.endsAt };
-    latest = { reta: data.reta, powerCut: data.powerCut };
+    latest = { phase: data.phase, live: data.live };
     listeners.forEach((fn) => fn(latest as SaleStatus));
     clockListeners.forEach((fn) => fn());
   } catch {
@@ -35,8 +37,8 @@ async function refresh() {
 
 /**
  * Sale state for display. `initial` is the server-rendered value; the hook then
- * confirms it against the SERVER clock (never the browser's) on mount and once
- * a minute, so an open tab returns to normal pricing when the sale ends.
+ * confirms it against the SERVER (clock + preview cookie) on mount and once a
+ * minute, so an open tab flips phases on its own.
  */
 export function useSaleStatus(initial: SaleStatus = OFF): SaleStatus {
   const [status, setStatus] = useState<SaleStatus>(latest ?? initial);
@@ -44,7 +46,7 @@ export function useSaleStatus(initial: SaleStatus = OFF): SaleStatus {
   useEffect(() => {
     const onChange = (s: SaleStatus) =>
       setStatus((prev) =>
-        prev.reta === s.reta && prev.powerCut === s.powerCut ? prev : s,
+        prev.phase === s.phase && prev.live === s.live ? prev : s,
       );
     listeners.add(onChange);
     if (listeners.size === 1) {
@@ -63,17 +65,20 @@ export function useSaleStatus(initial: SaleStatus = OFF): SaleStatus {
 }
 
 /**
- * Milliseconds left in the sale for `kind`, ticking every second off the
- * SERVER clock. null until the first sync with the server completes.
+ * Milliseconds left in the current sale phase (Black Friday, then Cyber
+ * Monday), ticking every second off the SERVER clock. null until synced or
+ * when no sale is running.
  */
-export function useSaleCountdown(kind: "reta" | "powerCut"): number | null {
+export function useSaleCountdown(): number | null {
   useSaleStatus(); // keeps the shared poller running
   const [msLeft, setMsLeft] = useState<number | null>(null);
 
   useEffect(() => {
     const update = () =>
       setMsLeft(
-        clock ? clock.endsAt[kind] - (Date.now() + clock.offsetMs) : null,
+        clock && clock.endsAt !== null
+          ? clock.endsAt - (Date.now() + clock.offsetMs)
+          : null,
       );
     update();
     clockListeners.add(update);
@@ -82,7 +87,7 @@ export function useSaleCountdown(kind: "reta" | "powerCut"): number | null {
       clockListeners.delete(update);
       window.clearInterval(id);
     };
-  }, [kind]);
+  }, []);
 
   return msLeft;
 }

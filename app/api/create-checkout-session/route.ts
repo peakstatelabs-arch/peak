@@ -11,12 +11,14 @@ import {
   resolveCouponId,
 } from "@/app/lib/bulkDiscount";
 import {
-  RETA_PRICE_ID,
+  PREVIEW_COOKIE,
   SALE_ENDS_AT_MS,
-  isRetaSaleActive,
-  isRetaSaleLine,
-  retaSaleTotalCents,
+  SALE_NAME,
+  isSaleLive,
+  resolveSalePhase,
+  salePctForLines,
 } from "@/app/lib/sale";
+import { fetchCheckoutContact } from "@/app/lib/smsOptIn";
 
 export const runtime = "nodejs";
 
@@ -102,9 +104,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: { items?: CartItemInput[] } = {};
+  let body: { items?: CartItemInput[]; powerCutSessionId?: unknown } = {};
   try {
-    body = (await req.json()) as { items?: CartItemInput[] };
+    body = (await req.json()) as typeof body;
   } catch {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
@@ -140,12 +142,27 @@ export async function POST(req: NextRequest) {
 
   const stripe = new Stripe(secretKey);
   const origin = siteOrigin(req);
-
-  // Temporary Reta sale (see app/lib/sale.ts). Decided here, on the server
-  // clock, from the quantities in the request — the client only displays it.
   const nowMs = Date.now();
-  const retaSale = isRetaSaleActive(nowMs);
-  const saleLines = cartLines.filter((l) => isRetaSaleLine(l, retaSale));
+  const phase = resolveSalePhase(
+    nowMs,
+    req.cookies.get(PREVIEW_COOKIE)?.value,
+    process.env.SALE_PREVIEW_SECRET,
+  );
+  const saleLive = isSaleLive(phase);
+
+  // POWER CUT™ add-ons: the buyer's paid POWER CUT checkout (on the Power Cut
+  // Stripe account) unlocks the top sale tier for the add-on vials.
+  let powerCutAddon = false;
+  let prefillEmail: string | undefined;
+  const pcSession =
+    typeof body.powerCutSessionId === "string" ? body.powerCutSessionId : "";
+  if (saleLive && pcSession) {
+    const contact = await fetchCheckoutContact(pcSession, "powercut");
+    if (contact) {
+      powerCutAddon = true;
+      prefillEmail = contact.email;
+    }
+  }
 
   const baseParams: Stripe.Checkout.SessionCreateParams = {
     mode: "payment",
@@ -158,92 +175,65 @@ export async function POST(req: NextRequest) {
     success_url: `${origin}/singles/thankyou?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/singles?checkout=cancelled`,
     automatic_tax: { enabled: false },
+    ...(prefillEmail ? { customer_email: prefillEmail } : {}),
   };
 
   let sessionParams: Stripe.Checkout.SessionCreateParams;
+  const hasStacks = cartLines.some((l) => isStackPriceId(l.priceId));
+  const discountable = cartLines.filter((l) => !isStackPriceId(l.priceId));
 
-  if (saleLines.length > 0) {
-    // SALE CART. Sale lines are charged their fixed sale price (priced inline
-    // against the existing Reta product — no Stripe prices are changed) and
-    // are excluded from every other discount: no customer promo codes, and a
-    // bulk coupon scoped to the remaining products only.
-    try {
-      const { productId: retaProductId, currency } = await productIdForPrice(
-        stripe,
-        RETA_PRICE_ID,
-      );
-      // The session can't outlive the sale (and Stripe caps sessions at 24h).
-      const expiresAt = Math.min(
-        Math.floor(SALE_ENDS_AT_MS / 1000),
-        Math.floor(nowMs / 1000) + 24 * 3600,
-      );
-
-      const saleItems: Stripe.Checkout.SessionCreateParams.LineItem[] =
-        cartLines.map((l) => {
-          const saleTotal = isRetaSaleLine(l, retaSale)
-            ? retaSaleTotalCents(l.quantity)
-            : null;
-          return saleTotal === null
-            ? { price: l.priceId, quantity: l.quantity }
-            : {
-                price_data: {
-                  currency,
-                  product: retaProductId,
-                  unit_amount: saleTotal / l.quantity,
-                },
-                quantity: l.quantity,
-              };
+  if (saleLive) {
+    // BLACK FRIDAY / CYBER MONDAY. Decided here, on the server clock, from the
+    // quantities in the request (the client only displays it): the vial
+    // ladder as a one-off coupon. Fixed-price stacks stay outside it. The
+    // session can't be paid after the sale (Stripe needs >= 30 min, max 24h).
+    const pct = salePctForLines(discountable, powerCutAddon);
+    const expiresAt = Math.max(
+      Math.floor(nowMs / 1000) + 31 * 60,
+      Math.min(Math.floor(SALE_ENDS_AT_MS / 1000), Math.floor(nowMs / 1000) + 24 * 3600),
+    );
+    sessionParams = { ...baseParams, expires_at: expiresAt };
+    if (pct > 0) {
+      try {
+        const appliesTo = hasStacks
+          ? {
+              applies_to: {
+                products: (
+                  await Promise.all(
+                    discountable.map((l) => productIdForPrice(stripe, l.priceId)),
+                  )
+                ).map((p) => p.productId),
+              },
+            }
+          : {};
+        const coupon = await stripe.coupons.create({
+          percent_off: pct,
+          duration: "once",
+          name: `${SALE_NAME[phase]} sale (${pct}% off)`,
+          max_redemptions: 1,
+          redeem_by: expiresAt,
+          ...appliesTo,
         });
-
-      sessionParams = {
-        ...baseParams,
-        line_items: saleItems,
-        expires_at: expiresAt,
-      };
-
-      // Stacks are fixed-price too, so they're left out of the bulk coupon.
-      const nonSale = cartLines.filter(
-        (l) => !isRetaSaleLine(l, retaSale) && !isStackPriceId(l.priceId),
-      );
-      const tier = bulkTierForQty(maxSameProductQty(nonSale));
-      if (tier && nonSale.length > 0) {
-        try {
-          const products = await Promise.all(
-            nonSale.map((l) => productIdForPrice(stripe, l.priceId)),
-          );
-          const coupon = await stripe.coupons.create({
-            percent_off: tier.pct,
-            duration: "once",
-            name: `Bulk discount (${tier.pct}% off)`,
-            applies_to: { products: products.map((p) => p.productId) },
-            max_redemptions: 1,
-            redeem_by: expiresAt,
-          });
-          sessionParams.discounts = [{ coupon: coupon.id }];
-        } catch (err) {
-          console.error(
-            "Could not create scoped bulk coupon for sale cart — charging full price for non-sale items.",
-            err,
-          );
-        }
+        sessionParams.discounts = [{ coupon: coupon.id }];
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Failed to apply the sale discount.";
+        console.error("Sale coupon error:", err);
+        return NextResponse.json({ error: message }, { status: 502 });
       }
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to price sale checkout.";
-      console.error("Sale checkout pricing error:", err);
-      return NextResponse.json({ error: message }, { status: 502 });
+    } else if (!hasStacks) {
+      sessionParams.allow_promotion_codes = true;
     }
-  } else if (cartLines.some((l) => isStackPriceId(l.priceId))) {
+  } else if (hasStacks) {
     // STACK CART. A FULL REPAIR stack is sold at its fixed stack price: no
     // customer promo codes, and the bulk tier comes from the other vials
     // only, as a one-off coupon scoped to those products.
     sessionParams = { ...baseParams };
-    const others = cartLines.filter((l) => !isStackPriceId(l.priceId));
-    const tier = bulkTierForQty(maxSameProductQty(others));
-    if (tier && others.length > 0) {
+    const tier = bulkTierForQty(maxSameProductQty(discountable));
+    if (tier && discountable.length > 0) {
       try {
         const products = await Promise.all(
-          others.map((l) => productIdForPrice(stripe, l.priceId)),
+          discountable.map((l) => productIdForPrice(stripe, l.priceId)),
         );
         const coupon = await stripe.coupons.create({
           percent_off: tier.pct,
@@ -267,14 +257,7 @@ export async function POST(req: NextRequest) {
     // coupon on the whole cart. Stripe forbids combining `discounts` with a
     // customer-entered promo code, so the promo-code box is only offered when
     // no bulk tier applies.
-    const maxSameQty = lineItems.reduce(
-      (m, li) => Math.max(m, li.quantity ?? 0),
-      0,
-    );
-    const bulkTier = bulkTierForQty(maxSameQty);
-
-    // The configured value (e.g. "BULK15") may be either a coupon ID or a
-    // promotion-code name — resolve whichever actually exists in this account.
+    const bulkTier = bulkTierForQty(maxSameProductQty(cartLines));
     let bulkDiscount: Stripe.Checkout.SessionCreateParams.Discount | null = null;
     if (bulkTier) {
       const id = resolveCouponId(bulkTier);
@@ -285,9 +268,6 @@ export async function POST(req: NextRequest) {
         );
       }
     }
-
-    // Stripe forbids combining `discounts` with a customer-entered promo code,
-    // so only offer the promo-code box when no bulk discount is applied.
     sessionParams = bulkDiscount
       ? { ...baseParams, discounts: [bulkDiscount] }
       : { ...baseParams, allow_promotion_codes: true };

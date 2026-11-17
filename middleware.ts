@@ -1,4 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  PREVIEW_COOKIE,
+  PREVIEW_MODES,
+  REGULAR_SITE_COOKIE,
+  SALE_ENDS_AT_MS,
+  isSaleLive,
+  previewCookieValue,
+  resolveSalePhase,
+  type SalePhase,
+} from "@/app/lib/sale";
+
+// Black Friday / Cyber Monday pages. Hidden (sent home) before the sale, and
+// replaced by the "sale is over" page after it.
+const SALE_ONLY_PATHS = new Set([
+  "/blackfriday",
+  "/shred",
+  "/build",
+  "/radiance",
+  "/limitless",
+  "/foreverstrong",
+  "/limitlessplus",
+  "/buildyourstack",
+]);
 
 const STRUCTURED_PEPTIDES_HOSTS = new Set([
   "structuredpeptides.com",
@@ -60,6 +83,76 @@ export function middleware(request: NextRequest) {
 
   if (host.split(":")[0] === APEX_HOST) {
     return NextResponse.redirect(`${CANONICAL_ORIGIN}${pathname}${search}`, 308);
+  }
+
+  // ── Sale preview: ?salepreview=<secret>&mode=pre|bf|cm|over|off ──────────
+  const previewSecret = process.env.SALE_PREVIEW_SECRET;
+  const previewParam = request.nextUrl.searchParams.get("salepreview");
+  if (previewParam !== null) {
+    const clean = request.nextUrl.clone();
+    clean.searchParams.delete("salepreview");
+    clean.searchParams.delete("mode");
+    const res = NextResponse.redirect(clean);
+    if (previewSecret && previewParam === previewSecret) {
+      const mode = request.nextUrl.searchParams.get("mode") ?? "bf";
+      if (PREVIEW_MODES.includes(mode as SalePhase)) {
+        res.cookies.set(PREVIEW_COOKIE, previewCookieValue(mode as SalePhase, previewSecret), {
+          path: "/",
+          httpOnly: true,
+          secure: true,
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 30,
+        });
+      } else {
+        res.cookies.delete(PREVIEW_COOKIE);
+      }
+    }
+    return res;
+  }
+
+  const phase = resolveSalePhase(
+    Date.now(),
+    request.cookies.get(PREVIEW_COOKIE)?.value,
+    previewSecret,
+  );
+  const saleLive = isSaleLive(phase);
+  const isSaleSite = !STRUCTURED_PEPTIDES_HOSTS.has(host);
+
+  if (isSaleSite && SALE_ONLY_PATHS.has(pathname)) {
+    if (phase === "pre") return NextResponse.redirect(new URL("/", request.url));
+    if (phase === "over") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/sale-over";
+      return NextResponse.rewrite(url);
+    }
+  }
+
+  if (isSaleSite && saleLive && pathname === "/getrecovery") {
+    return NextResponse.redirect(new URL(`/radiance${search}`, request.url));
+  }
+
+  if (isSaleSite && saleLive && pathname === "/") {
+    // "Continue to regular site" → remember it for the rest of the sale.
+    if (request.nextUrl.searchParams.get("regular") === "1") {
+      const clean = request.nextUrl.clone();
+      clean.searchParams.delete("regular");
+      const res = NextResponse.redirect(clean);
+      res.cookies.set(REGULAR_SITE_COOKIE, "1", {
+        path: "/",
+        sameSite: "lax",
+        expires: new Date(SALE_ENDS_AT_MS + 60 * 60 * 1000),
+      });
+      return res;
+    }
+    // ?pc=1 shows the regular (POWER CUT™) homepage once, without opting out.
+    const wantsRegular =
+      request.cookies.get(REGULAR_SITE_COOKIE)?.value === "1" ||
+      request.nextUrl.searchParams.get("pc") === "1";
+    if (!wantsRegular) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/blackfriday";
+      return NextResponse.rewrite(url);
+    }
   }
 
   if (STRUCTURED_PEPTIDES_HOSTS.has(host) && pathname === "/") {

@@ -203,11 +203,4 @@ export function useCart(): CartContextValue {
   return ctx;
 }
 
-export function formatUsd(cents: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(cents / 100);
-}
+export { formatUsd } from "@/app/lib/money";

@@ -4,6 +4,8 @@ import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { SmsOptIn } from "@/app/components/SmsOptIn";
 import { LegalLinks } from "@/app/components/LegalPage";
+import { PowerCutAddonOffer } from "@/app/components/sale/PowerCutAddonOffer";
+import { getSaleStatus } from "@/app/lib/salePhaseServer";
 import {
   fetchCheckoutContact,
   isCompleteContact,
@@ -23,6 +25,7 @@ export default async function ThankYouPage({
 }) {
   const { session_id } = await searchParams;
   const contact = session_id ? await fetchCheckoutContact(session_id, "powercut") : null;
+  const initialSale = await getSaleStatus();
 
   return (
     <div className="min-h-screen bg-white text-[var(--primary)]">
@@ -79,6 +82,11 @@ export default async function ThankYouPage({
             </div>
           </Container>
         </Section>
+
+        {/* Sale: add-on vials at 40% off for this verified POWER CUT order */}
+        {contact && initialSale.live && (
+          <PowerCutAddonOffer sessionId={contact.sessionId} initialSale={initialSale} />
+        )}
 
         {/* SMS support opt-in — only when Stripe has name, email and phone */}
         {isCompleteContact(contact) && (

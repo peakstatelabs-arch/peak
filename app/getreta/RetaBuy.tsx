@@ -5,7 +5,7 @@ import { RetaBundlePicker } from "./RetaBundlePicker";
 import { TIERS } from "./retaBundles";
 import { CrossSellStrip } from "@/app/singles/cart/CrossSellStrip";
 import { BUYBOX_CROSSSELL_SLUGS } from "@/app/singles/cart/crossSell";
-import type { SaleStatus } from "@/app/lib/sale";
+import type { SaleStatus } from "@/app/lib/useSaleStatus";
 
 export function RetaBuy({ initialSale }: { initialSale?: SaleStatus }) {
   const [selected, setSelected] = useState(2); // default: two-vial (most popular)

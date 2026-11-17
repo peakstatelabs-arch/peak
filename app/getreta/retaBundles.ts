@@ -1,6 +1,6 @@
 import { SINGLES_PRICE_IDS } from "@/app/singles/cart/priceCatalog";
 import { BULK_DISCOUNTS_LIVE, bulkPctForQty } from "@/app/lib/bulkDiscount";
-import { retaSaleTotalCents } from "@/app/lib/sale";
+import { pctOff, salePctForLines } from "@/app/lib/sale";
 
 // ── Reta product (mirrors the Stripe Price + /singles catalog) ──────────────
 export const RETA = {
@@ -56,10 +56,11 @@ export const TIERS: Tier[] = [
 
 export function tierPricing(tier: Tier, saleActive = false) {
   const full = tier.vials * RETA.unitPriceCents;
-  // Temporary sale (1 and 2 vials): fixed price, no bulk discount on top.
-  const sale = saleActive ? retaSaleTotalCents(tier.vials) : null;
-  if (sale !== null) {
-    return { full, discounted: sale, live: true, saves: full - sale, pct: 0, onSale: true };
+  // Black Friday: the sale ladder (1 vial alone 20%, 2–3 vials 30%).
+  if (saleActive) {
+    const pct = salePctForLines([{ priceId: RETA.priceId, quantity: tier.vials }]);
+    const discounted = pctOff(full, pct);
+    return { full, discounted, live: pct > 0, saves: full - discounted, pct, onSale: true };
   }
   const pct = bulkPctForQty(tier.vials);
   const live = BULK_DISCOUNTS_LIVE && pct > 0;

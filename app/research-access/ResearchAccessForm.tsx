@@ -5,8 +5,11 @@ import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
 import { acknowledgeDisclaimer } from "@/app/lib/disclaimer";
 import { TrackedLink } from "@/app/components/TrackedLink";
+import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
+import { SALE_NAME } from "@/app/lib/sale";
 import { useWelcomeDestination } from "@/app/lib/welcomeExperiment";
 import { MEMBER_DISCOUNT_CODE, SHOP_URL } from "./constants";
+import { markGateRequired } from "@/app/components/sale/MembersGate";
 
 type Tab = "create" | "signin";
 
@@ -36,7 +39,8 @@ function track(event: string, props?: Record<string, string>) {
   }
 }
 
-export function ResearchAccessForm() {
+export function ResearchAccessForm({ initialSale }: { initialSale?: SaleStatus }) {
+  const sale = useSaleStatus(initialSale);
   const [tab, setTab] = useState<Tab>("create");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -62,6 +66,11 @@ export function ResearchAccessForm() {
     memberCount,
     getServerMemberCount
   );
+
+  // During the sale, a new member goes straight to the sale page.
+  useEffect(() => {
+    if (unlocked && sale.live) window.location.assign("/");
+  }, [unlocked, sale.live]);
 
   // The success card is much shorter than the form, so bring it into view.
   useEffect(() => {
@@ -185,6 +194,26 @@ export function ResearchAccessForm() {
   const cardClass =
     "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
 
+  if (unlocked && sale.live) {
+    return (
+      <div className={`${cardClass} text-center`}>
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--primary)]">
+          You&rsquo;re in! 🎉
+        </h2>
+        <p className="mt-2 text-sm text-[var(--primary)]/70">
+          Unlocking your {SALE_NAME[sale.phase]} pricing&hellip;
+        </p>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- full page load so middleware serves the sale page */}
+        <a
+          href="/"
+          className="btn-primary mt-6 inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold"
+        >
+          Shop the sale <span aria-hidden="true" className="ml-2">→</span>
+        </a>
+      </div>
+    );
+  }
+
   if (unlocked) {
     return (
       <div ref={cardRef} className={`${cardClass} text-center`}>
@@ -252,9 +281,13 @@ export function ResearchAccessForm() {
           href={SHOP_URL}
           event="research_access_skip"
           eventProperties={{ placement: "top" }}
+          onClick={() => {
+            if (sale.live) markGateRequired();
+          }}
           className="whitespace-nowrap font-bold text-[var(--primary)] underline underline-offset-2"
         >
-          Continue to shop <span aria-hidden="true">→</span>
+          {sale.live ? "Continue without sale access" : "Continue to shop"}{" "}
+          <span aria-hidden="true">→</span>
         </TrackedLink>
       </p>
 
@@ -389,7 +422,11 @@ export function ResearchAccessForm() {
               className="btn-primary inline-flex w-full min-h-14 items-center justify-center rounded-2xl px-4 py-3 text-base sm:text-lg font-semibold leading-tight disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {/* Non-breaking spaces keep "Get 10% Off" together on small phones. */}
-              {submitting ? "Creating account..." : "Create Account & Get 10% Off"}
+              {submitting
+                ? "Creating account..."
+                : sale.live
+                  ? "Create Account & Unlock Sale Pricing"
+                  : "Create Account & Get 10% Off"}
             </button>
             <p className="mt-3 text-center text-xs text-[var(--primary)]/50 leading-relaxed">
               Free · takes 10 seconds · we never share your email.
@@ -486,9 +523,13 @@ export function ResearchAccessForm() {
         href={SHOP_URL}
         event="research_access_skip"
         eventProperties={{ placement: "bottom" }}
+        onClick={() => {
+          if (sale.live) markGateRequired();
+        }}
         className="mt-4 flex w-full min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-[var(--primary)] bg-white px-4 py-3 text-base sm:text-lg font-semibold text-[var(--primary)] shadow-sm transition-colors hover:bg-[var(--muted)]"
       >
-        Continue without discount <span aria-hidden="true">→</span>
+        {sale.live ? "Continue without sale access" : "Continue without discount"}{" "}
+        <span aria-hidden="true">→</span>
       </TrackedLink>
     </div>
   );

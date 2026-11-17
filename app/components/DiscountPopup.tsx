@@ -1,5 +1,6 @@
 "use client";
 
+import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 function getCookie(name: string): string | null {
@@ -20,7 +21,7 @@ const SEEN_COOKIE = "powercut_code_seen";
 const DELAY_MS = 8000; // fallback trigger (mobile has no exit-intent)
 const SCROLL_PCT = 0.35;
 
-export function DiscountPopup() {
+function DiscountPopupInner() {
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState<"form" | "loading" | "done" | "error">(
     "form",
@@ -248,4 +249,11 @@ export function DiscountPopup() {
       </div>
     </div>
   );
+}
+
+/** Hidden during the Black Friday / Cyber Monday sale (the 10% code is moot). */
+export function DiscountPopup() {
+  const sale = useSaleStatus();
+  if (sale.live) return null;
+  return <DiscountPopupInner />;
 }

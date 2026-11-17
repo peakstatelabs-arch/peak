@@ -7,6 +7,7 @@ import { AddToCartButton } from "@/app/singles/cart/AddToCartButton";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
 import { TrackedLink } from "@/app/components/TrackedLink";
 import { SalePriceInline } from "@/app/components/SalePrice";
+import { formatUsd } from "@/app/lib/money";
 import { safeFirstName } from "@/app/lib/clientContact";
 import {
   type QuizAnswers,
@@ -153,12 +154,13 @@ function StackContents() {
             <div className="flex items-center justify-between">
               <span>Your POWER CUT™ price</span>
               <span className="text-xl font-extrabold text-[var(--primary)]">
-                {pc.price}
+                {formatUsd(pc.priceCents)}
               </span>
             </div>
           </div>
           <p className="mt-3 inline-flex w-fit items-center rounded-full bg-[var(--accent)] px-3 py-1 text-sm font-extrabold text-[var(--primary)]">
-            You save {pc.savings}
+            You save {formatUsd(pc.valueCents - pc.priceCents)} (
+            {Math.round(((pc.valueCents - pc.priceCents) / pc.valueCents) * 100)}% off)
           </p>
           <p className="mt-4 text-sm text-[var(--primary)]/70 leading-relaxed">
             Bundled and sequenced so the three peptides compound instead of
@@ -363,7 +365,7 @@ function AddOnCard({
             <p className="font-bold text-[var(--primary)]">{name}</p>
             <p className="font-bold text-[var(--primary)]">
               {slug === "retatrutide" ? (
-                <SalePriceInline kind="reta" list={price} sale="$165" />
+                <SalePriceInline list={price} sale="$172" />
               ) : (
                 price
               )}
@@ -440,7 +442,7 @@ function StackDownsell({
             <p className="mt-2 text-sm font-semibold text-[var(--primary)]">
               From{" "}
               {single.slug === "retatrutide" ? (
-                <SalePriceInline kind="reta" list={single.price} sale="$165" />
+                <SalePriceInline list={single.price} sale="$172" />
               ) : (
                 single.price
               )}{" "}
@@ -596,9 +598,8 @@ export function QuizResults({
                   <span className="text-3xl font-extrabold text-[var(--primary)]">
                     {recommendation.primary.slug === "retatrutide" ? (
                       <SalePriceInline
-                        kind="reta"
                         list={recommendation.primary.price}
-                        sale="$165"
+                        sale="$172"
                       />
                     ) : (
                       recommendation.primary.price

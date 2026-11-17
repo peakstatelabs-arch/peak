@@ -1,5 +1,6 @@
 "use client";
 
+import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import posthog from "posthog-js";
@@ -29,7 +30,7 @@ function track(event: string, props?: Record<string, string>) {
  * bar while scrolling. It publishes its height as --member-banner-h so anchor
  * jumps and other sticky elements can clear it.
  */
-export function MemberBanner({
+function MemberBannerInner({
   page,
   leadSource,
 }: {
@@ -142,4 +143,11 @@ export function MemberBanner({
         )}
     </>
   );
+}
+
+/** Hidden during the Black Friday / Cyber Monday sale (the 10% code is moot). */
+export function MemberBanner(props: Parameters<typeof MemberBannerInner>[0]) {
+  const sale = useSaleStatus();
+  if (sale.live) return null;
+  return <MemberBannerInner {...props} />;
 }

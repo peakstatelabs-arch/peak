@@ -9,7 +9,8 @@ import { AddToCartButton } from "./cart/AddToCartButton";
 import { SourceBackLink } from "@/app/components/SourceBackLink";
 import { SINGLES_PRICE_IDS, type SinglesProductSlug } from "./cart/priceCatalog";
 import { BULK_DISCOUNTS_LIVE, BULK_TIERS } from "@/app/lib/bulkDiscount";
-import { saleStatus } from "@/app/lib/sale";
+import { getSaleStatus } from "@/app/lib/salePhaseServer";
+import { SALE_NAME } from "@/app/lib/sale";
 import { RetaCardBuy } from "./cart/RetaCardBuy";
 import { SaleBar } from "@/app/components/SaleUrgency";
 
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
     "Individual research peptides from Peak State Labs — Retatrutide, CJC-1295 + Ipamorelin, BPC-157 + TB-500, GHK-Cu, KPV, and NAD+. Lab-tested 99%+ purity with single-vial options and protocol guidance.",
 };
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 const STOCK_EPOCH_MS = Date.UTC(2026, 4, 1);
 
@@ -203,15 +204,15 @@ function PlaceholderImage({ label }: { label: string }) {
   );
 }
 
-export default function SinglesCatalog() {
-  const initialSale = saleStatus();
+export default async function SinglesCatalog() {
+  const initialSale = await getSaleStatus();
   return (
     <CartProvider>
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
           {/* Limited-time sale bar — pinned with the header */}
-          <SaleBar kind="reta" href="#retatrutide" initial={initialSale} />
+          <SaleBar href="/buildyourstack" initial={initialSale} />
           <Container className="flex h-16 items-center justify-between">
             <a href="/" className="flex items-center gap-2 font-bold text-lg">
               <img
@@ -285,7 +286,26 @@ export default function SinglesCatalog() {
           {/* Product Grid */}
           <Section className="bg-white !pt-8 sm:!pt-12">
             <Container>
-              {BULK_DISCOUNTS_LIVE && (
+              {initialSale.live ? (
+                <div className="mb-8 rounded-2xl border-2 border-[var(--accent)] bg-[#0b0f1a] px-5 py-5 text-center text-white">
+                  <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--accent)]">
+                    {SALE_NAME[initialSale.phase]} sale — mix &amp; match any vials
+                  </p>
+                  <p className="mt-2 text-lg sm:text-xl font-extrabold">
+                    2 vials 30% off · 4 vials 35% off · 6+ vials 40% off
+                  </p>
+                  <p className="mt-1 text-sm text-white/70">
+                    Every vial in your cart counts. A single Retatrutide vial is
+                    20% off on its own. Applied automatically at checkout.
+                  </p>
+                  <a
+                    href="/buildyourstack"
+                    className="mt-4 inline-flex items-center justify-center rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-extrabold text-[var(--primary)] hover:opacity-90"
+                  >
+                    Build your own stack &amp; save →
+                  </a>
+                </div>
+              ) : BULK_DISCOUNTS_LIVE ? (
                 <div className="mb-8 rounded-2xl border border-[var(--accent)]/40 bg-[var(--accent)]/10 px-5 py-4 text-center">
                   <p className="text-sm font-bold text-[var(--primary)]">
                     Buy more of the same product, save more —{" "}
@@ -299,7 +319,7 @@ export default function SinglesCatalog() {
                     checkout.
                   </p>
                 </div>
-              )}
+              ) : null}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 {products.map((product) => (
                   <div
@@ -436,9 +456,11 @@ export default function SinglesCatalog() {
                                       {product.price}
                                     </p>
                                   </div>
-                                  {BULK_DISCOUNTS_LIVE && (
+                                  {(initialSale.live || BULK_DISCOUNTS_LIVE) && (
                                     <span className="inline-flex items-center rounded-full bg-[var(--accent)]/15 px-2.5 py-1 text-[11px] font-bold text-[var(--accent-dark)]">
-                                      Buy 2+, save up to {BULK_MAX_PCT}%
+                                      {initialSale.live
+                                        ? "Stack 2+ vials, save up to 40%"
+                                        : `Buy 2+, save up to ${BULK_MAX_PCT}%`}
                                     </span>
                                   )}
                                 </div>
@@ -466,9 +488,11 @@ export default function SinglesCatalog() {
                               {product.price}
                             </p>
                           </div>
-                          {BULK_DISCOUNTS_LIVE && (
+                          {(initialSale.live || BULK_DISCOUNTS_LIVE) && (
                             <span className="inline-flex items-center rounded-full bg-[var(--accent)]/15 px-2.5 py-1 text-[11px] font-bold text-[var(--accent-dark)]">
-                              Buy 2+, save up to {BULK_MAX_PCT}%
+                              {initialSale.live
+                                ? "Stack 2+ vials, save up to 40%"
+                                : `Buy 2+, save up to ${BULK_MAX_PCT}%`}
                             </span>
                           )}
                         </div>

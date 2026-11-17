@@ -153,12 +153,12 @@ export const siteCopy = {
     diy: {
       title: "DIY Sourcing",
       items: [
-        { name: "Retatrutide 20mg (2 vials)", price: "$450+" },
-        { name: "CJC-1295 + Ipamorelin 10mg blend (2 vials)", price: "$180+" },
-        { name: "BPC-157 + TB-500 20mg blend (2 vials)", price: "$300+" },
+        { name: "Retatrutide 20mg (2 vials)", price: "$430" },
+        { name: "CJC-1295 + Ipamorelin 10mg blend (2 vials)", price: "$210" },
+        { name: "BPC-157 + TB-500 20mg blend (2 vials)", price: "$290" },
       ],
       cons: ["Guesswork and confusion", "You're on your own"],
-      total: "$900+",
+      total: "$930",
     },
     powercut: {
       title: "The POWER CUT\u2122 Solution",
@@ -168,8 +168,9 @@ export const siteCopy = {
         { name: "BPC-157 + TB-500 20mg blend (2 vials)", price: "INCLUDED" },
       ],
       pros: ["Step-by-step proven system", "Private community and support"],
-      price: "$599",
-      savings: "$300+",
+      // Singles total vs the one-stack price (sale price swaps in during the sale).
+      valueCents: 93000,
+      priceCents: 59900,
     },
   },
 

@@ -44,8 +44,38 @@ export const CROSS_SELL: Record<string, CrossSellItem> = {
     image: "/bpc-tb-product.png",
     blurb: "Joint, tendon & tissue repair",
   },
+  kpv: {
+    slug: "kpv",
+    priceId: SINGLES_PRICE_IDS.kpv,
+    name: "KPV",
+    dose: "10mg",
+    unitPriceCents: 6500,
+    priceLabel: "$65",
+    image: "/kpv-product.png",
+    blurb: "Gut health & calm inflammation",
+  },
+  nad: {
+    slug: "nad",
+    priceId: SINGLES_PRICE_IDS.nad,
+    name: "NAD+",
+    dose: "500mg",
+    unitPriceCents: 13500,
+    priceLabel: "$135",
+    image: "/NAD%20Vial%20Brown.png",
+    blurb: "Cellular energy & focus",
+  },
+  retatrutide: {
+    slug: "retatrutide",
+    priceId: SINGLES_PRICE_IDS.retatrutide,
+    name: "Retatrutide",
+    dose: "20mg",
+    unitPriceCents: 21500,
+    priceLabel: "$215",
+    image: "/reta-product.png",
+    blurb: "Fat loss & appetite control",
+  },
 };
 
 // Cart drawer shows all three; the reta buy box shows the first two.
-export const CART_CROSSSELL_SLUGS = ["ghk-cu", "cjc-ipamorelin", "bpc-tb500"];
+export const CART_CROSSSELL_SLUGS = ["ghk-cu", "cjc-ipamorelin", "bpc-tb500", "nad", "kpv"];
 export const BUYBOX_CROSSSELL_SLUGS = ["cjc-ipamorelin", "bpc-tb500"];

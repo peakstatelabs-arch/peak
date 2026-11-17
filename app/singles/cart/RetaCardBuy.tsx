@@ -2,8 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { SaleBanner } from "@/app/components/SalePrice";
-import { useSaleStatus } from "@/app/lib/useSaleStatus";
-import type { SaleStatus } from "@/app/lib/sale";
+import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { TIERS, tierPricing } from "@/app/getreta/retaBundles";
 import { AddToCartButton } from "./AddToCartButton";
 import { formatUsd } from "./CartContext";
@@ -25,7 +24,7 @@ type Props = {
  * the sale prices; otherwise it renders the standard single-vial block.
  */
 export function RetaCardBuy({ initial, fallback, ...product }: Props) {
-  const saleActive = useSaleStatus(initial).reta;
+  const saleActive = useSaleStatus(initial).live;
   const [selected, setSelected] = useState(1);
 
   if (!saleActive) return <>{fallback}</>;
@@ -33,7 +32,7 @@ export function RetaCardBuy({ initial, fallback, ...product }: Props) {
   return (
     <div>
       <div className="mb-3 text-center">
-        <SaleBanner kind="reta" initial={initial} />
+        <SaleBanner initial={initial} />
       </div>
 
       <div role="radiogroup" aria-label="Choose quantity" className="grid gap-2">
@@ -88,7 +87,7 @@ export function RetaCardBuy({ initial, fallback, ...product }: Props) {
                   </span>
                 </span>
                 <span className="mt-0.5 inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
-                  Save {formatUsd(p.saves)}
+                  Save {formatUsd(p.saves)} ({p.pct}%)
                 </span>
               </span>
             </button>
@@ -100,7 +99,7 @@ export function RetaCardBuy({ initial, fallback, ...product }: Props) {
         <AddToCartButton {...product} quantity={selected} />
       </div>
       <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
-        Sale price applied automatically at checkout — no code needed.
+        Sale price applied automatically at checkout — no code needed. Mix in any other vial to unlock up to 40% off.
       </p>
     </div>
   );

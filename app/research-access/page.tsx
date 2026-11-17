@@ -3,6 +3,10 @@ import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { ResearchAccessForm } from "./ResearchAccessForm";
+import { getSaleStatus } from "@/app/lib/salePhaseServer";
+import { SALE_NAME } from "@/app/lib/sale";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: `Peak State Labs — Research Access`,
@@ -16,7 +20,8 @@ const stats: { value: string; label: string }[] = [
   { value: "6", label: "Research Compounds" },
 ];
 
-export default function ResearchAccessPage() {
+export default async function ResearchAccessPage() {
+  const initialSale = await getSaleStatus();
   return (
     <div className="min-h-screen bg-white text-[var(--primary)]">
       {/* Header */}
@@ -60,26 +65,43 @@ export default function ResearchAccessPage() {
 
               {/* Eyebrow */}
               <div className="mt-6 flex justify-center">
-                <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent)]/15 px-4 py-2 text-xs sm:text-sm font-bold tracking-[0.18em] text-[var(--accent-dark)]">
-                  <span className="h-2 w-2 rounded-full bg-[var(--accent)] animate-pulse-slow" />
-                  <span>MEMBERS SAVE 10%</span>
+                <div className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs sm:text-sm font-bold tracking-[0.18em] ${initialSale.live ? "bg-[#0b0f1a] text-[var(--accent)]" : "border border-[var(--accent)]/40 bg-[var(--accent)]/15 text-[var(--accent-dark)]"}`}>
+                  <span className={`h-2 w-2 rounded-full ${initialSale.live ? "bg-red-500 animate-ping" : "bg-[var(--accent)] animate-pulse-slow"}`} />
+                  <span>{initialSale.live ? `${SALE_NAME[initialSale.phase].toUpperCase()} IS LIVE` : "MEMBERS SAVE 10%"}</span>
                 </div>
               </div>
 
               {/* Headline */}
-              <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] animate-fade-in-up">
-                Access {siteCopy.brand.name}
-              </h1>
+              {initialSale.live ? (
+                <>
+                  <h1 className="mt-5 text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.0] animate-fade-in-up">
+                    Up To 60% Off.
+                  </h1>
+                  <p className="mt-4 text-xl sm:text-2xl font-bold tracking-tight text-[var(--accent-dark)]">
+                    Create your free account to unlock sale pricing.
+                  </p>
+                  <p className="mt-3 text-base text-[var(--primary)]/70 leading-relaxed">
+                    Our biggest sale ever is members-only. It takes 10 seconds —
+                    then we&rsquo;ll build your stack.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05] animate-fade-in-up">
+                    Access {siteCopy.brand.name}
+                  </h1>
 
-              <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed">
-                Create your free account and get 10% off your order — or
-                continue to the catalog.
-              </p>
+                  <p className="mt-5 text-base sm:text-lg text-[var(--primary)]/70 leading-relaxed">
+                    Create your free account and get 10% off your order — or
+                    continue to the catalog.
+                  </p>
+                </>
+              )}
             </div>
 
             {/* Account form — placed first so the ask is above the fold */}
             <div className="max-w-md mx-auto mt-8 text-left">
-              <ResearchAccessForm />
+              <ResearchAccessForm initialSale={initialSale} />
             </div>
 
             {/* Trust info — below the form as supporting reinforcement */}

@@ -4,11 +4,11 @@ import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { DiscountPopup } from "@/app/components/DiscountPopup";
 import { highlightStats } from "@/content/reviews";
-import { saleStatus } from "@/app/lib/sale";
+import { getSaleStatus } from "@/app/lib/salePhaseServer";
 import { SaleBanner } from "@/app/components/SalePrice";
 
-// Re-render often so the server-evaluated sale state flips soon after expiry.
-export const revalidate = 60;
+// Rendered per request: the sale state depends on the clock + preview cookie.
+export const dynamic = "force-dynamic";
 
 function StarRating({ className = "" }: { className?: string }) {
   return (
@@ -72,8 +72,8 @@ function SectionDivider() {
   );
 }
 
-export default function PowerCutProtocol() {
-  const initialSale = saleStatus();
+export default async function PowerCutProtocol() {
+  const initialSale = await getSaleStatus();
   return (
     <div className="min-h-screen bg-white text-[var(--primary)]">
       {/* Header */}
@@ -358,7 +358,7 @@ export default function PowerCutProtocol() {
                   This is synergy over volume.
                 </p>
                 <div>
-                  <SaleBanner kind="powerCut" initial={initialSale} className="mt-8" />
+                  <SaleBanner initial={initialSale} className="mt-8" />
                 </div>
                 <a
                   href="/research-access"

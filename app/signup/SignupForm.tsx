@@ -5,6 +5,8 @@ import posthog from "posthog-js";
 import { saveClientContact } from "@/app/lib/clientContact";
 import { acknowledgeDisclaimer } from "@/app/lib/disclaimer";
 import { TrackedLink } from "@/app/components/TrackedLink";
+import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
+import { SALE_NAME } from "@/app/lib/sale";
 import { useWelcomeDestination } from "@/app/lib/welcomeExperiment";
 import { MEMBER_DISCOUNT_CODE } from "@/app/research-access/constants";
 
@@ -42,7 +44,8 @@ function track(event: string, props?: Record<string, string>) {
  * catalog — creating an account (or signing in) is the only path forward.
  * Create-account first, with a small "Already a member? Sign in" link.
  */
-export function SignupForm() {
+export function SignupForm({ initialSale }: { initialSale?: SaleStatus }) {
+  const sale = useSaleStatus(initialSale);
   const [view, setView] = useState<Method>("create");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -65,6 +68,11 @@ export function SignupForm() {
     memberCount,
     getServerMemberCount
   );
+
+  // During the sale, a new member goes straight to the sale page.
+  useEffect(() => {
+    if (unlocked && sale.live) window.location.assign("/");
+  }, [unlocked, sale.live]);
 
   // The success card is much shorter than the form, so bring it into view.
   useEffect(() => {
@@ -158,6 +166,26 @@ export function SignupForm() {
   const labelClass = "block text-sm font-bold text-[var(--primary)]";
   const cardClass =
     "p-6 sm:p-8 rounded-3xl border border-[var(--border)] bg-white shadow-sm";
+
+  if (unlocked && sale.live) {
+    return (
+      <div className={`${cardClass} text-center`}>
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--primary)]">
+          You&rsquo;re in! 🎉
+        </h2>
+        <p className="mt-2 text-sm text-[var(--primary)]/70">
+          Unlocking your {SALE_NAME[sale.phase]} pricing&hellip;
+        </p>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- full page load so middleware serves the sale page */}
+        <a
+          href="/"
+          className="btn-primary mt-6 inline-flex w-full h-14 items-center justify-center rounded-2xl px-6 text-lg font-semibold"
+        >
+          Shop the sale <span aria-hidden="true" className="ml-2">→</span>
+        </a>
+      </div>
+    );
+  }
 
   if (unlocked) {
     return (
@@ -338,7 +366,9 @@ export function SignupForm() {
               ? "Sign in"
               : submitting
                 ? "Creating account..."
-                : "Create Account & Get 10% Off"}
+                : sale.live
+                  ? "Create Account & Unlock Sale Pricing"
+                  : "Create Account & Get 10% Off"}
           </button>
           {view === "create" && (
             <p className="mt-3 text-center text-xs text-[var(--primary)]/50 leading-relaxed">

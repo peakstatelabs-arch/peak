@@ -6,6 +6,8 @@ import { readClientContact } from "@/app/lib/clientContact";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import { bulkPctForQty, BULK_DISCOUNTS_LIVE } from "@/app/lib/bulkDiscount";
 import { CrossSellStrip } from "@/app/singles/cart/CrossSellStrip";
+import { pctOff, salePctForLines } from "@/app/lib/sale";
+import { useSaleStatus } from "@/app/lib/useSaleStatus";
 
 export type BundleItem = Omit<CartLine, "quantity">;
 
@@ -34,7 +36,7 @@ export type BundleTier = {
  * Prices a tier the same way checkout will: list price, minus the bulk tier
  * unlocked by the highest quantity of any one product (see bulkDiscount.ts).
  */
-export function bundlePricing(tier: BundleTier) {
+export function bundlePricing(tier: BundleTier, saleLive = false) {
   const lineCents = tier.lines.reduce(
     (sum, l) => sum + l.item.unitPriceCents * l.quantity,
     0,
@@ -50,6 +52,14 @@ export function bundlePricing(tier: BundleTier) {
     };
   }
   const full = lineCents;
+  if (saleLive) {
+    // Black Friday: the vial ladder on this tier's vials.
+    const sp = salePctForLines(
+      tier.lines.map((l) => ({ priceId: l.item.priceId, quantity: l.quantity })),
+    );
+    const discounted = pctOff(full, sp);
+    return { full, discounted, live: sp > 0, saves: full - discounted, pct: sp };
+  }
   const pct = bulkPctForQty(Math.max(...tier.lines.map((l) => l.quantity)));
   const live = BULK_DISCOUNTS_LIVE && pct > 0;
   const discounted = live ? Math.round(full * (1 - pct / 100)) : full;
@@ -84,7 +94,8 @@ export function BundleBuyBox({
   const { addItem, openCart } = useCart();
   const [selected, setSelected] = useState(defaultTierId);
   const tier = tiers.find((t) => t.id === selected) ?? tiers[0];
-  const { discounted, live, saves, pct } = bundlePricing(tier);
+  const saleLive = useSaleStatus().live;
+  const { discounted, live, saves, pct } = bundlePricing(tier, saleLive);
 
   function handleAdd() {
     for (const { item, quantity } of tier.lines) {
@@ -152,7 +163,7 @@ export function BundleBuyBox({
         <div className="rounded-3xl border border-[var(--border)] bg-white p-5 sm:p-6 shadow-sm">
           <div className={`grid gap-3 ${tiers.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
             {tiers.map((t) => {
-              const p = bundlePricing(t);
+              const p = bundlePricing(t, saleLive);
               const isActive = t.id === selected;
               return (
                 <button
@@ -273,7 +284,9 @@ export function BundleBuyBox({
             </div>
           ) : live ? (
             <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
-              Bulk discount applied automatically at checkout — no code needed.
+              {saleLive
+                ? "Sale price applied automatically at checkout. Add more vials of anything to unlock up to 40% off."
+                : "Bulk discount applied automatically at checkout — no code needed."}
             </p>
           ) : null}
         </div>

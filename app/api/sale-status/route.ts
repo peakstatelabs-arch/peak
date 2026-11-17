@@ -1,22 +1,21 @@
 import { NextResponse } from "next/server";
-import {
-  RETA_SALE_CUTOFF_MS,
-  SALE_ENDS_AT_MS,
-  saleStatus,
-} from "@/app/lib/sale";
+import { isSaleLive, phaseEndsAtMs } from "@/app/lib/sale";
+import { getSalePhase } from "@/app/lib/salePhaseServer";
 
 export const dynamic = "force-dynamic";
 
-// Server-clock sale state for the client UI. Display only — the checkout
-// route re-evaluates the sale itself and never trusts the browser. `serverNow`
-// lets countdowns run off the server's clock instead of the visitor's.
+// Server-clock sale state for the client UI (honours the preview cookie).
+// Display only — the checkout route re-evaluates the sale itself and never
+// trusts the browser. `serverNow` lets countdowns run off the server's clock.
 export async function GET() {
   const now = Date.now();
+  const phase = await getSalePhase();
   return NextResponse.json(
     {
-      ...saleStatus(now),
+      phase,
+      live: isSaleLive(phase),
       serverNow: now,
-      endsAt: { reta: RETA_SALE_CUTOFF_MS, powerCut: SALE_ENDS_AT_MS },
+      endsAt: phaseEndsAtMs(phase),
     },
     { headers: { "Cache-Control": "no-store" } },
   );

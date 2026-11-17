@@ -6,6 +6,7 @@ import { DisclaimerModal } from "@/app/components/DisclaimerModal";
 import { FloatingCTA } from "@/app/components/FloatingCTA";
 import { PostHogInit } from "@/app/components/PostHogInit";
 import { IdentityFromUrl } from "@/app/components/IdentityFromUrl";
+import { GlobalSaleBar } from "@/app/components/SaleUrgency";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -51,6 +52,7 @@ export default function RootLayout({
         <PostHogInit />
         <IdentityFromUrl />
         <DisclaimerModal />
+        <GlobalSaleBar />
         {children}
         <FloatingCTA />
       </body>

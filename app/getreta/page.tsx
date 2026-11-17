@@ -9,13 +9,13 @@ import { CartDrawer } from "@/app/singles/cart/CartDrawer";
 import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
 import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { RetaBuy } from "./RetaBuy";
-import { saleStatus } from "@/app/lib/sale";
+import { getSaleStatus } from "@/app/lib/salePhaseServer";
 import { SalePriceInline } from "@/app/components/SalePrice";
 import { SaleBar } from "@/app/components/SaleUrgency";
 import { CoaSection } from "@/app/components/productPage/ProductPageParts";
 
-// Re-render often so the server-evaluated sale state flips soon after expiry.
-export const revalidate = 60;
+// Rendered per request: the sale state depends on the clock + preview cookie.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Buy Retatrutide (20mg) — Lab-Tested, Ships in 24h | Peak State Labs",
@@ -149,15 +149,15 @@ function TrustItem({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function GetRetaPage() {
-  const initialSale = saleStatus();
+export default async function GetRetaPage() {
+  const initialSale = await getSaleStatus();
   return (
     <CartProvider>
       <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
           {/* Limited-time sale bar — pinned with the header */}
-          <SaleBar kind="reta" href="#buy" initial={initialSale} />
+          <SaleBar href="#buy" cta="Shop the sale" initial={initialSale} />
           <Container className="flex h-16 items-center justify-between">
             {/* Not a link: keeps paid traffic on /getreta instead of the homepage */}
             <div className="flex items-center gap-2 font-bold text-lg">
@@ -509,9 +509,8 @@ export default function GetRetaPage() {
                     </h3>
                     <p className="mt-1 text-3xl font-extrabold text-[var(--primary)]">
                       <SalePriceInline
-                        kind="reta"
                         list="$215"
-                        sale="$165"
+                        sale="$172"
                         initial={initialSale}
                       />
                       <span className="text-base font-semibold text-[var(--primary)]/50">
@@ -555,9 +554,8 @@ export default function GetRetaPage() {
                     </h3>
                     <p className="mt-1 text-3xl font-extrabold text-[var(--primary)]">
                       <SalePriceInline
-                        kind="powerCut"
                         list="$599"
-                        sale="$499"
+                        sale="$449"
                         initial={initialSale}
                       />
                       <span className="text-base font-semibold text-[var(--primary)]/50">

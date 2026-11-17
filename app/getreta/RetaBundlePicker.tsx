@@ -6,7 +6,7 @@ import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import { RETA, TIERS, tierPricing } from "./retaBundles";
 import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { SaleBanner } from "@/app/components/SalePrice";
-import type { SaleStatus } from "@/app/lib/sale";
+import type { SaleStatus } from "@/app/lib/useSaleStatus";
 
 type Props = {
   /** Server-evaluated sale state, so the first paint matches the server clock. */
@@ -18,7 +18,7 @@ type Props = {
 
 export function RetaBundlePicker({ selected, onSelect, initialSale }: Props) {
   const { addItem, openCart } = useCart();
-  const saleActive = useSaleStatus(initialSale).reta;
+  const saleActive = useSaleStatus(initialSale).live;
 
   const tier = TIERS.find((t) => t.vials === selected) ?? TIERS[0];
   const { discounted, live, onSale } = tierPricing(tier, saleActive);
@@ -80,7 +80,7 @@ export function RetaBundlePicker({ selected, onSelect, initialSale }: Props) {
     <div className="rounded-3xl border border-[var(--border)] bg-white p-5 sm:p-6 shadow-sm">
       {saleActive ? (
         <div className="mb-4 text-center">
-          <SaleBanner kind="reta" initial={initialSale} />
+          <SaleBanner initial={initialSale} />
         </div>
       ) : null}
 
@@ -157,8 +157,7 @@ export function RetaBundlePicker({ selected, onSelect, initialSale }: Props) {
                 </span>
                 {p.live && p.saves > 0 ? (
                   <span className="mt-1 inline-flex items-center whitespace-nowrap rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
-                    Save {formatUsd(p.saves)}
-                    {p.onSale ? "" : ` · ${p.pct}%`}
+                    Save {formatUsd(p.saves)} · {p.pct}%
                   </span>
                 ) : (
                   <span className="mt-1 text-xs font-medium text-[var(--primary)]/50">
@@ -197,7 +196,7 @@ export function RetaBundlePicker({ selected, onSelect, initialSale }: Props) {
       {live ? (
         <p className="mt-2 text-center text-xs font-semibold text-[var(--accent-dark)]">
           {onSale
-            ? "Sale price applied automatically at checkout — no code needed."
+            ? "Sale price applied automatically at checkout — no code needed. Add any other vial to unlock up to 40% off."
             : "Bulk discount applied automatically at checkout — no code needed."}
         </p>
       ) : null}

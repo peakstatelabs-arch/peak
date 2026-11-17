@@ -11,15 +11,22 @@ import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { ShippingNoteText } from "@/app/components/ShippingNoteText";
 import { siteCopy } from "@/content/siteCopy";
 import { MemberBanner } from "@/app/components/member/MemberBanner";
-import { saleStatus } from "@/app/lib/sale";
+import { getSaleStatus } from "@/app/lib/salePhaseServer";
+import { POWERCUT_SALE, SALE_NAME } from "@/app/lib/sale";
+import { formatUsd } from "@/app/lib/money";
 import { SaleBanner } from "@/app/components/SalePrice";
 import { SaleBar } from "@/app/components/SaleUrgency";
 
-// Re-render often so the server-evaluated sale state flips soon after expiry.
-export const revalidate = 60;
+// Rendered per request: the sale state depends on the clock + preview cookie.
+export const dynamic = "force-dynamic";
 
-export default function Home() {
-  const initialSale = saleStatus();
+export default async function Home() {
+  const initialSale = await getSaleStatus();
+  // DIY-vs-stack comparison: one POWER CUT™ stack vs the same vials as singles.
+  const cmp = siteCopy.comparison.powercut;
+  const cmpPriceCents = initialSale.live
+    ? POWERCUT_SALE.single.saleCents
+    : cmp.priceCents;
   return (
     <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
       {/* Urgency Banner */}
@@ -37,7 +44,7 @@ export default function Home() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
         {/* Limited-time sale bar — pinned with the header */}
-        <SaleBar kind="powerCut" href="#pricing" initial={initialSale} />
+        <SaleBar href="/buildyourstack" cta="Build your own stack &amp; save" initial={initialSale} />
         <Container className="flex h-16 items-center justify-between">
           <a href="#top" className="flex items-center gap-2 font-bold text-lg">
             <img
@@ -623,15 +630,25 @@ export default function Home() {
                     ))}
                   </div>
                   <div className="mt-6 pt-6 border-t border-white/20">
-                    <div className="flex justify-between items-center">
-                      <span className="font-semibold">Your Exclusive Price:</span>
-                      <span className="text-3xl font-bold text-[var(--accent)]">
-                        {siteCopy.comparison.powercut.price}
+                    <div className="flex justify-between items-center gap-3">
+                      <span className="font-semibold">
+                        {initialSale.live
+                          ? `${SALE_NAME[initialSale.phase]} Price:`
+                          : "Your Exclusive Price:"}
+                      </span>
+                      <span className="text-3xl font-bold text-[var(--accent)] tabular-nums">
+                        {initialSale.live && (
+                          <span className="mr-2 text-lg font-semibold text-white/50 line-through">
+                            {formatUsd(cmp.priceCents)}
+                          </span>
+                        )}
+                        {formatUsd(cmpPriceCents)}
                       </span>
                     </div>
                     <div className="mt-4 w-full bg-[var(--accent)] text-[var(--primary)] py-3 px-6 rounded-xl text-center">
                       <span className="text-lg font-bold uppercase tracking-wide">
-                        VALUE SAVED: {siteCopy.comparison.powercut.savings}
+                        You save {formatUsd(cmp.valueCents - cmpPriceCents)} (
+                        {Math.round(((cmp.valueCents - cmpPriceCents) / cmp.valueCents) * 100)}% off)
                       </span>
                     </div>
                   </div>
@@ -651,7 +668,7 @@ export default function Home() {
               <p className="mt-3 text-lg text-[var(--accent-dark)] font-semibold">
                 [{siteCopy.pricing.subheadline}]
               </p>
-              <SaleBanner kind="powerCut" initial={initialSale} className="mt-4" />
+              <SaleBanner initial={initialSale} className="mt-4" />
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
