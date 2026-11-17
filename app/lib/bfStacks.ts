@@ -86,7 +86,7 @@ export const STACKS: Record<StackSlug, StackDef> = {
     heroBySets: {
       1: "/bf/shred-1-hero.webp",
       2: "/bf/shred-2-hero.webp",
-      3: "/bf/shred-3-hero.webp",
+      3: "/bf/shred-3-hero-v2.webp",
     },
     headline: ["Melt The Fat.", "Silence The Food Noise."],
     sub: "The triple-agonist that turns appetite down and burn up — at the lowest price we've ever offered. Stock up for the whole cut.",
