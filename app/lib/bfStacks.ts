@@ -145,12 +145,13 @@ export const STACKS: Record<StackSlug, StackDef> = {
     items: ["bpc-tb500", "kpv", "ghk-cu"],
     sizes: [
       { sets: 1, label: "1× Stack", supply: "5 weeks", image: "/Recovery%20Stack%201.png" },
-      { sets: 2, label: "2× Stack", supply: "10 weeks", image: "/Recovery%20Stack%202%20.png" },
+      { sets: 2, label: "2× Stack", supply: "10 weeks", image: P(2, "radiance") },
       { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "radiance") },
     ],
     defaultSets: 2,
     hero: "/recovery-stack-hero.png",
     heroBySets: {
+      2: P(2, "radiance"),
       3: P(3, "radiance"),
     },
     headline: ["Glow From The Inside Out.", "Skin, Gut & Recovery."],
@@ -219,12 +220,13 @@ export const STACKS: Record<StackSlug, StackDef> = {
     sizes: [
       { sets: 1, label: "1× Stack", supply: "5 weeks", image: P(1, "foreverstrong") },
       { sets: 2, label: "2× Stack", supply: "10 weeks", image: P(2, "foreverstrong") },
-      { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "foreverstrong") },
+      { sets: 3, label: "3× Stack", supply: "15 weeks", image: "/bf/foreverstrong-3-v2.webp" },
     ],
     defaultSets: 2,
     hero: "/bf/foreverstrong-hero.webp",
     heroBySets: {
       2: P(2, "foreverstrong"),
+      3: "/bf/foreverstrong-3-v2.webp",
     },
     headline: ["Get Strong.", "Stay Strong. Forever."],
     sub: "Build lean muscle, bulletproof your joints and fix your gut from the inside out. The longevity stack for people who plan to stay strong for decades.",
