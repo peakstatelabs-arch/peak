@@ -23,9 +23,9 @@ export function SaleHeader({
         <div className="flex items-center gap-4 sm:gap-6">
           <a
             href="/buildyourstack"
-            className="inline-flex h-10 items-center rounded-xl border border-[var(--accent)]/70 bg-white/5 px-4 text-sm font-extrabold text-[var(--accent)] shadow-[0_0_18px_rgba(120,220,229,0.18)] backdrop-blur transition-colors hover:bg-[var(--accent)]/10"
+            className="inline-flex h-10 items-center whitespace-nowrap rounded-xl border border-[var(--accent)]/70 bg-white/5 px-3 sm:px-4 text-[13px] sm:text-sm font-extrabold text-[var(--accent)] shadow-[0_0_18px_rgba(120,220,229,0.18)] backdrop-blur transition-colors hover:bg-[var(--accent)]/10"
           >
-            Build your stack →
+            Build your own stack →
           </a>
           {showCart ? <ViewCartButton variant="header" /> : null}
         </div>

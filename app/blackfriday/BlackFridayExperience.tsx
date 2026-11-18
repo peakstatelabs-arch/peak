@@ -159,10 +159,13 @@ export function BlackFridayExperience({
               <button
                 type="button"
                 onClick={start}
-                className="h-16 rounded-2xl bg-[var(--accent)] px-8 text-xl font-black uppercase tracking-wide text-[#0b0f1a] shadow-2xl ring-4 ring-[var(--accent)]/30 transition-transform hover:scale-[1.02]"
+                className="h-16 whitespace-nowrap rounded-2xl bg-[var(--accent)] px-3 sm:px-8 text-[clamp(13px,4.1vw,16px)] sm:text-xl font-black uppercase tracking-normal sm:tracking-wide text-[#0b0f1a] shadow-2xl ring-4 ring-[var(--accent)]/30 transition-transform hover:scale-[1.02]"
               >
-                Build your stack &amp; save →
+                Unlock my Black Friday stack →
               </button>
+              <p className="-mt-1 text-center text-sm font-semibold text-white/70">
+                2 quick questions · up to 60% off
+              </p>
               {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- full page load so middleware serves the sale page */}
               <a
                 href="/?regular=1"
