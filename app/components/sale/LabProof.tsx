@@ -7,7 +7,7 @@ const LAB: Record<ProductSlug, { name: string; dose: string; purity: string; hre
   "bpc-tb500": { name: "BPC-157/TB-500 Blend", dose: "20mg", purity: "99.68% purity (HPLC)", href: "/purity-tests/bpc-tb" },
   kpv: { name: "KPV", dose: "10mg", purity: "99.36% purity (HPLC)", href: "/purity-tests/kpv" },
   "ghk-cu": { name: "GHK-Cu", dose: "50mg", purity: "99.94% purity (HPLC)", href: "/purity-tests/ghkcu" },
-  nad: { name: "NAD+", dose: "500mg", purity: "99%+ purity", href: "/purity-tests/nad" },
+  nad: { name: "NAD+", dose: "500mg", purity: "99.18% purity (HPLC)", href: "/purity-tests/nad" },
 };
 
 /** Green PASS badges for each compound, linking to its lab report. */
