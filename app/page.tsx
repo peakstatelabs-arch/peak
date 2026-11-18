@@ -10,7 +10,8 @@ import { ShippingNoteText } from "@/app/components/ShippingNoteText";
 import { siteCopy } from "@/content/siteCopy";
 import { MemberBanner } from "@/app/components/member/MemberBanner";
 import { getSaleStatus } from "@/app/lib/salePhaseServer";
-import { POWERCUT_SALE } from "@/app/lib/sale";
+import { POWERCUT_SALE, SALE_NAME } from "@/app/lib/sale";
+import { OtherStacks } from "@/app/components/sale/OtherStacks";
 import { SaleBanner } from "@/app/components/SalePrice";
 import { SaleBar } from "@/app/components/SaleUrgency";
 import {
@@ -37,18 +38,23 @@ export default async function Home() {
     ? POWERCUT_SALE.single.saleCents
     : cmp.priceCents;
   return (
-    <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
-      {/* Urgency Banner */}
-      <div className="bg-[var(--primary)] text-white py-3.5 sm:py-3 px-3 sm:px-4 shadow-md">
-        <Container>
-          <UrgencyBanner
-            lineOne={siteCopy.urgencyBanner.lineOne}
-            lineTwo={siteCopy.urgencyBanner.lineTwo}
-            shippingText={siteCopy.urgencyBanner.shippingText}
-            stacks={siteCopy.urgencyBanner.stacks}
-          />
-        </Container>
-      </div>
+    <div
+      id="top"
+      className={`min-h-screen bg-white text-[var(--primary)] ${initialSale.live ? "bf-dark" : ""}`}
+    >
+      {/* Urgency Banner — replaced by the sale bar while the sale is live */}
+      {!initialSale.live && (
+        <div className="bg-[var(--primary)] text-white py-3.5 sm:py-3 px-3 sm:px-4 shadow-md">
+          <Container>
+            <UrgencyBanner
+              lineOne={siteCopy.urgencyBanner.lineOne}
+              lineTwo={siteCopy.urgencyBanner.lineTwo}
+              shippingText={siteCopy.urgencyBanner.shippingText}
+              stacks={siteCopy.urgencyBanner.stacks}
+            />
+          </Container>
+        </div>
+      )}
 
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
@@ -332,6 +338,35 @@ export default async function Home() {
                     ))}
                   </div>
 
+                  {/* Sale: the vial ladder, front and center */}
+                  {initialSale.live && (
+                    <div className="mt-8 mx-auto max-w-3xl rounded-2xl border border-[var(--accent)]/50 bg-[#0b0f1a]/60 p-4">
+                      <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[var(--accent)]">
+                        {SALE_NAME[initialSale.phase]} sale — every vial is on sale
+                      </p>
+                      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                        {[
+                          ["1 vial", "20%"],
+                          ["2 vials", "30%"],
+                          ["3 vials", "35%"],
+                          ["4+ vials", "40%"],
+                        ].map(([v, p]) => (
+                          <div key={v} className="rounded-xl bg-white/5 px-2 py-2.5">
+                            <p className="text-[11px] font-bold uppercase tracking-wider text-white/60">{v}</p>
+                            <p className="text-2xl font-black text-[var(--accent)]">
+                              {p} <span className="text-sm">off</span>
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-3 text-xs text-white/70">
+                        e.g. one Retatrutide vial: <span className="line-through">$215</span>{" "}
+                        <span className="font-extrabold text-white">$172</span> · mix any
+                        products, the discount covers your whole order.
+                      </p>
+                    </div>
+                  )}
+
                   {/* Benefits row */}
                   <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/80">
                     <span className="inline-flex items-center gap-2">
@@ -355,7 +390,7 @@ export default async function Home() {
                     event="shop_singles_click"
                     eventProperties={{ source: "singles_offer_section" }}
                   >
-                    Shop Single Vials
+                    {initialSale.live ? "Shop Single Vials — Up To 40% Off" : "Shop Single Vials"}
                     <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
@@ -369,6 +404,9 @@ export default async function Home() {
             </div>
           </Container>
         </Section>
+
+        {/* Sale: every Black Friday stack, right under the singles offer */}
+        {initialSale.live && <OtherStacks hidePowerCut title="Explore Every Black Friday Stack" />}
 
         {/* Body Composition Blueprint - low-ticket info product */}
         <Section className="bg-[var(--muted)]">

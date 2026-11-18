@@ -2,7 +2,7 @@
 
 import { useCart } from "@/app/singles/cart/CartContext";
 import { formatUsd } from "@/app/lib/money";
-import { LADDER, SALE_NAME, nextStepAction, priceCart } from "@/app/lib/sale";
+import { LADDER, priceCart } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import { product, supplyFor, type ProductSlug } from "@/app/lib/bfStacks";
@@ -58,7 +58,7 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
   }
 
   return (
-    <div className="pb-40">
+    <div className="pb-20">
       {modal}
       <div className="mx-auto max-w-5xl px-4">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
@@ -154,56 +154,37 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
         </div>
       </div>
 
-      {/* Sticky savings meter */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0b0f1a] text-white shadow-2xl">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:py-4">
-          <div className="min-w-0">
-            {priced.saleVials === 0 ? (
-              <p className="text-sm sm:text-base font-bold">
-                Add a vial to start saving — 1 vial is 20% off, 4+ vials 40% off.
-              </p>
-            ) : (
-              <>
-                <p className="text-sm sm:text-base font-bold">
-                  {priced.saleVials} vial{priced.saleVials === 1 ? "" : "s"}
-                  {priced.pct > 0 ? (
-                    <>
-                      {" "}· <span className="text-[var(--accent)]">{priced.pct}% off</span> · you
-                      save {formatUsd(priced.discountCents)}
-                    </>
-                  ) : null}
-                </p>
-                {priced.next && (
-                  <p className="text-xs text-white/70">
-                    {nextStepAction(priced.next)} to unlock {priced.next.pct}% off
-                    {sale.live ? ` · ${SALE_NAME[sale.phase]} pricing` : ""}
-                  </p>
-                )}
-              </>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            {priced.saleVials > 0 && (
-              <span className="text-right tabular-nums">
+      {/* Sticky savings meter — one slim line; hidden until something is added */}
+      {priced.saleVials > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0b0f1a]/95 text-white backdrop-blur">
+          <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-4 py-2">
+            <div className="min-w-0 text-xs leading-tight">
+              <p className="font-bold">
+                {priced.saleVials} vial{priced.saleVials === 1 ? "" : "s"} ·{" "}
+                <span className="text-[var(--accent)]">{priced.pct}% off</span> ·{" "}
+                <span className="tabular-nums">{formatUsd(priced.totalCents)}</span>
                 {priced.discountCents > 0 && (
-                  <span className="mr-2 text-sm text-white/40 line-through">
+                  <span className="ml-1 text-white/40 line-through tabular-nums">
                     {formatUsd(priced.subtotalCents)}
                   </span>
                 )}
-                <span className="text-xl sm:text-2xl font-black">{formatUsd(priced.totalCents)}</span>
-              </span>
-            )}
+              </p>
+              {priced.next && (
+                <p className="truncate text-[11px] text-white/60">
+                  +{priced.next.addVials} vial{priced.next.addVials === 1 ? "" : "s"} → {priced.next.pct}% off
+                </p>
+              )}
+            </div>
             <button
               type="button"
               onClick={openCart}
-              disabled={priced.saleVials === 0}
-              className="rounded-xl bg-[var(--accent)] px-5 py-3 text-sm sm:text-base font-black text-[#0b0f1a] disabled:opacity-40"
+              className="flex-shrink-0 rounded-lg bg-[var(--accent)] px-3 py-1.5 text-xs font-extrabold text-[#0b0f1a]"
             >
-              Review &amp; checkout →
+              Checkout →
             </button>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,10 @@ import { ViewCartButton } from "@/app/singles/cart/ViewCartButton";
 import { HeaderCrossLink } from "@/app/components/HeaderCrossLink";
 import { RetaBuy } from "./RetaBuy";
 import { getSaleStatus } from "@/app/lib/salePhaseServer";
+import { SALE_NAME } from "@/app/lib/sale";
+import { OtherStacks } from "@/app/components/sale/OtherStacks";
+import { TIERS, tierPricing } from "./retaBundles";
+import { formatUsd } from "@/app/lib/money";
 import { SalePriceInline } from "@/app/components/SalePrice";
 import { SaleBar } from "@/app/components/SaleUrgency";
 import { CoaSection } from "@/app/components/productPage/ProductPageParts";
@@ -153,7 +157,10 @@ export default async function GetRetaPage() {
   const initialSale = await getSaleStatus();
   return (
     <CartProvider>
-      <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
+      <div
+        id="top"
+        className={`min-h-screen bg-white text-[var(--primary)] ${initialSale.live ? "bf-dark" : ""}`}
+      >
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
           {/* Limited-time sale bar — pinned with the header */}
@@ -221,6 +228,36 @@ export default async function GetRetaPage() {
                     Carrying Extra Weight — So Getting Leaner Doesn’t Have To
                     Consume Your Entire Life.
                   </p>
+                  {initialSale.live && (
+                    <div className="mt-6 max-w-xl rounded-2xl border border-[var(--accent)]/50 bg-[var(--accent)]/10 p-4">
+                      <p className="text-[11px] font-extrabold uppercase tracking-[0.15em] text-[var(--accent)]">
+                        {SALE_NAME[initialSale.phase]} · up to 40% off
+                      </p>
+                      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                        {TIERS.map((t) => {
+                          const tp = tierPricing(t, true);
+                          return [
+                            `${t.vials} vial${t.vials === 1 ? "" : "s"}`,
+                            formatUsd(tp.discounted),
+                            formatUsd(tp.full),
+                            `${tp.pct}%`,
+                          ];
+                        }).map(([v, price, was, pct]) => (
+                          <a key={v} href="#buy" className="rounded-xl bg-white/5 px-1.5 py-2.5 hover:bg-white/10">
+                            <span className="block text-[11px] font-bold uppercase tracking-wider opacity-70">{v}</span>
+                            <span className="block text-xl font-black tabular-nums">{price}</span>
+                            <span className="block text-[11px] tabular-nums">
+                              <span className="line-through opacity-50">{was}</span>{" "}
+                              <span className="font-extrabold text-emerald-400">{pct} off</span>
+                            </span>
+                          </a>
+                        ))}
+                      </div>
+                      <p className="mt-3 text-xs opacity-80">
+                        Mix in any other vials: 4+ vials in your cart = 40% off everything.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Product image */}
@@ -482,7 +519,11 @@ export default async function GetRetaPage() {
             </Container>
           </Section>
 
-          {/* ── Reta vs. the stack (soft upsell) ─────────────────── */}
+          {/* ── Reta vs. the stack (soft upsell) — sale: every stack ── */}
+          {initialSale.live ? (
+            <OtherStacks title="Stack It & Save More This Black Friday" />
+          ) : (
+            <>
           <Section className="bg-white">
             <Container>
               <div className="max-w-5xl mx-auto">
@@ -593,6 +634,8 @@ export default async function GetRetaPage() {
               </div>
             </Container>
           </Section>
+            </>
+          )}
 
           {/* ── Other singles teaser ─────────────────────────────── */}
           <Section className="bg-[var(--muted)]">
