@@ -506,3 +506,23 @@ details[open] summary .faq-icon {
 .bf-dark .buy-cta:hover {
   background: var(--accent-light);
 }
+
+/* Cart drawer: a solid dark panel during the sale (never see-through). */
+.bf-dark [data-cart-panel] {
+  background-color: #0f1626;
+  color: #e6f4f6;
+}
+.bf-dark [data-cart-panel] .bg-white,
+.bf-dark [data-cart-panel] [class*="bg-white/"] {
+  background-color: #162036;
+}
+.bf-dark [data-cart-panel] footer {
+  background-color: #0b0f1a;
+}
+.bf-dark [data-cart-panel] .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+.bf-dark [data-cart-panel] .text-emerald-700 {
+  color: #6ee7b7;
+}

@@ -77,5 +77,6 @@ export const CROSS_SELL: Record<string, CrossSellItem> = {
 };
 
 // Cart drawer shows all three; the reta buy box shows the first two.
-export const CART_CROSSSELL_SLUGS = ["ghk-cu", "cjc-ipamorelin", "bpc-tb500", "nad", "kpv"];
+// Every single not yet in the cart (the strip hides what's already there).
+export const CART_CROSSSELL_SLUGS = ["retatrutide", "cjc-ipamorelin", "bpc-tb500", "nad", "ghk-cu", "kpv"];
 export const BUYBOX_CROSSSELL_SLUGS = ["cjc-ipamorelin", "bpc-tb500"];

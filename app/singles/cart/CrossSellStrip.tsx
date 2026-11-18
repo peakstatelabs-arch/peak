@@ -129,7 +129,7 @@ export function CrossSellStrip({
   return (
     <div className="mt-6 border-t border-[var(--border)] pt-4">
       <p className="text-xs font-bold uppercase tracking-wider text-[var(--primary)]/50">
-        Complete your protocol
+        Add to your protocol
       </p>
       <ul className="mt-3 flex flex-col gap-2.5">
         {items.map((i) => (

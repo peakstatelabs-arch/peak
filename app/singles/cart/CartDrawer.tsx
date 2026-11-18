@@ -124,6 +124,7 @@ export function CartDrawer() {
       />
 
       <aside
+        data-cart-panel
         role="dialog"
         aria-modal="true"
         aria-label="Shopping cart"
