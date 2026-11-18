@@ -7,7 +7,7 @@ import {
   maxSameProductQty,
   nextBulkTier,
 } from "@/app/lib/bulkDiscount";
-import { SALE_NAME, nextStepAction, priceCart, type NextStep } from "@/app/lib/sale";
+import { SALE_NAME, nextStepAction, pctOff, priceCart, type NextStep } from "@/app/lib/sale";
 import { SaleCountdown } from "@/app/components/SaleUrgency";
 import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { CrossSellStrip } from "./CrossSellStrip";
@@ -195,7 +195,11 @@ export function CartDrawer() {
                   <CartLineRow
                     key={line.priceId}
                     line={line}
-                    saleCents={null}
+                    saleCents={
+                      discountPct > 0 && !isStackPriceId(line.priceId)
+                        ? pctOff(line.unitPriceCents * line.quantity, discountPct)
+                        : null
+                    }
                     onQtyChange={(q) => setQuantity(line.priceId, q)}
                     onRemove={() => removeItem(line.priceId)}
                   />
@@ -672,7 +676,7 @@ function CartLineRow({
                 {formatUsd(saleCents)}
               </p>
               <p className="text-[11px] font-bold text-emerald-700">
-                Sale · Save{" "}
+                {Math.round((1 - saleCents / (line.unitPriceCents * line.quantity)) * 100)}% off · Save{" "}
                 {formatUsd(line.unitPriceCents * line.quantity - saleCents)}
               </p>
             </div>

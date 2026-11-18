@@ -29,6 +29,7 @@ import {
 import { SaleHeader } from "./SaleHeader";
 import { StackBuyBox } from "./StackBuyBox";
 import { OtherStacks } from "./OtherStacks";
+import { LabProof } from "./LabProof";
 import { SaleCountdown } from "@/app/components/SaleUrgency";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -235,6 +236,8 @@ export async function StackPage({
               />
             </Container>
           </Section>
+
+          <LabProof slugs={stack.items} />
 
           <OtherStacks current={slug} />
 

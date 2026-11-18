@@ -7,6 +7,7 @@ import { getSaleStatus } from "@/app/lib/salePhaseServer";
 import { SALE_NAME } from "@/app/lib/sale";
 import { BuildYourStack } from "./BuildYourStack";
 import { OtherStacks } from "@/app/components/sale/OtherStacks";
+import { LabProof } from "@/app/components/sale/LabProof";
 import {
   TestimonialsSection,
   pickReviews,
@@ -54,6 +55,7 @@ export default async function BuildYourStackPage() {
         <div className="pt-8">
           <BuildYourStack initialSale={initialSale} />
         </div>
+        <LabProof slugs={["retatrutide", "cjc-ipamorelin", "bpc-tb500", "nad", "ghk-cu", "kpv"]} />
         <OtherStacks title="Explore Every Black Friday Stack" />
         <TestimonialsSection
           intro={<>Check-ins from Peak State clients. Names shown as first name + last initial for privacy.</>}
