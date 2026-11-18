@@ -68,6 +68,13 @@ export function LogoMenu({
           role="menu"
           className="absolute left-0 top-full z-[60] mt-2 w-64 rounded-2xl border border-white/10 bg-[#0f1626] p-2 shadow-2xl"
         >
+          <a role="menuitem" href="/blackfriday?quiz=1" className={item}>
+            <span>
+              <span className="block">Find My Stack</span>
+              <span className="block text-xs font-medium text-white/60">2 quick questions, 20 seconds</span>
+            </span>
+            <span aria-hidden="true">→</span>
+          </a>
           <a role="menuitem" href="/stacks" className={item}>
             <span>
               <span className="block">Shop Sale Stacks</span>
