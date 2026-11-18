@@ -160,9 +160,9 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
                     <button
                       type="button"
                       onClick={() => change(slug, 1)}
-                      className="rounded-xl bg-[var(--primary)] px-4 py-2.5 text-sm font-bold text-white hover:bg-[var(--primary)]/90"
+                      className="buy-cta rounded-xl bg-[var(--primary)] px-5 py-3 text-sm font-bold text-white hover:bg-[var(--primary)]/90"
                     >
-                      Add to stack
+                      + Add to stack
                     </button>
                   ) : (
                     <span className="text-sm font-bold text-emerald-700">✓ In your stack</span>
