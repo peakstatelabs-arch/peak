@@ -5,7 +5,7 @@ import { formatUsd } from "@/app/lib/money";
 import { LADDER, priceCart } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
-import { product, supplyFor, type ProductSlug } from "@/app/lib/bfStacks";
+import { PRODUCT_CUTOUT, product, supplyFor, type ProductSlug } from "@/app/lib/bfStacks";
 import { useMembersGate } from "@/app/components/sale/MembersGate";
 
 const ORDER: ProductSlug[] = [
@@ -96,10 +96,10 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={p.image}
+                    src={PRODUCT_CUTOUT[slug]}
                     alt=""
                     aria-hidden="true"
-                    className="h-24 w-24 flex-shrink-0 rounded-2xl bg-[var(--muted)] object-contain"
+                    className="h-24 w-24 flex-shrink-0 object-contain"
                     loading="lazy"
                   />
                   <div className="min-w-0">

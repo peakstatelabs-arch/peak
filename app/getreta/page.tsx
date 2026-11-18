@@ -13,7 +13,6 @@ import { getSaleStatus } from "@/app/lib/salePhaseServer";
 import { SALE_NAME } from "@/app/lib/sale";
 import { OtherStacks } from "@/app/components/sale/OtherStacks";
 import { TIERS, tierPricing } from "./retaBundles";
-import { formatUsd } from "@/app/lib/money";
 import { SalePriceInline } from "@/app/components/SalePrice";
 import { SaleBar } from "@/app/components/SaleUrgency";
 import { CoaSection } from "@/app/components/productPage/ProductPageParts";
@@ -61,14 +60,14 @@ const otherSingles = [
     name: "CJC-1295 + Ipamorelin",
     dose: "10mg blend",
     price: "$105",
-    image: "/cjc-ipa-product.png",
+    image: "/CJC%20Ipa%20Product%20Image%20Transparent%202.png",
     note: "Lean muscle, sleep & recovery",
   },
   {
     name: "BPC-157 + TB-500",
     dose: "20mg blend",
     price: "$145",
-    image: "/bpc-tb-product.png",
+    image: "/BPC%20Tb%20Product%20Image%20Transparent%202.png",
     note: "Joint, tendon & tissue repair",
   },
   {
@@ -82,14 +81,14 @@ const otherSingles = [
     name: "KPV",
     dose: "10mg",
     price: "$65",
-    image: "/kpv-product.png",
+    image: "/kpv-product-transparent.png",
     note: "Inflammation & gut support",
   },
   {
     name: "NAD+",
     dose: "500mg",
     price: "$135",
-    image: "/NAD%20Vial%20Brown.png",
+    image: "/bf/nad-cutout.webp",
     note: "Cellular energy & recovery",
   },
 ];
@@ -236,22 +235,17 @@ export default async function GetRetaPage() {
                       <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                         {TIERS.map((t) => {
                           const tp = tierPricing(t, true);
-                          return [
-                            `${t.vials} vial${t.vials === 1 ? "" : "s"}`,
-                            formatUsd(tp.discounted),
-                            formatUsd(tp.full),
-                            `${tp.pct}%`,
-                          ];
-                        }).map(([v, price, was, pct]) => (
-                          <a key={v} href="#buy" className="rounded-xl bg-white/5 px-1.5 py-2.5 hover:bg-white/10">
-                            <span className="block text-[11px] font-bold uppercase tracking-wider opacity-70">{v}</span>
-                            <span className="block text-xl font-black tabular-nums">{price}</span>
-                            <span className="block text-[11px] tabular-nums">
-                              <span className="line-through opacity-50">{was}</span>{" "}
-                              <span className="font-extrabold text-emerald-400">{pct} off</span>
-                            </span>
-                          </a>
-                        ))}
+                          return (
+                            <a key={t.vials} href="#buy" className="rounded-xl bg-white/5 px-1.5 py-3 hover:bg-white/10">
+                              <span className="block text-[11px] font-bold uppercase tracking-wider opacity-70">
+                                {t.vials} vial{t.vials === 1 ? "" : "s"}
+                              </span>
+                              <span className="block text-2xl font-black text-[var(--accent)]">
+                                {tp.pct}% <span className="text-sm">off</span>
+                              </span>
+                            </a>
+                          );
+                        })}
                       </div>
                       <p className="mt-3 text-xs opacity-80">
                         Mix in any other vials: 4+ vials in your cart = 40% off everything.
@@ -269,7 +263,9 @@ export default async function GetRetaPage() {
                       className="w-full drop-shadow-2xl"
                     />
                     <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[var(--accent)]/30 to-[var(--accent)]/10 blur-3xl rounded-full scale-90" />
-                    <div className="absolute bottom-4 left-4 rounded-2xl bg-white/90 backdrop-blur border border-[var(--border)] px-4 py-3 shadow-lg">
+                    <div
+                      className={`absolute bottom-4 rounded-2xl backdrop-blur border px-4 py-3 shadow-lg ${initialSale.live ? "-left-2 sm:-left-6 coa-solid border-white/15" : "left-4 bg-white/90 border-[var(--border)]"}`}
+                    >
                       <p className="text-xs font-bold uppercase tracking-wider text-[var(--accent-dark)]">
                         COA Verified
                       </p>
@@ -521,7 +517,7 @@ export default async function GetRetaPage() {
 
           {/* ── Reta vs. the stack (soft upsell) — sale: every stack ── */}
           {initialSale.live ? (
-            <OtherStacks title="Stack It & Save More This Black Friday" />
+            <OtherStacks current="shred" title="Stack It & Save More This Black Friday" />
           ) : (
             <>
           <Section className="bg-white">

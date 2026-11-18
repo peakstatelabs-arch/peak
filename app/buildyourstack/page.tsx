@@ -6,6 +6,20 @@ import { SaleCountdown } from "@/app/components/SaleUrgency";
 import { getSaleStatus } from "@/app/lib/salePhaseServer";
 import { SALE_NAME } from "@/app/lib/sale";
 import { BuildYourStack } from "./BuildYourStack";
+import { OtherStacks } from "@/app/components/sale/OtherStacks";
+import {
+  TestimonialsSection,
+  pickReviews,
+} from "@/app/components/productPage/ProductPageParts";
+
+const testimonials = pickReviews([
+  "paige-amazed",
+  "stephanie-wk1",
+  "anon-great",
+  "dougie-painkillers",
+  "erin-wow",
+  "noelle-wk6",
+]);
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +34,7 @@ export default async function BuildYourStackPage() {
   const initialSale = await getSaleStatus();
   return (
     <CartProvider>
-      <div className="min-h-screen bg-[var(--muted)] text-[var(--primary)]">
+      <div className="bf-dark min-h-screen bg-[var(--muted)] text-[var(--primary)]">
         <SaleHeader initialSale={initialSale} />
         <section className="bg-[#0b0f1a] px-4 py-10 sm:py-14 text-center text-white">
           <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-[var(--accent)]">
@@ -40,6 +54,12 @@ export default async function BuildYourStackPage() {
         <div className="pt-8">
           <BuildYourStack initialSale={initialSale} />
         </div>
+        <OtherStacks title="Explore Every Black Friday Stack" />
+        <TestimonialsSection
+          intro={<>Check-ins from Peak State clients. Names shown as first name + last initial for privacy.</>}
+          testimonials={testimonials}
+        />
+        <div className="h-16" aria-hidden="true" />
         <CartDrawer />
       </div>
     </CartProvider>

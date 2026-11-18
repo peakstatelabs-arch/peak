@@ -25,7 +25,7 @@ export default async function BlackFridayPage({
   const sp = await searchParams;
   return (
     <CartProvider>
-      <div className="min-h-screen bg-[#0b0f1a]">
+      <div className="bf-dark min-h-screen bg-[#0b0f1a]">
         <SaleHeader initialSale={initialSale} />
         <BlackFridayExperience
           initialSale={initialSale}

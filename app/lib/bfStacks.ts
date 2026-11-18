@@ -20,7 +20,7 @@ export const PRODUCT_CUTOUT: Record<ProductSlug, string> = {
   "bpc-tb500": "/BPC%20Tb%20Product%20Image%20Transparent%202.png",
   "ghk-cu": "/GHKCU.png",
   kpv: "/kpv-product-transparent.png",
-  nad: "/nad-product.png",
+  nad: "/bf/nad-cutout.webp",
 };
 
 export const SHORT_NAME: Record<ProductSlug, string> = {
@@ -77,9 +77,9 @@ export const STACKS: Record<StackSlug, StackDef> = {
     tagline: "Burn stubborn fat. Kill the food noise.",
     items: ["retatrutide"],
     sizes: [
-      { sets: 1, label: "1 Vial", supply: "6–8 weeks", image: "/reta%20mockup%201.png" },
-      { sets: 2, label: "2 Vials", supply: "12–16 weeks", image: "/reta%20mockup%202.png" },
-      { sets: 3, label: "3 Vials", supply: "18–24 weeks", image: "/reta%20mockup%203.png" },
+      { sets: 1, label: "1 Vial", supply: "6–8 weeks", image: "/bf/shred-1-hero.webp" },
+      { sets: 2, label: "2 Vials", supply: "12–16 weeks", image: "/bf/shred-2-hero.webp" },
+      { sets: 3, label: "3 Vials", supply: "18–24 weeks", image: "/bf/shred-3-hero-v2.webp" },
     ],
     defaultSets: 2,
     hero: "/bf/shred-1-hero.webp",
@@ -144,7 +144,7 @@ export const STACKS: Record<StackSlug, StackDef> = {
     tagline: "Glowing skin. A calm, healthy gut.",
     items: ["bpc-tb500", "kpv", "ghk-cu"],
     sizes: [
-      { sets: 1, label: "1× Stack", supply: "5 weeks", image: "/Recovery%20Stack%201.png" },
+      { sets: 1, label: "1× Stack", supply: "5 weeks", image: "/recovery-stack-hero.png" },
       { sets: 2, label: "2× Stack", supply: "10 weeks", image: P(2, "radiance") },
       { sets: 3, label: "3× Stack", supply: "15 weeks", image: P(3, "radiance") },
     ],

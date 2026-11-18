@@ -129,7 +129,7 @@ export const SINGLES: Record<SinglesProductSlug, QuizProduct> = {
     dose: "20mg",
     price: "$215",
     priceCents: 21500,
-    image: "/reta-product.png",
+    image: "/reta-product-transparent-2.png",
     tagline: "The Engine",
     blurb:
       "GLP-1 / GIP / Glucagon triple agonist. Kills food noise, raises metabolic output, and drives stored fat oxidation.",
@@ -141,7 +141,7 @@ export const SINGLES: Record<SinglesProductSlug, QuizProduct> = {
     dose: "10mg blend",
     price: "$105",
     priceCents: 10500,
-    image: "/cjc-ipa-product.png",
+    image: "/CJC%20Ipa%20Product%20Image%20Transparent%202.png",
     tagline: "The Architect",
     blurb:
       "Amplifies your natural growth-hormone pulse. Builds lean muscle, deepens sleep, and protects gains in a deficit.",
@@ -153,7 +153,7 @@ export const SINGLES: Record<SinglesProductSlug, QuizProduct> = {
     dose: "20mg blend",
     price: "$145",
     priceCents: 14500,
-    image: "/bpc-tb-product.png",
+    image: "/BPC%20Tb%20Product%20Image%20Transparent%202.png",
     tagline: "The Shield",
     blurb:
       "Local + systemic repair. Accelerates connective-tissue recovery, calms inflammation, and protects joints and tendons.",
@@ -177,7 +177,7 @@ export const SINGLES: Record<SinglesProductSlug, QuizProduct> = {
     dose: "10mg",
     price: "$65",
     priceCents: 6500,
-    image: "/kpv-product.png",
+    image: "/kpv-product-transparent.png",
     tagline: "The Regulator",
     blurb:
       "Anti-inflammatory peptide signaling. Helps regulate inflammatory pathways, supports gut and skin health, and promotes a balanced immune response.",
@@ -189,7 +189,7 @@ export const SINGLES: Record<SinglesProductSlug, QuizProduct> = {
     dose: "500mg",
     price: "$135",
     priceCents: 13500,
-    image: "/NAD Vial Brown.png",
+    image: "/bf/nad-cutout.webp",
     tagline: "The Catalyst",
     blurb:
       "Cellular energy and metabolic support. Fuels energy production, cellular repair and healthy mitochondrial function for recovery and healthy aging.",

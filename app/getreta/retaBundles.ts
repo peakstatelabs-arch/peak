@@ -11,7 +11,7 @@ export const RETA = {
   unitPriceCents: 21500,
   // Standard single-vial product shot used for the cart line (the tier
   // thumbnails use the 1/2/3-vial mockups, but the cart stays consistent).
-  cartImage: "/reta-product.png",
+  cartImage: "/reta-product-transparent-2.png",
 };
 
 // The reta vial tiers add N of the SAME product, so their discount is just the
@@ -34,14 +34,14 @@ export const TIERS: Tier[] = [
     vials: 1,
     label: "Single Vial",
     blurb: "One 20mg vial — try it or top up a run in progress.",
-    image: "/reta%20mockup%201.png",
+    image: "/bf/shred-1-hero.webp",
     supply: "6–8 weeks",
   },
   {
     vials: 2,
     label: "Two Vials",
     blurb: "Covers titration into your maintenance dose without a reorder.",
-    image: "/reta%20mockup%202.png",
+    image: "/bf/shred-2-hero.webp",
     supply: "12–16 weeks",
     highlight: true,
   },
@@ -49,7 +49,7 @@ export const TIERS: Tier[] = [
     vials: 3,
     label: "Full Cycle",
     blurb: "A complete research cycle, stocked start to finish.",
-    image: "/reta%20mockup%203.png",
+    image: "/bf/shred-3-hero-v2.webp",
     supply: "18–24 weeks",
   },
 ];

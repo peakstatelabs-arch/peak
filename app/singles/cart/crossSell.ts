@@ -31,7 +31,7 @@ export const CROSS_SELL: Record<string, CrossSellItem> = {
     dose: "10mg blend",
     unitPriceCents: 10500,
     priceLabel: "$105",
-    image: "/cjc-ipa-product.png",
+    image: "/CJC%20Ipa%20Product%20Image%20Transparent%202.png",
     blurb: "Build lean muscle, sleep & recovery",
   },
   "bpc-tb500": {
@@ -41,7 +41,7 @@ export const CROSS_SELL: Record<string, CrossSellItem> = {
     dose: "20mg blend",
     unitPriceCents: 14500,
     priceLabel: "$145",
-    image: "/bpc-tb-product.png",
+    image: "/BPC%20Tb%20Product%20Image%20Transparent%202.png",
     blurb: "Joint, tendon & tissue repair",
   },
   kpv: {
@@ -51,7 +51,7 @@ export const CROSS_SELL: Record<string, CrossSellItem> = {
     dose: "10mg",
     unitPriceCents: 6500,
     priceLabel: "$65",
-    image: "/kpv-product.png",
+    image: "/kpv-product-transparent.png",
     blurb: "Gut health & calm inflammation",
   },
   nad: {
@@ -61,7 +61,7 @@ export const CROSS_SELL: Record<string, CrossSellItem> = {
     dose: "500mg",
     unitPriceCents: 13500,
     priceLabel: "$135",
-    image: "/NAD%20Vial%20Brown.png",
+    image: "/bf/nad-cutout.webp",
     blurb: "Cellular energy & focus",
   },
   retatrutide: {
@@ -71,7 +71,7 @@ export const CROSS_SELL: Record<string, CrossSellItem> = {
     dose: "20mg",
     unitPriceCents: 21500,
     priceLabel: "$215",
-    image: "/reta-product.png",
+    image: "/reta-product-transparent-2.png",
     blurb: "Fat loss & appetite control",
   },
 };

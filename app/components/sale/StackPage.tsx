@@ -91,7 +91,7 @@ export async function StackPage({
 
   return (
     <CartProvider>
-      <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
+      <div id="top" className="bf-dark min-h-screen bg-white text-[var(--primary)]">
         <SaleHeader initialSale={initialSale} />
 
         <main>

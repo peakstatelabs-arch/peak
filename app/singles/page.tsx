@@ -69,7 +69,7 @@ const products: Product[] = [
     priceCents: 21500,
     description:
       "GLP-1 / GIP / Glucagon triple agonist. Reduces food noise, raises metabolic output, and stimulates stored fat oxidation.",
-    image: "/reta-product.png",
+    image: "/reta-product-transparent-2.png",
     startStock: 13,
     stockStep: 3,
     stockMinimum: 3,
@@ -85,7 +85,7 @@ const products: Product[] = [
     priceCents: 10500,
     description:
       "Growth hormone pulse amplification. Builds lean muscle, improves sleep depth, and supports recovery during deficit.",
-    image: "/cjc-ipa-product.png",
+    image: "/CJC%20Ipa%20Product%20Image%20Transparent%202.png",
     startStock: 17,
     stockStep: 2,
     stockMinimum: 3,
@@ -101,7 +101,7 @@ const products: Product[] = [
     priceCents: 14500,
     description:
       "Local + systemic repair. Accelerates connective tissue recovery, reduces inflammatory drag, supports tendon integrity.",
-    image: "/bpc-tb-product.png",
+    image: "/BPC%20Tb%20Product%20Image%20Transparent%202.png",
     startStock: 9,
     stockStep: 2,
     stockMinimum: 3,
@@ -135,7 +135,7 @@ const products: Product[] = [
     priceCents: 6500,
     description:
       "Anti-inflammatory peptide signaling support. Helps regulate inflammatory pathways, supports gut and skin health, and promotes a balanced immune response. Designed to support recovery and overall tissue resilience.",
-    image: "/kpv-product.png",
+    image: "/kpv-product-transparent.png",
     startStock: 16,
     stockStep: 2,
     stockMinimum: 3,
@@ -151,7 +151,7 @@ const products: Product[] = [
     priceCents: 13500,
     description:
       "Cellular energy and metabolic support. Helps fuel energy production, cellular repair, and healthy mitochondrial function. Designed to support energy, recovery, and healthy aging at the cellular level.",
-    image: "/NAD Vial Brown.png",
+    image: "/bf/nad-cutout.webp",
     startStock: 18,
     stockStep: 2,
     stockMinimum: 3,
@@ -208,7 +208,10 @@ export default async function SinglesCatalog() {
   const initialSale = await getSaleStatus();
   return (
     <CartProvider>
-      <div id="top" className="min-h-screen bg-white text-[var(--primary)]">
+      <div
+        id="top"
+        className={`min-h-screen bg-white text-[var(--primary)] ${initialSale.live ? "bf-dark" : ""}`}
+      >
         {/* Header */}
         <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
           {/* Limited-time sale bar — pinned with the header */}
