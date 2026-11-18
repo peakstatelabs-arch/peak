@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "./CartContext";
 
 export function ViewCartButton({
@@ -8,6 +9,21 @@ export function ViewCartButton({
   variant?: "header" | "inline";
 }) {
   const { itemCount, hydrated, openCart } = useCart();
+
+  // "Pop" the count whenever something is added (not on first load).
+  const [pop, setPop] = useState(false);
+  const prev = useRef<number | null>(null);
+  useEffect(() => {
+    if (!hydrated) return;
+    if (prev.current !== null && itemCount > prev.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- brief animation flag
+      setPop(true);
+      const t = window.setTimeout(() => setPop(false), 600);
+      prev.current = itemCount;
+      return () => window.clearTimeout(t);
+    }
+    prev.current = itemCount;
+  }, [itemCount, hydrated]);
 
   const base =
     "relative inline-flex items-center gap-2 rounded-xl font-semibold transition-colors";
@@ -20,7 +36,7 @@ export function ViewCartButton({
     <button
       type="button"
       onClick={openCart}
-      className={`${base} ${styles}`}
+      className={`cart-btn ${base} ${styles}`}
       aria-label={`View cart, ${itemCount} item${itemCount === 1 ? "" : "s"}`}
     >
       <svg
@@ -39,7 +55,10 @@ export function ViewCartButton({
       </svg>
       <span className={variant === "header" ? "hidden sm:inline" : ""}>Cart</span>
       {hydrated && itemCount > 0 ? (
-        <span className="inline-flex items-center justify-center min-w-[1.5rem] h-6 rounded-full bg-[var(--accent)] px-2 text-xs font-extrabold text-[var(--primary)]">
+        <span
+          key={pop ? "pop" : "still"}
+          className={`cart-count inline-flex items-center justify-center min-w-[1.5rem] h-6 rounded-full bg-[var(--accent)] px-2 text-xs font-extrabold text-[var(--primary)] ${pop ? "animate-cart-pop" : ""}`}
+        >
           {itemCount}
         </span>
       ) : null}
