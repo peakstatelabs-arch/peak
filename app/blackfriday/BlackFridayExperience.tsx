@@ -19,6 +19,7 @@ import {
   type QuizResult,
 } from "@/app/lib/bfStacks";
 import { useMembersGate } from "@/app/components/sale/MembersGate";
+import { SaleReviewStrip } from "@/app/components/sale/SaleReviewStrip";
 
 function track(event: string, props?: Record<string, unknown>) {
   try {
@@ -222,6 +223,7 @@ export function BlackFridayExperience({
               Every vial counts — mix any products and stacks. The discount
               applies to your whole order, automatically.
             </p>
+            <SaleReviewStrip />
           </div>
         </div>
       )}

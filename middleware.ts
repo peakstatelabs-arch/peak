@@ -130,6 +130,11 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Old quiz links (emails, ads, bios) go to the new quiz during the sale.
+  if (isSaleSite && saleLive && (pathname === "/quiz" || pathname === "/welcome")) {
+    return NextResponse.redirect(new URL("/blackfriday?quiz=1", request.url));
+  }
+
   if (isSaleSite && saleLive && pathname === "/singles") {
     return NextResponse.redirect(new URL("/buildyourstack", request.url));
   }
