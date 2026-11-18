@@ -1,5 +1,6 @@
 "use client";
 
+import { useSaleStatus } from "@/app/lib/useSaleStatus";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { usePathname } from "next/navigation";
 
@@ -97,6 +98,7 @@ function loadCalScript() {
 
 export function FloatingCTA() {
   const pathname = usePathname();
+  const dark = useSaleStatus().live;
   // The Black Friday landing is served at "/" during the sale, so detect it by
   // its marker rather than the path (the regular homepage keeps the button).
   const [onSaleLanding, setOnSaleLanding] = useState(false);
@@ -192,9 +194,9 @@ export function FloatingCTA() {
               : "opacity-0 scale-100 sm:scale-95 translate-y-1 pointer-events-none"
           }`}
         >
-          <div className="relative whitespace-nowrap rounded-2xl bg-white border border-[var(--border)] shadow-sm sm:shadow-lg px-3 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-sm font-medium text-[var(--primary)]/80 sm:text-[var(--primary)]">
+          <div className={`relative whitespace-nowrap rounded-2xl border shadow-sm sm:shadow-lg px-3 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-sm font-medium ${dark ? "bg-[#0f1626] border-white/10 text-white/80" : "bg-white border-[var(--border)] text-[var(--primary)]/80 sm:text-[var(--primary)]"}`}>
             Have questions? We can help.
-            <span className="absolute -bottom-1 right-6 h-2 w-2 rotate-45 bg-white border-r border-b border-[var(--border)]" />
+            <span className={`absolute -bottom-1 right-6 h-2 w-2 rotate-45 border-r border-b ${dark ? "bg-[#0f1626] border-white/10" : "bg-white border-[var(--border)]"}`} />
           </div>
         </div>
 
@@ -202,7 +204,11 @@ export function FloatingCTA() {
           ref={triggerRef}
           onClick={openModal}
           aria-label="Talk to a Peptide Expert"
-          className={`group flex items-center gap-2.5 rounded-full bg-[var(--primary)] text-white pl-3.5 pr-4 sm:pl-4 sm:pr-5 h-12 sm:h-14 shadow-[0_10px_30px_rgba(21,80,144,0.35)] hover:shadow-[0_14px_38px_rgba(21,80,144,0.45)] hover:bg-[var(--primary-light)] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 ${
+          className={`group flex items-center gap-2.5 rounded-full text-white pl-3.5 pr-4 sm:pl-4 sm:pr-5 h-12 sm:h-14 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 ${
+            dark
+              ? "bg-[#0f1626]/90 border border-[var(--accent)]/50 backdrop-blur shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+              : "bg-[var(--primary)] shadow-[0_10px_30px_rgba(21,80,144,0.35)] hover:shadow-[0_14px_38px_rgba(21,80,144,0.45)] hover:bg-[var(--primary-light)]"
+          } ${
             nudge ? "sm:animate-pulse-slow" : ""
           }`}
         >

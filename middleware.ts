@@ -129,6 +129,10 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  if (isSaleSite && saleLive && pathname === "/singles") {
+    return NextResponse.redirect(new URL("/buildyourstack", request.url));
+  }
+
   if (isSaleSite && saleLive && pathname === "/getrecovery") {
     return NextResponse.redirect(new URL(`/radiance${search}`, request.url));
   }

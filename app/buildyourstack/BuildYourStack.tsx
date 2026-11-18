@@ -2,7 +2,7 @@
 
 import { useCart } from "@/app/singles/cart/CartContext";
 import { formatUsd } from "@/app/lib/money";
-import { LADDER, priceCart } from "@/app/lib/sale";
+import { LADDER, pctOff, priceCart } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { trackAddToCartInPostHog } from "@/app/lib/trackAddToCart";
 import { PRODUCT_CUTOUT, product, supplyFor, type ProductSlug } from "@/app/lib/bfStacks";
@@ -108,13 +108,33 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
                     </p>
                     <p className="text-lg font-bold text-[var(--primary)] leading-tight">{p.name}</p>
                     <p className="text-sm text-[var(--primary)]/55">
-                      {p.dose} · {p.price} · {supplyFor(slug, 1)} per vial
+                      {p.dose} · {supplyFor(slug, 1)} per vial
                     </p>
                   </div>
                 </div>
                 <p className="mt-3 flex-1 text-sm text-[var(--primary)]/70 leading-relaxed">
                   {p.blurb}
                 </p>
+                {sale.live && (
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/[0.08] px-3 py-2">
+                    <span className="tabular-nums">
+                      <span className="mr-1.5 text-xs text-[var(--primary)]/45 line-through">{p.price}</span>
+                      <span className="text-lg font-black text-[var(--primary)]">
+                        {formatUsd(pctOff(p.priceCents, 20))}
+                      </span>
+                      <span className="ml-1.5 rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-extrabold text-emerald-400">
+                        20% OFF
+                      </span>
+                    </span>
+                    <span className="text-right text-[11px] leading-tight text-[var(--primary)]/70">
+                      as low as
+                      <span className="block text-sm font-extrabold text-[var(--accent)] tabular-nums">
+                        {formatUsd(pctOff(p.priceCents, 40))}
+                      </span>
+                      <span className="block">in a 4+ stack</span>
+                    </span>
+                  </div>
+                )}
                 <div className="mt-4 flex items-center justify-between gap-3">
                   <div className="inline-flex items-center rounded-xl border border-[var(--border)]">
                     <button

@@ -75,7 +75,7 @@ export function LogoMenu({
             </span>
             <span aria-hidden="true">→</span>
           </a>
-          <a role="menuitem" href="/singles" className={item}>
+          <a role="menuitem" href="/buildyourstack" className={item}>
             <span>
               <span className="block">Shop Sale Singles</span>
               <span className="block text-xs font-medium text-white/60">Up to 40% off any vial</span>

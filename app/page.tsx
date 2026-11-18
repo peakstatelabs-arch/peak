@@ -388,15 +388,15 @@ export default async function Home() {
 
                   {/* CTA */}
                   <TrackedLink
-                    href="/singles"
+                    href={initialSale.live ? "/buildyourstack" : "/singles"}
                     className={initialSale.live
-                      ? "mt-8 inline-flex h-14 items-center justify-center whitespace-nowrap rounded-2xl bg-[var(--accent)] px-6 sm:px-10 text-base sm:text-lg font-black uppercase tracking-wide text-[#0b0f1a] shadow-2xl ring-4 ring-[var(--accent)]/25 transition-transform hover:scale-[1.02]"
+                      ? "mt-8 inline-flex h-14 items-center justify-center whitespace-nowrap rounded-2xl bg-[var(--accent)] w-full sm:w-auto gap-1 px-3 sm:px-10 text-[13px] sm:text-lg font-black uppercase tracking-normal sm:tracking-wide text-[#0b0f1a] shadow-2xl ring-4 ring-[var(--accent)]/25 transition-transform hover:scale-[1.02]"
                       : "btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold mt-8"}
                     event="shop_singles_click"
                     eventProperties={{ source: "singles_offer_section" }}
                   >
                     {initialSale.live ? "Shop Singles · Up To 40% Off" : "Shop Single Vials"}
-                    <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <svg className="ml-2 h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </TrackedLink>
