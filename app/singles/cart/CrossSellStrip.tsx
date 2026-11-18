@@ -11,18 +11,24 @@ type Props = {
   variant: "cart" | "buybox";
   /** Buy-box heading. */
   heading?: string;
+  /** Leave out products already in the cart (default true). */
+  hideInCart?: boolean;
 };
 
 export function CrossSellStrip({
   slugs,
   variant,
   heading = "Pairs well with reta",
+  hideInCart = true,
 }: Props) {
   const { lines, addItem, openCart } = useCart();
   const inCart = new Set(lines.map((l) => l.priceId));
   const items = slugs
     .map((s) => CROSS_SELL[s])
-    .filter((i): i is CrossSellItem => Boolean(i) && !inCart.has(i.priceId));
+    .filter(
+      (i): i is CrossSellItem =>
+        Boolean(i) && (!hideInCart || !inCart.has(i.priceId)),
+    );
 
   if (items.length === 0) return null;
 

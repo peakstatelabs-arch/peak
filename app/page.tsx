@@ -81,7 +81,7 @@ export default async function Home() {
               </a>
             ))}
           </nav>
-          <div className="flex items-center gap-3 sm:gap-6">
+          <div className="flex items-center gap-2.5 sm:gap-6">
             {/* Shortcut for Reta-aware visitors — text-weight so the hero stays untouched
                 and the primary CTA keeps visual priority. Hidden md→lg, where the nav
                 already fills the bar; short label on phones so it fits beside the CTA. */}
@@ -94,6 +94,15 @@ export default async function Home() {
               <span className="lg:hidden">{siteCopy.brand.retaCtaLabelShort}</span>
               <span className="hidden lg:inline">{siteCopy.brand.retaCtaLabel}</span>
             </HeaderCrossLink>
+            {initialSale.live && (
+              <a
+                href="/buildyourstack"
+                className="inline-flex h-10 items-center whitespace-nowrap rounded-xl border border-[var(--accent)]/70 bg-white/5 px-2.5 sm:px-4 text-[clamp(11.5px,3.4vw,13px)] sm:text-sm font-extrabold text-[var(--accent)] shadow-[0_0_18px_rgba(120,220,229,0.18)] backdrop-blur transition-colors hover:bg-[var(--accent)]/10"
+              >
+                <span className="max-[359px]:hidden">Build your own stack →</span>
+                <span className="hidden max-[359px]:inline">Build your own →</span>
+              </a>
+            )}
             {!initialSale.live && (
               <a
                 href={siteCopy.brand.primaryCtaHref}
