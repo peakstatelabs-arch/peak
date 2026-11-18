@@ -283,7 +283,6 @@ export function StackBuyBox({
           )}
           variant="buybox"
           heading="Stack more, save more"
-          hideInCart={false}
         />
       </div>
 
