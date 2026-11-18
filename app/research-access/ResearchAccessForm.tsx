@@ -9,7 +9,6 @@ import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
 import { SALE_NAME } from "@/app/lib/sale";
 import { useWelcomeDestination } from "@/app/lib/welcomeExperiment";
 import { MEMBER_DISCOUNT_CODE, SHOP_URL } from "./constants";
-import { markGateRequired } from "@/app/components/sale/MembersGate";
 
 type Tab = "create" | "signin";
 
@@ -281,9 +280,6 @@ export function ResearchAccessForm({ initialSale }: { initialSale?: SaleStatus }
           href={sale.live ? "/blackfriday" : SHOP_URL}
           event="research_access_skip"
           eventProperties={{ placement: "top" }}
-          onClick={() => {
-            if (sale.live) markGateRequired();
-          }}
           className="whitespace-nowrap font-bold text-[var(--primary)] underline underline-offset-2"
         >
           Continue to shop{" "}
@@ -523,9 +519,6 @@ export function ResearchAccessForm({ initialSale }: { initialSale?: SaleStatus }
         href={sale.live ? "/blackfriday" : SHOP_URL}
         event="research_access_skip"
         eventProperties={{ placement: "bottom" }}
-        onClick={() => {
-          if (sale.live) markGateRequired();
-        }}
         className="mt-4 flex w-full min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-[var(--primary)] bg-white px-4 py-3 text-base sm:text-lg font-semibold text-[var(--primary)] shadow-sm transition-colors hover:bg-[var(--muted)]"
       >
         {sale.live ? "Continue to shop" : "Continue without discount"}{" "}

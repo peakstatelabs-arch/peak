@@ -3,7 +3,6 @@ import {
   PREVIEW_COOKIE,
   PREVIEW_MODES,
   REGULAR_SITE_COOKIE,
-  SALE_ENDS_AT_MS,
   isSaleLive,
   previewCookieValue,
   resolveSalePhase,
@@ -108,6 +107,8 @@ export function middleware(request: NextRequest) {
       } else {
         res.cookies.delete(PREVIEW_COOKIE);
       }
+      // Opening the preview link also forgets "continue to the regular site".
+      res.cookies.delete(REGULAR_SITE_COOKIE);
     }
     return res;
   }
@@ -143,11 +144,9 @@ export function middleware(request: NextRequest) {
       const clean = request.nextUrl.clone();
       clean.searchParams.delete("regular");
       const res = NextResponse.redirect(clean);
-      res.cookies.set(REGULAR_SITE_COOKIE, "1", {
-        path: "/",
-        sameSite: "lax",
-        expires: new Date(SALE_ENDS_AT_MS + 60 * 60 * 1000),
-      });
+      // Session cookie: lasts until the browser closes, so every new visit
+      // to peakstate.shop starts on the sale page again.
+      res.cookies.set(REGULAR_SITE_COOKIE, "1", { path: "/", sameSite: "lax" });
       return res;
     }
     // ?pc=1 shows the regular (POWER CUT™) homepage once, without opting out.
