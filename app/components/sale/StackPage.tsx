@@ -58,11 +58,13 @@ export async function StackPage({
   const initialSale = await getSaleStatus();
   const saleName = SALE_NAME[initialSale.phase];
 
+  // Header photo: the size the quiz recommended; otherwise one of each (1×).
   const heroSets =
     Number.isFinite(setsParam) && stack.sizes.some((s) => s.sets === setsParam)
       ? setsParam
-      : stack.defaultSets;
-  const heroImage = stack.heroBySets?.[heroSets] ?? stack.hero;
+      : 1;
+  const heroImage =
+    heroSets === 1 ? stack.heroBySets?.[1] ?? stack.hero : stack.heroBySets?.[heroSets] ?? stack.hero;
   const best = priceLines(linesFor(stack.items, stack.sizes[stack.sizes.length - 1].sets));
   const from = priceLines(linesFor(stack.items, stack.sizes[0].sets));
 
