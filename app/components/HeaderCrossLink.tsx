@@ -6,8 +6,8 @@ import { cn } from "@/app/lib/cn";
 
 /**
  * Small underlined text link + boxed up-right arrow for the sticky header
- * (homepage → /getreta, /getreta → homepage). Opens in a new tab so the page
- * the visitor came from — and its cart — stays open.
+ * (homepage → /getreta, /getreta → homepage). Opens in the same tab; the cart
+ * is saved in the browser, so nothing is lost.
  *
  * Words + box flip colors on press (phones) and hover (desktop) so the tap
  * visibly registers.
@@ -28,8 +28,6 @@ export function HeaderCrossLink({
   return (
     <TrackedLink
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
       event={event}
       eventProperties={{ source }}
       // iOS Safari only applies :active when a touch listener is present.

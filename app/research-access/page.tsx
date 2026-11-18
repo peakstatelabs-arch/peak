@@ -81,7 +81,8 @@ export default async function ResearchAccessPage() {
                     Create your free account to unlock sale pricing.
                   </p>
                   <p className="mt-3 text-base text-[var(--primary)]/70 leading-relaxed">
-                    Free · 10 seconds · zero spam, ever.
+                    Our biggest sale ever.
+                    <span className="block">Free · 10 seconds · zero spam, ever.</span>
                   </p>
                 </>
               ) : (
