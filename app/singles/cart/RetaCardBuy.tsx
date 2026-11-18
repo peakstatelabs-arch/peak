@@ -53,7 +53,7 @@ export function RetaCardBuy({ initial, fallback, ...product }: Props) {
               }`}
             >
               {t.vials === 3 ? (
-                <span className="absolute -top-2 right-3 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--primary)]">
+                <span className="absolute -top-2 left-3 rounded-full border border-[var(--accent)] bg-[#0b0f1a] px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider text-[var(--accent)]">
                   Best value
                 </span>
               ) : null}

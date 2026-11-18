@@ -92,7 +92,7 @@ export function AddToCartButton(props: Props) {
     <button
       type="button"
       onClick={handleClick}
-      className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-semibold py-3.5 px-6 hover:bg-[var(--primary)]/90 transition-colors"
+      className="w-full buy-cta inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-semibold py-3.5 px-6 hover:bg-[var(--primary)]/90 transition-colors"
     >
       {justAdded ? (
         <>

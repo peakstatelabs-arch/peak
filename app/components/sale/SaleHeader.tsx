@@ -13,7 +13,7 @@ export function SaleHeader({
   showCart?: boolean;
 }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b0f1a]/90 text-white backdrop-blur-md">
       <SaleBar initial={initialSale} />
       <Container className="flex h-16 items-center justify-between">
         <LogoMenu href="/blackfriday">

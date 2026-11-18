@@ -37,9 +37,38 @@ export function BlackFridayExperience({
 }) {
   const sale = useSaleStatus(initialSale);
   const saleName = SALE_NAME[sale.phase];
-  const [step, setStep] = useState<"intro" | "q1" | "q2" | "result">(
-    startQuiz ? "q1" : "intro",
-  );
+  type Step = "intro" | "q1" | "q2" | "result";
+  const [step, setStepState] = useState<Step>(startQuiz ? "q1" : "intro");
+  // Each quiz step is a browser history entry, so the phone's back button
+  // goes back one question instead of leaving the page.
+  const setStep = (next: Step) => {
+    setStepState(next);
+    if (next === "q1" || next === "q2") {
+      try {
+        // Keep Next.js's own history state so its router doesn't reload.
+        window.history.pushState({ ...(window.history.state ?? {}), bfStep: next }, "");
+      } catch {
+        // ignore
+      }
+    }
+  };
+  useEffect(() => {
+    try {
+      window.history.replaceState(
+        { ...(window.history.state ?? {}), bfStep: startQuiz ? "q1" : "intro" },
+        "",
+      );
+    } catch {
+      // ignore
+    }
+    const onPop = (e: PopStateEvent) => {
+      const st = (e.state as { bfStep?: Step } | null)?.bfStep;
+      setStepState(st === "q1" || st === "q2" ? st : "intro");
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [startQuiz]);
+  const goBack = () => window.history.back();
   const [goal, setGoal] = useState<Goal | null>(null);
   const [size, setSize] = useState<number | null>(null);
   const [result, setResult] = useState<QuizResult | null>(null);
@@ -175,7 +204,7 @@ export function BlackFridayExperience({
                 </div>
               ))}
               <a
-                href="/powercutsale"
+                href="/powercutsale?tier=1"
                 className="col-span-2 rounded-2xl bg-[var(--accent)] px-3 py-4 text-center text-[#0b0f1a] transition-transform hover:scale-[1.02] sm:col-span-4"
               >
                 <p className="text-xs font-extrabold uppercase tracking-wider">POWER CUT&trade;</p>
@@ -196,6 +225,7 @@ export function BlackFridayExperience({
 
       {step === "q1" && (
         <div className={`relative ${shell} py-10 sm:py-16`}>
+          <BackLink onClick={goBack} />
           <Progress n={1} />
           <h2 className="mt-6 text-3xl sm:text-4xl font-black tracking-tight">
             What I want most right now is&hellip;
@@ -244,12 +274,13 @@ export function BlackFridayExperience({
               );
             })}
           </div>
-          <BackLink onClick={() => setStep("intro")} />
+          
         </div>
       )}
 
       {step === "q2" && goal && (
         <div className={`relative ${shell} py-10 sm:py-16`}>
+          <BackLink onClick={goBack} />
           <Progress n={2} />
           <h2 className="mt-6 text-3xl sm:text-4xl font-black tracking-tight">
             I&rsquo;d also love to improve&hellip;
@@ -269,7 +300,7 @@ export function BlackFridayExperience({
               </span>
             </button>
           </div>
-          <BackLink onClick={() => setStep("q1")} />
+          
         </div>
       )}
 
@@ -308,7 +339,7 @@ function BackLink({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="mt-8 text-sm font-semibold text-white/50 hover:text-white"
+      className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3.5 py-1.5 text-sm font-bold text-white/85 hover:border-white/40 hover:text-white"
     >
       ← Back
     </button>

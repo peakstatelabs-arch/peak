@@ -102,7 +102,7 @@ export function RetaBundlePicker({ selected, onSelect, initialSale }: Props) {
               }`}
             >
               {t.highlight ? (
-                <span className="absolute -top-2.5 right-3 rounded-full bg-[var(--accent)] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[var(--primary)]">
+                <span className="absolute -top-2.5 left-3 rounded-full border border-[var(--accent)] bg-[#0b0f1a] px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[var(--accent)] shadow">
                   Most popular
                 </span>
               ) : null}
@@ -174,7 +174,7 @@ export function RetaBundlePicker({ selected, onSelect, initialSale }: Props) {
       <button
         type="button"
         onClick={handleAdd}
-        className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-semibold py-3.5 px-6 hover:bg-[var(--primary)]/90 transition-colors"
+        className="mt-5 w-full buy-cta inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--primary)] text-white text-base font-semibold py-3.5 px-6 hover:bg-[var(--primary)]/90 transition-colors"
       >
         <svg
           className="w-5 h-5 flex-shrink-0"

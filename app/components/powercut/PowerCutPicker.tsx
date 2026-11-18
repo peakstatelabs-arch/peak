@@ -10,7 +10,7 @@ import {
   withPromoCode,
 } from "@/app/lib/sale";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
-import { ADDONS, PRODUCT_CUTOUT, type AddonKey } from "@/app/lib/bfStacks";
+import { ADDONS, PRODUCT_CUTOUT, SHORT_NAME, type AddonKey } from "@/app/lib/bfStacks";
 
 export type PcTier = {
   id: string;
@@ -172,7 +172,14 @@ export function PowerCutPicker({
         {addon && (
           <p className="mt-4 rounded-xl bg-white/5 px-4 py-3 text-sm text-white/80">
             {ADDONS[addon].emoji} Want {ADDONS[addon].label.toLowerCase()} too?
-            Right after checkout you can add it to your stack at{" "}
+            Right after checkout you can add{" "}
+            <strong className="text-white">
+              {ADDONS[addon].products
+                .filter((p) => !(PEPTIDES as readonly string[]).includes(p))
+                .map((p) => SHORT_NAME[p])
+                .join(" + ")}
+            </strong>{" "}
+            to your stack at{" "}
             <strong className="text-[var(--accent)]">40% off</strong>.
           </p>
         )}
