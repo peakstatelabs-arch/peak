@@ -487,3 +487,11 @@ details[open] summary .faq-icon {
   color: #e6f4f6;
   background-color: rgba(255, 255, 255, 0.06);
 }
+
+/* Tighter section spacing on phones for the sale pages. */
+@media (max-width: 639px) {
+  .bf-dark .py-16 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}

@@ -3,6 +3,7 @@
 // read as one family.
 
 import type { ReactNode } from "react";
+import { LogoMenu } from "@/app/components/sale/LogoMenu";
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
@@ -79,14 +80,14 @@ export function ProductHeader({
     <header className="sticky top-0 z-50 border-b border-[var(--border)] glass">
       <Container className="flex h-16 items-center justify-between">
         {/* Not a link: keeps the visitor on this page instead of the homepage */}
-        <div className="flex items-center gap-2 font-bold text-lg">
+        <LogoMenu>
           <img
             src="/logo.png"
             alt="Peak State Labs Logo"
             className="h-7 w-7 rounded-lg"
           />
           <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-        </div>
+        </LogoMenu>
         <div className="flex items-center gap-4 sm:gap-6">
           <HeaderCrossLink
             href="/"

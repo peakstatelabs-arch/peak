@@ -132,7 +132,7 @@ export async function StackPage({
                   <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                     <a
                       href="#buy"
-                      className="inline-flex h-14 items-center justify-center rounded-2xl bg-[var(--accent)] px-8 text-lg font-extrabold text-[#0b0f1a] shadow-xl hover:opacity-90"
+                      className="inline-flex h-14 items-center justify-center whitespace-nowrap rounded-2xl bg-[var(--accent)] px-5 sm:px-8 text-[15px] sm:text-lg font-extrabold text-[#0b0f1a] shadow-xl hover:opacity-90"
                     >
                       Claim my {stack.name} stack →
                     </a>

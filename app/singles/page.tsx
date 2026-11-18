@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Container } from "@/app/components/Container";
+import { LogoMenu } from "@/app/components/sale/LogoMenu";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { CartProvider } from "./cart/CartContext";
@@ -217,14 +218,14 @@ export default async function SinglesCatalog() {
           {/* Limited-time sale bar — pinned with the header */}
           <SaleBar href="/buildyourstack" initial={initialSale} />
           <Container className="flex h-16 items-center justify-between">
-            <a href="/" className="flex items-center gap-2 font-bold text-lg">
+            <LogoMenu href="/">
               <img
                 src="/logo.png"
                 alt="Peak State Labs Logo"
                 className="h-7 w-7 rounded-lg"
               />
               <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-            </a>
+            </LogoMenu>
             <div className="flex items-center gap-4 sm:gap-6">
               <SourceBackLink />
               <ViewCartButton variant="header" />

@@ -1,5 +1,6 @@
 import { Container } from "@/app/components/Container";
 import { Section } from "@/app/components/Section";
+import { LogoMenu } from "@/app/components/sale/LogoMenu";
 import { CountdownTimer } from "@/app/components/CountdownTimer";
 import { PricingCard } from "@/app/components/PricingCard";
 import { BenefitsGrid } from "@/app/components/BenefitsGrid";
@@ -61,14 +62,14 @@ export default async function Home() {
         {/* Limited-time sale bar — pinned with the header */}
         <SaleBar href="/buildyourstack" cta="Build your own stack &amp; save" initial={initialSale} />
         <Container className="flex h-16 items-center justify-between">
-          <a href="#top" className="flex items-center gap-2 font-bold text-lg">
+          <LogoMenu href="#top">
             <img
               src="/logo.png"
               alt="POWER CUT Logo"
               className="h-7 w-7 rounded-lg"
             />
             <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-          </a>
+          </LogoMenu>
           <nav className="hidden md:flex items-center gap-6 text-sm text-[var(--primary)]/70">
             {siteCopy.nav.map((item) => (
               <a
@@ -93,12 +94,14 @@ export default async function Home() {
               <span className="lg:hidden">{siteCopy.brand.retaCtaLabelShort}</span>
               <span className="hidden lg:inline">{siteCopy.brand.retaCtaLabel}</span>
             </HeaderCrossLink>
-            <a
-              href={siteCopy.brand.primaryCtaHref}
-              className="btn-primary inline-flex h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
-            >
-              {siteCopy.brand.primaryCtaLabel}
-            </a>
+            {!initialSale.live && (
+              <a
+                href={siteCopy.brand.primaryCtaHref}
+                className="btn-primary inline-flex h-10 items-center justify-center rounded-xl px-5 text-sm font-semibold"
+              >
+                {siteCopy.brand.primaryCtaLabel}
+              </a>
+            )}
           </div>
         </Container>
 
@@ -386,11 +389,13 @@ export default async function Home() {
                   {/* CTA */}
                   <TrackedLink
                     href="/singles"
-                    className="btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold mt-8"
+                    className={initialSale.live
+                      ? "mt-8 inline-flex h-14 items-center justify-center whitespace-nowrap rounded-2xl bg-[var(--accent)] px-6 sm:px-10 text-base sm:text-lg font-black uppercase tracking-wide text-[#0b0f1a] shadow-2xl ring-4 ring-[var(--accent)]/25 transition-transform hover:scale-[1.02]"
+                      : "btn-accent inline-flex h-14 items-center justify-center rounded-2xl px-10 text-lg font-semibold mt-8"}
                     event="shop_singles_click"
                     eventProperties={{ source: "singles_offer_section" }}
                   >
-                    {initialSale.live ? "Shop Single Vials — Up To 40% Off" : "Shop Single Vials"}
+                    {initialSale.live ? "Shop Singles · Up To 40% Off" : "Shop Single Vials"}
                     <svg className="ml-2 w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>

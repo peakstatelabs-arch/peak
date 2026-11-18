@@ -105,28 +105,29 @@ export function SaleBar({
   if (!live) return null;
   const u = saleUrgency(status.phase, msLeft ?? Infinity);
 
+  // Two lines on phones (sale name, then the countdown); one line on desktop.
+  // The "build your stack" link lives in each page's header instead.
+  void href;
+  void cta;
   return (
     <div
       ref={ref}
-      className={`px-3 py-2 text-center text-[11px] sm:text-sm font-bold ${u.bar}`}
+      className={`px-3 py-2.5 text-center font-bold ${u.bar}`}
     >
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-3 gap-y-0.5 sm:gap-x-4">
-        <span className="inline-flex items-center gap-1.5 tracking-wider">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-0.5 sm:flex-row sm:gap-4">
+        <span className="inline-flex items-center gap-2 text-sm sm:text-sm tracking-[0.15em]">
           <span
-            className={`h-1.5 w-1.5 rounded-full bg-[var(--accent)] ${u.pulse ? "animate-ping" : "animate-pulse-slow"}`}
+            className={`h-2 w-2 rounded-full bg-[var(--accent)] ${u.pulse ? "animate-ping" : "animate-pulse-slow"}`}
           />
           {u.label}
+          <span className="hidden sm:inline tracking-normal font-semibold opacity-90">· {SALE_HEADLINE}</span>
         </span>
-        <span className="hidden sm:inline opacity-90">{SALE_HEADLINE}</span>
         {msLeft !== null && (
-          <span className={u.pulse ? "animate-pulse-slow" : ""}>
+          <span className={`text-[13px] sm:text-sm ${u.pulse ? "animate-pulse-slow" : ""}`}>
             <span className="opacity-70 font-semibold">Ends in </span>
             <SaleCountdown />
           </span>
         )}
-        <a href={href} className="underline underline-offset-2 hover:opacity-80">
-          {cta} →
-        </a>
       </div>
     </div>
   );
@@ -145,6 +146,7 @@ const OWN_BAR_PREFIXES = [
   "/limitlessplus",
   "/buildyourstack",
   "/powercutsale",
+  "/stacks",
   "/sale-over",
   "/creator",
 ];

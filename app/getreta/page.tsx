@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Container } from "@/app/components/Container";
+import { LogoMenu } from "@/app/components/sale/LogoMenu";
 import { Section } from "@/app/components/Section";
 import { siteCopy } from "@/content/siteCopy";
 import { MemberBanner } from "@/app/components/member/MemberBanner";
@@ -166,14 +167,14 @@ export default async function GetRetaPage() {
           <SaleBar href="#buy" cta="Shop the sale" initial={initialSale} />
           <Container className="flex h-16 items-center justify-between">
             {/* Not a link: keeps paid traffic on /getreta instead of the homepage */}
-            <div className="flex items-center gap-2 font-bold text-lg">
+            <LogoMenu>
               <img
                 src="/logo.png"
                 alt="Peak State Labs Logo"
                 className="h-7 w-7 rounded-lg"
               />
               <span className="hidden sm:inline">{siteCopy.brand.name}</span>
-            </div>
+            </LogoMenu>
             <div className="flex items-center gap-4 sm:gap-6">
               {/* Power Cut cross-sell — text-weight so "Get Retatrutide" keeps priority */}
               <HeaderCrossLink href="/" event="powercut_entry_click" source="getreta_header">
