@@ -30,7 +30,7 @@ export function OtherStacks({
       name: "POWER CUT™",
       tagline: "Burn fat and build lean muscle — the full recomposition.",
       href: "/powercutsale?tier=1",
-      image: "/power-cut-stack.webp",
+      image: "/power-cut-stack-v2.webp",
       from: POWERCUT_SALE.single.saleCents,
       pct: pcPct,
     },
