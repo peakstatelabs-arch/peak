@@ -133,15 +133,15 @@ const sameAsDrawer = async (items: Item[], iso: string, expected: number) => {
 };
 
 // ── Window / phases ─────────────────────────────────────────────────────────
-await t("phases: pre → Black Friday (Nov 20–27) → Cyber Monday (to Nov 30) → over, ET", () => {
-  assert.equal(sale.salePhaseAt(T("2026-11-19T23:59:59-05:00")), "pre");
-  assert.equal(sale.salePhaseAt(T("2026-11-20T00:00:00-05:00")), "bf");
+await t("phases: pre → Black Friday (Nov 19–27) → Cyber Monday (to Nov 30) → over, ET", () => {
+  assert.equal(sale.salePhaseAt(T("2026-11-18T23:59:59-05:00")), "pre");
+  assert.equal(sale.salePhaseAt(T("2026-11-19T00:00:00-05:00")), "bf");
   assert.equal(sale.salePhaseAt(T("2026-11-27T23:59:59-05:00")), "bf");
   assert.equal(sale.salePhaseAt(T("2026-11-28T00:00:00-05:00")), "cm");
   assert.equal(sale.salePhaseAt(T("2026-11-30T23:59:59-05:00")), "cm");
   assert.equal(sale.salePhaseAt(T("2026-12-01T00:00:00-05:00")), "over");
   const f = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", weekday: "long", month: "long", day: "numeric", hour: "numeric", minute: "numeric", hour12: true });
-  assert.equal(f.format(new Date(sale.SALE_STARTS_AT_MS)), "Friday, November 20 at 12:00 AM");
+  assert.equal(f.format(new Date(sale.SALE_STARTS_AT_MS)), "Thursday, November 19 at 12:00 AM");
   assert.equal(f.format(new Date(sale.SALE_ENDS_AT_MS)), "Monday, November 30 at 11:59 PM");
 });
 

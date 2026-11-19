@@ -11,7 +11,8 @@ import { SINGLES_PRICE_IDS, isStackPriceId } from "../singles/cart/priceCatalog"
 import { bulkTierForQty, maxSameProductQty } from "./bulkDiscount";
 
 // ── Sale window (America/New_York; EST = UTC-5 for all of these dates) ─────
-export const SALE_STARTS_AT_MS = Date.parse("2026-11-20T00:00:00.000-05:00");
+// Launched early: live from Thursday Nov 19 (originally Friday Nov 20).
+export const SALE_STARTS_AT_MS = Date.parse("2026-11-19T00:00:00.000-05:00");
 /** Black Friday branding runs to the end of Friday Nov 27… */
 export const BLACK_FRIDAY_ENDS_AT_MS = Date.parse("2026-11-27T23:59:59.999-05:00");
 /** …then Cyber Monday branding until the sale ends Monday Nov 30. */
