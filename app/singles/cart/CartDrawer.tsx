@@ -211,7 +211,7 @@ export function CartDrawer() {
         </div>
 
         {lines.length > 0 && (
-          <footer className="border-t border-[var(--border)] px-5 sm:px-6 py-5 space-y-4 bg-[var(--muted)]">
+          <footer className="border-t border-[var(--border)] px-4 sm:px-6 py-3 sm:py-5 space-y-2.5 sm:space-y-4 bg-[var(--muted)]">
             {isSplitShipment && (
               <SplitShipmentNotice
                 inStockLines={inStockLines}
@@ -241,7 +241,24 @@ export function CartDrawer() {
 
             {discountCents > 0 ? (
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-sm">
+                {/* Phones: one compact total row */}
+                <div className="flex items-center justify-between sm:hidden">
+                  <span className="text-sm font-semibold text-[var(--primary)]/70">
+                    Total{" "}
+                    <span className="font-bold text-[var(--accent-dark)]">
+                      ({discountPct}% off)
+                    </span>
+                  </span>
+                  <span className="tabular-nums">
+                    <span className="mr-2 text-sm text-[var(--primary)]/45 line-through">
+                      {formatUsd(subtotalCents)}
+                    </span>
+                    <span className="text-xl font-bold text-[var(--primary)]">
+                      {formatUsd(estimatedTotalCents)}
+                    </span>
+                  </span>
+                </div>
+                <div className="hidden sm:flex items-center justify-between text-sm">
                   <span className="font-semibold text-[var(--primary)]/70">
                     Subtotal
                   </span>
@@ -249,7 +266,7 @@ export function CartDrawer() {
                     {formatUsd(subtotalCents)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
+                <div className="hidden sm:flex items-center justify-between text-sm">
                   <span className="font-semibold text-[var(--accent-dark)]">
                     {sale.live
                       ? `${SALE_NAME[sale.phase]} sale (${discountPct}% off)`
@@ -259,7 +276,7 @@ export function CartDrawer() {
                     −{formatUsd(discountCents)}
                   </span>
                 </div>
-                <div className="flex items-center justify-between pt-1">
+                <div className="hidden sm:flex items-center justify-between pt-1">
                   <span className="text-sm font-semibold text-[var(--primary)]/70">
                     Estimated total
                   </span>
@@ -278,7 +295,7 @@ export function CartDrawer() {
                 </span>
               </div>
             )}
-            <p className="text-xs text-[var(--primary)]/55">
+            <p className="hidden sm:block text-xs text-[var(--primary)]/55">
               {sale.live && discountCents > 0
                 ? "Sale pricing applies automatically and can\u2019t be combined with other codes. Shipping and taxes calculated at checkout."
                 : priced.hasStackLines
@@ -294,7 +311,7 @@ export function CartDrawer() {
               type="button"
               onClick={handleCheckout}
               disabled={submitting}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] text-[var(--primary)] text-base font-bold py-3.5 px-6 hover:bg-[var(--accent-dark)] hover:text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] text-[var(--primary)] text-base font-bold py-3 sm:py-3.5 px-6 hover:bg-[var(--accent-dark)] hover:text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <>
@@ -355,6 +372,7 @@ export function CartDrawer() {
                 />
               </svg>
               Secure checkout by Stripe
+              <span className="sm:hidden">· taxes &amp; shipping at checkout</span>
             </p>
           </footer>
         )}
@@ -380,7 +398,7 @@ function SaleCartNote({
   next: NextStep | null;
 }) {
   return (
-    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 sm:px-4 sm:py-3">
       {pct > 0 ? (
         <p className="flex items-center gap-2 text-sm font-bold text-emerald-700">
           <svg
@@ -400,13 +418,13 @@ function SaleCartNote({
         </p>
       )}
       {next && (
-        <p className="mt-1 text-xs font-semibold text-[var(--primary)]/80">
+        <p className="mt-0.5 sm:mt-1 text-xs font-semibold text-[var(--primary)]/80">
           {nextStepAction(next)} to unlock{" "}
           <span className="font-extrabold text-emerald-700">{next.pct}% off</span>{" "}
           your whole cart.
         </p>
       )}
-      <p className="mt-1 text-xs text-[var(--primary)]/65">
+      <p className="hidden sm:block mt-1 text-xs text-[var(--primary)]/65">
         {saleName} pricing ends in{" "}
         <SaleCountdown className="text-[var(--primary)]" />
       </p>
