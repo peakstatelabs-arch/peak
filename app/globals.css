@@ -553,7 +553,8 @@ details[open] summary .faq-icon {
 
 /* Struck-through original price in the cart: easy to spot. */
 .was-price {
-  color: #f87171;
-  text-decoration-color: #f87171;
-  text-decoration-thickness: 2px;
+  color: #8fb3dc; /* soft brand blue: visible, not competing with the sale price */
+  font-weight: 600;
+  text-decoration-color: rgba(143, 179, 220, 0.75);
+  text-decoration-thickness: 1px;
 }
