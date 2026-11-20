@@ -250,7 +250,7 @@ export function CartDrawer() {
                     </span>
                   </span>
                   <span className="tabular-nums">
-                    <span className="mr-2 text-sm text-[var(--primary)]/45 line-through">
+                    <span className="was-price mr-2 text-base font-bold line-through">
                       {formatUsd(subtotalCents)}
                     </span>
                     <span className="text-xl font-bold text-[var(--primary)]">
@@ -688,7 +688,7 @@ function CartLineRow({
           {saleCents !== null ? (
             <div className="text-right">
               <p className="font-bold text-[var(--primary)]">
-                <span className="mr-1.5 text-xs font-semibold text-[var(--primary)]/40 line-through">
+                <span className="was-price mr-1.5 text-sm font-bold line-through">
                   {formatUsd(line.unitPriceCents * line.quantity)}
                 </span>
                 {formatUsd(saleCents)}
