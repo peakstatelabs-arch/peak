@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import posthog from "posthog-js";
-import { saveClientContact } from "@/app/lib/clientContact";
+import { readClientContact, saveClientContact } from "@/app/lib/clientContact";
 import { acknowledgeDisclaimer } from "@/app/lib/disclaimer";
 import { TrackedLink } from "@/app/components/TrackedLink";
 import { useSaleStatus, type SaleStatus } from "@/app/lib/useSaleStatus";
@@ -66,10 +66,27 @@ export function ResearchAccessForm({ initialSale }: { initialSale?: SaleStatus }
     getServerMemberCount
   );
 
-  // During the sale, a new member goes straight to the sale page.
+  // During the sale, a new member goes straight to the sale page. replace()
+  // (not assign) drops this sign-up page from the tab's history, so pressing
+  // Back later (e.g. from Stripe checkout) never lands on the form again.
   useEffect(() => {
-    if (unlocked && sale.live) window.location.assign("/");
+    if (unlocked && sale.live) window.location.replace("/");
   }, [unlocked, sale.live]);
+
+  // Already signed up (this browser has their email) and the sale is on:
+  // skip the form. Also covers Back/forward restores from the browser cache.
+  useEffect(() => {
+    if (!sale.live) return;
+    const skipIfMember = () => {
+      if (readClientContact().email) window.location.replace("/");
+    };
+    skipIfMember();
+    const onShow = (e: PageTransitionEvent) => {
+      if (e.persisted) skipIfMember();
+    };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, [sale.live]);
 
   // The success card is much shorter than the form, so bring it into view.
   useEffect(() => {
