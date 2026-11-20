@@ -118,7 +118,7 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
                 {sale.live && (
                   <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-[var(--accent)]/30 bg-[var(--accent)]/[0.08] px-3 py-2">
                     <span className="tabular-nums">
-                      <span className="mr-1.5 text-xs text-[var(--primary)]/45 line-through">{p.price}</span>
+                      <span className="was-price mr-1.5 text-sm line-through">{p.price}</span>
                       <span className="text-lg font-black text-[var(--primary)]">
                         {formatUsd(pctOff(p.priceCents, 20))}
                       </span>
@@ -184,7 +184,7 @@ export function BuildYourStack({ initialSale }: { initialSale: SaleStatus }) {
                 <span className="text-[var(--accent)]">{priced.pct}% off</span> ·{" "}
                 <span className="tabular-nums">{formatUsd(priced.totalCents)}</span>
                 {priced.discountCents > 0 && (
-                  <span className="ml-1 text-white/40 line-through tabular-nums">
+                  <span className="was-price ml-1 line-through tabular-nums">
                     {formatUsd(priced.subtotalCents)}
                   </span>
                 )}
