@@ -63,7 +63,7 @@ export async function StackPage({
   const heroSets =
     Number.isFinite(setsParam) && stack.sizes.some((s) => s.sets === setsParam)
       ? setsParam
-      : 1;
+      : (stack.defaultHeroSets ?? 1);
   const heroImage =
     heroSets === 1 ? stack.heroBySets?.[1] ?? stack.hero : stack.heroBySets?.[heroSets] ?? stack.hero;
   const best = priceLines(linesFor(stack.items, stack.sizes[stack.sizes.length - 1].sets));

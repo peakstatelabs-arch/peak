@@ -46,7 +46,7 @@ export function OtherStacks({
         tagline: st.tagline,
         href: st.path,
         // See-through photo of a 1× stack (works on light and dark pages).
-        image: st.heroBySets?.[1] ?? st.hero,
+        image: st.heroBySets?.[st.defaultHeroSets ?? 1] ?? st.hero,
         from: p.price,
         pct: p.pct,
       };

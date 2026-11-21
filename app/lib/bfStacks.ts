@@ -61,6 +61,8 @@ export type StackDef = {
   hero: string;
   /** Header photo per stack size (transparent); falls back to `hero`. */
   heroBySets?: Partial<Record<number, string>>;
+  /** Size shown in the header/cards when no quiz size is given (default 1). */
+  defaultHeroSets?: number;
   headline: [string, string];
   sub: string;
   roles: Partial<Record<ProductSlug, { role: string; body: string }>>;
@@ -83,6 +85,7 @@ export const STACKS: Record<StackSlug, StackDef> = {
     ],
     defaultSets: 2,
     hero: "/bf/shred-1-hero.webp",
+    defaultHeroSets: 2,
     heroBySets: {
       1: "/bf/shred-1-hero.webp",
       2: "/bf/shred-2-hero.webp",
