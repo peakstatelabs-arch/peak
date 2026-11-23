@@ -558,3 +558,35 @@ details[open] summary .faq-icon {
   text-decoration-color: rgba(143, 179, 220, 0.75);
   text-decoration-thickness: 1px;
 }
+
+/* Dark sale theme: brand-blue gradient panels stay dark (their text is white). */
+.bf-dark .gradient-primary {
+  background: linear-gradient(135deg, #13203a 0%, #1c3563 100%);
+}
+/* White gradient stops would wash dark sections out to gray. */
+.bf-dark .from-white {
+  --tw-gradient-from: #0b0f1a;
+}
+.bf-dark .via-white {
+  --tw-gradient-via: #0b0f1a;
+}
+.bf-dark .to-white {
+  --tw-gradient-to: #0b0f1a;
+}
+/* Teal gradient badges keep dark text. */
+.bf-dark .gradient-accent {
+  --primary: #0b0f1a;
+}
+/* Layered !important utilities beat ours, so swap the variable they read. */
+.bf-dark .\!bg-\[var\(--primary\)\] {
+  --primary: #13203a;
+}
+.bf-dark .bg-\[var\(--primary\)\]\/90,
+.bf-dark .bg-\[var\(--primary\)\]\/60,
+.bf-dark .bg-\[var\(--primary\)\]\/55,
+.bf-dark .bg-\[var\(--primary\)\]\/40 {
+  background-color: #13203a;
+}
+.bf-dark .bg-\[var\(--primary-light\)\] {
+  background-color: #1c3563;
+}
